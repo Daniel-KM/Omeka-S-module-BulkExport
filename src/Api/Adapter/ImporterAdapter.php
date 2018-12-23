@@ -44,9 +44,11 @@ class ImporterAdapter extends AbstractEntityAdapter
                 $this->getEntityClass() . '.owner',
                 $userAlias
             );
-            $qb->andWhere($qb->expr()->eq(
-                $userAlias . '.id',
-                $this->createNamedParameter($qb, $query['owner_id']))
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $userAlias . '.id',
+                    $this->createNamedParameter($qb, $query['owner_id'])
+                )
             );
         }
     }

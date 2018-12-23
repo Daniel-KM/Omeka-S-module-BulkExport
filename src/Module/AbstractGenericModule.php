@@ -413,7 +413,8 @@ abstract class AbstractGenericModule extends AbstractModule
 
         $services = $this->getServiceLocator();
         $translator = $services->get('MvcTranslator');
-        $message = new Message($translator->translate('This module requires modules "%s".'), // @translate
+        $message = new Message(
+            $translator->translate('This module requires modules "%s".'), // @translate
             implode('", "', $this->dependencies)
         );
         throw new ModuleCannotInstallException($message);

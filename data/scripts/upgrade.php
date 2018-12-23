@@ -29,7 +29,8 @@ if (version_compare($oldVersion, '3.0.1', '<')) {
     $version = $module->getDb('version');
     if (version_compare($version, '3.2.2', '<')) {
         throw new \Omeka\Module\Exception\ModuleCannotInstallException(
-            'BulkImport requires module Log version 3.2.2 or higher.'); // @translate
+            'BulkImport requires module Log version 3.2.2 or higher.' // @translate
+        );
     }
 
     $sql = <<<'SQL'

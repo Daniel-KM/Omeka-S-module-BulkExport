@@ -248,7 +248,7 @@ class AutomapFields extends AbstractHelper
      */
     protected function cleanStrings(array $strings)
     {
-        return array_map(function($string) {
+        return array_map(function ($string) {
             return preg_replace('~\s*:\s*~', ':', $this->cleanUnicode($string));
         }, $strings);
     }

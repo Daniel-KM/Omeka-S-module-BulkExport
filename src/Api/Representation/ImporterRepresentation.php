@@ -85,7 +85,7 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         return $this->resource->getReaderConfig() ?: [];
     }
 
-        /**
+    /**
      * @return string
      */
     public function processorClass()

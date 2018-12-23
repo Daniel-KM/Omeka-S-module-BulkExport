@@ -282,7 +282,8 @@ trait ResourceUpdateTrait
     {
         $dataBase = $data;
         // Deduplicate data.
-        $data = array_map('unserialize', array_unique(array_map('serialize',
+        $data = array_map('unserialize', array_unique(array_map(
+            'serialize',
             // Normalize data.
             array_map(function ($v) {
                 return isset($v['o:id']) ? ['o:id' => $v['o:id']] : $v;
@@ -317,7 +318,8 @@ trait ResourceUpdateTrait
         foreach ($values as $key => $value) {
             $values[$key] = array_values(
                 // Deduplicate values.
-                array_map('unserialize', array_unique(array_map('serialize',
+                array_map('unserialize', array_unique(array_map(
+                    'serialize',
                     // Normalize values.
                     array_map(function ($v) use ($base, $isOldOmeka) {
                         $mainType = empty($v['@id']) ? (empty($v['value_resource_id']) ? 'literal' : 'resource') : 'url';

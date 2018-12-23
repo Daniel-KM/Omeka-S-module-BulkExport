@@ -61,7 +61,7 @@ class Entry implements EntryInterface
     public function isEmpty()
     {
         $data = array_filter($this->data, function ($v) {
-            return count(array_filter($v, function($w) {
+            return count(array_filter($v, function ($w) {
                 return strlen($w) > 0;
             }));
         });

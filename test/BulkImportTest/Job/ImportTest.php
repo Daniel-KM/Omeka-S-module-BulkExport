@@ -407,7 +407,7 @@ SQL;
                 'o:is_public' => 'true',
                 'resource_type' => 'items',
                 'o:item_set' => [],
-                'o:item'=> '',
+                'o:item' => '',
             ],
         ];
     }

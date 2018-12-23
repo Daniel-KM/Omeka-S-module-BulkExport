@@ -355,8 +355,7 @@ abstract class AbstractProcessor implements Processor
                     'The resource id cannot be checked: the resource type is undefined.' // @translate
                 );
                 $resource['has_error'] = true;
-            }
-            else {
+            } else {
                 $id = $this->findResourceFromIdentifier($resource['o:id'], 'o:id', $resourceType);
                 if (!$id) {
                     $this->logger->err(
