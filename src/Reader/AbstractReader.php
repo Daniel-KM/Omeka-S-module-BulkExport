@@ -9,6 +9,7 @@ use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Iterator;
+use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -88,7 +89,12 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
 
     public function isValid()
     {
-        return true;
+        $this->lastErrorMessage = null;
+        if (array_search('filename', $this->paramsKeys) === false) {
+            return true;
+        }
+        $filepath = $this->getParam('filename');
+        return $this->isValidFilepath($filepath);
     }
 
     public function getLastErrorMessage()
@@ -124,6 +130,14 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     {
         $values = $form->getData();
         $params = array_intersect_key($values, array_flip($this->paramsKeys));
+        if (array_search('filename', $this->paramsKeys) !== false) {
+            $file = $this->getUploadedFile($form);
+            $params['filename'] = $file['filename'];
+            // Remove temp names for security purpose.
+            unset($file['filename']);
+            unset($file['tmp_name']);
+            $params['file'] = $file;
+        }
         $this->setParams($params);
         $this->reset();
     }
@@ -198,7 +212,6 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
 
-        $this->iterator = new \ArrayIterator([]);
         $this->initializeReader();
 
         $this->finalizePrepareIterator();
@@ -208,11 +221,9 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     }
 
     /**
-     * Called only by prepareIterator() before opening reader.
+     * Initialize the reader iterator.
      */
-    protected function initializeReader()
-    {
-    }
+    abstract protected function initializeReader();
 
     /**
      * Called only by prepareIterator() after opening reader.
@@ -227,6 +238,75 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
      */
     protected function prepareAvailableFields()
     {
+    }
+
+    /**
+     * @todo Use the upload mechanism / temp file of Omeka.
+     *
+     * @param Form $form
+     * @throws \Omeka\Service\Exception\RuntimeException
+     * @return array The file array with the temp filename.
+     */
+    protected function getUploadedFile(Form $form)
+    {
+        $file = $form->get('file')->getValue();
+        if (empty($file)) {
+            throw new \Omeka\Service\Exception\RuntimeException(
+                'Unable to upload file.' // @translate
+            );
+        }
+
+        $systemConfig = $this->getServiceLocator()->get('Config');
+        $tempDir = isset($systemConfig['temp_dir'])
+            ? $systemConfig['temp_dir']
+            : null;
+        if (!$tempDir) {
+            throw new \Omeka\Service\Exception\RuntimeException(
+                'The "temp_dir" is not configured' // @translate
+            );
+        }
+
+        $filename = tempnam($tempDir, 'omk_');
+        if (!move_uploaded_file($file['tmp_name'], $filename)) {
+            throw new \Omeka\Service\Exception\RuntimeException(
+                new PsrMessage(
+                    'Unable to move uploaded file to {filename}', // @translate
+                    ['filename' => $filename]
+                )
+            );
+        }
+        $file['filename'] = $filename;
+        return $file;
+    }
+
+    /**
+     * @param string $filepath
+     * @return boolean
+     */
+    protected function isValidFilepath($filepath)
+    {
+        if (empty($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" doesn’t exist.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        if (!filesize($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is empty.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        if (!is_readable($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is not readable.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        return true;
     }
 
     protected function cleanData(array $data)

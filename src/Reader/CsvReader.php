@@ -6,7 +6,6 @@ use BulkImport\Form\CsvReaderConfigForm;
 use BulkImport\Form\CsvReaderParamsForm;
 use Log\Stdlib\PsrMessage;
 use SplFileObject;
-use Zend\Form\Form;
 
 /**
  * Box Spout Spreadshet reader doesn't support escape for csv (even if it
@@ -66,76 +65,9 @@ class CsvReader extends AbstractReader
      */
     protected $escape = self::DEFAULT_ESCAPE;
 
-    public function isValid()
-    {
-        $this->lastErrorMessage = null;
-
-        $filepath = $this->getParam('filename');
-        if (empty($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" doesn’t exist.', // @translate
-                ['filepath' => $filepath]
-            );
-            return false;
-        }
-        if (!filesize($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" is empty.', // @translate
-                ['filepath' => $filepath]
-            );
-            return false;
-        }
-        if (!is_readable($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" is not readable.', // @translate
-                ['filepath' => $filepath]
-            );
-            return false;
-        }
-        if (!$this->isUtf8($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" is not fully utf-8.', // @translate
-                ['filepath' => $filepath]
-            );
-            return false;
-        }
-        return true;
-    }
-
-    public function handleParamsForm(Form $form)
-    {
-        $values = $form->getData();
-        $file = $form->get('file')->getValue();
-
-        // Move file.
-        $systemConfig = $this->getServiceLocator()->get('Config');
-        $tempDir = isset($systemConfig['temp_dir'])
-            ? $systemConfig['temp_dir']
-            : null;
-        if (!$tempDir) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                'The "temp_dir" is not configured' // @translate
-            );
-        }
-
-        $filename = tempnam($tempDir, 'omeka');
-        if (!move_uploaded_file($file['tmp_name'], $filename)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                new PsrMessage(
-                    'Unable to move uploaded file to %s', // @translate
-                    ['filename' => $filename]
-                )
-            );
-        }
-
-        $params = array_intersect_key($values, array_flip($this->paramsKeys));
-        $params['filename'] = $filename;
-        $this->setParams($params);
-        $this->reset();
-    }
-
     public function key()
     {
+        // The first row is the headers, not the data.
         return parent::key() - 1;
     }
 
@@ -163,24 +95,15 @@ class CsvReader extends AbstractReader
 
     protected function prepareIterator()
     {
-        $this->reset();
-        if (!$this->isValid()) {
-            throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
-        }
-
-        $filepath = $this->getParam('filename');
-        $this->iterator = new SplFileObject($filepath);
-        $this->initializeReader();
-
-        $this->finalizePrepareIterator();
-        $this->prepareAvailableFields();
-
-        $this->isReady = true;
+        parent::prepareIterator();
         $this->next();
     }
 
     protected function initializeReader()
     {
+        $filepath = $this->getParam('filename');
+        $this->iterator = new SplFileObject($filepath);
+
         $this->delimiter = $this->getParam('delimiter', self::DEFAULT_DELIMITER);
         $this->enclosure = $this->getParam('enclosure', self::DEFAULT_ENCLOSURE);
         $this->escape = $this->getParam('escape', self::DEFAULT_ESCAPE);
@@ -207,6 +130,21 @@ class CsvReader extends AbstractReader
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
         $this->availableFields = array_map([$this, 'trimUnicode'], $fields);
+    }
+
+    protected function isValidFilepath($filepath)
+    {
+        if (!parent::isValidFilepath($filepath)) {
+            return false;
+        }
+        if (!$this->isUtf8($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is not fully utf-8.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        return true;
     }
 
     /**
