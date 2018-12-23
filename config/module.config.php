@@ -130,13 +130,13 @@ return [
     ],
     'bulk_import' => [
         'readers' => [
-            'csv' => Reader\CsvReader::class
+            Reader\CsvReader::class => Reader\CsvReader::class,
         ],
         'processors' => [
-            'items' => Processor\ItemProcessor::class,
-            'item_sets' => Processor\ItemSetProcessor::class,
-            'media' => Processor\MediaProcessor::class,
-            'resources' => Processor\ResourceProcessor::class,
+            Processor\ItemProcessor::class => Processor\ItemProcessor::class,
+            Processor\ItemSetProcessor::class => Processor\ItemSetProcessor::class,
+            Processor\MediaProcessor::class => Processor\MediaProcessor::class,
+            Processor\ResourceProcessor::class => Processor\ResourceProcessor::class,
         ],
     ],
 ];

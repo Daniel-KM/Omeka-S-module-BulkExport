@@ -23,37 +23,37 @@ class ImporterForm extends Form
         parent::init();
 
         $this->add([
-            'name' => 'o:name',
+            'name' => 'o:label',
             'type' => Element\Text::class,
             'options' => [
-                'label' => 'Name', // @translate
+                'label' => 'Label', // @translate
             ],
             'attributes' => [
-                'id' => 'o-name',
+                'id' => 'o-label',
             ],
         ]);
 
         $this->add([
-            'name' => 'o-module-bulk:reader_name',
+            'name' => 'o-module-bulk:reader_class',
             'type'  => Element\Select::class,
             'options' => [
                 'label' => 'Reader', // @translate
                 'value_options' => $this->getReaderOptions(),
             ],
             'attributes' => [
-                'id' => 'o-module-bulk-reader-name',
+                'id' => 'o-module-bulk-reader-class',
             ],
         ]);
 
         $this->add([
-            'name' => 'o-module-bulk:processor_name',
+            'name' => 'o-module-bulk:processor_class',
             'type'  => Element\Select::class,
             'options' => [
                 'label' => 'Processor', // @translate
                 'value_options' => $this->getProcessorOptions(),
             ],
             'attributes' => [
-                'id' => 'o-module-bulk-processor-name',
+                'id' => 'o-module-bulk-processor-class',
             ],
         ]);
 
@@ -93,10 +93,10 @@ class ImporterForm extends Form
     protected function getProcessorOptions()
     {
         $options = [];
-        $readerManager = $this->getServiceLocator()->get(ProcessorManager::class);
-        $readers = $readerManager->getPlugins();
-        foreach ($readers as $key => $reader) {
-            $options[$key] = $reader->getLabel();
+        $processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
+        $processors = $processorManager->getPlugins();
+        foreach ($processors as $key => $processor) {
+            $options[$key] = $processor->getLabel();
         }
         return $options;
     }

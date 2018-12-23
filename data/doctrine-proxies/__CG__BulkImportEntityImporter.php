@@ -64,10 +64,10 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'name', 'readerName', 'readerConfig', 'processorName', 'processorConfig'];
+            return ['__isInitialized__', 'id', 'label', 'readerClass', 'readerConfig', 'processorClass', 'processorConfig', 'owner'];
         }
 
-        return ['__isInitialized__', 'id', 'name', 'readerName', 'readerConfig', 'processorName', 'processorConfig'];
+        return ['__isInitialized__', 'id', 'label', 'readerClass', 'readerConfig', 'processorClass', 'processorConfig', 'owner'];
     }
 
     /**
@@ -191,45 +191,45 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setName($name)
+    public function setLabel($label)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$name]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setLabel', [$label]);
 
-        return parent::setName($name);
+        return parent::setLabel($label);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getLabel()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getName', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getLabel', []);
 
-        return parent::getName();
+        return parent::getLabel();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setReaderName($readerName)
+    public function setReaderClass($readerClass)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderName', [$readerName]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderClass', [$readerClass]);
 
-        return parent::setReaderName($readerName);
+        return parent::setReaderClass($readerClass);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getReaderName()
+    public function getReaderClass()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getReaderName', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getReaderClass', []);
 
-        return parent::getReaderName();
+        return parent::getReaderClass();
     }
 
     /**
@@ -257,23 +257,23 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setProcessorName($processorName)
+    public function setProcessorClass($processorClass)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorName', [$processorName]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorClass', [$processorClass]);
 
-        return parent::setProcessorName($processorName);
+        return parent::setProcessorClass($processorClass);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getProcessorName()
+    public function getProcessorClass()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorName', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorClass', []);
 
-        return parent::getProcessorName();
+        return parent::getProcessorClass();
     }
 
     /**
@@ -296,6 +296,28 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorConfig', []);
 
         return parent::getProcessorConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setOwner(\Omeka\Entity\User $owner = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOwner', [$owner]);
+
+        return parent::setOwner($owner);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOwner()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getOwner', []);
+
+        return parent::getOwner();
     }
 
     /**

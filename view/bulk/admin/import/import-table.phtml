@@ -20,7 +20,7 @@ $escape = $this->plugin('escapeHtml');
     <tbody>
         <?php foreach ($imports as $import): ?>
             <tr>
-                <td><?php echo $import->importer()->name(); ?></td>
+                <td><?php echo $import->importer()->label(); ?></td>
                 <td><?php echo $import->status(); ?></td>
                 <td><?php if ($import->started()) echo $import->started()->format('Y-m-d H:i:s'); ?></td>
                 <td><?php if ($import->ended()) echo $import->ended()->format('Y-m-d H:i:s'); ?></td>

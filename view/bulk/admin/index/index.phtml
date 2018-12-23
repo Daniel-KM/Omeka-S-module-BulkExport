@@ -34,7 +34,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'Bulk
         <?php foreach ($importers as $importer): ?>
             <tr>
                 <td>
-                    <?php echo $hyperlink($importer->name(), $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'start', 'id' => $importer->id()])); ?>
+                    <?php echo $hyperlink($importer->label(), $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'start', 'id' => $importer->id()])); ?>
                 </td>
                 <td>
                     <?php $reader = $importer->reader(); ?>

@@ -57,6 +57,7 @@ class ImporterController extends AbstractActionController
                 if ($entity) {
                     $response = $this->api($form)->update('bulk_importers', $this->params('id'), $data, [], ['isPartial' => true]);
                 } else {
+                    $data['o:owner'] = $this->identity();
                     $response = $this->api($form)->create('bulk_importers', $data);
                 }
 

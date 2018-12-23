@@ -38,12 +38,17 @@ class ImporterAdapter extends AbstractEntityAdapter
             );
         }
 
-        // if (isset($query['resource_type'])) {
-        //    $qb->andWhere($qb->expr()->eq(
-        //        $this->getEntityClass() . '.resource_type',
-        //        $this->createNamedParameter($qb, $query['resource_type']))
-        //    );
-        // }
+        if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
+            $userAlias = $this->createAlias();
+            $qb->innerJoin(
+                $this->getEntityClass() . '.owner',
+                $userAlias
+            );
+            $qb->andWhere($qb->expr()->eq(
+                $userAlias . '.id',
+                $this->createNamedParameter($qb, $query['owner_id']))
+            );
+        }
     }
 
     public function hydrate(Request $request, EntityInterface $entity, ErrorStore $errorStore)

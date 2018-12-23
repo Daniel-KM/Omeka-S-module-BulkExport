@@ -30,13 +30,16 @@ class ImporterRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLd()
     {
+        $owner = $this->owner();
+
         return [
             'o:id' => $this->id(),
-            'o:name' => $this->name(),
-            'o-module-bulk:reader_name' => $this->readerName(),
+            'o:label' => $this->label(),
+            'o-module-bulk:reader_class' => $this->readerClass(),
             'o-module-bulk:reader_config' => $this->readerConfig(),
-            'o-module-bulk:processor_name' => $this->processorName(),
+            'o-module-bulk:processor_class' => $this->processorClass(),
             'o-module-bulk:processor_config' => $this->processorConfig(),
+            'o:owner' => $owner ? $owner->getReference() : null,
         ];
     }
 
@@ -56,17 +59,17 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     /**
      * @return string
      */
-    public function name()
+    public function label()
     {
-        return $this->resource->getName();
+        return $this->resource->getLabel();
     }
 
     /**
      * @return string
      */
-    public function readerName()
+    public function readerClass()
     {
-        return $this->resource->getReaderName();
+        return $this->resource->getReaderClass();
     }
 
     /**
@@ -80,9 +83,9 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         /**
      * @return string
      */
-    public function processorName()
+    public function processorClass()
     {
-        return $this->resource->getProcessorName();
+        return $this->resource->getProcessorClass();
     }
 
     /**
@@ -93,7 +96,18 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         return $this->resource->getProcessorConfig() ?: [];
     }
 
-/**
+    /**
+     * Get the owner of this importer.
+     *
+     * @return \Omeka\Api\Representation\UserRepresentation|null
+     */
+    public function owner()
+    {
+        return $this->getAdapter('users')
+            ->getRepresentation($this->resource->getOwner());
+    }
+
+    /**
      * @return \BulkImport\Interfaces\Reader|null
      */
     public function reader()
@@ -102,10 +116,10 @@ class ImporterRepresentation extends AbstractEntityRepresentation
             return $this->reader;
         }
 
-        $readerName = $this->readerName();
+        $readerClass = $this->readerClass();
         $readerManager = $this->getReaderManager();
-        if ($readerManager->has($readerName)) {
-            $this->reader = $readerManager->get($readerName);
+        if ($readerManager->has($readerClass)) {
+            $this->reader = $readerManager->get($readerClass);
             if ($this->reader instanceof Configurable) {
                 $config = $this->readerConfig();
                 $this->reader->setConfig($config);
@@ -124,10 +138,10 @@ class ImporterRepresentation extends AbstractEntityRepresentation
             return $this->processor;
         }
 
-        $processorName = $this->processorName();
+        $processorClass = $this->processorClass();
         $processorManager = $this->getProcessorManager();
-        if ($processorManager->has($processorName)) {
-            $this->processor = $processorManager->get($processorName);
+        if ($processorManager->has($processorClass)) {
+            $this->processor = $processorManager->get($processorClass);
             if ($this->processor instanceof Configurable) {
                 $config = $this->processorConfig();
                 $this->processor->setConfig($config);

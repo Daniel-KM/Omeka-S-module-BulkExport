@@ -61,3 +61,24 @@ ALTER TABLE bulk_importer
 SQL;
     $connection->exec($sql);
 }
+
+if (version_compare($oldVersion, '3.0.3', '<')) {
+    $sql = <<<'SQL'
+ALTER TABLE bulk_import
+    CHANGE importer_id importer_id INT DEFAULT NULL,
+    CHANGE job_id job_id INT DEFAULT NULL,
+    CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
+ALTER TABLE bulk_importer
+    ADD owner_id INT DEFAULT NULL AFTER id,
+    CHANGE name `label` VARCHAR(190) DEFAULT NULL,
+    CHANGE reader_name reader_class VARCHAR(190) DEFAULT NULL,
+    CHANGE processor_name processor_class VARCHAR(190) DEFAULT NULL,
+    CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE processor_config processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
+ALTER TABLE bulk_importer
+    ADD CONSTRAINT FK_2DAF62D7E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE SET NULL;
+CREATE INDEX IDX_2DAF62D7E3C61F9 ON bulk_importer (owner_id);
+SQL;
+    $connection->exec($sql);
+}

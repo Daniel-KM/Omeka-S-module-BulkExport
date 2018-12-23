@@ -2,10 +2,9 @@
 namespace BulkImport\Entity;
 
 use Omeka\Entity\AbstractEntity;
+use Omeka\Entity\User;
 
 /**
- * @todo Add owner.
- *
  * @Entity
  * @Table(
  *     name="bulk_importer"
@@ -28,7 +27,7 @@ class Importer extends AbstractEntity
      *     length=190
      * )
      */
-    protected $name;
+    protected $label;
 
     /**
      * @var string
@@ -38,7 +37,7 @@ class Importer extends AbstractEntity
      *     length=190
      * )
      */
-    protected $readerName;
+    protected $readerClass;
 
     /**
      * @var array
@@ -57,7 +56,7 @@ class Importer extends AbstractEntity
      *     length=190
      * )
      */
-    protected $processorName;
+    protected $processorClass;
 
     /**
      * @var array
@@ -68,50 +67,62 @@ class Importer extends AbstractEntity
      */
     protected $processorConfig;
 
+    /**
+     * @var User
+     * @ManyToOne(
+     *     targetEntity=\Omeka\Entity\User::class
+     * )
+     * @JoinColumn(
+     *     nullable=true,
+     *     onDelete="SET NULL"
+     * )
+     */
+    protected $owner;
+
     public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @param string $name
-     * @return \BulkImport\Entity\Importer
+     * @param string $label
+     * @return self
      */
-    public function setName($name)
+    public function setLabel($label)
     {
-        $this->name = $name;
+        $this->label = $label;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getLabel()
     {
-        return $this->name;
+        return $this->label;
     }
 
     /**
-     * @param string $readerName
-     * @return \BulkImport\Entity\Importer
+     * @param string $readerClass
+     * @return self
      */
-    public function setReaderName($readerName)
+    public function setReaderClass($readerClass)
     {
-        $this->readerName = $readerName;
+        $this->readerClass = $readerClass;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getReaderName()
+    public function getReaderClass()
     {
-        return $this->readerName;
+        return $this->readerClass;
     }
 
     /**
      * @param array $readerConfig
-     * @return \BulkImport\Entity\Importer
+     * @return self
      */
     public function setReaderConfig($readerConfig)
     {
@@ -128,26 +139,26 @@ class Importer extends AbstractEntity
     }
 
     /**
-     * @param string $processorName
-     * @return \BulkImport\Entity\Importer
+     * @param string $processorClass
+     * @return self
      */
-    public function setProcessorName($processorName)
+    public function setProcessorClass($processorClass)
     {
-        $this->processorName = $processorName;
+        $this->processorClass = $processorClass;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getProcessorName()
+    public function getProcessorClass()
     {
-        return $this->processorName;
+        return $this->processorClass;
     }
 
     /**
      * @param array $processorConfig
-     * @return \BulkImport\Entity\Importer
+     * @return self
      */
     public function setProcessorConfig($processorConfig)
     {
@@ -161,5 +172,20 @@ class Importer extends AbstractEntity
     public function getProcessorConfig()
     {
         return $this->processorConfig;
+    }
+
+    /**
+     * @param User $owner
+     * @return self
+     */
+    public function setOwner(User $owner = null)
+    {
+        $this->owner = $owner;
+        return $this;
+    }
+
+    public function getOwner()
+    {
+        return $this->owner;
     }
 }

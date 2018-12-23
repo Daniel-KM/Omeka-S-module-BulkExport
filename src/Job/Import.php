@@ -98,17 +98,17 @@ class Import extends AbstractJob
         $services = $this->getServiceLocator();
         $import = $this->getImport();
         $importer = $import->importer();
-        $readerName = $importer->readerName();
+        $readerClass = $importer->readerClass();
         $readerManager = $services->get(ReaderManager::class);
-        if (!$readerManager->has($readerName)) {
+        if (!$readerManager->has($readerClass)) {
             throw new \Omeka\Job\Exception\InvalidArgumentException(
                 new PsrMessage(
                     'Reader "{reader}" is not available.', // @translate
-                    ['reader' => $readerName]
+                    ['reader' => $readerClass]
                 )
             );
         }
-        $reader = $readerManager->get($readerName);
+        $reader = $readerManager->get($readerClass);
         $reader->setServiceLocator($services);
         if ($reader instanceof Configurable && $reader instanceof Parametrizable) {
             $reader->setConfig($importer->readerConfig());
@@ -122,17 +122,17 @@ class Import extends AbstractJob
         $services = $this->getServiceLocator();
         $import = $this->getImport();
         $importer = $import->importer();
-        $processorName = $importer->processorName();
+        $processorClass = $importer->processorClass();
         $processorManager = $services->get(ProcessorManager::class);
-        if (!$processorManager->has($processorName)) {
+        if (!$processorManager->has($processorClass)) {
             throw new \Omeka\Job\Exception\InvalidArgumentException(
                 new PsrMessage(
                     'Processor "{processor}" is not available.', // @translate
-                    ['processor' => $processorName]
+                    ['processor' => $processorClass]
                 )
             );
         }
-        $processor = $processorManager->get($processorName);
+        $processor = $processorManager->get($processorClass);
         $processor->setServiceLocator($services);
         if ($processor instanceof Configurable && $processor instanceof Parametrizable) {
             $processor->setConfig($importer->processorConfig());
