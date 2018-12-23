@@ -17,6 +17,7 @@ class Importer extends AbstractEntity
     protected $id;
 
     /**
+     * @var string
      * @Column(
      *     type="string",
      *     nullable=true
@@ -25,6 +26,7 @@ class Importer extends AbstractEntity
     protected $name;
 
     /**
+     * @var string
      * @Column(
      *     type="string",
      *     nullable=true
@@ -33,6 +35,7 @@ class Importer extends AbstractEntity
     protected $readerName;
 
     /**
+     * @var array
      * @Column(
      *     type="array",
      *     nullable=true
@@ -41,6 +44,7 @@ class Importer extends AbstractEntity
     protected $readerConfig;
 
     /**
+     * @var string
      * @Column(
      *     type="string",
      *     nullable=true
@@ -49,6 +53,7 @@ class Importer extends AbstractEntity
     protected $processorName;
 
     /**
+     * @var array
      * @Column(
      *      type="array",
      *      nullable=true
@@ -61,56 +66,91 @@ class Importer extends AbstractEntity
         return $this->id;
     }
 
-    public function setName($value)
+    /**
+     * @param string $name
+     * @return \BulkImport\Entity\Importer
+     */
+    public function setName($name)
     {
-        $this->name = $value;
+        $this->name = $name;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
-    public function setReaderName($value)
+    /**
+     * @param string $readerName
+     * @return \BulkImport\Entity\Importer
+     */
+    public function setReaderName($readerName)
     {
-        $this->readerName = $value;
+        $this->readerName = $readerName;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getReaderName()
     {
         return $this->readerName;
     }
 
-    public function setReaderConfig($value)
+    /**
+     * @param array $readerConfig
+     * @return \BulkImport\Entity\Importer
+     */
+    public function setReaderConfig($readerConfig)
     {
-        $this->readerConfig = $value;
+        $this->readerConfig = $readerConfig;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getReaderConfig()
     {
         return $this->readerConfig;
     }
 
-    public function setProcessorName($value)
+    /**
+     * @param string $processorName
+     * @return \BulkImport\Entity\Importer
+     */
+    public function setProcessorName($processorName)
     {
-        $this->processorName = $value;
+        $this->processorName = $processorName;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getProcessorName()
     {
         return $this->processorName;
     }
 
-    public function setProcessorConfig($value)
+    /**
+     * @param array $processorConfig
+     * @return \BulkImport\Entity\Importer
+     */
+    public function setProcessorConfig($processorConfig)
     {
-        $this->processorConfig = $value;
+        $this->processorConfig = $processorConfig;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getProcessorConfig()
     {
         return $this->processorConfig;

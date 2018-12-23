@@ -1,6 +1,7 @@
 <?php
 namespace BulkImport\Controller\Admin;
 
+use BulkImport\Api\Representation\ImporterRepresentation;
 use BulkImport\Form\ImporterDeleteForm;
 use BulkImport\Form\ImporterForm;
 use BulkImport\Form\ImporterStartForm;
@@ -19,6 +20,9 @@ class ImporterController extends AbstractActionController
 {
     use ServiceLocatorAwareTrait;
 
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     */
     public function __construct(ServiceLocatorInterface $serviceLocator)
     {
         $this->setServiceLocator($serviceLocator);
@@ -218,8 +222,9 @@ class ImporterController extends AbstractActionController
     public function startAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $importer = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
+        /** @var \BulkImport\Api\Representation\ImporterRepresentation $importer */
+        $importer = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
         if (!$importer) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
@@ -299,7 +304,7 @@ class ImporterController extends AbstractActionController
                         }
                         $import = $response->getContent();
 
-                        //clear import session
+                        // Clear import session.
                         $session->exchangeArray([]);
 
                         $dispatcher = $this->jobDispatcher();
@@ -331,7 +336,7 @@ class ImporterController extends AbstractActionController
         return $view;
     }
 
-    protected function getStartFormsCallbacks($importer)
+    protected function getStartFormsCallbacks(ImporterRepresentation $importer)
     {
         $controller = $this;
         $formsCallbacks = [];

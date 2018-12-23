@@ -24,18 +24,6 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
      */
     protected $properties;
 
-    /**
-     * @return \Omeka\Api\Manager
-     */
-    protected function getApi()
-    {
-        if ($this->api) {
-            return $this->api;
-        }
-        $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
-        return $this->api;
-    }
-
     public function getLabel()
     {
         return 'Items'; // @translate
@@ -145,11 +133,16 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         $this->createEntities($insert);
     }
 
-    protected function createEntities($list)
+    /**
+     * Process creation of entities.
+     *
+     * @param array $data
+     */
+    protected function createEntities($data)
     {
         try {
             $items = $this->getApi()
-                ->batchCreate('items', $list, [], ['continueOnError' => true])->getContent();
+                ->batchCreate('items', $data, [], ['continueOnError' => true])->getContent();
             foreach ($items as $item) {
                 $this->logger->log(Logger::NOTICE, sprintf('Created item %d', $item->id())); // @translate
             }
@@ -158,6 +151,12 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         }
     }
 
+    /**
+     * Get a property by id.
+     *
+     * @param int $id
+     * @return \Omeka\Api\Representation\PropertyRepresentation|null
+     */
     protected function getProperty($id)
     {
         $properties = $this->getProperties();
@@ -167,7 +166,9 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
     }
 
     /**
-     * @return array
+     * Get all properties by id.
+     *
+     * @return \Omeka\Api\Representation\PropertyRepresentation[]
      */
     protected function getProperties()
     {
@@ -183,5 +184,17 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         }
 
         return $this->properties;
+    }
+
+    /**
+     * @return \Omeka\Api\Manager
+     */
+    protected function getApi()
+    {
+        if ($this->api) {
+            return $this->api;
+        }
+        $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
+        return $this->api;
     }
 }

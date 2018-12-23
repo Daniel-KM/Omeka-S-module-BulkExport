@@ -23,6 +23,9 @@ class ImportRepresentation extends AbstractEntityRepresentation
         return 'o-module-import:Import';
     }
 
+    /**
+     * @return \BulkImport\Entity\Import
+     */
     public function getResource()
     {
         return $this->resource;

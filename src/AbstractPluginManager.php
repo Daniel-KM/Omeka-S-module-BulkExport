@@ -26,6 +26,7 @@ abstract class AbstractPluginManager
 
     /**
      * AbstractPluginManager constructor.
+     *
      * @param ServiceLocatorInterface $serviceLocator
      */
     public function __construct(ServiceLocatorInterface $serviceLocator)
@@ -62,8 +63,8 @@ abstract class AbstractPluginManager
 
         $identifiers = $eventManager->getIdentifiers();
 
-        $eventManager->addIdentifiers([Module::class]);
-        $responseCollection = $eventManager->trigger($eventName, Module::class);
+        $eventManager->addIdentifiers([\BulkImport\Module::class]);
+        $responseCollection = $eventManager->trigger($eventName, \BulkImport\Module::class);
 
         $eventManager->setIdentifiers($identifiers);
 

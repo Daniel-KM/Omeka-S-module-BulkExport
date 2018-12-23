@@ -1,6 +1,7 @@
 <?php
 namespace BulkImport\Entity;
 
+use DateTime;
 use Omeka\Entity\AbstractEntity;
 
 /**
@@ -17,6 +18,7 @@ class Import extends AbstractEntity
     protected $id;
 
     /**
+     * @var array
      * @Column(
      *     type="array",
      *     nullable=true
@@ -25,6 +27,7 @@ class Import extends AbstractEntity
     protected $readerParams;
 
     /**
+     * @var array
      * @Column(
      *     type="array",
      *     nullable=true
@@ -41,6 +44,7 @@ class Import extends AbstractEntity
     protected $status;
 
     /**
+     * @var DateTime
      * @Column(
      *     type="datetime",
      *     nullable=true
@@ -49,6 +53,7 @@ class Import extends AbstractEntity
     protected $started;
 
     /**
+     * @var DateTime
      * @Column(
      *     type="datetime",
      *     nullable=true
@@ -57,6 +62,7 @@ class Import extends AbstractEntity
     protected $ended;
 
     /**
+     * @var Importer
      * @ManyToOne(
      *     targetEntity=Importer::class,
      *     inversedBy="import",
@@ -73,67 +79,109 @@ class Import extends AbstractEntity
         return $this->id;
     }
 
-    public function setReaderParams($value)
+    /**
+     * @param array|\Traversable $readerParams
+     * @return \BulkImport\Entity\Import
+     */
+    public function setReaderParams($readerParams)
     {
-        $this->readerParams = $value;
+        $this->readerParams = $readerParams;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getReaderParams()
     {
         return $this->readerParams;
     }
 
-    public function setProcessorParams($value)
+    /**
+     * @param array|\Traversable $processorParams
+     * @return \BulkImport\Entity\Import
+     */
+    public function setProcessorParams($processorParams)
     {
-        $this->processorParams = $value;
+        $this->processorParams = $processorParams;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getProcessorParams()
     {
         return $this->processorParams;
     }
 
-    public function setStatus($value)
+    /**
+     * @param string $status
+     * @return \BulkImport\Entity\Import
+     */
+    public function setStatus($status)
     {
-        $this->status = $value;
+        $this->status = $status;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getStatus()
     {
         return $this->status;
     }
 
-    public function setStarted($value)
+    /**
+     * @param DateTime $started
+     * @return \BulkImport\Entity\Import
+     */
+    public function setStarted(DateTime $started)
     {
-        $this->started = $value;
+        $this->started = $started;
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
     public function getStarted()
     {
         return $this->started;
     }
 
-    public function setEnded($value)
+    /**
+     * @param DateTime $ended
+     * @return \BulkImport\Entity\Import
+     */
+    public function setEnded(DateTime $ended)
     {
-        $this->ended = $value;
+        $this->ended = $ended;
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
     public function getEnded()
     {
         return $this->ended;
     }
 
-    public function setImporter($value)
+    /**
+     * @param Importer $importer
+     * @return \BulkImport\Entity\Import
+     */
+    public function setImporter(Importer $importer)
     {
-        $this->importer = $value;
+        $this->importer = $importer;
         return $this;
     }
 
+    /**
+     * @return \BulkImport\Entity\Importer
+     */
     public function getImporter()
     {
         return $this->importer;

@@ -22,7 +22,7 @@ abstract class AbstractProcessor implements Processor
     protected $logger;
 
     /**
-     * CsvReader constructor.
+     * Processor constructor.
      *
      * @param ServiceLocatorInterface $serviceLocator
      */
@@ -34,8 +34,12 @@ abstract class AbstractProcessor implements Processor
     public function setReader(Reader $reader)
     {
         $this->reader = $reader;
+        return $this;
     }
 
+    /**
+     * @return \BulkImport\Interfaces\Reader
+     */
     public function getReader()
     {
         return $this->reader;
@@ -44,5 +48,6 @@ abstract class AbstractProcessor implements Processor
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
+        return $this;
     }
 }

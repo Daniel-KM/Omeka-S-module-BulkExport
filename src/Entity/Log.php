@@ -1,9 +1,12 @@
 <?php
 namespace BulkImport\Entity;
 
+use DateTime;
 use Omeka\Entity\AbstractEntity;
 
 /**
+ * @todo Use standard log instead of a special entity.
+ *
  * @Entity
  * @Table(name="bulk_log")
  */
@@ -17,6 +20,7 @@ class Log extends AbstractEntity
     protected $id;
 
     /**
+     * @var string
      * @Column(
      *     type="string",
      *     nullable=true
@@ -25,6 +29,7 @@ class Log extends AbstractEntity
     protected $severity;
 
     /**
+     * @var string
      * @Column(
      *     type="string",
      *     nullable=true
@@ -33,6 +38,7 @@ class Log extends AbstractEntity
     protected $message;
 
     /**
+     * @var array
      * @Column(
      *     type="array",
      *     nullable=true
@@ -41,6 +47,7 @@ class Log extends AbstractEntity
     protected $params;
 
     /**
+     * @var DateTime
      * @Column(
      *     type="datetime",
      *     nullable=true
@@ -49,6 +56,7 @@ class Log extends AbstractEntity
     protected $added;
 
     /**
+     * @var Import
      * @ManyToOne(
      *     targetEntity=Import::class,
      *     fetch="EXTRA_LAZY"
@@ -65,56 +73,91 @@ class Log extends AbstractEntity
         return $this->id;
     }
 
-    public function setSeverity($value)
+    /**
+     * @param string $severity
+     * @return \BulkImport\Entity\Log
+     */
+    public function setSeverity($severity)
     {
-        $this->severity = $value;
+        $this->severity = $severity;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getSeverity()
     {
         return $this->severity;
     }
 
-    public function setMessage($value)
+    /**
+     * @param string $message
+     * @return \BulkImport\Entity\Log
+     */
+    public function setMessage($message)
     {
-        $this->message = $value;
+        $this->message = $message;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
-    public function setParams($value)
+    /**
+     * @param array $params
+     * @return \BulkImport\Entity\Log
+     */
+    public function setParams($params)
     {
-        $this->params = $value;
+        $this->params = $params;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getParams()
     {
         return $this->params;
     }
 
-    public function setAdded($value)
+    /**
+     * @param DateTime $added
+     * @return \BulkImport\Entity\Log
+     */
+    public function setAdded(DateTime $added)
     {
-        $this->added = $value;
+        $this->added = $added;
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
     public function getAdded()
     {
         return $this->added;
     }
 
-    public function setImport($value)
+    /**
+     * @param Import $import
+     * @return \BulkImport\Entity\Log
+     */
+    public function setImport(Import $import)
     {
-        $this->import = $value;
+        $this->import = $import;
         return $this;
     }
 
+    /**
+     * @return \BulkImport\Entity\Import
+     */
     public function getImport()
     {
         return $this->import;

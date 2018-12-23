@@ -98,7 +98,7 @@ class Import extends AbstractJob
         $readerManager = $this->getServiceLocator()->get(ReaderManager::class);
         $reader = $readerManager
             ->getPlugin($this->getImport()->getImporter()->getReaderName());
-        if ($reader instanceof Configurable) {
+        if ($reader instanceof Configurable && $reader instanceof Parametrizable) {
             $reader->setConfig($this->getImport()->getImporter()->getReaderConfig());
             $reader->setParams($this->getImport()->getReaderParams());
         }
@@ -110,7 +110,7 @@ class Import extends AbstractJob
         $processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
         $processor = $processorManager
             ->getPlugin($this->getImport()->getImporter()->getProcessorName());
-        if ($processor instanceof Configurable) {
+        if ($processor instanceof Configurable && $processor instanceof Parametrizable) {
             $processor->setConfig($this->getImport()->getImporter()->getProcessorConfig());
             $processor->setParams($this->getImport()->getProcessorParams());
         }

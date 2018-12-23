@@ -1,6 +1,7 @@
 <?php
 namespace BulkImport\Api\Adapter;
 
+use BulkImport\Api\Representation\LogRepresentation;
 use BulkImport\Entity\Log;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\QueryBuilder;
@@ -18,7 +19,7 @@ class LogAdapter extends AbstractEntityAdapter
 
     public function getRepresentationClass()
     {
-        return \BulkImport\Api\Representation\LogRepresentation::class;
+        return LogRepresentation::class;
     }
 
     public function getEntityClass()

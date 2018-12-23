@@ -5,9 +5,20 @@ use BulkImport\Interfaces\Entry as EntryInterface;
 
 class CsvRow implements EntryInterface
 {
+    /**
+     * @var array|\Traversable
+     */
     protected $row;
+
+    /**
+     * @var bool
+     */
     protected $valid;
 
+    /**
+     * @param array $headers
+     * @param array $rowData
+     */
     public function __construct($headers, $rowData)
     {
         foreach ($rowData as $i => $columnData) {

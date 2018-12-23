@@ -10,6 +10,10 @@ class IndexController extends AbstractActionController
 {
     use ServiceLocatorAwareTrait;
 
+    /**
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     */
     public function __construct(ServiceLocatorInterface $serviceLocator)
     {
         $this->setServiceLocator($serviceLocator);

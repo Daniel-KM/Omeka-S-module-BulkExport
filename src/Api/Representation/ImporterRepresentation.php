@@ -21,12 +21,12 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     protected $processorManager;
 
     /**
-     * @var ReaderManager
+     * @var \BulkImport\Interfaces\Reader
      */
     protected $reader;
 
     /**
-     * @var ProcessorManager
+     * @var \BulkImport\Interfaces\Processor
      */
     protected $processor;
 
@@ -56,6 +56,9 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         return 'o-module-import:Importer';
     }
 
+    /**
+     * @return \BulkImport\Entity\Importer
+     */
     public function getResource()
     {
         return $this->resource;
@@ -107,6 +110,9 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         }
     }
 
+    /**
+     * @return \BulkImport\Interfaces\Reader|null
+     */
     public function getReader()
     {
         if ($this->reader) {
@@ -121,6 +127,9 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         return $this->reader;
     }
 
+    /**
+     * @return \BulkImport\Interfaces\Processor|null
+     */
     public function getProcessor()
     {
         if ($this->processor) {
