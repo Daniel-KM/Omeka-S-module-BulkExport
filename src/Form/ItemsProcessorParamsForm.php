@@ -34,11 +34,14 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
                 'type' => PropertySelect::class,
                 'options' => [
                     'label' => $name,
-                    'empty_option' => 'Select one or more property…', // @translate
+                    'empty_option' => 'Select one or more properties…', // @translate
+                    'term_as_value' => true,
                 ],
                 'attributes' => [
                     'required' => false,
+                    'multiple' => true,
                     'class' => 'chosen-select',
+                    'data-placeholder' => 'Select one or more properties…', // @translate
                 ],
             ]);
         }

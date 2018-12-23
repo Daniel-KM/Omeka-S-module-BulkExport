@@ -53,6 +53,7 @@ class ItemsProcessorConfigForm extends Form
             'options' => [
                 'label' => 'Resource class', // @translate
                 'empty_option' => 'Select a class…', // @translate
+                'term_as_value' => true,
             ],
             'attributes' => [
                 'id' => 'resource-class-select',
@@ -66,14 +67,14 @@ class ItemsProcessorConfigForm extends Form
             'type' => ItemSetSelect::class,
             'options' => [
                 'label' => 'Item set', // @translate
-                'empty_option' => 'Select item set…', // @translate
+                'empty_option' => 'Select one or more item sets…', // @translate
             ],
             'attributes' => [
                 'id' => 'o-item-set',
                 'class' => 'chosen-select',
-                'multiple' => false,
+                'multiple' => true,
                 'required' => false,
-                'data-placeholder' => 'Select item set…', // @translate
+                'data-placeholder' => 'Select one or more item sets…', // @translate
             ],
         ]);
 

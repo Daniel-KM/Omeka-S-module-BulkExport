@@ -66,47 +66,48 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
 
     public function process()
     {
-        $mapping = $this->getParam('mapping', []);
-        $itemSetId = $this->getParam('o:item_set');
+        $base = [];
+        $base['o:is_public'] = true;
         $resourceTemplateId = $this->getParam('o:resource_template');
+        if ($resourceTemplateId) {
+            $base['o:resource_template'] = ['o:id' => $resourceTemplateId];
+        }
         $resourceClassId = $this->getParam('o:resource_class');
+        if ($resourceClassId) {
+            $base['o:resource_class'] = ['o:id' => $resourceClassId];
+        }
+        $itemSetIds = $this->getParam('o:item_set', []);
+        foreach ($itemSetIds as $itemSetId) {
+            $base['o:item_set'][] = ['o:id' => $itemSetId];
+        }
+        $base['o:media'] = [];
+
+        $mapping = $this->getParam('mapping', []);
 
         $insert = [];
         foreach ($this->reader as $index => $entry) {
             $this->logger->log(Logger::NOTICE, sprintf('Processing row %s', $index + 1)); // @translate
 
-            $item = [
-                'o:is_public' => true,
-            ];
-            if ($itemSetId) {
-                $item['o:item_set'][] = ['o:id' => $itemSetId];
-            }
-            if ($resourceTemplateId) {
-                $item['o:resource_template'] = ['o:id' => $resourceTemplateId];
-            }
-            if ($resourceClassId) {
-                $item['o:resource_class'] = ['o:id' => $resourceClassId];
-            }
+            $item = $base;
 
-            // $files = [];
-
-            foreach ($mapping as $sourceField => $target) {
-                if (empty($target)) {
+            foreach ($mapping as $sourceField => $targets) {
+                if (empty($targets)) {
                     continue;
                 }
-                if (isset($entry[$sourceField])) {
-                    $value = $entry[$sourceField];
-
+                if (!isset($entry[$sourceField])) {
+                    continue;
+                }
+                $value = $entry[$sourceField];
+                foreach ($targets as $target) {
                     // Literal property.
-                    if (is_numeric($target)) {
-                        if (($property = $this->getProperty($target))) {
-                            $itemProperty = [
-                                '@value' => $value,
-                                'property_id' => $property->getId(),
-                                'type' => 'literal',
-                            ];
-                            $item[] = [$itemProperty];
-                        }
+                    $property = $this->getProperty($target);
+                    if ($property) {
+                        $itemProperty = [
+                            '@value' => $value,
+                            'property_id' => $property->getId(),
+                            'type' => 'literal',
+                        ];
+                        $item[] = [$itemProperty];
                     } elseif (0 === strpos($target, 'file:')) {
                         // TODO Develop as a feature, as there are too many changes in media handling for refactoring.
                         // $strategy = substr($target, strpos($target, ':') + 1);
@@ -156,23 +157,59 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
     }
 
     /**
-     * Get a property by id.
+     * Get a resource class by term.
      *
-     * @param int $id
-     * @return \Omeka\Api\Representation\PropertyRepresentation|null
+     * @param string $term
+     * @return \Omeka\Entity\ResourceClass|null
      */
-    protected function getProperty($id)
+    protected function getResourceClass($term)
     {
-        $properties = $this->getProperties();
-        return isset($properties[$id])
-            ? $properties[$id]
+        $resourceClasses = $this->getResourceClasses();
+        return isset($resourceClasses[$term])
+            ? $resourceClasses[$term]
             : null;
     }
 
     /**
-     * Get all properties by id.
+     * Get all resource classes by term.
      *
-     * @return \Omeka\Api\Representation\PropertyRepresentation[]
+     * @return \Omeka\Entity\ResourceClass[]
+     */
+    protected function getResourceClasses()
+    {
+        if (isset($this->resourceClasses)) {
+            return $this->resourceClasses;
+        }
+
+        $this->resourceClasses = [];
+        $resourceClasses = $this->getApi()
+            ->search('resource_classes', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($resourceClasses as $resourceClass) {
+            $term = $resourceClass->getVocabulary()->getPrefix() . ':' . $resourceClass->getLocalName();
+            $this->resourceClasses[$term] = $resourceClass;
+        }
+
+        return $this->resourceClasses;
+    }
+
+    /**
+     * Get a property by term.
+     *
+     * @param string $term
+     * @return \Omeka\Entity\Property|null
+     */
+    protected function getProperty($term)
+    {
+        $properties = $this->getProperties();
+        return isset($properties[$term])
+            ? $properties[$term]
+            : null;
+    }
+
+    /**
+     * Get all properties by term.
+     *
+     * @return \Omeka\Entity\Property[]
      */
     protected function getProperties()
     {
@@ -184,7 +221,8 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         $properties = $this->getApi()
             ->search('properties', [], ['responseContent' => 'resource'])->getContent();
         foreach ($properties as $property) {
-            $this->properties[$property->getId()] = $property;
+            $term = $property->getVocabulary()->getPrefix() . ':' . $property->getLocalName();
+            $this->properties[$term] = $property;
         }
 
         return $this->properties;
