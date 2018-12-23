@@ -3,7 +3,7 @@ namespace BulkImport\Form;
 
 use Zend\Form\Element;
 
-class ItemSetProcessorConfigForm extends ResourceProcessorConfigForm
+class ItemSetProcessorConfigForm extends AbstractResourceProcessorConfigForm
 {
     protected function addFieldsets()
     {

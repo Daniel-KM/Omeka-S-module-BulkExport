@@ -24,9 +24,11 @@ trait ServiceLocatorAwareTrait
      * Set the service locator.
      *
      * @param ServiceLocatorInterface $serviceLocator
+     * @return self
      */
     public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
+        return $this;
     }
 }

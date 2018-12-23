@@ -2,8 +2,6 @@
 namespace BulkImport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\ResourceProcessorConfigForm;
-use BulkImport\Form\ResourceProcessorParamsForm;
 use BulkImport\Interfaces\Configurable;
 use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Log\Logger;
@@ -18,22 +16,22 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     /**
      * @var string
      */
-    protected $resourceType = 'resources';
+    protected $resourceType;
 
     /**
      * @var string
      */
-    protected $resourceLabel = 'Resources'; // @translate
+    protected $resourceLabel;
 
     /**
      * @var string
      */
-    protected $configFormClass = ResourceProcessorConfigForm::class;
+    protected $configFormClass;
 
     /**
      * @var string
      */
-    protected $paramsFormClass = ResourceProcessorParamsForm::class;
+    protected $paramsFormClass;
 
     /**
      * @var \Omeka\Api\Manager
@@ -93,22 +91,31 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     public function handleConfigForm(Form $form)
     {
         $values = $form->getData();
-        $config = [];
-        $config['o:resource_template'] = $values['o:resource_template'];
-        $config['o:resource_class'] = $values['o:resource_class'];
-        $config['o:is_public'] = $values['o:is_public'];
+        $config = new ArrayObject;
+        $this->handleFormGeneric($config, $values);
+        $this->handleFormSpecific($config, $values);
         $this->setConfig($config);
     }
 
     public function handleParamsForm(Form $form)
     {
         $values = $form->getData();
-        $params = [];
-        $params['o:resource_template'] = $values['o:resource_template'];
-        $params['o:resource_class'] = $values['o:resource_class'];
-        $params['o:is_public'] = $values['o:is_public'];
+        $params = new ArrayObject;
+        $this->handleFormGeneric($params, $values);
+        $this->handleFormSpecific($params, $values);
         $params['mapping'] = $values['mapping'];
         $this->setParams($params);
+    }
+
+    protected function handleFormGeneric(ArrayObject $args, array $values)
+    {
+        $args['o:resource_template'] = $values['o:resource_template'];
+        $args['o:resource_class'] = $values['o:resource_class'];
+        $args['o:is_public'] = $values['o:is_public'];
+    }
+
+    protected function handleFormSpecific(ArrayObject $args, array $values)
+    {
     }
 
     public function process()
@@ -148,10 +155,10 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                     continue;
                 }
 
-                $this->processCell($resource, $targets, $values);
+                $this->fillResource($resource, $targets, $values);
             }
 
-            if ($this->checkEntity($resource)) {
+            if ($this->checkResource($resource)) {
                 ++$this->processing;
                 ++$this->totalProcessed;
                 $insert[] = $resource->getArrayCopy();
@@ -183,6 +190,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected function baseResource()
     {
         $resource = new ArrayObject;
+        $this->baseGeneric($resource);
+        $this->baseSpecific($resource);
+        return $resource;
+    }
+
+    protected function baseGeneric(ArrayObject $resource)
+    {
         $resourceTemplateId = $this->getParam('o:resource_template');
         if ($resourceTemplateId) {
             $resource['o:resource_template'] = ['o:id' => $resourceTemplateId];
@@ -192,47 +206,69 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             $resource['o:resource_class'] = ['o:id' => $resourceClassId];
         }
         $resource['o:is_public'] = $this->getParam('o:is_public') !== 'false';
-        return $resource;
     }
 
-    protected function processCell(ArrayObject $resource, array $targets, array $values)
+    protected function baseSpecific(ArrayObject $resource)
+    {
+    }
+
+    protected function fillResource(ArrayObject $resource, array $targets, array $values)
     {
         foreach ($targets as $target) {
             switch ($target) {
-                // Literal.
-                case $this->isTerm($target):
-                    foreach ($values as $value) {
-                        $resourceProperty = [
-                            '@value' => $value,
-                            'property_id' => $this->getProperty($target)->getId(),
-                            'type' => 'literal',
-                        ];
-                        $resource[$target][] = $resourceProperty;
-                    }
+                case $this->fillGeneric($resource, $target, $values):
                     break;
-                case 'o:is_public':
-                    $value = array_pop($values);
-                    $resource['o:is_public'] = in_array(strtolower($value), ['false', 'no', 'off', 'private'])
-                        ? false
-                        : (bool) $value;
+                case $this->fillSpecific($resource, $target, $values):
                     break;
                 default:
-                    $this->processCellDefault($resource, $target, $values);
+                    $resource[$target] = array_pop($values);
                     break;
             }
         }
     }
 
-    /**
-     * Process one cell for a non-managed target.
-     *
-     * @param ArrayObject $resource
-     * @param string $target
-     * @param array $values
-     */
-    protected function processCellDefault(ArrayObject $resource, $target, array $values)
+    protected function fillGeneric(ArrayObject $resource, $target, array $values)
     {
-        $resource[$target] = array_pop($values);
+        switch ($target) {
+            case 'o:resource_template':
+                $value = array_pop($values);
+                if ($value) {
+                    $resource['o:resource_template'] = ['o:id' => $value];
+                } else {
+                    $resource['o:resource_template'] = null;
+                }
+                return true;
+            case 'o:resource_class':
+                $value = array_pop($values);
+                $resourceClassId = $this->getResourceClass($value);
+                if ($resourceClassId) {
+                    $resource['o:resource_class'] = ['o:id' => $resourceClassId];
+                }
+                return true;
+            case 'o:is_public':
+                $value = array_pop($values);
+                $resource['o:is_public'] = in_array(strtolower($value), ['false', 'no', 'off', 'private'])
+                    ? false
+                    : (bool) $value;
+                return true;
+            // Literal.
+            case $this->isTerm($target):
+                foreach ($values as $value) {
+                    $resourceProperty = [
+                        '@value' => $value,
+                        'property_id' => $this->getProperty($target)->getId(),
+                        'type' => 'literal',
+                    ];
+                    $resource[$target][] = $resourceProperty;
+                }
+                return true;
+        }
+        return false;
+    }
+
+    protected function fillSpecific(ArrayObject $resource, $target, array $values)
+    {
+        return false;
     }
 
     /**
@@ -241,7 +277,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * @param ArrayObject $resource
      * @return bool
      */
-    protected function checkEntity(ArrayObject $resource)
+    protected function checkResource(ArrayObject $resource)
     {
         return true;
     }
@@ -253,15 +289,32 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      */
     protected function createEntities(array $data)
     {
+        $resourceType = $this->getResourceType();
+        $this->createResources($resourceType, $data);
+    }
+
+    /**
+     * Process creation of resources.
+     *
+     * @param array $data
+     */
+    protected function createResources($resourceType, array $data)
+    {
         if (!count($data)) {
             return;
         }
-
         try {
             $resources = $this->api()
-                ->batchCreate($this->getResourceType(), $data, [], ['continueOnError' => true])->getContent();
+                ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
             foreach ($resources as $resource) {
-                $this->logger->log(Logger::NOTICE, sprintf('Created %s #%d', $this->getLabel(), $resource->id())); // @translate
+                $this->logger->log(
+                    Logger::NOTICE,
+                    sprintf(
+                        'Created %s #%d', // @translate
+                        $this->getLabel(),
+                        $resource->id()
+                    )
+                );
             }
         } catch (\Exception $e) {
             $this->logger->log(Logger::ERR, $e->__toString());

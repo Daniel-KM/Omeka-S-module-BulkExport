@@ -3,7 +3,7 @@ namespace BulkImport\Form;
 
 use Omeka\Form\Element\ResourceSelect;
 
-class MediaProcessorConfigForm extends ResourceProcessorConfigForm
+class MediaProcessorConfigForm extends AbstractResourceProcessorConfigForm
 {
     protected function addFieldsets()
     {

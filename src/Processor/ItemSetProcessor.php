@@ -4,9 +4,8 @@ namespace BulkImport\Processor;
 use ArrayObject;
 use BulkImport\Form\ItemSetProcessorConfigForm;
 use BulkImport\Form\ItemSetProcessorParamsForm;
-use Zend\Form\Form;
 
-class ItemSetProcessor extends AbstractResourceProcessor
+class ItemSetProcessor extends ResourceProcessor
 {
     protected $resourceType = 'item_sets';
 
@@ -16,50 +15,28 @@ class ItemSetProcessor extends AbstractResourceProcessor
 
     protected $paramsFormClass = ItemSetProcessorParamsForm::class;
 
-    public function handleConfigForm(Form $form)
+    protected function handleFormSpecific(ArrayObject $args, array $values)
     {
-        parent::handleConfigForm($form);
-
-        $values = $form->getData();
-        $config = $this->getConfig();
-        if (isset($values['o:is_open'])) {
-            $config['o:is_open'] = $values['o:is_open'];
-        }
-        $this->setConfig($config);
+        $this->handleFormItemSet($args, $values);
     }
 
-    public function handleParamsForm(Form $form)
+    protected function baseSpecific(ArrayObject $resource)
     {
-        parent::handleParamsForm($form);
-
-        $values = $form->getData();
-        $params = $this->getParams();
-        if (isset($values['o:is_open'])) {
-            $params['o:is_open'] = $values['o:is_open'];
-        }
-        $this->setParams($params);
+        $this->baseItemSet($resource);
     }
 
-    protected function baseResource()
-    {
-        $resource = parent::baseResource();
-        $isOpen = $this->getParam('o:is_open', null);
-        $resource['o:is_open'] = $isOpen;
-        return $resource;
-    }
-
-    protected function processCellDefault(ArrayObject $resource, $target, array $values)
+    protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
         switch ($target) {
-            case 'o:is_open':
-                $value = array_pop($values);
-                $resource['o:is_open'] = in_array(strtolower($value), ['false', 'no', 'off', 'closed'])
-                    ? false
-                    : (bool) $value;
-                break;
+            case $this->fillItemSet($resource, $target, $values):
+                return true;
             default:
-                parent::processCellDefault($resource, $target, $values);
-                break;
+                return false;
         }
+    }
+
+    protected function checkResource(ArrayObject $resource)
+    {
+        return true;
     }
 }

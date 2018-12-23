@@ -3,7 +3,7 @@ namespace BulkImport\Form;
 
 use Omeka\Form\Element\ItemSetSelect;
 
-class ItemProcessorConfigForm extends ResourceProcessorConfigForm
+class ItemProcessorConfigForm extends AbstractResourceProcessorConfigForm
 {
     protected function addFieldsets()
     {

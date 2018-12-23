@@ -138,6 +138,7 @@ return [
             'items' => Processor\ItemProcessor::class,
             'item_sets' => Processor\ItemSetProcessor::class,
             'media' => Processor\MediaProcessor::class,
+            'resources' => Processor\ResourceProcessor::class,
         ],
     ],
 ];

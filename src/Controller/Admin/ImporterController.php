@@ -338,6 +338,7 @@ class ImporterController extends AbstractActionController
         if (!isset($form)) {
             $form = call_user_func($formCallback);
         }
+
         $view = new ViewModel;
         $view->setVariable('importer', $importer);
         $view->setVariable('form', $form);
