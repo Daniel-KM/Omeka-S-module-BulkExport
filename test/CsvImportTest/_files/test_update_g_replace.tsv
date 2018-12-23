@@ -1,0 +1,4 @@
+Identifier	Resource Template	Resource Class	Visibility	Open	Title	Description	Date	Tags	Media url
+novels|issn: 0123456789		dctype:Collection		Yes	Collection of novels	A collection of novels	2017	books | collection	http://upload.wikimedia.org/wikipedia/commons/b/ba/Henry_David_Thoreau.jpg
+books|issn: 9876543210	Base Resource		Closed		Collection of books	A collection of books		Foo | bar	
+paints	Base Resource	dctype:Collection	Closed		Collection of paints	A collection of paints	2016		

@@ -1,0 +1,85 @@
+{
+  "@context": "http://localhost/api-context",
+  "@id": "http://localhost/api/media/5",
+  "@type": [
+    "o:Media",
+    "dctype:StillImage"
+  ],
+  "o:id": 5,
+  "o:is_public": true,
+  "o:owner": {
+    "@id": "http://localhost/api/users/1",
+    "o:id": 1
+  },
+  "o:resource_class": {
+    "@id": "http://localhost/api/resource_classes/33",
+    "o:id": 33
+  },
+  "o:resource_template": null,
+  "o:created": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:modified": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:ingester": "url",
+  "o:renderer": "file",
+  "o:item": {
+    "@id": "http://localhost/api/items/4",
+    "o:id": 4
+  },
+  "o:source": "https://upload.wikimedia.org/wikipedia/commons/8/87/Exterior_of_the_Coliseum_Rome_Italy.jpg",
+  "o:media_type": "image/jpeg",
+  "o:sha256": "7eb749f37fca5f255967c1945767602133ecf28bbca6af7fca86cf1cf80601ac",
+  "o:filename": "8859161eae760477643e8976de812c3ebdb854f9.jpg",
+  "o:lang": null,
+  "o:original_url": "http://localhost/files/original/8859161eae760477643e8976de812c3ebdb854f9.jpg",
+  "o:thumbnail_urls": {
+    "large": "http://localhost/files/large/8859161eae760477643e8976de812c3ebdb854f9.jpg",
+    "medium": "http://localhost/files/medium/8859161eae760477643e8976de812c3ebdb854f9.jpg",
+    "square": "http://localhost/files/square/8859161eae760477643e8976de812c3ebdb854f9.jpg"
+  },
+  "data": [],
+  "dcterms:title": [
+    {
+      "type": "literal",
+      "property_id": 1,
+      "property_label": "Title",
+      "@value": "Exterior of the Coliseum, Rome, Italy"
+    }
+  ],
+  "dcterms:identifier": [
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "Coliseum m1"
+    }
+  ],
+  "dcterms:creator": [
+    {
+      "type": "literal",
+      "property_id": 2,
+      "property_label": "Creator",
+      "@value": "The Library of Congress"
+    }
+  ],
+  "dcterms:date": [
+    {
+      "type": "literal",
+      "property_id": 7,
+      "property_label": "Date",
+      "@value": "Between ca. 1890 and ca. 1900"
+    }
+  ],
+  "dcterms:rights": [
+    {
+      "type": "literal",
+      "property_id": 15,
+      "property_label": "Rights",
+      "@value": "Public domain"
+    }
+  ]
+}

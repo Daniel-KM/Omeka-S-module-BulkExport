@@ -1,0 +1,85 @@
+{
+    "filename": "test_resources_update.tsv",
+    "filesize": "2008",
+    "filepath": "\/tmp\/omekawQ7mxA",
+    "media_type": "text/tab-separated-values",
+    "csrf": "a73f21420773629bee05debcd846a53b-f61e1688b47afca60c701b190c27a949",
+    "resource_type": "resources",
+    "automap_check_names_alone": "0",
+    "automap_check_user_list": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": ""
+    },
+    "global_language": "",
+    "action": "revise",
+    "identifier_property": "dcterms:identifier",
+    "action_unidentified": "create",
+    "rows_by_batch": 20,
+    "column-property": {
+        "0": {
+            "dcterms:identifier": 10
+        },
+        "6": {
+            "dcterms:title": 1
+        },
+        "7": {
+            "dcterms:creator": 2
+        },
+        "8": {
+            "dcterms:date": 7
+        },
+        "9": {
+            "dcterms:rights": 15
+        },
+        "10": {
+            "dcterms:description": 4
+        },
+        "11": {
+            "dcterms:format": 9
+        }
+    },
+    "column-multivalue": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+    ],
+    "column-resource_type": {
+        "1": "1"
+    },
+    "column-item_set": {
+        "2": "dcterms:identifier"
+    },
+    "column-item": {
+        "3": "dcterms:identifier"
+    },
+    "column-media_source": {
+        "4": "url"
+    },
+    "column-resource_class": {
+        "5": "1"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": "|"
+}

@@ -1,0 +1,66 @@
+{
+  "@context": "http://localhost/OmekaS/api-context",
+  "@id": "http://localhost/OmekaS/api/items/7",
+  "@type": [
+    "o:Item",
+    "dctype:PhysicalObject"
+  ],
+  "o:id": 7,
+  "o:is_public": true,
+  "o:owner": {
+    "@id": "http://localhost/OmekaS/api/users/1",
+    "o:id": 1
+  },
+  "o:resource_class": {
+    "@id": "http://localhost/OmekaS/api/resource_classes/32",
+    "o:id": 32
+  },
+  "o:resource_template": null,
+  "o:created": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:modified": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:media": [],
+  "o:item_set": [
+    {
+      "@id": "http://localhost/OmekaS/api/item_sets/1",
+      "o:id": 1
+    }
+  ],
+  "dcterms:title": [
+    {
+      "type": "literal",
+      "property_id": 1,
+      "property_label": "Title",
+      "@value": "Saint-Louis Cathedral (Carthage)"
+    }
+  ],
+  "dcterms:identifier": [
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "Saint-Louis Cathedral"
+    }
+  ],
+  "dcterms:creator": [
+    {
+      "type": "literal",
+      "property_id": 2,
+      "property_label": "Creator",
+      "@value": "Joseph Pougnet"
+    }
+  ],
+  "dcterms:date": [
+    {
+      "type": "literal",
+      "property_id": 7,
+      "property_label": "Date",
+      "@value": "1884-1890"
+    }
+  ]
+}

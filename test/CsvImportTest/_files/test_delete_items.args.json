@@ -1,0 +1,49 @@
+{
+    "filename": "test_delete_items.tsv",
+    "filesize": "205",
+    "filepath": "/tmp/omeka6fQJqp",
+    "media_type": "text/tab-separated-values",
+    "csrf": "a2d625785a91be0ae5fc753f4608766d-2d7924c0d92aaedc583451b3546182d2",
+    "resource_type": "items",
+    "automap_check_names_alone": "0",
+    "automap_check_user_list": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": ""
+    },
+    "multivalue_by_default": "0",
+    "global_language": "",
+    "action": "delete",
+    "identifier_property": "dcterms:title",
+    "action_unidentified": "skip",
+    "column-property": [
+        {
+            "dcterms:title": 1
+        },
+        {
+            "dcterms:creator": 2
+        },
+        {
+            "dcterms:description": 4
+        }
+    ],
+    "column-multivalue": {
+        "0": "1",
+        "1": "1",
+        "2": "1",
+        "4": "1"
+    },
+    "column-media_source": {
+        "4": "url"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": ","
+}

@@ -1,0 +1,55 @@
+{
+  "@context": "http://localhost/OmekaS/api-context",
+  "@id": "http://localhost/OmekaS/api/item_sets/1",
+  "@type": [
+    "o:ItemSet",
+    "dctype:Collection"
+  ],
+  "o:id": 1,
+  "o:is_public": true,
+  "o:owner": {
+    "@id": "http://localhost/OmekaS/api/users/1",
+    "o:id": 1
+  },
+  "o:resource_class": {
+    "@id": "http://localhost/OmekaS/api/resource_classes/23",
+    "o:id": 23
+  },
+  "o:resource_template": null,
+  "o:created": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:modified": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:is_open": false,
+  "o:items": {
+    "@id": "http://localhost/OmekaS/api/items?item_set_id=1"
+  },
+  "dcterms:title": [
+    {
+      "type": "literal",
+      "property_id": 1,
+      "property_label": "Title",
+      "@value": "Architectural Heritage"
+    }
+  ],
+  "dcterms:description": [
+    {
+      "type": "literal",
+      "property_id": 4,
+      "property_label": "Description",
+      "@value": "A collection of well-known monuments."
+    }
+  ],
+  "dcterms:identifier": [
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "Architectural Heritage"
+    }
+  ]
+}

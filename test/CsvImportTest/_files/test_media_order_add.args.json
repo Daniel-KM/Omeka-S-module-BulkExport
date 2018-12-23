@@ -1,0 +1,58 @@
+{
+    "filename": "test_media_order_add.tsv",
+    "filesize": "226",
+    "filepath": "\/tmp\/omekauqhPjv",
+    "media_type": "text/tab-separated-values",
+    "csrf": "1ed4cffa47d92c14640067e49c0473c5-27ab929ad66355a1f8bae4393984d306",
+    "resource_type": "media",
+    "automap_check_names_alone": "0",
+    "automap_check_user_list": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": 1
+    },
+    "global_language": "",
+    "action": "create",
+    "identifier_property": "dcterms:identifier",
+    "action_unidentified": "skip",
+    "rows_by_batch": 20,
+    "column-property": [
+        {
+            "dcterms:identifier": 10
+        },
+        {
+            "dcterms:title": 1
+        }
+    ],
+    "column-multivalue": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+    ],
+    "column-item": {
+        "2": "internal_id"
+    },
+    "column-resource_template": {
+        "4": "1"
+    },
+    "column-resource_class": {
+        "5": "1"
+    },
+    "column-media_source": {
+        "6": "url"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": "|"
+}

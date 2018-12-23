@@ -1,0 +1,31 @@
+Identifier	Dublin Core:Title	Collections	Tags	Resource template	Resource class	Media html
+aa	aa title		Aa tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo aa</p>
+bb	bb title		Bb tag | Cc tag | Dd tag		dctype:Text	<p>Foo bb</p>
+cc	cc title		Cc tag | Dd tag | Ee tag		dctype:Text	<p>Foo cc</p>
+dd	dd title		Dd tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo dd</p>
+ee	ee title		Ee tag | Cc tag | Dd tag		dctype:Text	<p>Foo ee</p>
+ff	ff title		Ff tag | Dd tag | Ee tag		dctype:Text	<p>Foo ff</p>
+gg	gg title		Gg tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo gg</p>
+hh	hh title		Hh tag | Cc tag | Dd tag		dctype:Text	<p>Foo hh</p>
+ii	ii title		Ii tag | Dd tag | Ee tag		dctype:Text	<p>Foo ii</p>
+jj	jj title		Jj tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo jj</p>
+kk	kk title		Kk tag | Cc tag | Dd tag		dctype:Text	<p>Foo kk</p>
+ll	ll title		Ll tag | Dd tag | Ee tag		dctype:Text	<p>Foo ll</p>
+mm	mm title		Mm tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo mm</p>
+nn	nn title		Nn tag | Cc tag | Dd tag		dctype:Text	<p>Foo nn</p>
+∞	∞ title		Oo tag | Dd tag | Ee tag		dctype:Text	<p>Foo oo</p>
+pp	pp title		Pp tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo pp</p>
+qq	qq title		Qq tag | Cc tag | Dd tag		dctype:Text	<p>Foo qq</p>
+rr	rr title		Rr tag | Dd tag | Ee tag		dctype:Text	<p>Foo rr</p>
+ss	ss title		Ss tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo ss</p>
+tt	tt title		Tt tag | Cc tag | Dd tag		dctype:Text	<p>Foo tt</p>
+uu	uu title		Uu tag | Dd tag | Ee tag		dctype:Text	<p>Foo uu</p>
+vv	vv title		Vv tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo vv</p>
+ww	ww title		Ww tag | Cc tag | Dd tag		dctype:Text	<p>Foo ww</p>
+xx	xx title		Xx tag | Dd tag | Ee tag		dctype:Text	<p>Foo xx</p>
+yy	yy title		Yy tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo yy</p>
+zz	zz title		Zz tag | Cc tag | Dd tag		dctype:Text	<p>Foo zz</p>
+aaa	aaa title		Aaa tag | Dd tag | Ee tag		dctype:Text	<p>Foo aaa</p>
+bbb	bbb title		Bbb tag | Bb tag | Cc tag	Base Resource	dctype:Text	<p>Foo bbb</p>
+ccc	ccc title		Ccc tag | Cc tag | Dd tag		dctype:Text	<p>Foo ccc</p>
+ddd	ddd title		Ddd tag | Dd tag | Ee tag		dctype:Text	<p>Foo ddd</p>
