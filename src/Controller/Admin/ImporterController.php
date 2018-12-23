@@ -8,7 +8,7 @@ use BulkImport\Form\ImporterStartForm;
 use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Job\Import as JobImport;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
-use Omeka\Stdlib\Message;
+use Log\Stdlib\PsrMessage;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -40,7 +40,8 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if ($id && !$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
+            $message = new PsrMessage('Importer #{importer_id} does not exist', ['importer_id' => $id]); // @translate
+            $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -84,7 +85,8 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
+            $message = new PsrMessage('Importer #{importer_id} does not exist', ['importer_id' => $id]); // @translate
+            $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -127,7 +129,8 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
+            $message = new PsrMessage('Importer #{importer_id} does not exist', ['importer_id' => $id]); // @translate
+            $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -181,7 +184,8 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
+            $message = new PsrMessage('Importer #{importer_id} does not exist', ['importer_id' => $id]); // @translate
+            $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -238,7 +242,8 @@ class ImporterController extends AbstractActionController
         /** @var \BulkImport\Api\Representation\ImporterRepresentation $importer */
         $importer = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
         if (!$importer) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
+            $message = new PsrMessage('Importer #{importer_id} does not exist', ['importer_id' => $id]); // @translate
+            $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -330,13 +335,13 @@ class ImporterController extends AbstractActionController
                             // Synchronous dispatcher for testing purpose.
                             // $job = $dispatcher->dispatch(JobImport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
                             $job = $dispatcher->dispatch(JobImport::class, $args);
-                            $message = new Message(
-                                'Import started in background (%sjob #%d%s)', // @translate
-                                sprintf('<a href="%s">',
-                                    htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()]))
-                                ),
-                                $job->getId(),
-                                '</a>'
+
+                            $message = new PsrMessage(
+                                'Import started in background (<a href="{job_url}">job #{job_id}</a>). This may take a while.', // @translate
+                                [
+                                    'job_url' => htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()])),
+                                    'job_id' => $job->getId(),
+                                ]
                             );
                             $message->setEscapeHtml(false);
                             $this->messenger()->addSuccess($message);
