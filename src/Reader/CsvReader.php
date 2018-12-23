@@ -12,7 +12,7 @@ use SplFileObject;
  * manages end of line and encoding). So the basic file handler is used for csv.
  * The format tsv uses the Spout reader, because there is no escape.
  */
-class CsvReader extends AbstractReader
+class CsvReader extends AbstractSpreadsheetReader
 {
     const DEFAULT_DELIMITER = ',';
     const DEFAULT_ENCLOSURE = '"';
@@ -129,7 +129,8 @@ class CsvReader extends AbstractReader
             $this->lastErrorMessage = 'File has no available fields.'; // @translate
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
-        $this->availableFields = array_map([$this, 'trimUnicode'], $fields);
+        // The data should be cleaned, since it's not an entry.
+        $this->availableFields = $this->cleanData($fields);
     }
 
     protected function isValidFilepath($filepath, $file)

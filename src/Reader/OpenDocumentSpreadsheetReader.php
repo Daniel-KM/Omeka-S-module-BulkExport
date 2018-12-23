@@ -8,7 +8,7 @@ use BulkImport\Form\Reader\OpenDocumentSpreadsheetReaderParamsForm;
 use BulkImport\Form\Reader\SpreadsheetReaderConfigForm;
 use Log\Stdlib\PsrMessage;
 
-class OpenDocumentSpreadsheetReader extends AbstractReader
+class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
 {
     protected $label = 'OpenDocument Spreadsheet'; // @translate
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
@@ -138,7 +138,8 @@ class OpenDocumentSpreadsheetReader extends AbstractReader
             $this->lastErrorMessage = 'File has no available fields.'; // @translate
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
-        $this->availableFields = array_map([$this, 'trimUnicode'], $fields);
+        // The data should be cleaned, since it's not an entry.
+        $this->availableFields = $this->cleanData($fields);
         $this->initializeReader();
     }
 }

@@ -156,8 +156,19 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
         if (!is_array($this->currentData)) {
             return null;
         }
-        $this->currentData = $this->cleanData($this->currentData);
-        return new Entry($this->availableFields, $this->currentData);
+        return $this->currentEntry();
+    }
+
+    /**
+     * Helper to manage the current entry.
+     *
+     * May be overridden with a different entry sub-class.
+     *
+     * @return \BulkImport\Entry\Entry
+     */
+    protected function currentEntry()
+    {
+        return new Entry($this->availableFields, $this->currentData, $this->getParams());
     }
 
     public function key()
@@ -190,6 +201,11 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
         return $this->totalEntries;
     }
 
+    /**
+     * Check if the reader is ready, or prepare it.
+     *
+     * @return boolean
+     */
     protected function isReady()
     {
         if ($this->isReady) {
@@ -200,6 +216,9 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
         return $this->isReady;
     }
 
+    /**
+     * Reset the iterator to allow to use it with different params.
+     */
     protected function reset()
     {
         $this->availableFields = [];

@@ -235,9 +235,6 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
         $resource = clone $this->base;
 
-        // TODO Manage the multivalue separator at field level.
-        $multivalueSeparator = $this->reader->getParam('separator', '');
-
         $this->skippedSourceFields = [];
         foreach ($this->mapping as $sourceField => $targets) {
             // Check if the entry has a value for this source field.
@@ -254,17 +251,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             }
 
             $values = $entry[$sourceField];
-            if ($multivalueSeparator !== '') {
-                $val = $values;
-                $values = [];
-                foreach ($val as $value) {
-                    $values += explode($multivalueSeparator, $value);
-                }
-            }
-            $values = array_map([$this, 'trimUnicode'], $values);
-            $values = array_filter($values, 'strlen');
-            $values = array_unique($values);
-            if (!$values) {
+            if (!count($values)) {
                 $this->skippedSourceFields[] = $sourceField;
                 continue;
             }
