@@ -77,6 +77,34 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
+        static $resourceTypes;
+
+        if (is_null($resourceTypes)) {
+            $translate = $this->getServiceLocator()->get('ViewHelperManager')->get('translate');
+            $resourceTypes = [
+                'item' => 'items',
+                'itemset' => 'item_sets',
+                'media' => 'media',
+                'items' => 'items',
+                'itemsets' => 'item_sets',
+                'medias' => 'media',
+                'collection' => 'item_sets',
+                'collections' => 'item_sets',
+                'file' => 'media',
+                'files' => 'media',
+                $translate('item') => 'items',
+                $translate('itemset') => 'item_sets',
+                $translate('media') => 'media',
+                $translate('items') => 'items',
+                $translate('itemsets') => 'item_sets',
+                $translate('medias') => 'media',
+                $translate('collection') => 'item_sets',
+                $translate('collections') => 'item_sets',
+                $translate('file') => 'media',
+                $translate('files') => 'media',
+            ];
+        }
+
         // When the resource type is known, don't fill other resources. But if
         // is not known yet, fill the item first. It fixes the issues with the
         // target that are the same for media of item and media (that is a
@@ -87,8 +115,9 @@ class ResourceProcessor extends AbstractResourceProcessor
         switch ($target['target']) {
             case 'resource_type':
                 $value = array_pop($values);
-                if (in_array($value, ['items', 'item_sets', 'media'])) {
-                    $resource['resource_type'] = $value;
+                $resourceType = preg_replace('~[^a-z]~', '', strtolower($value));
+                if (isset($resourceTypes[$resourceType])) {
+                    $resource['resource_type'] = $resourceTypes[$resourceType];
                 }
                 return true;
             case $resourceType == 'items' && $this->fillItem($resource, $target, $values):
