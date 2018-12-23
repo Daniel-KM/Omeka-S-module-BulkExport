@@ -607,6 +607,9 @@ abstract class AbstractProcessor implements Processor
                         'Identifier "{identifier}" is not unique ({count} values).', // @translate
                         ['identifier' => $identifier, 'count' => $result['count'][$identifier]]
                     );
+                    // if (!$this->allowDuplicateIdentifiers) {
+                    //     unset($result['result'][$identifier]);
+                    // }
                 }
             }
 

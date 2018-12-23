@@ -242,6 +242,8 @@ SQL;
      */
     public function testPerformDelete($filepath, $options, $resources)
     {
+        // TODO Remove dependencies of testPerformDelete()
+
         $filepath = $this->basepath . $filepath;
         // $filebase = substr($filepath, 0, -4);
         list($resourceType, $index) = $options;

@@ -92,7 +92,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
      */
     public function __invoke($identifiers, $identifierName, $resourceType = null, $uniqueOnly = false)
     {
-        $isSingle = is_string($identifiers);
+        $isSingle = !is_array($identifiers);
 
         if (empty($identifierName)) {
             return $isSingle ? null : [];
@@ -271,38 +271,58 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             : null;
     }
 
-    protected function findResourcesFromInternalIds(array $identifiers, $resourceType)
+    protected function findResourcesFromInternalIds(array $ids, $resourceType)
     {
-        $identifiers = array_filter(array_map('intval', $identifiers));
-        if (empty($identifiers)) {
+        $ids = array_filter(array_map('intval', $ids));
+        if (empty($ids)) {
             return [];
         }
 
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
 
-        $quotedIdentifiers = implode(',', $identifiers);
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
             ->select('resource.id')
             ->from('resource', 'resource')
-            // ->andWhere($expr->in('resource.id', ':ids'))
-            // ->setParameter('ids', $identifiers)
-            ->andWhere('resource.id IN (:ids)')
-            ->setParameter('ids', $quotedIdentifiers)
+            ->addGroupBy('resource.id')
             ->addOrderBy('resource.id', 'ASC');
+
+        $parameters = [];
+        if (count($ids) === 1) {
+            $qb
+                ->andWhere($expr->eq('resource.id', ':id'));
+            $parameters['id'] = reset($ids);
+        } else {
+            // Warning: there is a difference between qb / dbal and qb / orm for
+            // "in" in qb, when a placeholder is used, there should be one
+            // placeholder for each value for expr->in().
+            $placeholders = [];
+            foreach (array_values($ids) as $key => $value) {
+                $placeholder = 'id_' . $key;
+                $parameters[$placeholder] = $value;
+                $placeholders[] = ':' . $placeholder;
+            }
+            $qb
+                ->andWhere($expr->in('resource.id', $placeholders));
+        }
+
         if ($resourceType) {
             $qb
-                ->andWhere($expr->eq('resource.resource_type', ':resource_type'))
-                ->setParameter('resource_type', $resourceType);
+                ->andWhere($expr->eq('resource.resource_type', ':resource_type'));
+            $parameters['resource_type'] = $resourceType;
         }
+
+        $qb
+            ->setParameters($parameters);
+
         $stmt = $conn->executeQuery($qb, $qb->getParameters());
         $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         // Reorder the result according to the input (simpler in php and there
         // is no duplicated identifiers).
-        return array_replace(array_fill_keys($identifiers, null), array_combine($result, $result));
+        return array_replace(array_fill_keys($ids, null), array_combine($result, $result));
     }
 
     protected function findResourcesFromPropertyIds(array $identifiers, array $propertyIds, $resourceType)
@@ -310,32 +330,60 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
 
-        // Search in multiple resource types in one time.
-        $quotedIdentifiers = array_map([$conn, 'quote'], $identifiers);
-        $quotedIdentifiers = implode(',', $quotedIdentifiers);
-
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
             ->select('value.value AS identifier', 'value.resource_id AS id', 'COUNT(DISTINCT(value.resource_id)) AS "count"')
             ->from('value', 'value')
             ->leftJoin('value', 'resource', 'resource', 'value.resource_id = resource.id')
-            // ->andwhere($expr->in('value.property_id', ':property_ids'))
-            // ->setParameter('property_ids', implode(',', $propertyIds))
-            ->andwhere('value.property_id IN (:property_ids)')
-            ->setParameter('property_ids', implode(',', $propertyIds))
-            // ->andWhere($expr->in('value.value', ':values'))
-            // ->setParameter('values', $quotedIdentifiers)
-            // ->andWhere('value.value IN (:values)')
-            // ->setParameter('values', $identifiers)
-            ->andWhere("value.value IN ($quotedIdentifiers)")
+            // ->andWhere($expr->in('value.property_id', $propertyIds))
+            // ->andWhere($expr->in('value.value', $identifiers))
+            ->addGroupBy('value.value')
             ->addOrderBy('resource.id', 'ASC')
             ->addOrderBy('value.id', 'ASC');
+
+        $parameters = [];
+        if (count($identifiers) === 1) {
+            $qb
+                ->andWhere($expr->eq('value.value', ':identifier'));
+            $parameters['identifier'] = reset($identifiers);
+        } else {
+            // Warning: there is a difference between qb / dbal and qb / orm for
+            // "in" in qb, when a placeholder is used, there should be one
+            // placeholder for each value for expr->in().
+            $placeholders = [];
+            foreach (array_values($identifiers) as $key => $value) {
+                $placeholder = 'value_' . $key;
+                $parameters[$placeholder] = $value;
+                $placeholders[] = ':' . $placeholder;
+            }
+            $qb
+                ->andWhere($expr->in('value.value', $placeholders));
+        }
+
+        if (count($propertyIds) === 1) {
+            $qb
+                ->andWhere($expr->eq('value.property_id', ':property_id'));
+            $parameters['property_id'] = reset($propertyIds);
+        } else {
+            $placeholders = [];
+            foreach (array_values($propertyIds) as $key => $value) {
+                $placeholder = 'property_' . $key;
+                $parameters[$placeholder] = $value;
+                $placeholders[] = ':' . $placeholder;
+            }
+            $qb
+                ->andWhere($expr->in('value.property_id', $placeholders));
+        }
+
         if ($resourceType) {
             $qb
-                ->andWhere($expr->eq('resource.resource_type', ':resource_type'))
-                ->setParameter('resource_type', $resourceType);
+                ->andWhere($expr->eq('resource.resource_type', ':resource_type'));
+            $parameters['resource_type'] = $resourceType;
         }
+
+        $qb
+            ->setParameters($parameters);
 
         $stmt = $conn->executeQuery($qb, $qb->getParameters());
         // $stmt->fetchAll(\PDO::FETCH_KEY_PAIR) cannot be used, because it
@@ -351,27 +399,46 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
 
-        // Search in multiple resource types in one time.
-        $quotedIdentifiers = array_map([$conn, 'quote'], $identifiers);
-        $quotedIdentifiers = implode(',', $quotedIdentifiers);
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
             ->select('media.source AS identifier', 'media.id AS id', 'COUNT(media.source) AS "count"')
             ->from('media', 'media')
-            ->andwhere('media.ingester = :ingester')
-            ->setParameter('ingester', $ingesterName)
-            // ->andWhere('media.source IN (:sources)')
-            // ->setParameter('sources', $identifiers)
-            // ->andWhere($expr->in('media.source', ':sources'))
-            // ->setParameter('sources', $quotedIdentifiers)
-            ->andwhere("media.source IN ($quotedIdentifiers)")
+            ->andWhere('media.ingester = :ingester')
+            // ->andWhere('media.source IN (' . implode(',', array_map([$conn, 'quote'], $identifiers)) . ')')
+            ->addGroupBy('media.source')
             ->addOrderBy('media.id', 'ASC');
+
+        $parameters = [];
+        $parameters['ingester'] = $ingesterName;
+
+        if (count($identifiers) === 1) {
+            $qb
+                ->andWhere($expr->eq('media.source', ':identifier'));
+            $parameters['identifier'] = reset($identifiers);
+        } else {
+            // Warning: there is a difference between qb / dbal and qb / orm for
+            // "in" in qb, when a placeholder is used, there should be one
+            // placeholder for each value for expr->in().
+            $placeholders = [];
+            foreach (array_values($identifiers) as $key => $value) {
+                $placeholder = 'value_' . $key;
+                $parameters[$placeholder] = $value;
+                $placeholders[] = ':' . $placeholder;
+            }
+            $qb
+                ->andWhere($expr->in('media.source', $placeholders));
+        }
+
         if ($itemId) {
             $qb
-                ->andWhere($expr->eq('media.item_id', ':item_id'))
-                ->setParameter('item_id', $itemId);
+                ->andWhere($expr->eq('media.item_id', ':item_id'));
+            $parameters['item_id'] = $itemId;
         }
+
+        $qb
+            ->setParameters($parameters);
+
         $stmt = $conn->executeQuery($qb, $qb->getParameters());
         // $stmt->fetchAll(\PDO::FETCH_KEY_PAIR) cannot be used, because it
         // replaces the first id by later ids in case of true duplicates.

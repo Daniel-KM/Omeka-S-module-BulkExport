@@ -18,7 +18,7 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
 
         $services = $this->getServiceLocator();
         $this->connection = $services->get('Omeka\Connection');
-        $this->api = $services->get('Omeka\ApiManager');
+        $this->api = $services->get('ControllerPluginManager')->get('api');
         $this->findResourcesFromIdentifier = new FindResourcesFromIdentifiers($this->connection, $this->api);
 
         $this->loginAsAdmin();
@@ -80,7 +80,7 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
     public function testNoIdentifier()
     {
         $findResourcesFromIdentifier = $this->findResourcesFromIdentifier;
-        $item = $this->api->create('items', [])->getContent();
+        $this->api->create('items', [])->getContent();
 
         $identifierProperty = 'o:id';
         $resourceType = null;
