@@ -41,7 +41,7 @@ class Log extends AbstractEntity
     /**
      * @var array
      * @Column(
-     *     type="array",
+     *     type="json_array",
      *     nullable=true
      * )
      */

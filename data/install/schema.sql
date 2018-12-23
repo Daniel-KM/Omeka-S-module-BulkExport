@@ -1,8 +1,8 @@
 CREATE TABLE bulk_import (
     id INT AUTO_INCREMENT NOT NULL,
     importer_id INT DEFAULT NULL,
-    reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
-    processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     status VARCHAR(190) DEFAULT NULL,
     started DATETIME DEFAULT NULL,
     ended DATETIME DEFAULT NULL,
@@ -13,9 +13,9 @@ CREATE TABLE bulk_importer (
     id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(190) DEFAULT NULL,
     reader_name VARCHAR(190) DEFAULT NULL,
-    reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     processor_name VARCHAR(190) DEFAULT NULL,
-    processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     PRIMARY KEY(id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
 CREATE TABLE bulk_log (
@@ -23,7 +23,7 @@ CREATE TABLE bulk_log (
     import_id INT NOT NULL,
     severity VARCHAR(190) DEFAULT NULL,
     message VARCHAR(255) DEFAULT NULL,
-    params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     added DATETIME DEFAULT NULL,
     INDEX IDX_3B78A07DB6A263D9 (import_id),
     PRIMARY KEY(id)
