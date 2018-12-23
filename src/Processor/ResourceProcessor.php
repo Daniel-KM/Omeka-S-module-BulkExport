@@ -337,6 +337,8 @@ class ResourceProcessor extends AbstractResourceProcessor
         }
 
         // Create all resources, but keep order, so create resources by type.
+        // Useless when the batch is 1.
+        // TODO Create an option for full order by id for items, then media.
         $datas = [];
         $previousResourceType = $data[0]['resource_type'];
         foreach ($data as $dataResource) {

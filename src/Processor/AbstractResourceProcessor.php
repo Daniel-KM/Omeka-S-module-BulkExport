@@ -139,9 +139,18 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     protected function handleFormGeneric(ArrayObject $args, array $values)
     {
+        $defaults = [
+            'o:resource_template' => null,
+            'o:resource_class' => null,
+            'o:is_public' => null,
+            'entries_by_batch' => null,
+        ];
+        $values += $defaults;
+
         $args['o:resource_template'] = $values['o:resource_template'];
         $args['o:resource_class'] = $values['o:resource_class'];
         $args['o:is_public'] = $values['o:is_public'];
+        $args['entries_by_batch'] = $values['entries_by_batch'];
     }
 
     protected function handleFormSpecific(ArrayObject $args, array $values)
@@ -157,6 +166,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         // Filter the mapping to avoid to loop of entry without targets.
         $this->mapping = array_filter($mapping);
         unset($mapping);
+
+        $batch = (int) $this->getParam('entries_by_batch') ?: self::ENTRIES_BY_BATCH;
 
         $insert = [];
         foreach ($this->reader as $index => $entry) {
@@ -182,7 +193,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             }
 
             // Only add every X for batch import.
-            if ($this->processing >= self::BATCH) {
+            if ($this->processing >= $batch) {
                 // Batch create.
                 $this->createEntities($insert);
                 $insert = [];
@@ -387,25 +398,32 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             return;
         }
 
+        try {
+            if (count($data) === 1) {
+                $resource = $this->api()
+                    ->create($resourceType, reset($data))->getContent();
+                $resources = [$resource];
+            } else {
+                $resources = $this->api()
+                    ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
+            }
+        } catch (\Exception $e) {
+            $this->logger->err('Core error: {exception}', ['exception' => $e]);
+            ++$this->totalErrors;
+            return;
+        }
+
         $labels = [
             'items' => 'item',
             'item_sets' => 'item set',
             'media' => 'media',
         ];
         $label = $labels[$resourceType];
-
-        try {
-            $resources = $this->api()
-                ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
-            foreach ($resources as $resource) {
-                $this->logger->notice(
-                    'Created {resource_type} #{resource_id}', // @translate
-                    ['resource_type' => $label, 'resource_id' => $resource->id()]
-                );
-            }
-        } catch (\Exception $e) {
-            $this->logger->err('Core error: {exception}', ['exception' => $e]);
-            ++$this->totalErrors;
+        foreach ($resources as $resource) {
+            $this->logger->notice(
+                'Created {resource_type} #{resource_id}', // @translate
+                ['resource_type' => $label, 'resource_id' => $resource->id()]
+            );
         }
     }
 

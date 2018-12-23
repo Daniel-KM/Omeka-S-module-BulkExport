@@ -2,6 +2,7 @@
 namespace BulkImport\Form\Processor;
 
 use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Form\EntriesByBatchTrait;
 use Omeka\Form\Element\PropertySelect;
 use Omeka\Form\Element\ResourceClassSelect;
 use Omeka\Form\Element\ResourceSelect;
@@ -12,14 +13,17 @@ use Zend\Form\Form;
 abstract class AbstractResourceProcessorConfigForm extends Form
 {
     use ServiceLocatorAwareTrait;
+    use EntriesByBatchTrait;
 
     public function init()
     {
         $this->baseFieldset();
         $this->addFieldsets();
+        $this->addEntriesByBatch();
 
         $this->baseInputFilter();
         $this->addInputFilter();
+        $this->addEntriesByBatchInputFilter();
     }
 
     protected function baseFieldset()
