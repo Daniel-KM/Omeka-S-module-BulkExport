@@ -137,19 +137,15 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     public function process()
     {
-        $this->base = $this->baseResource();
-
-        $mapping = $this->getParam('mapping', []);
-        $mapping = $this->fullMapping($mapping);
-        // Filter the mapping to avoid to loop of entry without targets.
-        $this->mapping = array_filter($mapping);
-        unset($mapping);
-
         $this->prepareIdentifierName();
+
+        $this->prepareMapping();
 
         $batch = (int) $this->getParam('entries_by_batch') ?: self::ENTRIES_BY_BATCH;
 
-        $insert = [];
+        $this->base = $this->baseEntity();
+
+        $dataToProcess = [];
         foreach ($this->reader as $index => $entry) {
             ++$this->totalIndexResources;
             // The first entry is #1, but the iterator (array) numbered it 0.
@@ -164,24 +160,23 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 continue;
             }
 
-            if ($this->checkResource($resource)) {
+            if ($this->checkEntity($resource)) {
                 ++$this->processing;
                 ++$this->totalProcessed;
-                $insert[] = $resource->getArrayCopy();
+                $dataToProcess[] = $resource->getArrayCopy();
             } else {
                 ++$this->totalErrors;
             }
 
             // Only add every X for batch import.
             if ($this->processing >= $batch) {
-                // Batch create.
-                $this->createEntities($insert);
-                $insert = [];
+                $this->processEntities($dataToProcess);
+                $dataToProcess = [];
                 $this->processing = 0;
             }
         }
         // Take care of remainder from the modulo check.
-        $this->createEntities($insert);
+        $this->processEntities($dataToProcess);
 
         $this->logger->notice(
             'End of process: {total_resources} resources to process, {total_skipped} skipped, {total_processed} processed, {total_errors} errors inside module.', // @translate
@@ -238,7 +233,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         return $resource;
     }
 
-    protected function baseResource()
+    protected function baseEntity()
     {
         $resource = new ArrayObject;
         $this->baseGeneric($resource);
@@ -366,9 +361,19 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * @param ArrayObject $resource
      * @return bool
      */
-    protected function checkResource(ArrayObject $resource)
+    protected function checkEntity(ArrayObject $resource)
     {
         return true;
+    }
+
+    /**
+     * Process entities.
+     *
+     * @param array $data
+     */
+    protected function processEntities(array $data)
+    {
+        $this->createEntities($data);
     }
 
     /**
@@ -403,15 +408,15 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                     ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
             }
         } catch (\Exception $e) {
-            $this->logger->err('Core error: {exception}', ['exception' => $e]);
+            $this->logger->err('Core error during creation: {exception}', ['exception' => $e]); // @translate
             ++$this->totalErrors;
             return;
         }
 
         $labels = [
-            'items' => 'item',
-            'item_sets' => 'item set',
-            'media' => 'media',
+            'items' => 'item', // @translate
+            'item_sets' => 'item set', // @translate
+            'media' => 'media', // @translate
         ];
         $label = $labels[$resourceType];
         foreach ($resources as $resource) {
@@ -455,13 +460,14 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * Add automapped metadata for properties (language and datatype).
+     * Prepare full mapping to simplify process.
      *
-     * @param array $mapping
-     * @return array Each target is an array with metadata.
+     * Add automapped metadata for properties (language and datatype).
      */
-    protected function fullMapping(array $mapping)
+    protected function prepareMapping()
     {
+        $mapping = $this->getParam('mapping', []);
+
         $automapFields = $this->getServiceLocator()->get('ViewHelperManager')->get('automapFields');
         $sourceFields = $automapFields(array_keys($mapping), ['output_full_matches' => true]);
         $index = -1;
@@ -513,6 +519,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             }
             $mapping[$sourceField] = $fullTargets;
         }
-        return $mapping;
+
+        // Filter the mapping to avoid to loop entries without target.
+        $this->mapping = array_filter($mapping);
     }
 }

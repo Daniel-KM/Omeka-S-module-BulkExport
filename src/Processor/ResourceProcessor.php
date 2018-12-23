@@ -276,7 +276,7 @@ class ResourceProcessor extends AbstractResourceProcessor
         $resource[$metadata][] = $related;
     }
 
-    protected function checkResource(ArrayObject $resource)
+    protected function checkEntity(ArrayObject $resource)
     {
         if (empty($resource['resource_type'])) {
             $this->logger->err(
@@ -285,6 +285,7 @@ class ResourceProcessor extends AbstractResourceProcessor
             );
             return false;
         }
+
         if (!in_array($resource['resource_type'], ['items', 'item_sets', 'media'])) {
             $this->logger->err(
                 'Skipped resource index #{index}: resource type "{resource_type}" not managed', // @translate
@@ -295,6 +296,7 @@ class ResourceProcessor extends AbstractResourceProcessor
             );
             return false;
         }
+
         switch ($resource['resource_type']) {
             case 'items':
                 if (!$this->checkItem($resource)) {
@@ -373,7 +375,7 @@ class ResourceProcessor extends AbstractResourceProcessor
             return;
         }
 
-        // Create all resources, but keep order, so create resources by type.
+        // Process all resources, but keep order, so process them by type.
         // Useless when the batch is 1.
         // TODO Create an option for full order by id for items, then media.
         $datas = [];
