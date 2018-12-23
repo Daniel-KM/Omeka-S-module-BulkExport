@@ -9,9 +9,14 @@
 
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
+$hyperlink = $this->plugin('hyperlink');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-imports logs browse');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
+$this->headLink()->appendStylesheet($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.css', 'Log'));
+$this->headLink()->appendStylesheet($this->assetUrl('css/log.css', 'Log'));
+$this->headScript()->appendFile($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.js', 'Log'));
+$this->headScript()->appendFile($this->assetUrl('js/log.js', 'Log'));
 $severityNames = [
     \Zend\Log\Logger::EMERG => $escape($translate('Emergency')),
     \Zend\Log\Logger::ALERT => $escape($translate('Alert')),
@@ -41,31 +46,55 @@ $severityNames = [
         <button type="submit"><?php echo $translate('Show'); ?></button>
     </form>
 
-    <?php if (count($logs)): ?>
-        <?php echo $this->pagination(); ?>
+<?php if (count($logs)): ?>
+    <?php echo $this->pagination(); ?>
 
-        <table class="tablesaw" data-tablesaw-mode="stack">
-            <thead>
+    <table class="tablesaw batch-edit" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+            <th><?php echo $escape($translate('Message')); ?></th>
+            <th><?php echo $escape($translate('Severity')); ?></th>
+            <th><?php echo $escape($translate('Time')); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($logs as $log) { ?>
             <tr>
-                <th><?php echo $escape($translate('Message')); ?></th>
-                <th><?php echo $escape($translate('Severity')); ?></th>
-                <th><?php echo $escape($translate('Time')); ?></th>
+                <td class="webui-popover-parent">
+                    <span class="log-message">
+                        <?php $text = $log->text(); ?>
+                        <?php $isLong = strlen($text) > 240; ?>
+                        <?php if ($isLong): ?>
+                        <span class="log-message-truncated truncate"><?php echo nl2br(substr($text, 0, 240)) . '…'; ?></span>
+                        <?php else: ?>
+                        <?php echo nl2br($text); ?>
+                        <?php endif; ?>
+                    </span>
+                    <ul class="actions">
+                        <?php if ($isLong): ?>
+                        <li><?php
+                            echo $hyperlink('', '#', [
+                                'class' => 'o-icon- fa fa-expand popover',
+                                'title' => $translate('Full log'),
+                            ]); ?>
+                            <div class="log-message-full webui-popover-content webui-popover-current"><?php echo nl2br($escape($text)); ?></div>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+                </td>
+                <td><?php echo $translate($log->severityLabel()); ?> </td>
+                <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
             </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($logs as $log) { ?>
-                <tr>
-                    <td><?php echo $log->message()->translate(); ?></td>
-                    <td><?php echo $translate($log->severityLabel()); ?> </td>
-                    <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
-                </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+        <?php } ?>
+        </tbody>
+    </table>
+
+    <p>
         <?php echo $this->hyperlink(sprintf($translate('Manage logs')),
             $this->url('admin/log/default', [], ['query' => ['reference' => 'bulk/import/' . $import->id()]])); ?>
+    </p>
 
-    <?php else: ?>
-        <p><?php echo $escape($translate('No logs yet.')); ?> <a href=""><?php echo $escape($translate('Refresh page')); ?></a></p>
-    <?php endif; ?>
+<?php else: ?>
+    <p><?php echo $escape($translate('No logs yet.')); ?> <a href=""><?php echo $escape($translate('Refresh page')); ?></a></p>
+<?php endif; ?>
 </div>
