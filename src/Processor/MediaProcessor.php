@@ -37,13 +37,6 @@ class MediaProcessor extends ResourceProcessor
 
     protected function checkResource(ArrayObject $resource)
     {
-        if (empty($resource['o:item']['o:id'])) {
-            $this->logger->err(
-                'Skipped media index {index}: no item is set', // @translate
-                ['index' => $this->indexResource]
-            );
-            return false;
-        }
-        return true;
+        return $this->checkMedia($resource);
     }
 }

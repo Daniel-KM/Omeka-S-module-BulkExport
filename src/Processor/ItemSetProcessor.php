@@ -37,6 +37,6 @@ class ItemSetProcessor extends ResourceProcessor
 
     protected function checkResource(ArrayObject $resource)
     {
-        return true;
+        return $this->checkItemSet($resource);
     }
 }

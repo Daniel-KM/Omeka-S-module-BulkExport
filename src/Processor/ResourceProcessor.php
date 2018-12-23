@@ -77,6 +77,13 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
+        // When the resource type is known, don't fill other resources. But if
+        // is not known yet, fill the item first. It fixes the issues with the
+        // target that are the same for media of item and media (that is a
+        // special case where two or more resources are created from one
+        // entry).
+        $resourceType = empty($resource['resource_type']) ? true : $resource['resource_type'];
+
         switch ($target['target']) {
             case 'resource_type':
                 $value = array_pop($values);
@@ -84,11 +91,11 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $resource['resource_type'] = $value;
                 }
                 return true;
-            case $this->fillItem($resource, $target, $values):
+            case $resourceType == 'items' && $this->fillItem($resource, $target, $values):
                 return true;
-            case $this->fillItemSet($resource, $target, $values):
+            case $resourceType == 'item_sets' && $this->fillItemSet($resource, $target, $values):
                 return true;
-            case $this->fillMedia($resource, $target, $values):
+            case $resourceType == 'media' && $this->fillMedia($resource, $target, $values):
                 return true;
             default:
                 return false;
@@ -251,8 +258,22 @@ class ResourceProcessor extends AbstractResourceProcessor
             );
             return false;
         }
-        if ($resource['resource_type'] === 'items') {
-            $this->checkItem($resource);
+        switch ($resource['resource_type']) {
+            case 'items':
+                if (!$this->checkItem($resource)) {
+                    return false;
+                }
+                break;
+            case 'item_sets':
+                if (!$this->checkItemSet($resource)) {
+                    return false;
+                }
+                break;
+            case 'media':
+                if (!$this->checkMedia($resource)) {
+                    return false;
+                }
+                break;
         }
         return true;
     }
@@ -265,6 +286,41 @@ class ResourceProcessor extends AbstractResourceProcessor
                 $media['o:is_public'] = true;
             }
         }
+
+        unset($resource['o:item']);
+        return true;
+    }
+
+    protected function checkItemSet(ArrayObject $resource)
+    {
+        unset($resource['o:item']);
+        unset($resource['o:item_set']);
+        unset($resource['o:media']);
+        return true;
+    }
+
+    protected function checkMedia(ArrayObject $resource)
+    {
+        // With a resource type is unknown before the end of the filling of an
+        // entry, fillItem() is called for item first, and there are some common
+        // fields with media (the file related ones), so they should be moved
+        // here.
+        if (!empty($resource['o:media'])) {
+            foreach ($resource['o:media'] as $media) {
+                $resource += $media;
+            }
+        }
+
+        if (empty($resource['o:item']['o:id'])) {
+            $this->logger->err(
+                'Skipped media index {index}: no item is set', // @translate
+                ['index' => $this->indexResource]
+            );
+            return false;
+        }
+
+        unset($resource['o:item_set']);
+        unset($resource['o:media']);
         return true;
     }
 
