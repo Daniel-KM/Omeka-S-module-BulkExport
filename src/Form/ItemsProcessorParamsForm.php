@@ -34,18 +34,29 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
                 'type' => PropertySelect::class,
                 'options' => [
                     'label' => $name,
-                    'empty_option' => 'Select one or more properties…', // @translate
+                    'empty_option' => 'Select one or more targets…', // @translate
                     'term_as_value' => true,
                     'prepend_value_options' => [
-                        'https:' => 'Url', // @translate
-                        'file:' => 'File (via sideload)', // @translate
+                        'metadata' => [
+                            'label' => 'Resource metadata', // @translate
+                            'options' => [
+                                'o:is_public' => 'Is public', // @translate
+                            ],
+                        ],
+                        'media' => [
+                            'label' => 'Media', // @translate
+                            'options' => [
+                                'url' => 'Url', // @translate
+                                'sideload' => 'File (via sideload)', // @translate
+                            ],
+                        ],
                     ],
                 ],
                 'attributes' => [
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',
-                    'data-placeholder' => 'Select one or more properties…', // @translate
+                    'data-placeholder' => 'Select one or more targets…', // @translate
                 ],
             ]);
         }

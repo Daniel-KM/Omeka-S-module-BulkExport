@@ -5,6 +5,7 @@ use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Omeka\Form\Element\ItemSetSelect;
 use Omeka\Form\Element\ResourceClassSelect;
 use Omeka\Form\Element\ResourceSelect;
+use Zend\Form\Element;
 use Zend\Form\Form;
 
 class ItemsProcessorConfigForm extends Form
@@ -78,6 +79,21 @@ class ItemsProcessorConfigForm extends Form
             ],
         ]);
 
+        $this->add([
+            'name' => 'o:is_public',
+            'type' => Element\Radio::class,
+            'options' => [
+                'label' => 'Visibility', // @translate
+                'value_options' => [
+                    'true' => 'Public', // @translate
+                    'false' => 'Private', // @translate
+                ],
+            ],
+            'attributes' => [
+                'id' => 'o-is-public',
+            ],
+        ]);
+
         if ($this->hasInputFilter) {
             $this->updateInputFilters();
         }
@@ -96,6 +112,10 @@ class ItemsProcessorConfigForm extends Form
         ]);
         $inputFilter->add([
             'name' => 'o:item_set',
+            'required' => false,
+        ]);
+        $inputFilter->add([
+            'name' => 'o:is_public',
             'required' => false,
         ]);
     }

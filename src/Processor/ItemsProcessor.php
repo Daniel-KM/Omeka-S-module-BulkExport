@@ -67,7 +67,6 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
     public function process()
     {
         $base = [];
-        $base['o:is_public'] = true;
         $resourceTemplateId = $this->getParam('o:resource_template');
         if ($resourceTemplateId) {
             $base['o:resource_template'] = ['o:id' => $resourceTemplateId];
@@ -80,6 +79,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         foreach ($itemSetIds as $itemSetId) {
             $base['o:item_set'][] = ['o:id' => $itemSetId];
         }
+        $base['o:is_public'] = $this->getParam('o:is_public') !== 'false';
         $base['o:media'] = [];
 
         $mapping = $this->getParam('mapping', []);
@@ -144,6 +144,12 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
                                 $media['ingest_filename'] = $value;
                                 $item['o:media'][] = $media;
                             }
+                            break;
+                        case 'o:is_public':
+                            $value = array_pop($values);
+                            $item['o:is_public'] = in_array(strtolower($value), ['false', 'no', 'off', 'private'])
+                                ? false
+                                : (bool) $value;
                             break;
                         default:
                             $item[$target] = array_pop($values);
