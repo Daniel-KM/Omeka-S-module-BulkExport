@@ -45,6 +45,31 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      */
     protected $properties;
 
+    /**
+     * @var int
+     */
+    protected $indexResource = 0;
+
+    /**
+     * @var int
+     */
+    protected $processing = 0;
+
+    /**
+     * @var int
+     */
+    protected $totalIndexResources = 0;
+
+    /**
+     * @var int
+     */
+    protected $totalProcessed = 0;
+
+    /**
+     * @var int
+     */
+    protected $totalError = 0;
+
     public function getResourceType()
     {
         return $this->resourceType;
@@ -97,7 +122,9 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
         $insert = [];
         foreach ($this->reader as $index => $entry) {
-            $this->logger->log(Logger::NOTICE, sprintf('Processing row %s', $index + 1)); // @translate
+            ++$this->totalIndexResources;
+            $this->indexResource = $index + 1;
+            $this->logger->log(Logger::NOTICE, sprintf('Processing resource index #%d', $this->indexResource)); // @translate
 
             $resource = clone $base;
 
@@ -124,16 +151,33 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 $this->processCell($resource, $targets, $values);
             }
 
-            $insert[] = $resource->getArrayCopy();
+            if ($this->checkEntity($resource)) {
+                ++$this->processing;
+                ++$this->totalProcessed;
+                $insert[] = $resource->getArrayCopy();
+            } else {
+                ++$this->totalError;
+            }
             // Only add every X for batch import.
-            if (($index + 1) % self::BATCH == 0) {
+            if ($this->processing >= self::BATCH) {
                 // Batch create.
                 $this->createEntities($insert);
                 $insert = [];
+                $this->processing = 0;
             }
         }
         // Take care of remainder from the modulo check.
         $this->createEntities($insert);
+
+        $this->logger->log(
+            Logger::NOTICE,
+            sprintf(
+                'End of process: %d resources to process, %d processed, %d errors.', // @translate
+                $this->totalIndexResources,
+                $this->totalProcessed,
+                $this->totalError
+            )
+        );
     }
 
     protected function baseResource()
@@ -192,11 +236,22 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
+     * Check if a resource is well-formed.
+     *
+     * @param ArrayObject $resource
+     * @return bool
+     */
+    protected function checkEntity(ArrayObject $resource)
+    {
+        return true;
+    }
+
+    /**
      * Process creation of entities.
      *
      * @param array $data
      */
-    protected function createEntities($data)
+    protected function createEntities(array $data)
     {
         if (!count($data)) {
             return;

@@ -4,6 +4,7 @@ namespace BulkImport\Processor;
 use ArrayObject;
 use BulkImport\Form\MediaProcessorConfigForm;
 use BulkImport\Form\MediaProcessorParamsForm;
+use BulkImport\Log\Logger;
 use Zend\Form\Form;
 
 class MediaProcessor extends AbstractResourceProcessor
@@ -65,5 +66,14 @@ class MediaProcessor extends AbstractResourceProcessor
                 parent::processCellDefault($resource, $target, $values);
                 break;
         }
+    }
+
+    protected function checkEntity(ArrayObject $resource)
+    {
+        if (empty($resource['o:item']['o:id'])) {
+            $this->logger->log(Logger::ERROR, sprintf('Skipped media row %s: no item is set.', $this->indexRow)); // @translate
+            return false;
+        }
+        return true;
     }
 }
