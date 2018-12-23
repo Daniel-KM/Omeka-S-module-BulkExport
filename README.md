@@ -55,8 +55,10 @@ Internal differences with Csv Import
 ------------------------------------
 
 - Two columns with the same headers should be mapped the same.
-- Empty boolean values with the action "replace" are skipped and they don't mean
-  "false".
+- Empty values for boolean metadata (is_public…) in spreadsheet reader are
+  skipped and they don't mean "false" or "true".
+- In case of insensitive duplicate, the first one is always returned.
+
 
 TODO
 ----

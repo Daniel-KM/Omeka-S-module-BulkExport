@@ -6,7 +6,7 @@
       "dctype:Collection"
   ],
   "o:id": 8,
-  "o:is_public": false,
+  "o:is_public": true,
   "o:owner": {
       "@id": "https://localhost/api/users/1",
       "o:id": 1

@@ -3,7 +3,7 @@
   "@id": "https://localhost/api/items/1",
   "@type": "o:Item",
   "o:id": 1,
-  "o:is_public": false,
+  "o:is_public": true,
   "o:owner": {
     "@id": "https://localhost/api/users/1",
     "o:id": 1

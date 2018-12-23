@@ -101,7 +101,10 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
             ['Foo Item Set', 10, 'item_sets', 0],
             ['Foo Item', 10, 'items', 1],
             ['Foo Media', 10, 'media', 2],
-            ['foo item set', 10, 'item_sets', 3],
+            // Unlike CsvImport, the first one is always returned in case of a
+            // insensitive duplicate..
+            // ['foo item set', 10, 'item_sets', 3],
+            ['foo item set', 10, 'item_sets', 0],
             ['unknown', 10, 'item_sets', null],
             ['unknown', 10, 'items', null],
             ['unknown', 10, 'media', null],
@@ -129,10 +132,16 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
     {
         return [
             [['Foo Item Set'], 10, 'item_sets', [0]],
-            [['Foo Item Set', 'foo item set'], 10, 'item_sets', [0, 3]],
-            [['foo item set', 'Foo Item Set'], 10, 'item_sets', [3, 0]],
-            [['foo item set', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, 0]],
-            [['foo item set', 'unknown', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, null, 0]],
+            // Unlike CsvImport, the first one is always returned in case of a
+            // insensitive duplicate..
+            // [['Foo Item Set', 'foo item set'], 10, 'item_sets', [0, 3]],
+            // [['foo item set', 'Foo Item Set'], 10, 'item_sets', [3, 0]],
+            // [['foo item set', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, 0]],
+            // [['foo item set', 'unknown', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, null, 0]],
+            [['Foo Item Set', 'foo item set'], 10, 'item_sets', [0, 0]],
+            [['foo item set', 'Foo Item Set'], 10, 'item_sets', [0, 0]],
+            [['foo item set', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [0, 0]],
+            [['foo item set', 'unknown', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [0, null, 0]],
         ];
     }
 

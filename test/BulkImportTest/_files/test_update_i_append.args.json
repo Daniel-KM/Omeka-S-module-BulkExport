@@ -43,7 +43,8 @@
       "action": "append",
       "action_unidentified": "skip",
       "identifier_name": [
-        "dcterms:title"
+        "dcterms:title",
+        "dcterms:identifier"
       ],
       "allow_duplicate_identifiers": false,
       "resource_type": "items",
