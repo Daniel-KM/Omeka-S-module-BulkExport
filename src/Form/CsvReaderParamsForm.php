@@ -19,7 +19,8 @@ class CsvReaderParamsForm extends CsvReaderConfigForm
                 'label' => 'CSV file', // @translate
             ],
             'attributes' => [
-                'file',
+                'id' => 'file',
+                'required' => true,
             ],
         ]);
 
