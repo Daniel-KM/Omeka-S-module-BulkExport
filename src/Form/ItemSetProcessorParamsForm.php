@@ -1,7 +1,7 @@
 <?php
 namespace BulkImport\Form;
 
-class ItemProcessorParamsForm extends ItemProcessorConfigForm
+class ItemSetProcessorParamsForm extends ItemSetProcessorConfigForm
 {
     public function init()
     {
@@ -18,17 +18,10 @@ class ItemProcessorParamsForm extends ItemProcessorConfigForm
     {
         $mapping = parent::prependMappingOptions();
         return array_merge_recursive($mapping, [
-            'item_sets' => [
-                'label' => 'Item sets', // @translate
+            'metadata' => [
+                'label' => 'Resource metadata', // @translate
                 'options' => [
-                    'o:item_set' => 'Internal id', // @translate
-                ],
-            ],
-            'media' => [
-                'label' => 'Media', // @translate
-                'options' => [
-                    'url' => 'Url', // @translate
-                    'sideload' => 'File (via sideload)', // @translate
+                    'o:is_open' => 'Openness', // @translate
                 ],
             ],
         ]);

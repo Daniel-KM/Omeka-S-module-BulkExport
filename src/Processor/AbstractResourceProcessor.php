@@ -166,24 +166,6 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                         $resource[$target][] = $resourceProperty;
                     }
                     break;
-                case 'url':
-                    foreach ($values as $value) {
-                        $media = [];
-                        $media['o:is_public'] = true;
-                        $media['o:ingester'] = 'url';
-                        $media['ingest_url'] = $value;
-                        $resource['o:media'][] = $media;
-                    }
-                    break;
-                case 'sideload':
-                    foreach ($values as $value) {
-                        $media = [];
-                        $media['o:is_public'] = true;
-                        $media['o:ingester'] = 'sideload';
-                        $media['ingest_filename'] = $value;
-                        $resource['o:media'][] = $media;
-                    }
-                    break;
                 case 'o:is_public':
                     $value = array_pop($values);
                     $resource['o:is_public'] = in_array(strtolower($value), ['false', 'no', 'off', 'private'])
@@ -191,10 +173,22 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                         : (bool) $value;
                     break;
                 default:
-                    $resource[$target] = array_pop($values);
+                    $this->processCellDefault($resource, $target, $values);
                     break;
             }
         }
+    }
+
+    /**
+     * Process one cell for a non-managed target.
+     *
+     * @param ArrayObject $resource
+     * @param string $target
+     * @param array $values
+     */
+    protected function processCellDefault(ArrayObject $resource, $target, array $values)
+    {
+        $resource[$target] = array_pop($values);
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 namespace BulkImport\Processor;
 
+use ArrayObject;
 use BulkImport\Form\ItemProcessorConfigForm;
 use BulkImport\Form\ItemProcessorParamsForm;
 use Zend\Form\Form;
@@ -44,5 +45,37 @@ class ItemProcessor extends AbstractResourceProcessor
         }
         $resource['o:media'] = [];
         return $resource;
+    }
+
+    protected function processCellDefault(ArrayObject $resource, $target, array $values)
+    {
+        switch ($target) {
+            case 'o:item_set':
+                foreach ($values as $value) {
+                    $resource['o:item_set'][] = ['o:id' => $value];
+                }
+                break;
+            case 'url':
+                foreach ($values as $value) {
+                    $media = [];
+                    $media['o:is_public'] = true;
+                    $media['o:ingester'] = 'url';
+                    $media['ingest_url'] = $value;
+                    $resource['o:media'][] = $media;
+                }
+                break;
+            case 'sideload':
+                foreach ($values as $value) {
+                    $media = [];
+                    $media['o:is_public'] = true;
+                    $media['o:ingester'] = 'sideload';
+                    $media['ingest_filename'] = $value;
+                    $resource['o:media'][] = $media;
+                }
+                break;
+            default:
+                parent::processCellDefault($resource, $target, $values);
+                break;
+        }
     }
 }

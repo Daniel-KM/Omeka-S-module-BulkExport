@@ -43,6 +43,10 @@ return [
             Form\ImporterStartForm::class => Service\Form\FormFactory::class,
             Form\ItemProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\ItemProcessorParamsForm::class => Service\Form\FormFactory::class,
+            Form\ItemSetProcessorConfigForm::class => Service\Form\FormFactory::class,
+            Form\ItemSetProcessorParamsForm::class => Service\Form\FormFactory::class,
+            Form\MediaProcessorConfigForm::class => Service\Form\FormFactory::class,
+            Form\MediaProcessorParamsForm::class => Service\Form\FormFactory::class,
             Form\ResourceProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\ResourceProcessorParamsForm::class => Service\Form\FormFactory::class,
         ],
@@ -132,6 +136,8 @@ return [
         ],
         'processors' => [
             'items' => Processor\ItemProcessor::class,
+            'item_sets' => Processor\ItemSetProcessor::class,
+            'media' => Processor\MediaProcessor::class,
         ],
     ],
 ];

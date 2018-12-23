@@ -1,0 +1,50 @@
+<?php
+namespace BulkImport\Form;
+
+use Omeka\Form\Element\ResourceSelect;
+
+class MediaProcessorConfigForm extends ResourceProcessorConfigForm
+{
+    protected function addFieldsets()
+    {
+        parent::addFieldsets();
+
+        $serviceLocator = $this->getServiceLocator();
+        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('url');
+
+        $this->add([
+            'name' => 'o:item',
+            'type' => ResourceSelect::class,
+            'options' => [
+                'label' => 'Item', // @translate
+                'empty_option' => 'Select one item…', // @translate
+                'resource_value_options' => [
+                    'resource' => 'items',
+                    'query' => [],
+                    'option_text_callback' => function ($resource) {
+                        return $resource->displayTitle();
+                    },
+                ],
+            ],
+            'attributes' => [
+                'id' => 'o-item',
+                'class' => 'chosen-select',
+                'multiple' => false,
+                'required' => false,
+                'data-placeholder' => 'Select one item…', // @translate
+                'data-api-base-url' => $urlHelper('api/default', ['resource' => 'items']),
+            ],
+        ]);
+    }
+
+    protected function addInputFilter()
+    {
+        parent::addInputFilter();
+
+        $inputFilter = $this->getInputFilter();
+        $inputFilter->add([
+            'name' => 'o:item',
+            'required' => false,
+        ]);
+    }
+}
