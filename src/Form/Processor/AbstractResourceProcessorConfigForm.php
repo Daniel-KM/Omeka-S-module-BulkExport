@@ -82,6 +82,31 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'id' => 'o-is-public',
             ],
         ]);
+
+        $this->add([
+            'name' => 'identifier_name',
+            'type' => PropertySelect::class,
+            'options' => [
+                'label' => 'Identifier name', // @translate
+                'info' => 'Allows to identify existing resources, for example to attach a media to an existing item or to update a resource. It is always recommended to set one ore more unique identifiers to all resources, with a prefix.', // @translate
+                'empty_option' => '', // @translate
+                'prepend_value_options' => [
+                    'internal_id' => 'Internal id', // @translate
+                ],
+                'term_as_value' => true,
+            ],
+            'attributes' => [
+                'id' => 'identifier_name',
+                'multiple' => true,
+                'required' =>false,
+                'value' => [
+                    'internal_id',
+                    'dcterms:identifier',
+                ],
+                'class' => 'chosen-select',
+                'data-placeholder' => 'Select an identifier name…', // @translate
+            ],
+        ]);
     }
 
     protected function addFieldsets()
@@ -158,6 +183,10 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         ]);
         $inputFilter->add([
             'name' => 'o:is_public',
+            'required' => false,
+        ]);
+        $inputFilter->add([
+            'name' => 'identifier_name',
             'required' => false,
         ]);
     }

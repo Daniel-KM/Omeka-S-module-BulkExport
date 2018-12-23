@@ -39,6 +39,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected $api;
 
     /**
+     * @var \BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     */
+    protected $findResourcesFromIdentifiers;
+
+    /**
+     * @var string|int|array
+     */
+    protected $identifierName;
+
+    /**
      * @var array
      */
     protected $properties;
@@ -143,14 +153,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             'o:resource_template' => null,
             'o:resource_class' => null,
             'o:is_public' => null,
+            'identifier_name' => null,
             'entries_by_batch' => null,
         ];
-        $values += $defaults;
-
-        $args['o:resource_template'] = $values['o:resource_template'];
-        $args['o:resource_class'] = $values['o:resource_class'];
-        $args['o:is_public'] = $values['o:is_public'];
-        $args['entries_by_batch'] = $values['entries_by_batch'];
+        $result = array_intersect_key($values, $defaults) + $args->getArrayCopy() + $defaults;
+        $args->exchangeArray($result);
     }
 
     protected function handleFormSpecific(ArrayObject $args, array $values)
@@ -166,6 +173,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         // Filter the mapping to avoid to loop of entry without targets.
         $this->mapping = array_filter($mapping);
         unset($mapping);
+
+        $this->prepareIdentifierName();
 
         $batch = (int) $this->getParam('entries_by_batch') ?: self::ENTRIES_BY_BATCH;
 
@@ -646,6 +655,38 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         return $mapping;
     }
 
+    protected function prepareIdentifierName()
+    {
+        $this->identifierName = $this->getParam('identifier_name', ['internal_id', 'dcterms:identifier']);
+        if (empty($this->identifierName)) {
+            $this->logger->warn(
+                'No identifier name was selected.' // @translate
+            );
+            $this->identifierName = null;
+            return;
+        }
+
+        // For quicker search, prepare the ids of the properties.
+        $isSingle = !is_array($this->identifierName);
+        if ($isSingle) {
+            $this->identifierName = $this->getPropertyId($this->identifierName) ?: $this->identifierName;
+            return;
+        }
+
+        foreach ($this->identifierName as $key => $idName) {
+            $this->identifierName[$key] = $this->getPropertyId($idName) ?: $idName;
+        }
+        $this->identifierName = array_filter($this->identifierName);
+        if (count($this->identifierName) === 1) {
+            $this->identifierName = reset($this->identifierName);
+        } elseif (empty($this->identifierName)) {
+            $this->logger->err(
+                'Invalid identifier names: check your params.' // @translate
+            );
+            $this->identifierName = null;
+        }
+    }
+
     /**
      * Trim all whitespaces.
      *
@@ -681,5 +722,54 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         }
         return $this->api;
+    }
+
+    /**
+     * Find a list of resource ids from a list of identifiers (or one id).
+     *
+     * When there are true duplicates and case insensitive duplicates, the first
+     * case sensitive is returned, else the first case insensitive resource.
+     *
+     * @todo Manage Media source html.
+     *
+     * @uses\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     *
+     * @param array|string $identifiers Identifiers should be unique. If a
+     * string is sent, the result will be the resource.
+     * @param string $resourceType The resource type if any.
+     * @param string|int|array $identifierName Property as integer or term,
+     * "internal_id", a media ingester (url or file), or an associative array
+     * with multiple conditions (for media source). May be a list of identifier
+     * metadata names, in which case the identifiers are searched in a list of
+     * properties and/or in internal ids.
+     * @return array|int|null Associative array with the identifiers as key and the ids
+     * or null as value. Order is kept, but duplicate identifiers are removed.
+     * If $identifiers is a string, return directly the resource id, or null.
+     */
+    protected function findResourcesFromIdentifiers($identifiers, $resourceType = null, $identifierName = null)
+    {
+        if (!$this->findResourcesFromIdentifiers) {
+            $this->findResourcesFromIdentifiers = $this->getServiceLocator()->get('ControllerPluginManager')
+                // Use class name to use it even when CsvImport is installed.
+                ->get(\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class);
+        }
+
+        $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
+        $identifierName = $identifierName ?: $this->identifierName;
+        return $findResourcesFromIdentifiers($identifiers, $identifierName, $resourceType);
+    }
+
+    /**
+     * Find a resource id from a an identifier.
+     *
+     * @param string $identifier
+     * @param string $resourceType The resource type if any.
+     * @param string|int|array $identifierName Property as integer or term,
+     * media ingester or "internal_id", or an array with multiple conditions.
+     * @return int|null
+     */
+    protected function findResourceFromIdentifier($identifier, $resourceType = null, $identifierName = null)
+    {
+        return $this->findResourcesFromIdentifiers($identifier, $resourceType, $identifierName);
     }
 }

@@ -67,6 +67,15 @@ return [
             'BulkImport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
         ],
     ],
+    'controller_plugins' => [
+        'factories' => [
+            Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class => Service\ControllerPlugin\FindResourcesFromIdentifiersFactory::class,
+        ],
+        'aliases' => [
+            'findResourcesFromIdentifiers' => Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class,
+            'findResourceFromIdentifier' => Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class,
+        ],
+    ],
     'navigation' => [
         'AdminModule' => [
             'bulk' => [

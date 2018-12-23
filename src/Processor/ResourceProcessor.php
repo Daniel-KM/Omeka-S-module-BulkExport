@@ -28,7 +28,10 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormItem(ArrayObject $args, array $values)
     {
         if (isset($values['o:item_set'])) {
-            $args['o:item_set'] = $values['o:item_set'];
+            $itemSetIds = $this->findResourcesFromIdentifiers($values['o:item_set'], 'item_sets', 'internal_id');
+            foreach ($itemSetIds as $itemSetId) {
+                $args['o:item_set'][] = ['o:id' => $itemSetId];
+            }
         }
     }
 
@@ -42,7 +45,10 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormMedia(ArrayObject $args, array $values)
     {
         if (isset($values['o:item'])) {
-            $args['o:item'] = $values['o:item'];
+            $itemId = $this->findResourceFromIdentifier($values['o:item'], 'items', 'internal_id');
+            if ($itemId) {
+                $args['o:item'] = ['o:id' => $itemId];
+            }
         }
     }
 
@@ -56,10 +62,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function baseItem(ArrayObject $resource)
     {
-        $itemSetIds = $this->getParam('o:item_set', []);
-        foreach ($itemSetIds as $itemSetId) {
-            $resource['o:item_set'][] = ['o:id' => $itemSetId];
-        }
+        $resource['o:item_set'] = $this->getParam('o:item_set', []);
         $resource['o:media'] = [];
     }
 
@@ -71,8 +74,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function baseMedia(ArrayObject $resource)
     {
-        $itemId = $this->getParam('o:item', null);
-        $resource['o:item'] = ['o:id' => $itemId];
+        $resource['o:item'] = $this->getParam('o:item') ?: ['o:id' => null];
     }
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
@@ -135,8 +137,9 @@ class ResourceProcessor extends AbstractResourceProcessor
     {
         switch ($target['target']) {
             case 'o:item_set':
-                foreach ($values as $value) {
-                    $resource['o:item_set'][] = ['o:id' => $value];
+                $ids = $this->findResourcesFromIdentifiers($values, 'item_sets');
+                foreach ($ids as $id) {
+                    $resource['o:item_set'][] = ['o:id' => $id];
                 }
                 return true;
             case 'url':
@@ -210,7 +213,8 @@ class ResourceProcessor extends AbstractResourceProcessor
         switch ($target['target']) {
             case 'o:item':
                 $value = array_pop($values);
-                $resource['o:item'] = ['o:id' => $value];
+                $itemId = $this->findResourceFromIdentifier($value, 'items');
+                $resource['o:item'] = ['o:id' => $itemId];
                 return true;
             case 'url':
                 $value = array_pop($values);

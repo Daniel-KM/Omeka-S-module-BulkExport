@@ -245,9 +245,14 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
 
     protected function findResourcesFromInternalIds($identifiers, $resourceType)
     {
+        $identifiers = array_filter(array_map('intval', $identifiers));
+        if (empty($identifiers)) {
+            return [];
+        }
+
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
-        $identifiers = array_map('intval', $identifiers);
+
         $quotedIdentifiers = implode(',', $identifiers);
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
