@@ -137,7 +137,7 @@ class ResourceProcessor extends AbstractResourceProcessor
             case 'o:media {dcterms:title}':
                 foreach ($values as $value) {
                     $resourceProperty = [
-                        'property_id' => $this->getProperty($target['target'])->getId(),
+                        'property_id' => $this->getPropertyId($target['target']),
                         'type' => 'literal',
                         '@value' => $value,
                     ];

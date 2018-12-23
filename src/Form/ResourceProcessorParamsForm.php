@@ -21,7 +21,7 @@ class ResourceProcessorParamsForm extends ResourceProcessorConfigForm
                 'label' => 'Resource metadata', // @translate
                 'options' => [
                     'resource_type' => 'Resource type', // @translate
-                    'o:resource_template' => 'Resource template id', // @translate
+                    'o:resource_template' => 'Resource template', // @translate
                     'o:resource_class' => 'Resource class', // @translate
                     'o:is_public' => 'Visibility public/private', // @translate
                 ],

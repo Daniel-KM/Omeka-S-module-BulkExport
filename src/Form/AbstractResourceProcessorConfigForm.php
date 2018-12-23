@@ -133,7 +133,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
             'metadata' => [
                 'label' => 'Resource metadata', // @translate
                 'options' => [
-                    'o:resource_template' => 'Resource template id', // @translate
+                    'o:resource_template' => 'Resource template', // @translate
                     'o:resource_class' => 'Resource class', // @translate
                     'o:is_public' => 'Visibility public/private', // @translate
                 ],

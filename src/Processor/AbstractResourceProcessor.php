@@ -50,6 +50,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     /**
      * @var array
      */
+    protected $resourceTemplates;
+
+    /**
+     * @var array
+     */
     protected $dataTypes;
 
     /**
@@ -294,13 +299,14 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         switch ($target['target']) {
             case 'o:resource_template':
                 $value = array_pop($values);
-                $resource['o:resource_template'] = $value
-                    ? ['o:id' => $value]
-                    : null;
+                $resourceTemplateId =$this->getResourceTemplateId($value);
+                if ($resourceTemplateId) {
+                    $resource['o:resource_template'] = ['o:id' => $resourceTemplateId];
+                }
                 return true;
             case 'o:resource_class':
                 $value = array_pop($values);
-                $resourceClassId = $this->getResourceClass($value);
+                $resourceClassId =$this->getResourceClassId($value);
                 if ($resourceClassId) {
                     $resource['o:resource_class'] = ['o:id' => $resourceClassId];
                 }
@@ -376,36 +382,36 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * Check if a string is a managed term.
+     * Check if a string or a id is a managed term.
      *
-     * @param string $term
+     * @param string|int $termOrId
      * @return bool
      */
-    protected function isTerm($term)
+    protected function isPropertyTerm($termOrId)
     {
-        return $this->getProperty($term) !== null;
+        return $this->getPropertyId($termOrId) !== null;
     }
 
     /**
-     * Get a property by term.
+     * Get a property id by term or id.
      *
-     * @param string $term
-     * @return \Omeka\Entity\Property|null
+     * @param string|int $termOrId
+     * @return int|null
      */
-    protected function getProperty($term)
+    protected function getPropertyId($termOrId)
     {
-        $properties = $this->getProperties();
-        return isset($properties[$term])
-            ? $properties[$term]
-            : null;
+        $propertyIds = $this->getPropertyIds();
+        return is_numeric($termOrId)
+            ? (array_search($termOrId, $propertyIds) ? $termOrId : null)
+            : (isset($propertyIds[$termOrId]) ? $propertyIds[$termOrId] : null);
     }
 
     /**
-     * Get all properties by term.
+     * Get all property ids by term.
      *
-     * @return \Omeka\Entity\Property[]
+     * @return array Associative array of ids by term.
      */
-    protected function getProperties()
+    protected function getPropertyIds()
     {
         if (isset($this->properties)) {
             return $this->properties;
@@ -416,43 +422,43 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             ->search('properties', [], ['responseContent' => 'resource'])->getContent();
         foreach ($properties as $property) {
             $term = $property->getVocabulary()->getPrefix() . ':' . $property->getLocalName();
-            $this->properties[$term] = $property;
+            $this->properties[$term] = $property->getId();
         }
 
         return $this->properties;
     }
 
     /**
-     * Check if a string is a managed term for resource class.
+     * Check if a string or a id is a resource class.
      *
-     * @param string $term
+     * @param string|int $termOrId
      * @return bool
      */
-    protected function isClassTerm($term)
+    protected function isResourceClass($termOrId)
     {
-        return $this->getResourceClass($term) !== null;
+        return $this->getResourceClassId($termOrId) !== null;
     }
 
     /**
-     * Get a resource class by term.
+     * Get a resource class by term or by id.
      *
-     * @param string $term
-     * @return \Omeka\Entity\ResourceClass|null
+     * @param string|int $termOrId
+     * @return int|null
      */
-    protected function getResourceClass($term)
+    protected function getResourceClassId($termOrId)
     {
-        $resourceClasses = $this->getResourceClasses();
-        return isset($resourceClasses[$term])
-            ? $resourceClasses[$term]
-            : null;
+        $resourceClassIds = $this->getResourceClassIds();
+        return is_numeric($termOrId)
+            ? (array_search($termOrId, $resourceClassIds) ? $termOrId : null)
+            : (isset($resourceClassIds[$termOrId]) ? $resourceClassIds[$termOrId] : null);
     }
 
     /**
      * Get all resource classes by term.
      *
-     * @return \Omeka\Entity\ResourceClass[]
+     * @return array Associative array of ids by term.
      */
-    protected function getResourceClasses()
+    protected function getResourceClassIds()
     {
         if (isset($this->resourceClasses)) {
             return $this->resourceClasses;
@@ -463,10 +469,56 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             ->search('resource_classes', [], ['responseContent' => 'resource'])->getContent();
         foreach ($resourceClasses as $resourceClass) {
             $term = $resourceClass->getVocabulary()->getPrefix() . ':' . $resourceClass->getLocalName();
-            $this->resourceClasses[$term] = $resourceClass;
+            $this->resourceClasses[$term] = $resourceClass->getId();
         }
 
         return $this->resourceClasses;
+    }
+
+    /**
+     * Check if a string or a id is a resource template.
+     *
+     * @param string|int $labelOrId
+     * @return bool
+     */
+    protected function isResourceTemplate($labelOrId)
+    {
+        return $this->getResourceTemplateId($labelOrId) !== null;
+    }
+
+    /**
+     * Get a resource template by label or by id.
+     *
+     * @param string|int $labelOrId
+     * @return int|null
+     */
+    protected function getResourceTemplateId($labelOrId)
+    {
+        $resourceTemplateIds = $this->getResourceTemplateIds();
+        return is_numeric($labelOrId)
+            ? (array_search($labelOrId, $resourceTemplateIds) ? $labelOrId : null)
+            : (isset($resourceTemplateIds[$labelOrId]) ? $resourceTemplateIds[$labelOrId] : null);
+    }
+
+    /**
+     * Get all resource templates by label.
+     *
+     * @return array Associative array of ids by label.
+     */
+    protected function getResourceTemplateIds()
+    {
+        if (isset($this->resourceTemplates)) {
+            return $this->resourceTemplates;
+        }
+
+        $this->resourceTemplate = [];
+        $resourceTemplates = $this->api()
+            ->search('resource_templates', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($resourceTemplates as $resourceTemplate) {
+            $this->resourceTemplates[$resourceTemplate->getLabel()] = $resourceTemplate->getId();
+        }
+
+        return $this->resourceTemplates;
     }
 
     /**
@@ -531,9 +583,9 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 $result = [];
                 $result['field'] = $metadata['field'];
                 $result['target'] = $target;
-                $property = $this->getProperty($target);
-                if ($property) {
-                    $result['value']['property_id'] = $property->getId();
+                $propertyId = $this->getPropertyId($target);
+                if ($propertyId) {
+                    $result['value']['property_id'] = $propertyId;
                     $result['value']['type'] = $this->getDataType($metadata['type']) ?: 'literal';
                     $result['value']['@language'] = $metadata['@language'];
                     $result['value']['is_public'] = true;
