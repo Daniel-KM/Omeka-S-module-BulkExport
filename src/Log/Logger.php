@@ -1,7 +1,7 @@
 <?php
-namespace Import\Log;
+namespace BulkImport\Log;
 
-use Import\Entity\Import as ImportEntity;
+use BulkImport\Entity\Import as ImportEntity;
 use Zend\Log\Logger as ZendLogger;
 
 class Logger extends ZendLogger

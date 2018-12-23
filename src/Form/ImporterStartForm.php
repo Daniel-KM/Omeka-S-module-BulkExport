@@ -1,7 +1,7 @@
 <?php
-namespace Import\Form;
+namespace BulkImport\Form;
 
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;

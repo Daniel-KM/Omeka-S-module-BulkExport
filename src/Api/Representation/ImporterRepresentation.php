@@ -1,9 +1,9 @@
 <?php
-namespace Import\Api\Representation;
+namespace BulkImport\Api\Representation;
 
-use Import\Interfaces\Configurable;
-use Import\Processor\Manager as ProcessorManager;
-use Import\Reader\Manager as ReaderManager;
+use BulkImport\Interfaces\Configurable;
+use BulkImport\Processor\Manager as ProcessorManager;
+use BulkImport\Reader\Manager as ReaderManager;
 use Omeka\Api\Adapter\AdapterInterface;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Entity\EntityInterface;

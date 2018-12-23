@@ -1,5 +1,5 @@
 <?php
-namespace Import\Form;
+namespace BulkImport\Form;
 
 use Zend\Form\Element;
 use Zend\Form\Fieldset;

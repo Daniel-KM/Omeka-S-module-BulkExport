@@ -1,5 +1,5 @@
 <?php
-namespace Import\Entity;
+namespace BulkImport\Entity;
 
 use Omeka\Entity\AbstractEntity;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Import;
+namespace BulkImport;
 
 return [
     'service_manager' => [
@@ -44,9 +44,9 @@ return [
         'factories' => [
             // Class is not used as key, since it's set dynamically by sub-route
             // and it should be available in acl (so alias is mapped later).
-            'Import\Controller\Admin\Import' => Service\Controller\ControllerFactory::class,
-            'Import\Controller\Admin\Importer' => Service\Controller\ControllerFactory::class,
-            'Import\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
+            'BulkImport\Controller\Admin\Import' => Service\Controller\ControllerFactory::class,
+            'BulkImport\Controller\Admin\Importer' => Service\Controller\ControllerFactory::class,
+            'BulkImport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
         ],
     ],
     'navigation' => [
@@ -54,7 +54,7 @@ return [
             [
                 'label' => 'Import', // @translate
                 'route' => 'admin/import',
-                'resource' => 'Import\Controller\Admin\Index',
+                'resource' => 'BulkImport\Controller\Admin\Index',
             ],
         ],
     ],
@@ -67,7 +67,7 @@ return [
                         'options' => [
                             'route'    => '/import',
                             'defaults' => [
-                                '__NAMESPACE__' => 'Import\Controller\Admin',
+                                '__NAMESPACE__' => 'BulkImport\Controller\Admin',
                                 '__ADMIN__' => true,
                                 'controller' => 'Index',
                                 'action'     => 'index',

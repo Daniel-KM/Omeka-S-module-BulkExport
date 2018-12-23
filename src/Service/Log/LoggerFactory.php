@@ -1,7 +1,7 @@
 <?php
-namespace Import\Service\Log;
+namespace BulkImport\Service\Log;
 
-use Import\Log\Writer;
+use BulkImport\Log\Writer;
 use Interop\Container\ContainerInterface;
 use Zend\Log\Filter\Priority;
 use Zend\ServiceManager\Factory\FactoryInterface;

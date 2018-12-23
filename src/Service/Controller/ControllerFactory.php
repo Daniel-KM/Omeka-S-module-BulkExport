@@ -1,5 +1,5 @@
 <?php
-namespace Import\Service\Controller;
+namespace BulkImport\Service\Controller;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;

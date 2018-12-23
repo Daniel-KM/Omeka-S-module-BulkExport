@@ -1,13 +1,13 @@
 <?php
-namespace Import\Controller\Admin;
+namespace BulkImport\Controller\Admin;
 
-use Import\Form\ImporterDeleteForm;
-use Import\Form\ImporterForm;
-use Import\Form\ImporterStartForm;
-use Import\Interfaces\Parametrizable;
-use Import\Interfaces\Processor;
-use Import\Job\Import as JobImport;
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Form\ImporterDeleteForm;
+use BulkImport\Form\ImporterForm;
+use BulkImport\Form\ImporterStartForm;
+use BulkImport\Interfaces\Parametrizable;
+use BulkImport\Interfaces\Processor;
+use BulkImport\Job\Import as JobImport;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Omeka\Media\Ingester\Manager as MediaIngesterManager ;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;

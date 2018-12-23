@@ -1,7 +1,7 @@
 <?php
-namespace Import\Controller\Admin;
+namespace BulkImport\Controller\Admin;
 
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;

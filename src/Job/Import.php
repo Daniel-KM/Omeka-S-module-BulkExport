@@ -1,11 +1,11 @@
 <?php
-namespace Import\Job;
+namespace BulkImport\Job;
 
-use Import\Log\Logger;
-use Import\Interfaces\Configurable;
-use Import\Interfaces\Parametrizable;
-use Import\Processor\Manager as ProcessorManager;
-use Import\Reader\Manager as ReaderManager;
+use BulkImport\Log\Logger;
+use BulkImport\Interfaces\Configurable;
+use BulkImport\Interfaces\Parametrizable;
+use BulkImport\Processor\Manager as ProcessorManager;
+use BulkImport\Reader\Manager as ReaderManager;
 use Omeka\Job\AbstractJob;
 
 class Import extends AbstractJob

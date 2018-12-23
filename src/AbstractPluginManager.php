@@ -1,7 +1,7 @@
 <?php
-namespace Import;
+namespace BulkImport;
 
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ResponseCollection;
 use Zend\ServiceManager\ServiceLocatorInterface;

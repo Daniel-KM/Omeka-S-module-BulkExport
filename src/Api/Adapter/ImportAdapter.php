@@ -1,10 +1,10 @@
 <?php
-namespace Import\Api\Adapter;
+namespace BulkImport\Api\Adapter;
 
+use BulkImport\Api\Representation\ImportRepresentation;
+use BulkImport\Entity\Import;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\QueryBuilder;
-use Import\Api\Representation\ImportRepresentation;
-use Import\Entity\Import;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;

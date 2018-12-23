@@ -1,15 +1,15 @@
 <?php
-namespace Import\Reader;
+namespace BulkImport\Reader;
 
-use Import\Entry\CsvRow;
-use Import\Form\CsvReaderConfigForm;
-use Import\Form\CsvReaderParamsForm;
-use Import\Interfaces\Configurable;
-use Import\Interfaces\Parametrizable;
-use Import\Interfaces\Reader;
-use Import\Traits\ConfigurableTrait;
-use Import\Traits\ParametrizableTrait;
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Entry\CsvRow;
+use BulkImport\Form\CsvReaderConfigForm;
+use BulkImport\Form\CsvReaderParamsForm;
+use BulkImport\Interfaces\Configurable;
+use BulkImport\Interfaces\Parametrizable;
+use BulkImport\Interfaces\Reader;
+use BulkImport\Traits\ConfigurableTrait;
+use BulkImport\Traits\ParametrizableTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

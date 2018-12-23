@@ -1,7 +1,7 @@
 <?php
-namespace Import\Entry;
+namespace BulkImport\Entry;
 
-use Import\Interfaces\Entry as EntryInterface;
+use BulkImport\Interfaces\Entry as EntryInterface;
 
 class CsvRow implements EntryInterface
 {

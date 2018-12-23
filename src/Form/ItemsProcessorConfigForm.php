@@ -1,7 +1,7 @@
 <?php
-namespace Import\Form;
+namespace BulkImport\Form;
 
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Omeka\Form\Element\ResourceSelect;
 use Zend\Form\Form;
 

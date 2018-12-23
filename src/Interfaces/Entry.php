@@ -1,5 +1,5 @@
 <?php
-namespace Import\Interfaces;
+namespace BulkImport\Interfaces;
 
 interface Entry extends \Iterator, \ArrayAccess
 {

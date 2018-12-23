@@ -1,7 +1,7 @@
 <?php
-namespace Import\Log;
+namespace BulkImport\Log;
 
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Log\Writer\AbstractWriter;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

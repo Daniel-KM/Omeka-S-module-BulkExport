@@ -1,13 +1,13 @@
 <?php
-namespace Import\Processor;
+namespace BulkImport\Processor;
 
-use Import\Interfaces\Configurable;
-use Import\Interfaces\Parametrizable;
-use Import\Log\Logger;
-use Import\Traits\ConfigurableTrait;
-use Import\Traits\ParametrizableTrait;
-use Import\Form\ItemsProcessorConfigForm;
-use Import\Form\ItemsProcessorParamsForm;
+use BulkImport\Interfaces\Configurable;
+use BulkImport\Interfaces\Parametrizable;
+use BulkImport\Log\Logger;
+use BulkImport\Traits\ConfigurableTrait;
+use BulkImport\Traits\ParametrizableTrait;
+use BulkImport\Form\ItemsProcessorConfigForm;
+use BulkImport\Form\ItemsProcessorParamsForm;
 use Zend\Form\Form;
 
 class ItemsProcessor extends AbstractProcessor implements Configurable, Parametrizable

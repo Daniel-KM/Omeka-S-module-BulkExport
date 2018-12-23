@@ -1,9 +1,9 @@
 <?php
-namespace Import\Processor;
+namespace BulkImport\Processor;
 
-use Import\Interfaces\Processor;
-use Import\Interfaces\Reader;
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Interfaces\Processor;
+use BulkImport\Interfaces\Reader;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

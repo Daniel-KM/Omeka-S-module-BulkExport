@@ -1,9 +1,9 @@
 <?php
 
-namespace Import;
+namespace BulkImport;
 
-use Import\Processor\ItemsProcessor;
-use Import\Reader\CsvReader;
+use BulkImport\Processor\ItemsProcessor;
+use BulkImport\Reader\CsvReader;
 use Omeka\Module\AbstractModule;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

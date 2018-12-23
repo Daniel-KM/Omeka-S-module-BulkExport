@@ -1,5 +1,5 @@
 <?php
-namespace Import\Form;
+namespace BulkImport\Form;
 
 use Omeka\Form\Element\ResourceSelect;
 use Zend\Form\Fieldset;
@@ -10,9 +10,9 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
     {
         parent::init();
 
-        /** @var \Import\Interfaces\Processor $processor */
+        /** @var \BulkImport\Interfaces\Processor $processor */
         $processor = $this->getOption('processor');
-        /** @var \Import\Interfaces\Reader $reader */
+        /** @var \BulkImport\Interfaces\Reader $reader */
         $reader = $processor->getReader();
 
         $this->add([

@@ -1,5 +1,5 @@
 <?php
-namespace Import\Api\Representation;
+namespace BulkImport\Api\Representation;
 
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 

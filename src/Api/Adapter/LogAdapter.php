@@ -1,9 +1,9 @@
 <?php
-namespace Import\Api\Adapter;
+namespace BulkImport\Api\Adapter;
 
+use BulkImport\Entity\Log;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\QueryBuilder;
-use Import\Entity\Log;
 use Omeka\Api\Adapter\AbstractEntityAdapter;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
@@ -18,7 +18,7 @@ class LogAdapter extends AbstractEntityAdapter
 
     public function getRepresentationClass()
     {
-        return \Import\Api\Representation\LogRepresentation::class;
+        return \BulkImport\Api\Representation\LogRepresentation::class;
     }
 
     public function getEntityClass()

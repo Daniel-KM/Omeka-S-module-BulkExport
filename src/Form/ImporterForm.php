@@ -1,10 +1,10 @@
 <?php
-namespace Import\Form;
+namespace BulkImport\Form;
 
-use Import\Entity\Importer;
-use Import\Reader\Manager as ReaderManager;
-use Import\Processor\Manager as ProcessorManager;
-use Import\Traits\ServiceLocatorAwareTrait;
+use BulkImport\Entity\Importer;
+use BulkImport\Reader\Manager as ReaderManager;
+use BulkImport\Processor\Manager as ProcessorManager;
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
@@ -65,8 +65,8 @@ class ImporterForm extends Form
         $fieldset = $this->get('importer_submit');
 
         $fieldset->add([
-            'type'  => Element\Submit::class,
             'name' => 'submit',
+            'type'  => Element\Submit::class,
             'attributes' => [
                 'id' => 'submitbutton',
                 'value' => 'Save', // @translate
