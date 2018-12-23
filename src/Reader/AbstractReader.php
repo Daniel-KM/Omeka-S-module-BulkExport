@@ -325,7 +325,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
             }
         } elseif ($mediaType !== $this->mediaType) {
             $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" has media type "{file_media_type}", not "{media_type}.', // @translate
+                'File "{filename}" has media type "{file_media_type}", not "{media_type}".', // @translate
                 ['filename' => $file['name'], 'file_media_type' => $mediaType, 'media_type' => $this->mediaType]
             );
             return false;

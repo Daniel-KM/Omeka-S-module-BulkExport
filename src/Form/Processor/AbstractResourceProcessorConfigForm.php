@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Form;
+namespace BulkImport\Form\Processor;
 
 use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Omeka\Form\Element\PropertySelect;

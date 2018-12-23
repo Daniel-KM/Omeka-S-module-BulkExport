@@ -4,8 +4,8 @@ namespace BulkImport\Reader;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
-use BulkImport\Form\SpreadsheetReaderConfigForm;
-use BulkImport\Form\OpenDocumentSpreadsheetReaderParamsForm;
+use BulkImport\Form\Reader\OpenDocumentSpreadsheetReaderParamsForm;
+use BulkImport\Form\Reader\SpreadsheetReaderConfigForm;
 use Log\Stdlib\PsrMessage;
 
 class OpenDocumentSpreadsheetReader extends AbstractReader

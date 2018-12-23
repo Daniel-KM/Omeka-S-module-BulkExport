@@ -1,8 +1,8 @@
 <?php
 namespace BulkImport\Reader;
 
-use BulkImport\Form\CsvReaderConfigForm;
-use BulkImport\Form\SpreadsheetReaderParamsForm;
+use BulkImport\Form\Reader\CsvReaderConfigForm;
+use BulkImport\Form\Reader\SpreadsheetReaderParamsForm;
 
 class SpreadsheetReader extends AbstractGenericReader
 {

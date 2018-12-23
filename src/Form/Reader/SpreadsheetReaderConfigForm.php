@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Form;
+namespace BulkImport\Form\Reader;
 
 use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;

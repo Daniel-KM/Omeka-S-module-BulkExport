@@ -2,8 +2,8 @@
 namespace BulkImport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\ItemSetProcessorConfigForm;
-use BulkImport\Form\ItemSetProcessorParamsForm;
+use BulkImport\Form\Processor\ItemSetProcessorConfigForm;
+use BulkImport\Form\Processor\ItemSetProcessorParamsForm;
 
 class ItemSetProcessor extends ResourceProcessor
 {

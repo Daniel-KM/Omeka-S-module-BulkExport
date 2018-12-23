@@ -2,8 +2,8 @@
 namespace BulkImport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\MediaProcessorConfigForm;
-use BulkImport\Form\MediaProcessorParamsForm;
+use BulkImport\Form\Processor\MediaProcessorConfigForm;
+use BulkImport\Form\Processor\MediaProcessorParamsForm;
 
 class MediaProcessor extends ResourceProcessor
 {

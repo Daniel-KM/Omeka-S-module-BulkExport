@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Form;
+namespace BulkImport\Form\Processor;
 
 class ItemSetProcessorParamsForm extends ItemSetProcessorConfigForm
 {

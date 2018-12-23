@@ -2,8 +2,8 @@
 namespace BulkImport\Reader;
 
 use Box\Spout\Common\Type;
-use BulkImport\Form\SpreadsheetReaderConfigForm;
-use BulkImport\Form\TsvReaderParamsForm;
+use BulkImport\Form\Reader\SpreadsheetReaderConfigForm;
+use BulkImport\Form\Reader\TsvReaderParamsForm;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

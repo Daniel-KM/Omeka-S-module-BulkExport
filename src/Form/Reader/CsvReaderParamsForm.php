@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport\Form;
+namespace BulkImport\Form\Reader;
 
 use Zend\Form\Element;
 
-class OpenDocumentSpreadsheetReaderParamsForm extends SpreadsheetReaderConfigForm
+class CsvReaderParamsForm extends CsvReaderConfigForm
 {
     protected $reader;
 
@@ -16,7 +16,7 @@ class OpenDocumentSpreadsheetReaderParamsForm extends SpreadsheetReaderConfigFor
             'name' => 'file',
             'type' => Element\File::class,
             'options' => [
-                'label' => 'OpenDocument Spreadsheet (ods)', // @translate
+                'label' => 'CSV file', // @translate
             ],
             'attributes' => [
                 'id' => 'file',

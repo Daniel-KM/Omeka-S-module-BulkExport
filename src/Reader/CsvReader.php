@@ -2,8 +2,8 @@
 namespace BulkImport\Reader;
 
 use Box\Spout\Common\Type;
-use BulkImport\Form\CsvReaderConfigForm;
-use BulkImport\Form\CsvReaderParamsForm;
+use BulkImport\Form\Reader\CsvReaderConfigForm;
+use BulkImport\Form\Reader\CsvReaderParamsForm;
 use Log\Stdlib\PsrMessage;
 use SplFileObject;
 
