@@ -253,12 +253,17 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 continue;
             }
 
-            $value = $entry[$sourceField];
-            $values = $multivalueSeparator !== ''
-                ? explode($multivalueSeparator, $value)
-                : [$value];
+            $values = $entry[$sourceField];
+            if ($multivalueSeparator !== '') {
+                $val = $values;
+                $values = [];
+                foreach ($val as $value) {
+                    $values += explode($multivalueSeparator, $value);
+                }
+            }
             $values = array_map([$this, 'trimUnicode'], $values);
             $values = array_filter($values, 'strlen');
+            $values = array_unique($values);
             if (!$values) {
                 $this->skippedSourceFields[] = $sourceField;
                 continue;

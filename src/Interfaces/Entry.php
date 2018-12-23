@@ -9,4 +9,12 @@ interface Entry extends \Iterator, \ArrayAccess, \Countable, \JsonSerializable
      * @return bool
      */
     public function isEmpty();
+
+    /**
+     * {@inheritDoc}
+     * @see \Iterator::current()
+     *
+     * @return array The list of values for the current field of the entry.
+     */
+    public function current();
 }

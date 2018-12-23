@@ -26,15 +26,18 @@ class Entry implements EntryInterface
 
     protected function init(array $fields, array $data)
     {
+        // The set fields should be kept set (for array_key_exists).
         foreach ($data as $i => $value) {
-            $this->data[$fields[$i]] = $value;
+            $this->data[$fields[$i]][] = $value;
         }
     }
 
     public function isEmpty()
     {
         $data = array_filter($this->data, function ($v) {
-            return strlen($v) > 0;
+            return count(array_filter($v, function($w) {
+                return strlen($w) > 0;
+            }));
         });
         return count($data) == 0;
     }
