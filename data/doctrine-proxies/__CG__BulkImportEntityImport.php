@@ -191,12 +191,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setReaderParams($value)
+    public function setReaderParams($readerParams)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderParams', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderParams', [$readerParams]);
 
-        return parent::setReaderParams($value);
+        return parent::setReaderParams($readerParams);
     }
 
     /**
@@ -213,12 +213,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setProcessorParams($value)
+    public function setProcessorParams($processorParams)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorParams', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorParams', [$processorParams]);
 
-        return parent::setProcessorParams($value);
+        return parent::setProcessorParams($processorParams);
     }
 
     /**
@@ -235,12 +235,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setStatus($value)
+    public function setStatus($status)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', [$status]);
 
-        return parent::setStatus($value);
+        return parent::setStatus($status);
     }
 
     /**
@@ -257,12 +257,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setStarted($value)
+    public function setStarted(\DateTime $started)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStarted', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStarted', [$started]);
 
-        return parent::setStarted($value);
+        return parent::setStarted($started);
     }
 
     /**
@@ -279,12 +279,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setEnded($value)
+    public function setEnded(\DateTime $ended)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setEnded', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setEnded', [$ended]);
 
-        return parent::setEnded($value);
+        return parent::setEnded($ended);
     }
 
     /**
@@ -301,12 +301,12 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setImporter($value)
+    public function setImporter(\BulkImport\Entity\Importer $importer)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImporter', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImporter', [$importer]);
 
-        return parent::setImporter($value);
+        return parent::setImporter($importer);
     }
 
     /**

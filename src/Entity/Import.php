@@ -48,7 +48,8 @@ class Import extends AbstractEntity
     /**
      * @Column(
      *     type="string",
-     *     nullable=true
+     *     nullable=true,
+     *     length=190
      * )
      */
     protected $status;

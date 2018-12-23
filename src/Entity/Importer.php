@@ -20,7 +20,8 @@ class Importer extends AbstractEntity
      * @var string
      * @Column(
      *     type="string",
-     *     nullable=true
+     *     nullable=true,
+     *     length=190
      * )
      */
     protected $name;
@@ -29,7 +30,8 @@ class Importer extends AbstractEntity
      * @var string
      * @Column(
      *     type="string",
-     *     nullable=true
+     *     nullable=true,
+     *     length=190
      * )
      */
     protected $readerName;
@@ -47,7 +49,8 @@ class Importer extends AbstractEntity
      * @var string
      * @Column(
      *     type="string",
-     *     nullable=true
+     *     nullable=true,
+     *     length=190
      * )
      */
     protected $processorName;

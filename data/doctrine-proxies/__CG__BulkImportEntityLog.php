@@ -191,12 +191,12 @@ class Log extends \BulkImport\Entity\Log implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setSeverity($value)
+    public function setSeverity($severity)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setSeverity', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setSeverity', [$severity]);
 
-        return parent::setSeverity($value);
+        return parent::setSeverity($severity);
     }
 
     /**
@@ -213,12 +213,12 @@ class Log extends \BulkImport\Entity\Log implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setMessage($value)
+    public function setMessage($message)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setMessage', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setMessage', [$message]);
 
-        return parent::setMessage($value);
+        return parent::setMessage($message);
     }
 
     /**
@@ -235,12 +235,12 @@ class Log extends \BulkImport\Entity\Log implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setParams($value)
+    public function setParams($params)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setParams', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setParams', [$params]);
 
-        return parent::setParams($value);
+        return parent::setParams($params);
     }
 
     /**
@@ -257,12 +257,12 @@ class Log extends \BulkImport\Entity\Log implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setAdded($value)
+    public function setAdded(\DateTime $added)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setAdded', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setAdded', [$added]);
 
-        return parent::setAdded($value);
+        return parent::setAdded($added);
     }
 
     /**
@@ -279,12 +279,12 @@ class Log extends \BulkImport\Entity\Log implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setImport($value)
+    public function setImport(\BulkImport\Entity\Import $import)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImport', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImport', [$import]);
 
-        return parent::setImport($value);
+        return parent::setImport($import);
     }
 
     /**

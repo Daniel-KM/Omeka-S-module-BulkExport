@@ -191,12 +191,12 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setName($value)
+    public function setName($name)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$name]);
 
-        return parent::setName($value);
+        return parent::setName($name);
     }
 
     /**
@@ -213,12 +213,12 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setReaderName($value)
+    public function setReaderName($readerName)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderName', [$readerName]);
 
-        return parent::setReaderName($value);
+        return parent::setReaderName($readerName);
     }
 
     /**
@@ -235,12 +235,12 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setReaderConfig($value)
+    public function setReaderConfig($readerConfig)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderConfig', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderConfig', [$readerConfig]);
 
-        return parent::setReaderConfig($value);
+        return parent::setReaderConfig($readerConfig);
     }
 
     /**
@@ -257,12 +257,12 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setProcessorName($value)
+    public function setProcessorName($processorName)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorName', [$processorName]);
 
-        return parent::setProcessorName($value);
+        return parent::setProcessorName($processorName);
     }
 
     /**
@@ -279,12 +279,12 @@ class Importer extends \BulkImport\Entity\Importer implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setProcessorConfig($value)
+    public function setProcessorConfig($processorConfig)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorConfig', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorConfig', [$processorConfig]);
 
-        return parent::setProcessorConfig($value);
+        return parent::setProcessorConfig($processorConfig);
     }
 
     /**

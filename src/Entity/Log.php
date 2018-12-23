@@ -23,7 +23,8 @@ class Log extends AbstractEntity
      * @var string
      * @Column(
      *     type="string",
-     *     nullable=true
+     *     nullable=true,
+     *     length=190
      * )
      */
     protected $severity;
