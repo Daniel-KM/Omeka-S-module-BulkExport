@@ -36,6 +36,10 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
                     'label' => $name,
                     'empty_option' => 'Select one or more properties…', // @translate
                     'term_as_value' => true,
+                    'prepend_value_options' => [
+                        'https:' => 'Url', // @translate
+                        'file:' => 'File (via sideload)', // @translate
+                    ],
                 ],
                 'attributes' => [
                     'required' => false,

@@ -39,9 +39,9 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         $values = $form->getData();
 
         $config = [
-            'o:item_set' => $values['o:item_set'],
             'o:resource_template' => $values['o:resource_template'],
             'o:resource_class' => $values['o:resource_class'],
+            'o:item_set' => $values['o:item_set'],
         ];
 
         $this->setConfig($config);
@@ -56,10 +56,10 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
     {
         $values = $form->getData();
         $params = [
-            'mapping' => $values['mapping'],
-            'o:item_set' => $values['o:item_set'],
             'o:resource_template' => $values['o:resource_template'],
             'o:resource_class' => $values['o:resource_class'],
+            'o:item_set' => $values['o:item_set'],
+            'mapping' => $values['mapping'],
         ];
         $this->setParams($params);
     }
@@ -99,6 +99,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
                 }
                 $value = $entry[$sourceField];
                 foreach ($targets as $target) {
+                    // TODO Develop file load as a feature, as there are too many changes in media handling for refactoring.
                     // Literal property.
                     $property = $this->getProperty($target);
                     if ($property) {
@@ -108,14 +109,18 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
                             'type' => 'literal',
                         ];
                         $item[] = [$itemProperty];
+                    } elseif (0 === strpos($target, 'https:') || 0 === strpos($target, 'http:')) {
+                        $file = [];
+                        $file['o:is_public'] = true;
+                        $file['o:ingester'] = 'url';
+                        $file['ingest_url'] = $value;
+                        $item['o:media'][] = $file;
                     } elseif (0 === strpos($target, 'file:')) {
-                        // TODO Develop as a feature, as there are too many changes in media handling for refactoring.
-                        // $strategy = substr($target, strpos($target, ':') + 1);
-                        // $strategy = ucfirst($strategy);
-                        // $files[] = [
-                        //    'strategy' => $strategy,
-                        //    'file' => $value,
-                        // ];
+                        $file = [];
+                        $file['o:is_public'] = true;
+                        $file['o:ingester'] = 'sideload';
+                        $file['ingest_filename'] = $value;
+                        $item['o:media'][] = $file;
                     } else {
                         $item[$target] = $value;
                     }
