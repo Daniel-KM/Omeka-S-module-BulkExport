@@ -105,6 +105,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
             'delimiter' => $values['delimiter'],
             'enclosure' => $values['enclosure'],
             'escape' => $values['escape'],
+            'separator' => $values['separator'],
         ];
 
         $this->setConfig($config);
@@ -139,6 +140,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
             'delimiter' => $values['delimiter'],
             'enclosure' => $values['enclosure'],
             'escape' => $values['escape'],
+            'separator' => $values['separator'],
         ]);
     }
 
@@ -150,7 +152,12 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
         $fields = fgetcsv($fh, 0, $delimiter, $enclosure, $escape);
         if (is_array($fields)) {
-            return array_map('trim', $fields);
+            return array_map([$this, 'trimUnicode'], $fields);
         }
+    }
+
+    protected function trimUnicode($string)
+    {
+        return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
     }
 }

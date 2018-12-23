@@ -46,5 +46,17 @@ class CsvReaderConfigForm extends Form
                 'value' => '\\',
             ],
         ]);
+        $this->add([
+            'name' => 'separator',
+            'type' => Element\Text::class,
+            'options' => [
+                'label' => 'Default multi-value separator', // @translate
+                'info' => 'If cells are multivalued, it is recommended to use a character that is never used, like "|" or a random string.', // @translate
+            ],
+            'attributes' => [
+                'id' => 'separator',
+                'value' => '',
+            ],
+        ]);
     }
 }
