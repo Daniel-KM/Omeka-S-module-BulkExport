@@ -251,7 +251,7 @@ SQL;
         $resource = $resources[$resourceType][$index];
         $resourceId = $resource->id();
         $resource = $this->api->read($resourceType, $resourceId)->getContent();
-        $this->assertNotEmpty($resource);
+        $this->assertNotEmpty($resource, sprintf('Error before testing deletion: %s #%d does not exist.', $resourceType, $resourceId));
 
         $this->performProcessForFile($filepath);
 

@@ -388,11 +388,13 @@ class ResourceProcessor extends AbstractResourceProcessor
         }
 
         if (empty($resource['o:item']['o:id'])) {
-            $this->logger->err(
-                'Skipped media index #{index}: no item is set', // @translate
-                ['index' => $this->indexResource]
-            );
-            return false;
+            if ($this->action !== self::ACTION_DELETE) {
+                $this->logger->err(
+                    'Skipped media index #{index}: no item is set', // @translate
+                    ['index' => $this->indexResource]
+                );
+                return false;
+            }
         }
 
         unset($resource['o:item_set']);
