@@ -9,7 +9,7 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'bulk-import importer');
+$this->htmlElement('body')->appendAttribute('class', 'bulk-importers bulk-imports edit');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $form->prepare();
 ?>
@@ -18,8 +18,7 @@ $form->prepare();
 
 <div id="content">
     <h2><?php echo $escape($translate('Start import')); ?></h2>
-    <h3><?php echo $escape($translate('Importer')); ?></h3>
-    <p><?php echo $importer->label(); ?></p>
+    <h3><?php echo $escape(sprintf($translate('Importer: %s'), $importer->label())); ?></h3>
     <?php if (isset($importArgs)): ?>
     <h3><?php echo $escape($translate('Parameters')); ?></h3>
     <div class="value">

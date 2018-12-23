@@ -28,6 +28,11 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      */
     protected $processor;
 
+    public function getControllerName()
+    {
+        return 'importer';
+    }
+
     public function getJsonLd()
     {
         $owner = $this->owner();
@@ -171,5 +176,19 @@ class ImporterRepresentation extends AbstractEntityRepresentation
             $this->processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
         }
         return $this->processorManager;
+    }
+
+    public function adminUrl($action = null, $canonical = false)
+    {
+        $url = $this->getViewHelper('Url');
+        return $url(
+            'admin/bulk/id',
+            [
+                'controller' => $this->getControllerName(),
+                'action' => $action,
+                'id' => $this->id(),
+            ],
+            ['force_canonical' => $canonical]
+        );
     }
 }

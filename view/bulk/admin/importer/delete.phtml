@@ -8,7 +8,7 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'bulk-import importer');
+$this->htmlElement('body')->appendAttribute('class', 'bulk-importers delete');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $form->prepare();
 ?>

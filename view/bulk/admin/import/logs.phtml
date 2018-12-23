@@ -10,7 +10,7 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'bulk-import import');
+$this->htmlElement('body')->appendAttribute('class', 'bulk-imports logs browse');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $severityNames = [
     \Zend\Log\Logger::EMERG => $escape($translate('Emergency')),
@@ -47,17 +47,17 @@ $severityNames = [
         <table class="tablesaw" data-tablesaw-mode="stack">
             <thead>
             <tr>
-                <th><?php echo $escape($translate('Time')); ?></th>
                 <th><?php echo $escape($translate('Message')); ?></th>
                 <th><?php echo $escape($translate('Severity')); ?></th>
+                <th><?php echo $escape($translate('Time')); ?></th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($logs as $log) { ?>
                 <tr>
-                    <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
                     <td><?php echo $log->message()->translate(); ?></td>
                     <td><?php echo $translate($log->severityLabel()); ?> </td>
+                    <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
                 </tr>
             <?php } ?>
             </tbody>

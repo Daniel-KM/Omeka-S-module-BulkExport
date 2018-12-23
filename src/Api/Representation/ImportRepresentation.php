@@ -20,6 +20,11 @@ class ImportRepresentation extends AbstractEntityRepresentation
         ];
     }
 
+    public function getControllerName()
+    {
+        return 'import';
+    }
+
     public function getJsonLdType()
     {
         return 'o-module-bulk:Import';
@@ -103,5 +108,19 @@ class ImportRepresentation extends AbstractEntityRepresentation
         $response = $this->getServiceLocator()->get('Omeka\ApiManager')
             ->search('logs', ['job_id' => $job->id(), 'limit' => 0]);
         return $response->getTotalResults();
+    }
+
+    public function adminUrl($action = null, $canonical = false)
+    {
+        $url = $this->getViewHelper('Url');
+        return $url(
+            'admin/bulk/id',
+            [
+                'controller' => $this->getControllerName(),
+                'action' => $action,
+                'id' => $this->id(),
+            ],
+            ['force_canonical' => $canonical]
+        );
     }
 }

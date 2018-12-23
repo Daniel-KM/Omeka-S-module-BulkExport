@@ -1,12 +1,14 @@
 /* Import: styles */
 
 @media screen {
-    header nav .bulk-import::before,
-    .bulk-import .subhead::before {
+    header nav .bulk-imports::before,
+    header nav .bulk-importers::before,
+    .bulk-imports .subhead::before,
+    .bulk-importers .subhead::before {
         content:"";
     }
-    .bulk-import .no-resources:before,
-    .bulk-import .no-resources:before {
+    .bulk-imports .no-resources:before,
+    .bulk-importers .no-resources:before {
         content:"";
     }
 }
