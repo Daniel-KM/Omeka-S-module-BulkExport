@@ -137,7 +137,8 @@ class ResourceProcessor extends AbstractResourceProcessor
     {
         switch ($target['target']) {
             case 'o:item_set':
-                $ids = $this->findResourcesFromIdentifiers($values, 'item_sets');
+                $identifierName = isset($target['target_data']) ? $target['target_data'] : $this->identifierName;
+                $ids = $this->findResourcesFromIdentifiers($values, 'item_sets', $identifierName);
                 foreach ($ids as $id) {
                     $resource['o:item_set'][] = ['o:id' => $id];
                 }
@@ -173,24 +174,26 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $this->appendRelated($resource, $media);
                 }
                 return true;
-            case 'o:media {dcterms:title}':
-                foreach ($values as $value) {
-                    $resourceProperty = [
-                        'property_id' => $this->getPropertyId($target['target']),
-                        'type' => 'literal',
-                        '@value' => $value,
-                    ];
-                    $media = [];
-                    $media['dcterms:title'][] = $resourceProperty;
-                    $this->appendRelated($resource, $media, 'o:media', 'dcterms:title');
+            case 'o:media':
+                if (isset($target["target_data"])) {
+                    if (isset($target['target_data_value'])) {
+                        foreach ($values as $value) {
+                            $resourceProperty = $target['target_data_value'];
+                            $resourceProperty['@value'] = $value;
+                            $media = [];
+                            $media[$target['target_data']][] = $resourceProperty;
+                            $this->appendRelated($resource, $media, 'o:media', 'dcterms:title');
+                        }
+                        return true;
+                    } else {
+                        $value = array_pop($values);
+                        $media = [];
+                        $media[$target['target_data']] = $value;
+                        $this->appendRelated($resource, $media, 'o:media', $target['target_data']);
+                        return true;
+                    }
                 }
-                return true;
-            case 'o:media {o:is_public}':
-                $value = array_pop($values);
-                $media = [];
-                $media['o:is_public'] = $value;
-                $this->appendRelated($resource, $media, 'o:media', 'o:is_public');
-                return true;
+                break;
         }
         return false;
     }
@@ -213,8 +216,9 @@ class ResourceProcessor extends AbstractResourceProcessor
         switch ($target['target']) {
             case 'o:item':
                 $value = array_pop($values);
-                $itemId = $this->findResourceFromIdentifier($value, 'items');
-                $resource['o:item'] = ['o:id' => $itemId];
+                $identifierName = isset($target["target_data"]) ? $target["target_data"] : $this->identifierName;
+                $id = $this->findResourceFromIdentifier($value, 'items', $identifierName);
+                $resource['o:item'] = ['o:id' => $id];
                 return true;
             case 'url':
                 $value = array_pop($values);

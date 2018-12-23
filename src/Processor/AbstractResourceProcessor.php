@@ -243,7 +243,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $resource = clone $this->base;
 
         // TODO Manage the multivalue separator at field level.
-        $multivalueSeparator = $this->reader->getParam('separator' , '');
+        $multivalueSeparator = $this->reader->getParam('separator', '');
 
         foreach ($this->mapping as $sourceField => $targets) {
             // Check if the entry has a value for this source field.
@@ -637,7 +637,29 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             foreach ($targets as $target) {
                 $result = [];
                 $result['field'] = $metadata['field'];
-                $result['target'] = $target;
+
+                // Manage the property of a target when it is a resource type,
+                // like "o:item_set {dcterms:title}".
+                // It is used to set a metadata for derived resource (media for
+                // item) or to find another resource (item set for item, as an
+                // identifier name).
+                if ($pos = strpos($target, '{')) {
+                    $targetData = trim(substr($target, $pos + 1), '{} ');
+                    $target = trim(substr($target, $pos));
+                    $result['target'] = $target;
+                    $result['target_data'] = $targetData;
+                    $propertyId = $this->getPropertyId($targetData);
+                    if ($propertyId) {
+                        $result['target_data_value'] = [
+                            'property_id' => $propertyId,
+                            'type' => 'literal',
+                            'is_public' => true,
+                        ];
+                    }
+                } else {
+                    $result['target'] = $target;
+                }
+
                 $propertyId = $this->getPropertyId($target);
                 if ($propertyId) {
                     $result['value']['property_id'] = $propertyId;
@@ -648,6 +670,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                     $result['@language'] = $metadata['@language'];
                     $result['type'] = $metadata['type'];
                 }
+
                 $fullTargets[] = $result;
             }
             $mapping[$sourceField] = $fullTargets;
