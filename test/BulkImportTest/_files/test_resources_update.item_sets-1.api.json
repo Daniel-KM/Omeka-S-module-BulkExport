@@ -16,6 +16,7 @@
     "o:id": 23
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -33,7 +34,8 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Architectural Heritage"
+      "@value": "Architectural Heritage",
+      "is_public": true
     }
   ],
   "dcterms:description": [
@@ -41,7 +43,8 @@
       "type": "literal",
       "property_id": 4,
       "property_label": "Description",
-      "@value": "A collection of well-known monuments."
+      "@value": "A collection of well-known monuments.",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -49,7 +52,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Architectural Heritage"
+      "@value": "Architectural Heritage",
+      "is_public": true
     }
   ]
 }

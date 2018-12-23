@@ -54,10 +54,10 @@
         "Resource Type": [
           "resource_type"
         ],
-        "Collection Identifier": [
+        "Collection": [
           "o:item_set"
         ],
-        "Item Identifier": [
+        "Item": [
           "o:item"
         ],
         "Media Url": [

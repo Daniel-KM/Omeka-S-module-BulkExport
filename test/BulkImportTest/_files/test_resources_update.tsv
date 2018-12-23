@@ -1,4 +1,4 @@
-Identifier	Resource type	Collection identifier	Item identifier	Media url	Resource class	Title	Creator	Date	Rights	Description	Format	Tags	Latitude	Longitude	Default Zoom
+Identifier	Resource type	Collection	Item	Media url	Resource class	Title	Creator	Date	Rights	Description	Format	Tags	Latitude	Longitude	Default Zoom
 Mont Saint-Michel	Item	Architectural Heritage			dctype:PhysicalObject	Mont Saint-Michel | English: Saint Michael's Mount		709			92 m	Abbey | Monastery	48.6360166	-1.5111145	15
 Mont Saint-Michel m1	Media		Mont Saint-Michel	https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/France-Mont-Saint-Michel-1900_bordercropped.jpg/1200px-France-Mont-Saint-Michel-1900_bordercropped.jpg	dctype:StillImage	Looking east at high water in 1900, Mont St. Michel, France	Unknown	Between 1890 and 1905	Public domain						
 Coliseum	Item	Architectural Heritage			dctype:PhysicalObject	Coliseum | English: Colosseum	Vespasian | Titus	70-80			61 m	Amphitheatre | Stadium	41.8902492	12.4923563	17
