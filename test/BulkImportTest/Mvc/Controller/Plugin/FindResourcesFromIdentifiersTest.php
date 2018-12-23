@@ -82,7 +82,7 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
         $findResourcesFromIdentifier = $this->findResourcesFromIdentifier;
         $item = $this->api->create('items', [])->getContent();
 
-        $identifierProperty = 'internal_id';
+        $identifierProperty = 'o:id';
         $resourceType = null;
 
         $identifier = '';

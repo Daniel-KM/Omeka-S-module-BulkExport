@@ -35,19 +35,20 @@ class ResourceProcessorParamsForm extends ResourceProcessorConfigForm
             'item' => [
                 'label' => 'Item', // @translate
                 'options' => [
-                    'o:item' => 'Internal id', // @translate
+                    'o:item' => 'Identifier / Internal id', // @translate
                 ],
             ],
             'item_sets' => [
                 'label' => 'Item sets', // @translate
                 'options' => [
-                    'o:item_set' => 'Internal id', // @translate
+                    'o:item_set' => 'Identifier / Internal id', // @translate
                     'o:is_open' => 'Openness', // @translate
                 ],
             ],
             'media' => [
                 'label' => 'Media', // @translate
                 'options' => [
+                    'o:media' => 'Identifier / Internal id', // @translate
                     'url' => 'Url', // @translate
                     'file' => 'File', // @translate
                     'html' => 'Html', // @translate

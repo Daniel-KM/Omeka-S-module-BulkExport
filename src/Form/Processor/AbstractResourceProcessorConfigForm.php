@@ -91,7 +91,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'info' => 'Allows to identify existing resources, for example to attach a media to an existing item or to update a resource. It is always recommended to set one ore more unique identifiers to all resources, with a prefix.', // @translate
                 'empty_option' => '', // @translate
                 'prepend_value_options' => [
-                    'internal_id' => 'Internal id', // @translate
+                    'o:id' => 'Internal id', // @translate
                 ],
                 'term_as_value' => true,
             ],
@@ -100,7 +100,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'multiple' => true,
                 'required' =>false,
                 'value' => [
-                    'internal_id',
+                    'o:id',
                     'dcterms:identifier',
                 ],
                 'class' => 'chosen-select',

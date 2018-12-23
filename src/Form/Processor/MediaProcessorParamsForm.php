@@ -27,7 +27,7 @@ class MediaProcessorParamsForm extends MediaProcessorConfigForm
             'item' => [
                 'label' => 'Item', // @translate
                 'options' => [
-                    'o:item' => 'Internal id', // @translate
+                    'o:item' => 'Identifier / Internal id', // @translate
                 ],
             ],
             'media' => [

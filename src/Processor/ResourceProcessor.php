@@ -28,9 +28,9 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormItem(ArrayObject $args, array $values)
     {
         if (isset($values['o:item_set'])) {
-            $itemSetIds = $this->findResourcesFromIdentifiers($values['o:item_set'], 'item_sets', 'internal_id');
-            foreach ($itemSetIds as $itemSetId) {
-                $args['o:item_set'][] = ['o:id' => $itemSetId];
+            $ids = $this->findResourcesFromIdentifiers($values['o:item_set'], 'item_sets', 'o:id');
+            foreach ($ids as $id) {
+                $args['o:item_set'][] = ['o:id' => $id];
             }
         }
     }
@@ -45,9 +45,9 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormMedia(ArrayObject $args, array $values)
     {
         if (isset($values['o:item'])) {
-            $itemId = $this->findResourceFromIdentifier($values['o:item'], 'items', 'internal_id');
-            if ($itemId) {
-                $args['o:item'] = ['o:id' => $itemId];
+            $id = $this->findResourceFromIdentifier($values['o:item'], 'items', 'o:id');
+            if ($id) {
+                $args['o:item'] = ['o:id' => $id];
             }
         }
     }
@@ -334,7 +334,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function checkMedia(ArrayObject $resource)
     {
-        // With a resource type is unknown before the end of the filling of an
+        // When a resource type is unknown before the end of the filling of an
         // entry, fillItem() is called for item first, and there are some common
         // fields with media (the file related ones), so they should be moved
         // here.
@@ -346,7 +346,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
         if (empty($resource['o:item']['o:id'])) {
             $this->logger->err(
-                'Skipped media index {index}: no item is set', // @translate
+                'Skipped media index #{index}: no item is set', // @translate
                 ['index' => $this->indexResource]
             );
             return false;

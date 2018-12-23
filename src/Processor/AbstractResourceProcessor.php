@@ -657,7 +657,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     protected function prepareIdentifierName()
     {
-        $this->identifierName = $this->getParam('identifier_name', ['internal_id', 'dcterms:identifier']);
+        $this->identifierName = $this->getParam('identifier_name', ['o:id', 'dcterms:identifier']);
         if (empty($this->identifierName)) {
             $this->logger->warn(
                 'No identifier name was selected.' // @translate
@@ -738,8 +738,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * string is sent, the result will be the resource.
      * @param string $resourceType The resource type if any.
      * @param string|int|array $identifierName Property as integer or term,
-     * "internal_id", a media ingester (url or file), or an associative array
-     * with multiple conditions (for media source). May be a list of identifier
+     * "o:id", a media ingester (url or file), or an associative array with
+     * multiple conditions (for media source). May be a list of identifier
      * metadata names, in which case the identifiers are searched in a list of
      * properties and/or in internal ids.
      * @return array|int|null Associative array with the identifiers as key and the ids
@@ -765,7 +765,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * @param string $identifier
      * @param string $resourceType The resource type if any.
      * @param string|int|array $identifierName Property as integer or term,
-     * media ingester or "internal_id", or an array with multiple conditions.
+     * media ingester or "o:id", or an array with multiple conditions.
      * @return int|null
      */
     protected function findResourceFromIdentifier($identifier, $resourceType = null, $identifierName = null)

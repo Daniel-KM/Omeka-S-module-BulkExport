@@ -27,7 +27,7 @@ class ItemProcessorParamsForm extends ItemProcessorConfigForm
             'item_sets' => [
                 'label' => 'Item sets', // @translate
                 'options' => [
-                    'o:item_set' => 'Internal id', // @translate
+                    'o:item_set' => 'Identifier / Internal id', // @translate
                 ],
             ],
             'media' => [

@@ -15,7 +15,11 @@
       "o:is_public": "true",
       "resource_type": "media",
       "o:item_set": [],
-      "o:item": ""
+      "o:item": "",
+      "identifier_name": [
+        "o:id",
+        "dcterms:identifier"
+      ]
     }
   },
   "import": {
@@ -39,6 +43,10 @@
       "resource_type": "media",
       "o:item_set": [],
       "o:item": "",
+      "identifier_name": [
+        "o:id",
+        "dcterms:identifier"
+      ],
       "mapping": {
         "Identifier": [
           "dcterms:identifier"

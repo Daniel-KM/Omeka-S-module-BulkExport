@@ -71,8 +71,8 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
      * @param array|string $identifiers Identifiers should be unique. If a
      * string is sent, the result will be the resource.
      * @param string|int|array $identifierName Property as integer or term,
-     * "internal_id", a media ingester (url or file), or an associative array
-     * with multiple conditions (for media source). May be a list of identifier
+     * "o:id", a media ingester (url or file), or an associative array with
+     * multiple conditions (for media source). May be a list of identifier
      * metadata names, in which case the identifiers are searched in a list of
      * properties and/or in internal ids.
      * @param string $resourceType The resource type if any.
@@ -116,7 +116,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
     protected function findResources($identifierType, $identifiers, $identifierName, $resourceType, $itemId)
     {
         switch ($identifierType) {
-            case 'internal_id':
+            case 'o:id':
                 return $this->findResourcesFromInternalIds($identifiers, $resourceType);
             case 'property':
                 return $this->findResourcesFromPropertyIds($identifiers, $identifierName, $resourceType);
@@ -147,9 +147,9 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             }
         }
         // Next, identifierName is a string or an integer.
-        elseif ($identifierName === 'internal_id') {
-            $identifierType = 'internal_id';
-            $identifierTypeName = $identifierName;
+        elseif ($identifierName === 'o:id') {
+            $identifierType = 'o:id';
+            $identifierTypeName = 'o:id';
         } elseif (is_numeric($identifierName)) {
             $identifierType = 'property';
             // No check of the property id for quicker process.
@@ -195,7 +195,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
                 $identifierName = reset($identifierTypeName);
                 $identifierType = key($identifierTypeName);
                 switch ($identifierType) {
-                    case 'internal_id':
+                    case 'o:id':
                         $identifierTypeNames[$identifierType] = $identifierName;
                         break;
                     default:
