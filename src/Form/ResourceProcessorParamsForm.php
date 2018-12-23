@@ -44,6 +44,7 @@ class ResourceProcessorParamsForm extends ResourceProcessorConfigForm
                 'options' => [
                     'url' => 'Url', // @translate
                     'file' => 'File', // @translate
+                    'o:media {dcterms:title}' => 'Title', // @translate
                 ],
             ],
         ];

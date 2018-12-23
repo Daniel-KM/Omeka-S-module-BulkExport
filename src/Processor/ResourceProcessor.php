@@ -111,7 +111,7 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $media['o:is_public'] = true;
                     $media['o:ingester'] = 'url';
                     $media['ingest_url'] = $value;
-                    $resource['o:media'][] = $media;
+                    $this->appendRelated($resource, $media);
                 }
                 return true;
             case 'file':
@@ -125,7 +125,19 @@ class ResourceProcessor extends AbstractResourceProcessor
                         $media['o:ingester'] = 'sideload';
                         $media['ingest_filename'] = $value;
                     }
-                    $resource['o:media'][] = $media;
+                    $this->appendRelated($resource, $media);
+                }
+                return true;
+            case 'o:media {dcterms:title}':
+                foreach ($values as $value) {
+                    $resourceProperty = [
+                        '@value' => $value,
+                        'property_id' => $this->getProperty($target)->getId(),
+                        'type' => 'literal',
+                    ];
+                    $media = [];
+                    $media['dcterms:title'][] = $resourceProperty;
+                    $this->appendRelated($resource, $media, 'o:media', 'dcterms:title');
                 }
                 return true;
         }
@@ -168,6 +180,37 @@ class ResourceProcessor extends AbstractResourceProcessor
                 }
                 return true;
         }
+    }
+
+    /**
+     * Append an attached resource to a resource, checking if it exists already.
+     *
+     * It allows to fill multiple media of an items, or any other related
+     * resource, in multiple steps, for example the url, then the title.
+     * Note: it requires that all elements to be set, in the same order, when
+     * they are multiple.
+     *
+     * @param ArrayObject $resource
+     * @param array $related
+     * @param string $term
+     * @param string $check
+     */
+    protected function appendRelated(
+        ArrayObject $resource,
+        array $related,
+        $metadata = 'o:media',
+        $check = 'o:ingester'
+    ) {
+        if (!empty($resource[$metadata])) {
+            foreach ($resource[$metadata] as $key => $values) {
+                if (!array_key_exists($check, $values)) {
+                    // Use the last data set.
+                    $resource[$metadata][$key] = $related + $resource[$metadata][$key];
+                    return;
+                }
+            }
+        }
+        $resource[$metadata][] = $related;
     }
 
     protected function checkResource(ArrayObject $resource)

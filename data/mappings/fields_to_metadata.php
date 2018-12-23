@@ -47,6 +47,7 @@ return [
     'media' => 'o:media',
     'media id' => 'o:media {o:id}',
     'media identifier' => 'o:media {dcterms:identifier}',
+    'media title' => 'o:media {dcterms:title}',
     'media url' => 'url',
     'media html' => 'html',
     'html' => 'html',
