@@ -6,7 +6,7 @@ use BulkImport\Interfaces\Reader;
 
 class Manager extends AbstractPluginManager
 {
-    protected function getEventName()
+    protected function getName()
     {
         return 'readers';
     }

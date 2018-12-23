@@ -6,7 +6,7 @@ use BulkImport\Interfaces\Processor;
 
 class Manager extends AbstractPluginManager
 {
-    protected function getEventName()
+    protected function getName()
     {
         return 'processors';
     }

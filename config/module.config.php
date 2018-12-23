@@ -124,4 +124,12 @@ return [
             ],
         ],
     ],
+    'bulk_import' => [
+        'readers' => [
+            'csv' => Reader\CsvReader::class
+        ],
+        'processors' => [
+            'items' => Processor\ItemsProcessor::class,
+        ],
+    ],
 ];

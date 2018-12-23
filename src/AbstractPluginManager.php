@@ -2,8 +2,6 @@
 namespace BulkImport;
 
 use BulkImport\Traits\ServiceLocatorAwareTrait;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ResponseCollection;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractPluginManager
@@ -11,17 +9,18 @@ abstract class AbstractPluginManager
     use ServiceLocatorAwareTrait;
 
     /**
-     * @var EventManagerInterface
-     */
-    protected $eventManager;
-
-    /**
      * @var array
      */
     protected $plugins;
 
-    abstract protected function getEventName();
+    /**
+     * @return string
+     */
+    abstract protected function getName();
 
+    /**
+     * @return string
+     */
     abstract protected function getInterface();
 
     /**
@@ -32,43 +31,6 @@ abstract class AbstractPluginManager
     public function __construct(ServiceLocatorInterface $serviceLocator)
     {
         $this->setServiceLocator($serviceLocator);
-        $this->setEventManager($serviceLocator->get('EventManager'));
-    }
-
-    /**
-     * @return EventManagerInterface
-     */
-    public function getEventManager()
-    {
-        return $this->eventManager;
-    }
-
-    /**
-     * @param EventManagerInterface $eventManager
-     * @return $this
-     */
-    public function setEventManager(EventManagerInterface $eventManager)
-    {
-        $this->eventManager = $eventManager;
-        return $this;
-    }
-
-    /**
-     * @return ResponseCollection
-     */
-    public function trigger()
-    {
-        $eventName = $this->getEventName();
-        $eventManager = $this->getEventManager();
-
-        $identifiers = $eventManager->getIdentifiers();
-
-        $eventManager->addIdentifiers([\BulkImport\Module::class]);
-        $responseCollection = $eventManager->trigger($eventName, \BulkImport\Module::class);
-
-        $eventManager->setIdentifiers($identifiers);
-
-        return $responseCollection;
     }
 
     public function getPlugins()
@@ -79,24 +41,29 @@ abstract class AbstractPluginManager
 
         $this->plugins = [];
 
-        $responseCollection = $this->trigger();
+        // @todo Use a standard factory? But without load at init or bootstrap, because it's rarely used.
 
-        $items = [];
-        foreach ($responseCollection as $response) {
-            $items = array_merge($items, $response);
-        }
-
+        $services = $this->getServiceLocator();
+        $name = $this->getName();
+        $config = $services->get('Config');
         $interface = $this->getInterface();
+
+        $items = $config['bulk_import'][$name];
         foreach ($items as $name => $class) {
             if (class_exists($class) && in_array($interface, class_implements($class))) {
-                $this->plugins[$name] = new $class($this->getServiceLocator());
+                $this->plugins[$name] = new $class($services);
             }
         }
-
         return $this->plugins;
     }
 
-    public function getPlugin($name)
+    public function has($name)
+    {
+        $plugins = $this->getPlugins();
+        return isset($plugins[$name]);
+    }
+
+    public function get($name)
     {
         $plugins = $this->getPlugins();
         return isset($plugins[$name]) ? $plugins[$name] : null;

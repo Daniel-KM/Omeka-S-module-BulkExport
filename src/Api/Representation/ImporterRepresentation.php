@@ -4,9 +4,7 @@ namespace BulkImport\Api\Representation;
 use BulkImport\Interfaces\Configurable;
 use BulkImport\Processor\Manager as ProcessorManager;
 use BulkImport\Reader\Manager as ReaderManager;
-use Omeka\Api\Adapter\AdapterInterface;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
-use Omeka\Entity\EntityInterface;
 
 class ImporterRepresentation extends AbstractEntityRepresentation
 {
@@ -29,15 +27,6 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      * @var \BulkImport\Interfaces\Processor
      */
     protected $processor;
-
-    public function __construct(EntityInterface $resource, AdapterInterface $adapter)
-    {
-        parent::__construct($resource, $adapter);
-
-        $serviceLocator = $this->getServiceLocator();
-        $this->setReaderManager($serviceLocator->get(ReaderManager::class));
-        $this->setProcessorManager($serviceLocator->get(ProcessorManager::class));
-    }
 
     public function getJsonLd()
     {
@@ -69,17 +58,10 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      */
     public function getReaderManager()
     {
+        if (!$this->readerManager) {
+            $this->readerManager = $this->getServiceLocator()->get(ReaderManager::class);
+        }
         return $this->readerManager;
-    }
-
-    /**
-     * @param ReaderManager $readerManager
-     * @return $this
-     */
-    public function setReaderManager(ReaderManager $readerManager)
-    {
-        $this->readerManager = $readerManager;
-        return $this;
     }
 
     /**
@@ -87,17 +69,10 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      */
     public function getProcessorManager()
     {
+        if (!$this->processorManager) {
+            $this->processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
+        }
         return $this->processorManager;
-    }
-
-    /**
-     * @param ProcessorManager $processorManager
-     * @return $this
-     */
-    public function setProcessorManager(ProcessorManager $processorManager)
-    {
-        $this->processorManager = $processorManager;
-        return $this;
     }
 
     /*
@@ -119,9 +94,14 @@ class ImporterRepresentation extends AbstractEntityRepresentation
             return $this->reader;
         }
 
-        $this->reader = $this->getReaderManager()->getPlugin($this->getReaderName());
-        if ($this->reader instanceof Configurable) {
-            $this->reader->setConfig($this->getReaderConfig());
+        $readerName = $this->getReaderName();
+        $readerManager = $this->getReaderManager();
+        if ($readerManager->has($readerName)) {
+            $this->reader = $readerManager->get($readerName);
+            if ($this->reader instanceof Configurable) {
+                $config = $this->getReaderConfig();
+                $this->reader->setConfig($config);
+            }
         }
 
         return $this->reader;
@@ -136,9 +116,14 @@ class ImporterRepresentation extends AbstractEntityRepresentation
             return $this->processor;
         }
 
-        $this->processor = $this->getProcessorManager()->getPlugin($this->getProcessorName());
-        if ($this->processor instanceof Configurable) {
-            $this->processor->setConfig($this->getProcessorConfig());
+        $processorName = $this->getProcessorName();
+        $processorManager = $this->getProcessorManager();
+        if ($processorManager->has($processorName)) {
+            $this->processor = $processorManager->get($processorName);
+            if ($this->processor instanceof Configurable) {
+                $config = $this->getProcessorConfig();
+                $this->processor->setConfig($config);
+            }
         }
 
         return $this->processor;
