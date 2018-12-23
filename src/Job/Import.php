@@ -28,41 +28,18 @@ class Import extends AbstractJob
         ini_set('auto_detect_line_endings', true);
 
         $logger = $this->getLogger();
-
         $import = $this->getImport();
-        if (!$import) {
-            $logger->log(Logger::ERR, 'Import record does not exist'); // @translate
-            return;
-        }
-
+        $this->api()->update('bulk_imports', $import->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
         $reader = $this->getReader();
-        if (empty($reader)) {
-            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, new PsrMessage('Reader "{reader}" is not available.', ['reader' => $import->getImporter()->getReaderName()])); // @translate
-            return;
-        }
-
         $processor = $this->getProcessor();
-        if (empty($processor)) {
-            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, new PsrMessage('Processor "{processor}" is not available.', ['processor' => $import->getImporter()->getProcessorName()])); // @translate
-            return;
-        }
-
         $processor->setReader($reader);
         $processor->setLogger($logger);
 
-        try {
-            $logger->log(Logger::NOTICE, 'Import started'); // @translate
-            $data = ['status' => \BulkImport\Entity\Import::STATUS_IN_PROGRESS, 'started' => new \DateTime()];
-            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
+        $logger->log(Logger::NOTICE, 'Import started'); // @translate
 
-            $processor->process();
+        $processor->process();
 
-            $logger->log(Logger::NOTICE, 'Import completed'); // @translate
-            $data = ['status' => \BulkImport\Entity\Import::STATUS_COMPLETED, 'ended' => new \DateTime()];
-            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
-        } catch (\Exception $e) {
-            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, 'Import error: {exception}', ['exception' => $e]);
-        }
+        $logger->log(Logger::NOTICE, 'Import completed'); // @translate
     }
 
     /**
@@ -77,7 +54,7 @@ class Import extends AbstractJob
         }
         $this->logger = $this->getServiceLocator()->get('Omeka\Logger');
         $referenceIdProcessor = new \Zend\Log\Processor\ReferenceId();
-        $referenceIdProcessor->setReferenceId('bulk/import/' . $this->getImport()->getId());
+        $referenceIdProcessor->setReferenceId('bulk/import/' . $this->getImport()->id());
         $this->logger->addProcessor($referenceIdProcessor);
         return $this->logger;
     }
@@ -85,13 +62,11 @@ class Import extends AbstractJob
     /**
      * @return \Omeka\Api\Manager
      */
-    protected function getApi()
+    protected function api()
     {
-        if ($this->api) {
-            return $this->api;
+        if (!$this->api) {
+            $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         }
-
-        $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         return $this->api;
     }
 
@@ -105,52 +80,64 @@ class Import extends AbstractJob
         }
 
         $id = $this->getArg('import_id');
-        if (!$id) {
-            return null;
+        if ($id) {
+            $content = $this->api()->search('bulk_imports', ['id' => $id, 'limit' => 1])->getContent();
+            $this->import = is_array($content) && count($content) ? reset($content) : null;
         }
 
-        $content = $this->getApi()->search('bulk_imports', ['id' => $id, 'limit' => 1])->getContent();
-        $this->import = is_array($content) && count($content) ? reset($content) : null;
+        if (empty($this->import)) {
+            // TODO Avoid the useless trace in the log for jobs.
+            throw new \Omeka\Job\Exception\InvalidArgumentException('Import record does not exist'); // @translate
+        }
 
         return $this->import;
     }
 
-    public function getReader()
+    protected function getReader()
     {
-        $readerName = $this->getImport()->getImporter()->getReaderName();
-        $readerManager = $this->getServiceLocator()->get(ReaderManager::class);
+        $services = $this->getServiceLocator();
+        $import = $this->getImport();
+        $importer = $import->importer();
+        $readerName = $importer->readerName();
+        $readerManager = $services->get(ReaderManager::class);
         if (!$readerManager->has($readerName)) {
-            return;
+            throw new \Omeka\Job\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'Reader "{reader}" is not available.', // @translate
+                    ['reader' => $readerName]
+                )
+            );
         }
         $reader = $readerManager->get($readerName);
-        $reader->setServiceLocator($this->getServiceLocator());
+        $reader->setServiceLocator($services);
         if ($reader instanceof Configurable && $reader instanceof Parametrizable) {
-            $reader->setConfig($this->getImport()->getImporter()->getReaderConfig());
-            $reader->setParams($this->getImport()->getReaderParams());
+            $reader->setConfig($importer->readerConfig());
+            $reader->setParams($import->readerParams());
         }
         return $reader;
     }
 
-    public function getProcessor()
+    protected function getProcessor()
     {
-        $processorName = $this->getImport()->getImporter()->getProcessorName();
-        $processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
+        $services = $this->getServiceLocator();
+        $import = $this->getImport();
+        $importer = $import->importer();
+        $processorName = $importer->processorName();
+        $processorManager = $services->get(ProcessorManager::class);
         if (!$processorManager->has($processorName)) {
-            return;
+            throw new \Omeka\Job\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'Processor "{processor}" is not available.', // @translate
+                    ['processor' => $processorName]
+                )
+            );
         }
         $processor = $processorManager->get($processorName);
-        $processor->setServiceLocator($this->getServiceLocator());
+        $processor->setServiceLocator($services);
         if ($processor instanceof Configurable && $processor instanceof Parametrizable) {
-            $processor->setConfig($this->getImport()->getImporter()->getProcessorConfig());
-            $processor->setParams($this->getImport()->getProcessorParams());
+            $processor->setConfig($importer->processorConfig());
+            $processor->setParams($import->processorParams());
         }
         return $processor;
-    }
-
-    protected function log($severity, $status, $message)
-    {
-        $this->getLogger()->log($severity, $message);
-        $data = ['status' => $status];
-        $this->getApi()->update('bulk_imports', $this->getImport()->getId(), $data, [], ['isPartial' => true]);
     }
 }

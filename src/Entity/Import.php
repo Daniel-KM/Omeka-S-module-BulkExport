@@ -1,31 +1,47 @@
 <?php
 namespace BulkImport\Entity;
 
-use DateTime;
 use Omeka\Entity\AbstractEntity;
+use Omeka\Entity\Job;
 
 /**
- * @todo Implement the job inside the import to avoid duplication.
- *
  * @Entity
- * @Table(name="bulk_import")
+ * @Table(
+ *     name="bulk_import"
+ * )
  */
 class Import extends AbstractEntity
 {
-    // All job statuses are not implemented currently.
-    const STATUS_STARTING = 'starting'; // @translate
-    // const STATUS_STOPPING = 'stopping'; // @translate
-    const STATUS_IN_PROGRESS = 'in_progress'; // @translate
-    // const STATUS_STOPPED = 'stopped'; // @translate
-    const STATUS_COMPLETED = 'completed'; // @translate
-    const STATUS_ERROR = 'error'; // @translate
-
     /**
      * @Id
      * @Column(type="integer")
      * @GeneratedValue
      */
     protected $id;
+
+    /**
+     * @var Importer
+     * @ManyToOne(
+     *     targetEntity=Importer::class,
+     *     inversedBy="import",
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @JoinColumn(
+     *     nullable=true
+     * )
+     */
+    protected $importer;
+
+    /**
+     * @var Job
+     * @OneToOne(
+     *     targetEntity=\Omeka\Entity\Job::class
+     * )
+     * @JoinColumn(
+     *     nullable=true
+     * )
+     */
+    protected $job;
 
     /**
      * @var array
@@ -45,54 +61,50 @@ class Import extends AbstractEntity
      */
     protected $processorParams;
 
-    /**
-     * @Column(
-     *     type="string",
-     *     nullable=true,
-     *     length=190
-     * )
-     */
-    protected $status;
-
-    /**
-     * @var DateTime
-     * @Column(
-     *     type="datetime",
-     *     nullable=true
-     * )
-     */
-    protected $started;
-
-    /**
-     * @var DateTime
-     * @Column(
-     *     type="datetime",
-     *     nullable=true
-     * )
-     */
-    protected $ended;
-
-    /**
-     * @var Importer
-     * @ManyToOne(
-     *     targetEntity=Importer::class,
-     *     inversedBy="import",
-     *     fetch="EXTRA_LAZY",
-     * )
-     * @JoinColumn(
-     *     nullable=true
-     * )
-     */
-    protected $importer;
-
     public function getId()
     {
         return $this->id;
     }
 
     /**
+     * @param Importer $importer
+     * @return self
+     */
+    public function setImporter(Importer $importer)
+    {
+        $this->importer = $importer;
+        return $this;
+    }
+
+    /**
+     * @return \BulkImport\Entity\Importer
+     */
+    public function getImporter()
+    {
+        return $this->importer;
+    }
+
+    /**
+     * @param Job $job
+     * @return self
+     */
+    public function setJob(Job $job)
+    {
+        $this->job = $job;
+        return $this;
+    }
+
+    /**
+     * @return \Omeka\Entity\Job
+     */
+    public function getJob()
+    {
+        return $this->job;
+    }
+
+    /**
      * @param array|\Traversable $readerParams
-     * @return \BulkImport\Entity\Import
+     * @return self
      */
     public function setReaderParams($readerParams)
     {
@@ -110,7 +122,7 @@ class Import extends AbstractEntity
 
     /**
      * @param array|\Traversable $processorParams
-     * @return \BulkImport\Entity\Import
+     * @return self
      */
     public function setProcessorParams($processorParams)
     {
@@ -128,7 +140,7 @@ class Import extends AbstractEntity
 
     /**
      * @param string $status
-     * @return \BulkImport\Entity\Import
+     * @return self
      */
     public function setStatus($status)
     {
@@ -142,59 +154,5 @@ class Import extends AbstractEntity
     public function getStatus()
     {
         return $this->status;
-    }
-
-    /**
-     * @param DateTime $started
-     * @return \BulkImport\Entity\Import
-     */
-    public function setStarted(DateTime $started)
-    {
-        $this->started = $started;
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getStarted()
-    {
-        return $this->started;
-    }
-
-    /**
-     * @param DateTime $ended
-     * @return \BulkImport\Entity\Import
-     */
-    public function setEnded(DateTime $ended)
-    {
-        $this->ended = $ended;
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getEnded()
-    {
-        return $this->ended;
-    }
-
-    /**
-     * @param Importer $importer
-     * @return \BulkImport\Entity\Import
-     */
-    public function setImporter(Importer $importer)
-    {
-        $this->importer = $importer;
-        return $this;
-    }
-
-    /**
-     * @return \BulkImport\Entity\Importer
-     */
-    public function getImporter()
-    {
-        return $this->importer;
     }
 }

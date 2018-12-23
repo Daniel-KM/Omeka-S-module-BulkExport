@@ -29,16 +29,21 @@ class ImportController extends AbstractActionController
         $response = $this->api()->search('bulk_imports', $query);
         $this->paginator($response->getTotalResults(), $page);
 
+        $imports = $response->getContent();
+
         $view = new ViewModel;
-        $view->setVariable('imports', $response->getContent());
+        $view->setVariable('imports', $imports);
+        $view->setVariable('resources', $imports);
         return $view;
     }
 
     public function logsAction()
     {
+        $id = $this->params()->fromRoute('id');
+        $import = $this->api()->read('bulk_imports', $id)->getContent();
+
         $this->setBrowseDefaults('created');
 
-        $id = $this->params()->fromRoute('id');
         $severity = $this->params()->fromQuery('severity', Logger::NOTICE);
         $severity = (int) preg_replace('/[^0-9]+/', '', $severity);
         $page = $this->params()->fromQuery('page', 1);
@@ -46,11 +51,19 @@ class ImportController extends AbstractActionController
         $query['reference'] = 'bulk/import/' . $id;
         $query['severity'] = '<=' . $severity;
 
+        $response = $this->api()->read('bulk_imports', $id);
         $this->paginator($response->getTotalResults(), $page);
 
+        $response = $this->api()->search('logs', $query);
+        $this->paginator($response->getTotalResults(), $page);
+
+        $logs = $response->getContent();
+
         $view = new ViewModel;
+        $view->setVariable('import', $import);
+        $view->setVariable('resource', $import);
+        $view->setVariable('logs', $logs);
         $view->setVariable('severity', $severity);
-        $view->setVariable('logs', $response->getContent());
         return $view;
     }
 }

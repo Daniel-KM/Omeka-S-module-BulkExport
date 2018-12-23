@@ -31,18 +31,18 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     public function getJsonLd()
     {
         return [
-            'o:id' => $this->getId(),
-            'name' => $this->getName(),
-            'reader_name' => $this->getReaderName(),
-            'reader_config' => $this->getReaderConfig(),
-            'processor_name' => $this->getProcessorName(),
-            'processor_config' => $this->getProcessorConfig(),
+            'o:id' => $this->id(),
+            'o:name' => $this->name(),
+            'o-module-bulk:reader_name' => $this->readerName(),
+            'o-module-bulk:reader_config' => $this->readerConfig(),
+            'o-module-bulk:processor_name' => $this->processorName(),
+            'o-module-bulk:processor_config' => $this->processorConfig(),
         ];
     }
 
     public function getJsonLdType()
     {
-        return 'o-module-import:Importer';
+        return 'o-module-bulk:Importer';
     }
 
     /**
@@ -54,52 +54,60 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * @return ReaderManager
+     * @return string
      */
-    public function getReaderManager()
+    public function name()
     {
-        if (!$this->readerManager) {
-            $this->readerManager = $this->getServiceLocator()->get(ReaderManager::class);
-        }
-        return $this->readerManager;
+        return $this->resource->getName();
     }
 
     /**
-     * @return ProcessorManager
+     * @return string
      */
-    public function getProcessorManager()
+    public function readerName()
     {
-        if (!$this->processorManager) {
-            $this->processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
-        }
-        return $this->processorManager;
-    }
-
-    /*
-     * Magic getter to always pull data from resource
-     */
-    public function __call($method, $arguments)
-    {
-        if (substr($method, 0, 3) == 'get') {
-            return $this->resource->$method();
-        }
+        return $this->resource->getReaderName();
     }
 
     /**
+     * @return array
+     */
+    public function readerConfig()
+    {
+        return $this->resource->getReaderConfig() ?: [];
+    }
+
+        /**
+     * @return string
+     */
+    public function processorName()
+    {
+        return $this->resource->getProcessorName();
+    }
+
+    /**
+     * @return array
+     */
+    public function processorConfig()
+    {
+        return $this->resource->getProcessorConfig() ?: [];
+    }
+
+/**
      * @return \BulkImport\Interfaces\Reader|null
      */
-    public function getReader()
+    public function reader()
     {
         if ($this->reader) {
             return $this->reader;
         }
 
-        $readerName = $this->getReaderName();
+        $readerName = $this->readerName();
         $readerManager = $this->getReaderManager();
         if ($readerManager->has($readerName)) {
             $this->reader = $readerManager->get($readerName);
             if ($this->reader instanceof Configurable) {
-                $config = $this->getReaderConfig();
+                $config = $this->readerConfig();
                 $this->reader->setConfig($config);
             }
         }
@@ -110,22 +118,44 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     /**
      * @return \BulkImport\Interfaces\Processor|null
      */
-    public function getProcessor()
+    public function processor()
     {
         if ($this->processor) {
             return $this->processor;
         }
 
-        $processorName = $this->getProcessorName();
+        $processorName = $this->processorName();
         $processorManager = $this->getProcessorManager();
         if ($processorManager->has($processorName)) {
             $this->processor = $processorManager->get($processorName);
             if ($this->processor instanceof Configurable) {
-                $config = $this->getProcessorConfig();
+                $config = $this->processorConfig();
                 $this->processor->setConfig($config);
             }
         }
 
         return $this->processor;
+    }
+
+    /**
+     * @return ReaderManager
+     */
+    protected function getReaderManager()
+    {
+        if (!$this->readerManager) {
+            $this->readerManager = $this->getServiceLocator()->get(ReaderManager::class);
+        }
+        return $this->readerManager;
+    }
+
+    /**
+     * @return ProcessorManager
+     */
+    protected function getProcessorManager()
+    {
+        if (!$this->processorManager) {
+            $this->processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
+        }
+        return $this->processorManager;
     }
 }

@@ -23,37 +23,37 @@ class ImporterForm extends Form
         parent::init();
 
         $this->add([
-            'name' => 'name',
+            'name' => 'o:name',
             'type' => Element\Text::class,
             'options' => [
                 'label' => 'Name', // @translate
             ],
             'attributes' => [
-                'id' => 'name',
+                'id' => 'o-name',
             ],
         ]);
 
         $this->add([
-            'name' => 'reader_name',
+            'name' => 'o-module-bulk:reader_name',
             'type'  => Element\Select::class,
             'options' => [
                 'label' => 'Reader', // @translate
                 'value_options' => $this->getReaderOptions(),
             ],
             'attributes' => [
-                'id' => 'reader_name',
+                'id' => 'o-module-bulk-reader-name',
             ],
         ]);
 
         $this->add([
-            'name' => 'processor_name',
+            'name' => 'o-module-bulk:processor_name',
             'type'  => Element\Select::class,
             'options' => [
                 'label' => 'Processor', // @translate
                 'value_options' => $this->getProcessorOptions(),
             ],
             'attributes' => [
-                'id' => 'processor_name',
+                'id' => 'o-module-bulk-processor-name',
             ],
         ]);
 

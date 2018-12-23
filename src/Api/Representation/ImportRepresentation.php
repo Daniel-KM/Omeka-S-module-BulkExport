@@ -2,6 +2,7 @@
 namespace BulkImport\Api\Representation;
 
 use Omeka\Api\Representation\AbstractEntityRepresentation;
+use Omeka\Api\Representation\JobRepresentation;
 
 class ImportRepresentation extends AbstractEntityRepresentation
 {
@@ -9,35 +10,98 @@ class ImportRepresentation extends AbstractEntityRepresentation
     {
         return [
             'o:id' => $this->getId(),
-            'reader_params' => $this->getReaderParams(),
-            'processor_params' => $this->getProcessorParams(),
-            'o:status' => $this->getStatus(),
-            'started' => $this->getStarted(),
-            'ended' => $this->getEnded(),
-            'o-module-import:importer' => $this->getImporter(),
+            'o-module-bulk:importer' => $this->importer()->getReference(),
+            'o-module-bulk:reader_params' => $this->readerParams(),
+            'o-module-bulk:processor_params' => $this->processorParams(),
+            'o:job' => $this->job(),
+            'o:status' => $this->status(),
+            'o:started' => $this->started(),
+            'o:ended' => $this->ended(),
         ];
     }
 
     public function getJsonLdType()
     {
-        return 'o-module-import:Import';
+        return 'o-module-bulk:Import';
     }
 
     /**
-     * @return \BulkImport\Entity\Import
+     * @return ImporterRepresentation|null
      */
-    public function getResource()
+    public function importer()
     {
-        return $this->resource;
+        $importer = $this->resource->getImporter();
+        return $importer
+            ? $this->getAdapter('bulk_importers')->getRepresentation($importer)
+            : null;
     }
 
-    /*
-     * Magic getter to always pull data from resource
+    /**
+     * @return array
      */
-    public function __call($method, $arguments)
+    public function readerParams()
     {
-        if (substr($method, 0, 3) == 'get') {
-            return $this->resource->$method();
+        return $this->resource->getReaderParams();
+    }
+
+    /**
+     * @return array
+     */
+    public function processorParams()
+    {
+        return $this->resource->getProcessorParams();
+    }
+
+    /**
+     * @return JobRepresentation|null
+     */
+    public function job()
+    {
+        $job = $this->resource->getJob();
+        return $job
+        ? $this->getAdapter('jobs')->getRepresentation($job)
+        : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function status()
+    {
+        $job = $this->job();
+        return $job ? $job->status() : 'Ready'; // @translate
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function started()
+    {
+        $job = $this->job();
+        return $job ? $job->started() : null;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function ended()
+    {
+        $job = $this->job();
+        return $job ? $job->ended() : null;
+    }
+
+    /**
+     * @return int
+     */
+    public function logCount()
+    {
+        $job = $this->job();
+        if (!$job) {
+            return 0;
         }
+
+        $response = $this->getServiceLocator()->get('Omeka\ApiManager')
+            ->search('logs', ['job_id' => $job->id(), 'limit' => 0]);
+        return $response->getTotalResults();
     }
 }

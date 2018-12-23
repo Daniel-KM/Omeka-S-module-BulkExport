@@ -22,7 +22,10 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         // Importers.
-        $importers = $this->api()->search('bulk_importers');
+        $response = $this->api()->search('bulk_importers');
+        $importers = $response->getContent();
+
+        $this->setBrowseDefaults('id');
 
         // Imports.
         $perPage = 25;
@@ -32,11 +35,14 @@ class IndexController extends AbstractActionController
             'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
             'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
         ];
-        $imports = $this->api()->search('bulk_imports', $query);
+        $response = $this->api()->search('bulk_imports', $query);
+        $this->paginator($response->getTotalResults(), 1);
+
+        $imports = $response->getContent();
 
         $view = new ViewModel;
-        $view->setVariable('importers', $importers->getContent());
-        $view->setVariable('imports', $imports->getContent());
+        $view->setVariable('importers', $importers);
+        $view->setVariable('imports', $imports);
         return $view;
     }
 }

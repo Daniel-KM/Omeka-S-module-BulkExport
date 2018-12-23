@@ -4,8 +4,12 @@ namespace BulkImport\Entity;
 use Omeka\Entity\AbstractEntity;
 
 /**
+ * @todo Add owner.
+ *
  * @Entity
- * @Table(name="bulk_importer")
+ * @Table(
+ *     name="bulk_importer"
+ * )
  */
 class Importer extends AbstractEntity
 {

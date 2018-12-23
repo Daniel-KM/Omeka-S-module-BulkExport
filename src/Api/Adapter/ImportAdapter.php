@@ -46,13 +46,24 @@ class ImportAdapter extends AbstractEntityAdapter
                 )
             );
         }
+
+        if (isset($query['job_id'])) {
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $this->getEntityClass() . '.job',
+                    $this->createNamedParameter($qb, $query['job_id'])
+                )
+            );
+        }
     }
 
     public function hydrate(Request $request, EntityInterface $entity, ErrorStore $errorStore)
     {
         $data = $request->getContent();
         foreach ($data as $key => $value) {
-            $method = 'set' . ucfirst(Inflector::camelize($key));
+            $posColon = strpos($key, ':');
+            $keyName = $posColon === false ? $key : substr($key, $posColon + 1);
+            $method = 'set' . ucfirst(Inflector::camelize($keyName));
             if (!method_exists($entity, $method)) {
                 continue;
             }

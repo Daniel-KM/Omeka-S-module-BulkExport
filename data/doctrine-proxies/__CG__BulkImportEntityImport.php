@@ -64,10 +64,10 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'readerParams', 'processorParams', 'status', 'started', 'ended', 'importer'];
+            return ['__isInitialized__', 'id', 'importer', 'job', 'readerParams', 'processorParams'];
         }
 
-        return ['__isInitialized__', 'id', 'readerParams', 'processorParams', 'status', 'started', 'ended', 'importer'];
+        return ['__isInitialized__', 'id', 'importer', 'job', 'readerParams', 'processorParams'];
     }
 
     /**
@@ -191,6 +191,50 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
+    public function setImporter(\BulkImport\Entity\Importer $importer)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImporter', [$importer]);
+
+        return parent::setImporter($importer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getImporter()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getImporter', []);
+
+        return parent::getImporter();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setJob(\Omeka\Entity\Job $job)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setJob', [$job]);
+
+        return parent::setJob($job);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getJob()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getJob', []);
+
+        return parent::getJob();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setReaderParams($readerParams)
     {
 
@@ -252,72 +296,6 @@ class Import extends \BulkImport\Entity\Import implements \Doctrine\ORM\Proxy\Pr
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStatus', []);
 
         return parent::getStatus();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setStarted(\DateTime $started)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStarted', [$started]);
-
-        return parent::setStarted($started);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getStarted()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStarted', []);
-
-        return parent::getStarted();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEnded(\DateTime $ended)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setEnded', [$ended]);
-
-        return parent::setEnded($ended);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getEnded()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getEnded', []);
-
-        return parent::getEnded();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setImporter(\BulkImport\Entity\Importer $importer)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setImporter', [$importer]);
-
-        return parent::setImporter($importer);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getImporter()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getImporter', []);
-
-        return parent::getImporter();
     }
 
     /**

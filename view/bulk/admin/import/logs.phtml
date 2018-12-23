@@ -1,6 +1,8 @@
 <?php
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \BulkImport\Api\Representation\ImportRepresentation $import
+ * @var \BulkImport\Api\Representation\ImportRepresentation $resource
  * @var \Log\Api\Representation\LogRepresentation[] $logs
  * @var int $severity
  */
@@ -60,6 +62,8 @@ $severityNames = [
             <?php } ?>
             </tbody>
         </table>
+        <?php echo $this->hyperlink(sprintf($translate('Manage logs')),
+            $this->url('admin/log/default', [], ['query' => ['reference' => 'bulk/import/' . $import->id()]])); ?>
 
     <?php else: ?>
         <p><?php echo $escape($translate('No logs yet.')); ?> <a href=""><?php echo $escape($translate('Refresh page')); ?></a></p>

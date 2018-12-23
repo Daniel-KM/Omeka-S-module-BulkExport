@@ -36,6 +36,7 @@ class ImporterController extends AbstractActionController
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id');
+        /** @var \BulkImport\Api\Representation\ImporterRepresentation $entity */
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if ($id && !$entity) {
@@ -45,7 +46,8 @@ class ImporterController extends AbstractActionController
 
         $form = $this->getForm(ImporterForm::class);
         if ($entity) {
-            $form->setData($entity->getJsonLd());
+            $data = $entity->getJsonLd();
+            $form->setData($data);
         }
 
         if ($this->getRequest()->isPost()) {
@@ -128,7 +130,7 @@ class ImporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk');
         }
 
-        $reader = $entity->getReader();
+        $reader = $entity->reader();
         $form = $this->getForm($reader->getConfigFormClass());
         $readerConfig = ($reader->getConfig()) ? $reader->getConfig() : [];
         $form->setData($readerConfig);
@@ -182,7 +184,7 @@ class ImporterController extends AbstractActionController
         }
 
         /** @var Processor $processor */
-        $processor = $entity->getProcessor();
+        $processor = $entity->processor();
         $form = $this->getForm($processor->getConfigFormClass());
         $processorConfig = ($processor->getConfig()) ? $processor->getConfig() : [];
         $form->setData($processorConfig);
@@ -237,8 +239,8 @@ class ImporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk');
         }
 
-        $reader = $importer->getReader();
-        $processor = $importer->getProcessor();
+        $reader = $importer->reader();
+        $processor = $importer->processor();
         $processor->setReader($reader);
 
         /** @var \Zend\Session\SessionManager $sessionManager */
@@ -294,15 +296,13 @@ class ImporterController extends AbstractActionController
                         break;
 
                     case 'start':
-                        $importData = [
-                            'status' => \BulkImport\Entity\Import::STATUS_STARTING,
-                            'importer' => $importer->getResource(),
-                        ];
+                        $importData = [];
+                        $importData['o-module-bulk:importer'] = $importer->getResource();
                         if ($reader instanceof Parametrizable) {
-                            $importData['reader_params'] = $reader->getParams();
+                            $importData['o-module-bulk:reader_params'] = $reader->getParams();
                         }
                         if ($processor instanceof Parametrizable) {
-                            $importData['processor_params'] = $processor->getParams();
+                            $importData['o-module-bulk:processor_params'] = $processor->getParams();
                         }
 
                         $response = $this->api()->create('bulk_imports', $importData);
@@ -315,7 +315,7 @@ class ImporterController extends AbstractActionController
                         // Clear import session.
                         $session->exchangeArray([]);
 
-                        $args = ['import_id' => $import->getId()];
+                        $args = ['import_id' => $import->id()];
 
                         $dispatcher = $this->jobDispatcher();
                         try {
@@ -371,11 +371,11 @@ class ImporterController extends AbstractActionController
         $controller = $this;
         $formsCallbacks = [];
 
-        $reader = $importer->getReader();
+        $reader = $importer->reader();
         if ($reader instanceof Parametrizable) {
             $formsCallbacks['reader'] = function () use ($reader, $controller) {
                 $readerForm = $controller->getForm($reader->getParamsFormClass());
-                $readerConfig = ($reader->getConfig()) ? $reader->getConfig() : [];
+                $readerConfig = $reader->getConfig() ?: [];
                 $readerForm->setData($readerConfig);
 
                 $readerForm->add([
@@ -401,16 +401,14 @@ class ImporterController extends AbstractActionController
             };
         }
 
-        $processor = $importer->getProcessor();
+        $processor = $importer->processor();
         $processor->setReader($reader);
         if ($processor instanceof Parametrizable) {
             $formsCallbacks['processor'] = function () use ($processor, $controller) {
                 $processorForm = $controller->getForm($processor->getParamsFormClass(), [
                     'processor' => $processor,
                 ]);
-                $processorConfig = ($processor->getConfig())
-                    ? $processor->getConfig()
-                    : [];
+                $processorConfig = $processor->getConfig() ?: [];
                 $processorForm->setData($processorConfig);
 
                 $processorForm->add([

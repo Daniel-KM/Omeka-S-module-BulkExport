@@ -38,3 +38,26 @@ DROP TABLE bulk_log;
 SQL;
     $connection->exec($sql);
 }
+
+if (version_compare($oldVersion, '3.0.2', '<')) {
+    $sql = <<<'SQL'
+ALTER TABLE bulk_import
+    ADD job_id INT DEFAULT NULL AFTER importer_id,
+    DROP status,
+    DROP started,
+    DROP ended,
+    CHANGE importer_id importer_id INT DEFAULT NULL,
+    CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
+ALTER TABLE bulk_import
+    ADD CONSTRAINT FK_BD98E874BE04EA9 FOREIGN KEY (job_id) REFERENCES job (id);
+CREATE UNIQUE INDEX UNIQ_BD98E874BE04EA9 ON bulk_import (job_id);
+ALTER TABLE bulk_importer
+    CHANGE name name VARCHAR(190) DEFAULT NULL,
+    CHANGE reader_name reader_name VARCHAR(190) DEFAULT NULL,
+    CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE processor_name processor_name VARCHAR(190) DEFAULT NULL,
+    CHANGE processor_config processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
+SQL;
+    $connection->exec($sql);
+}
