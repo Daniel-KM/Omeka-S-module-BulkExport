@@ -19,6 +19,10 @@ class MockUrl extends Url
     public function ingest(Media $media, Request $request, ErrorStore $errorStore)
     {
         $data = $request->getContent();
+        if (!isset($data['ingest_url'])) {
+            $errorStore->addError('error', 'No ingest URL specified');
+            return;
+        }
         $uri = $data['ingest_url'];
 
         // Replace a remote url by a local mock one.
@@ -39,6 +43,9 @@ class MockUrl extends Url
         $media->setExtension($tempFile->getExtension());
         $media->setMediaType($tempFile->getMediaType());
         $media->setSha256($tempFile->getSha256());
+        if (version_compare(\Omeka\Module::VERSION, '1.3.0', '>=')) {
+            $media->setSize($tempFile->getSize());
+        }
         // $hasThumbnails = $tempFile->storeThumbnails();
         $hasThumbnails = false;
         $media->setHasThumbnails($hasThumbnails);

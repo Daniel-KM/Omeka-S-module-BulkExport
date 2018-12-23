@@ -346,6 +346,16 @@ SQL;
             unset($resource['o:thumbnail_urls']);
         }
 
+        if (version_compare(\Omeka\Module::VERSION, '1.3.0', '<')) {
+            unset($resource['o:thumbnail']);
+            unset($resource['o:size']);
+            foreach ($resource as &$property) {
+                if (isset($property['property_id'])) {
+                    unset($property['is_public']);
+                }
+            }
+        }
+
         return $resource;
     }
 
@@ -381,7 +391,7 @@ SQL;
                     'name' => 'filename.tsv',
                     'type' => 'text/tab-separated-values',
                     'error' => 0,
-                    'size' => 1000
+                    'size' => 27482
                 ],
                 'delimiter' => "\t",
                 'enclosure' => chr(0),

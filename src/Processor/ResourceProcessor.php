@@ -108,6 +108,7 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $media = [];
                     $media['o:ingester'] = 'url';
                     $media['ingest_url'] = $value;
+                    $media['o:source'] = $value;
                     $this->appendRelated($resource, $media);
                 }
                 return true;
@@ -121,6 +122,7 @@ class ResourceProcessor extends AbstractResourceProcessor
                         $media['o:ingester'] = 'sideload';
                         $media['ingest_filename'] = $value;
                     }
+                    $media['o:source'] = $value;
                     $this->appendRelated($resource, $media);
                 }
                 return true;
@@ -178,6 +180,7 @@ class ResourceProcessor extends AbstractResourceProcessor
                 $value = array_pop($values);
                 $resource['o:ingester'] = 'url';
                 $resource['ingest_url'] = $value;
+                $resource['o:source'] = $value;
                 return true;
             case 'file':
                 $value = array_pop($values);
@@ -188,6 +191,7 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $resource['o:ingester'] = 'sideload';
                     $resource['ingest_filename'] = $value;
                 }
+                $resource['o:source'] = $value;
                 return true;
             case 'html':
                 $value = array_pop($values);
