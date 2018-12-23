@@ -1,7 +1,9 @@
 <?php
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \BulkImport\Api\Representation\ImporterRepresentation $importer
  * @var \BulkImport\Form\ImporterForm $form
+ * @var array $importArgs
  */
 
 $translate = $this->plugin('translate');
@@ -16,6 +18,16 @@ $form->prepare();
 
 <div id="content">
     <h2><?php echo $escape($translate('Start import')); ?></h2>
+    <h3><?php echo $escape($translate('Importer')); ?></h3>
+    <p><?php echo $importer->getName(); ?></p>
+    <?php if (isset($importArgs)): ?>
+    <h3><?php echo $escape($translate('Parameters')); ?></h3>
+    <div class="value">
+        <pre><?php
+            echo $escape(json_encode($importArgs, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        ?></pre>
+    </div>
+    <?php endif; ?>
     <?php
     echo $this->form()->openTag($form);
     echo $this->formCollection($form);

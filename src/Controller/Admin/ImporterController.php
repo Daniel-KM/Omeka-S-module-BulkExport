@@ -6,16 +6,13 @@ use BulkImport\Form\ImporterDeleteForm;
 use BulkImport\Form\ImporterForm;
 use BulkImport\Form\ImporterStartForm;
 use BulkImport\Interfaces\Parametrizable;
-use BulkImport\Interfaces\Processor;
 use BulkImport\Job\Import as JobImport;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
-use Omeka\Media\Ingester\Manager as MediaIngesterManager ;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
-use Zend\Session\SessionManager;
 use Zend\View\Model\ViewModel;
 
 class ImporterController extends AbstractActionController
@@ -243,9 +240,8 @@ class ImporterController extends AbstractActionController
         $processor = $importer->getProcessor();
         $processor->setReader($reader);
 
-        /** @var SessionManager $sessionManager */
+        /** @var \Zend\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
-        /** @var Container $session */
         $session = new Container('ImporterStartForm', $sessionManager);
 
         if (!$this->getRequest()->isPost()) {
@@ -261,6 +257,7 @@ class ImporterController extends AbstractActionController
         $formsCallbacks = $this->getStartFormsCallbacks($importer);
         $formCallback = reset($formsCallbacks);
 
+        $next = null;
         if ($this->getRequest()->isPost()) {
             // Current form.
             $currentForm = $this->getRequest()->getPost('current_form');
@@ -279,18 +276,19 @@ class ImporterController extends AbstractActionController
                 // Execute file filters.
                 $data = $form->getData();
                 $session->{$currentForm} = $data;
-
                 switch ($currentForm) {
                     default:
                     case 'reader':
                         $reader->handleParamsForm($form);
                         $session->reader = $reader->getParams();
-                        $formCallback = isset($formsCallbacks['processor']) ? $formsCallbacks['processor'] : $formsCallbacks['start'];
+                        $next = isset($formsCallbacks['processor']) ? 'processor' : 'start';
+                        $formCallback = $formsCallbacks[$next];
                         break;
 
                     case 'processor':
                         $processor->handleParamsForm($form);
                         $session->processor = $processor->getParams();
+                        $next = 'start';
                         $formCallback = $formsCallbacks['start'];
                         break;
 
@@ -341,7 +339,16 @@ class ImporterController extends AbstractActionController
             $form = call_user_func($formCallback);
         }
         $view = new ViewModel;
+        $view->setVariable('importer', $importer);
         $view->setVariable('form', $form);
+        if ($next === 'start') {
+            $importArgs = [];
+            $importArgs['reader'] = $session['reader'];
+            $importArgs['processor'] = $currentForm === 'reader' ? [] : $session['processor'];
+            // For security purpose.
+            unset($importArgs['reader']['filename']);
+            $view->setVariable('importArgs', $importArgs);
+        }
         return $view;
     }
 
