@@ -49,5 +49,14 @@ class ImportAdapter extends AbstractEntityAdapter
                 )
             );
         }
+
+        if (isset($query['importer_id'])) {
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $this->getEntityClass() . '.importer',
+                    $this->createNamedParameter($qb, $query['importer_id'])
+                )
+            );
+        }
     }
 }

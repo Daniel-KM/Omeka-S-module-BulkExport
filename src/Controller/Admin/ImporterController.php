@@ -85,6 +85,13 @@ class ImporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk');
         }
 
+        // Check if the importer has imports.
+        $total = $this->api()->search('bulk_imports', ['importer_id' => $id])->getTotalResults();
+        if ($total) {
+            $this->messenger()->addWarning('This importerd cannot be deleted: imports that use it exist.'); // @translate
+            return $this->redirect()->toRoute('admin/bulk');
+        }
+
         $form = $this->getForm(ImporterDeleteForm::class);
         $form->setData($entity->getJsonLd());
 
