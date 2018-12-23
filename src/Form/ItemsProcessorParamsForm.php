@@ -1,10 +1,8 @@
 <?php
 namespace Import\Form;
 
-use Import\Interfaces\Processor;
-use Import\Interfaces\Reader;
 use Omeka\Form\Element\ResourceSelect;
-
+use Zend\Form\Fieldset;
 
 class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
 {
@@ -12,21 +10,21 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
     {
         parent::init();
 
-        /** @var  Processor $processor */
+        /** @var \Import\Interfaces\Processor $processor */
         $processor = $this->getOption('processor');
-        /** @var Reader $reader */
+        /** @var \Import\Interfaces\Reader $reader */
         $reader = $processor->getReader();
 
         $this->add([
             'name' => 'mapping',
-            'type' => 'fieldset',
+            'type' => Fieldset::class,
             'options' => [
-                'label' => 'Mapping',  // Text label
+                'label' => 'Mapping', // Text label
             ],
         ]);
 
-        //add all columns from file as inputs
-        foreach($reader->getAvailableFields() as $name) {
+        // Add all columns from file as inputs.
+        foreach ($reader->getAvailableFields() as $name) {
             $this->get('mapping')->add([
                 'name' => $name,
                 'type' => ResourceSelect::class,
@@ -47,8 +45,8 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
             ]);
         }
 
-        //change required to false
-        foreach($this->getInputFilter()->get('mapping')->getInputs() as $input) {
+        // Change required to false.
+        foreach ($this->getInputFilter()->get('mapping')->getInputs() as $input) {
             $input->setRequired(false);
         }
     }

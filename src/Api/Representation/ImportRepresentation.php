@@ -8,22 +8,23 @@ class ImportRepresentation extends AbstractEntityRepresentation
     public function getJsonLd()
     {
         return [
-            'id' => $this->getId(),
+            'o:id' => $this->getId(),
             'reader_params' => $this->getReaderParams(),
             'processor_params' => $this->getProcessorParams(),
-            'status' => $this->getStatus(),
+            'o:status' => $this->getStatus(),
             'started' => $this->getStarted(),
             'ended' => $this->getEnded(),
-            'o:importer' => $this->getImporter(),
+            'o-module-import:importer' => $this->getImporter(),
         ];
     }
 
     public function getJsonLdType()
     {
-        return 'o:importImport';
+        return 'o-module-import:Import';
     }
 
-    public function getResource() {
+    public function getResource()
+    {
         return $this->resource;
     }
 

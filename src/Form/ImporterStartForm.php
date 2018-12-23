@@ -2,6 +2,8 @@
 namespace Import\Form;
 
 use Import\Traits\ServiceLocatorAwareTrait;
+use Zend\Form\Element;
+use Zend\Form\Fieldset;
 use Zend\Form\Form;
 
 class ImporterStartForm extends Form
@@ -12,13 +14,16 @@ class ImporterStartForm extends Form
     {
         $this->add([
             'name' => 'start_submit',
-            'type' => 'fieldset',
+            'type' => Fieldset::class,
         ]);
-        $this->get('start_submit')->add([
-            'type'  => 'submit',
+
+        $fieldset = $this->get('start_submit');
+
+        $fieldset->add([
+            'type'  => Element\Submit::class,
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Start import',
+                'value' => 'Start import', // @translate
             ],
         ]);
     }

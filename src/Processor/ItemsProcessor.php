@@ -1,25 +1,27 @@
 <?php
 namespace Import\Processor;
 
-use Import\Log\Logger;
-use Zend\Form\Form;
-
-use Import\Processor\AbstractProcessor;
 use Import\Interfaces\Configurable;
-use Import\Traits\ConfigurableTrait;
 use Import\Interfaces\Parametrizable;
+use Import\Log\Logger;
+use Import\Traits\ConfigurableTrait;
 use Import\Traits\ParametrizableTrait;
-use Import\Form\ItemsProcessorParamsForm;
 use Import\Form\ItemsProcessorConfigForm;
-use Zend\Form\FormInterface;
+use Import\Form\ItemsProcessorParamsForm;
+use Zend\Form\Form;
 
 class ItemsProcessor extends AbstractProcessor implements Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait;
 
-    /** @var \Omeka\Api\Manager */
+    /**
+     * @var \Omeka\Api\Manager
+     */
     protected $api;
-    /** @var array */
+
+    /**
+     * @var array
+     */
     protected $properties;
 
     /**
@@ -27,14 +29,16 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
      */
     protected function getApi()
     {
-        if($this->api) return $this->api;
+        if ($this->api) {
+            return $this->api;
+        }
         $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         return $this->api;
     }
 
     public function getLabel()
     {
-        return 'Items';
+        return 'Items'; // @translate
     }
 
     public function getConfigFormClass()
@@ -63,12 +67,12 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
     public function handleParamsForm(Form $form)
     {
         $values = $form->getData();
-        $params = array(
+        $params = [
             'mapping' => $values['mapping'],
             'o:item_set' => $values['o:item_set'],
             'o:resource_template' => $values['o:resource_template'],
             'o:resource_class' => $values['o:resource_class'],
-        );
+        ];
         $this->setParams($params);
     }
 
@@ -79,44 +83,50 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
         $resourceTemplateId = $this->getParam('o:resource_template');
         $resourceClassId = $this->getParam('o:resource_class');
 
-
+        $insert = [];
         foreach ($this->reader as $index => $entry) {
             $this->logger->log(Logger::NOTICE, sprintf('Processing row %s', $index + 1));
 
             $item = [
                 'o:is_public' => true,
             ];
-            if ($itemSetId) $item['o:item_set'][] = ['o:id' => $itemSetId];
-            if ($resourceTemplateId) $item['o:resource_template'] = ['o:id' => $resourceTemplateId];
-            if ($resourceClassId) $item['o:resource_class'] = ['o:id' => $resourceClassId];
+            if ($itemSetId) {
+                $item['o:item_set'][] = ['o:id' => $itemSetId];
+            }
+            if ($resourceTemplateId) {
+                $item['o:resource_template'] = ['o:id' => $resourceTemplateId];
+            }
+            if ($resourceClassId) {
+                $item['o:resource_class'] = ['o:id' => $resourceClassId];
+            }
 
-//            $files = [];
+            // $files = [];
 
             foreach ($mapping as $sourceField => $target) {
-                if(empty($target)) continue;
+                if (empty($target)) {
+                    continue;
+                }
                 if (isset($entry[$sourceField])) {
                     $value = $entry[$sourceField];
 
-                    //literal property
+                    // Literal property.
                     if (is_numeric($target)) {
-
-                        if(($property = $this->getProperty($target))) {
+                        if (($property = $this->getProperty($target))) {
                             $itemProperty = [
                                 '@value' => $value,
                                 'property_id' => $property->getId(),
                                 'type' => 'literal',
                             ];
-                            $item[] = [ $itemProperty ];
+                            $item[] = [$itemProperty];
                         }
-
                     } elseif (0 === strpos($target, 'file:')) {
-                        //TODO: develop as a feature, as there are too many changes in media handling for refactoring
-//                        $strategy = substr($target, strpos($target, ':') + 1);
-//                        $strategy = ucfirst($strategy);
-//                        $files[] = [
-//                            'strategy' => $strategy,
-//                            'file' => $value,
-//                        ];
+                        // TODO Develop as a feature, as there are too many changes in media handling for refactoring.
+                        // $strategy = substr($target, strpos($target, ':') + 1);
+                        // $strategy = ucfirst($strategy);
+                        // $files[] = [
+                        //    'strategy' => $strategy,
+                        //    'file' => $value,
+                        // ];
                     } else {
                         $item[$target] = $value;
                     }
@@ -124,33 +134,36 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
             }
 
             $insert[] = $item;
-            //only add every X for batch import
-            if (($index+1) % 20 == 0) {
-                //batch create
+            // Only add every X for batch import.
+            if (($index + 1) % 20 == 0) {
+                // Batch create.
                 $this->createEntities($insert);
                 $insert = [];
             }
         }
-        //take care of remainder from the modulo check
+        // Take care of remainder from the modulo check.
         $this->createEntities($insert);
     }
 
     protected function createEntities($list)
     {
         try {
-            $items = $this->getApi()->batchCreate('items', $list, [], ['continueOnError' => true])->getContent();
-            foreach($items as $item) {
-                $this->logger->log( Logger::NOTICE, sprintf('Created item %d', $item->id()));
+            $items = $this->getApi()
+                ->batchCreate('items', $list, [], ['continueOnError' => true])->getContent();
+            foreach ($items as $item) {
+                $this->logger->log(Logger::NOTICE, sprintf('Created item %d', $item->id())); // @translate
             }
-        } catch (Exception $e) {
-            $this->logger->log( Logger::ERR, $e->__toString());
+        } catch (\Exception $e) {
+            $this->logger->log(Logger::ERR, $e->__toString());
         }
     }
 
     protected function getProperty($id)
     {
         $properties = $this->getProperties();
-        return isset($properties[$id]) ? $properties[$id] : null;
+        return isset($properties[$id])
+            ? $properties[$id]
+            : null;
     }
 
     /**
@@ -158,11 +171,14 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
      */
     protected function getProperties()
     {
-        if (isset($this->properties)) return $this->properties;
+        if (isset($this->properties)) {
+            return $this->properties;
+        }
 
         $this->properties = [];
-        $properties = $this->getApi()->search('properties', [], ['responseContent' => 'resource'])->getContent();
-        foreach($properties as $property) {
+        $properties = $this->getApi()
+            ->search('properties', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($properties as $property) {
             $this->properties[$property->getId()] = $property;
         }
 

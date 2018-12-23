@@ -1,23 +1,21 @@
 <?php
-namespace Import\Controller;
+namespace Import\Controller\Admin;
 
-use Import\Job\Import as JobImport;
 use Import\Form\ImporterDeleteForm;
 use Import\Form\ImporterForm;
 use Import\Form\ImporterStartForm;
 use Import\Interfaces\Parametrizable;
 use Import\Interfaces\Processor;
-
+use Import\Job\Import as JobImport;
 use Import\Traits\ServiceLocatorAwareTrait;
 use Omeka\Media\Ingester\Manager as MediaIngesterManager ;
-
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
-use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Zend\Session\SessionManager;
+use Zend\View\Model\ViewModel;
 
-class ImportersController extends AbstractActionController
+class ImporterController extends AbstractActionController
 {
     use ServiceLocatorAwareTrait;
 
@@ -42,14 +40,15 @@ class ImportersController extends AbstractActionController
         }
 
         $form = $this->getForm(ImporterForm::class);
-        if($entity) $form->setData($entity->getJsonLd());
+        if ($entity) {
+            $form->setData($entity->getJsonLd());
+        }
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-
-                if($entity) {
+                if ($entity) {
                     $response = $this->api($form)->update('import_importers', $this->params('id'), $data, [], ['isPartial' => true]);
                 } else {
                     $response = $this->api($form)->create('import_importers', $data);
@@ -140,7 +139,6 @@ class ImportersController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-
                 $reader->handleConfigForm($form);
                 $data['reader_config'] = $reader->getConfig();
                 $response = $this->api($form)->update('import_importers', $this->params('id'), $data, [], ['isPartial' => true]);
@@ -250,7 +248,7 @@ class ImportersController extends AbstractActionController
         $formCallback = reset($formsCallbacks);
 
         if ($this->getRequest()->isPost()) {
-            //current form
+            // Current form.
             $currentForm = $this->getRequest()->getPost('current_form');
             $form = call_user_func($formsCallbacks[$currentForm]);
 
@@ -268,19 +266,19 @@ class ImportersController extends AbstractActionController
                 $data = $form->getData();
                 $session->{$currentForm} = $data;
 
-                switch($currentForm) {
+                switch ($currentForm) {
                     default:
                     case 'reader':
                         $reader->handleParamsForm($form);
                         $session->reader = $reader->getParams();
                         $formCallback = isset($formsCallbacks['processor']) ? $formsCallbacks['processor'] : $formsCallbacks['start'];
-                    break;
+                        break;
 
                     case 'processor':
                         $processor->handleParamsForm($form);
                         $session->processor = $processor->getParams();
                         $formCallback = $formsCallbacks['start'];
-                    break;
+                        break;
 
                     case 'start':
                         $importData = [
@@ -314,108 +312,33 @@ class ImportersController extends AbstractActionController
                         }
 
                         return $this->redirect()->toRoute('admin/import');
-                    break;
+                        break;
                 }
 
-                //next form
+                // Next form.
                 $form = call_user_func($formCallback);
             } else {
                 $this->messenger()->addFormErrors($form);
             }
         }
 
-        //default form
-        if(!isset($form)) {
+        // Default form.
+        if (!isset($form)) {
             $form = call_user_func($formCallback);
         }
         $view = new ViewModel;
         $view->setVariable('form', $form);
         return $view;
-
-//        $db = $this->getHelper('db');
-//
-//        $importer = $db->getTable('Import_Importer')->find($this->getParam('id'));
-//        $reader = $importer->getReader();
-//        $processor = $importer->getProcessor();
-//        $processor->setReader($reader);
-//
-//        $session = new Zend_Session_Namespace('ImporterStartForm');
-//        if (!$this->getRequest()->isPost()) {
-//            $session->unsetAll();
-//        }
-//        if (isset($session->reader)) {
-//            $reader->setParams($session->reader);
-//        }
-//        if (isset($session->processor)) {
-//            $processor->setParams($session->processor);
-//        }
-//
-//        $formsCallbacks = $this->getStartFormsCallbacks($importer);
-//        $formCallback = reset($formsCallbacks);
-//
-//        if ($this->getRequest()->isPost()) {
-//            $currentForm = $this->getRequest()->getPost('current_form');
-//            $form = call_user_func($formsCallbacks[$currentForm]);
-//            if ($form->isValid($_POST)) {
-//                $values = $form->getValues();
-//                $session->{$currentForm} = $values;
-//                if ($currentForm == 'reader') {
-//                    $reader->handleParamsForm($form);
-//                    $session->reader = $reader->getParams();
-//                    $formCallback = isset($formsCallbacks['processor']) ? $formsCallbacks['processor'] : $formsCallbacks['start'];
-//                } elseif ($currentForm == 'processor') {
-//                    $processor->handleParamsForm($form);
-//                    $session->processor = $processor->getParams();
-//                    $formCallback = $formsCallbacks['start'];
-//                } elseif ($currentForm == 'start') {
-//                    $import = new Import_Import;
-//                    $import->importer_id = $importer->id;
-//                    if ($reader instanceof Import_Parametrizable) {
-//                        $import->setReaderParams($reader->getParams());
-//                    }
-//                    if ($processor instanceof Import_Parametrizable) {
-//                        $import->setProcessorParams($processor->getParams());
-//                    }
-//                    $import->status = 'queued';
-//                    $import->save();
-//                    $session->unsetAll();
-//
-//                    $jobDispatcher = Zend_Registry::get('job_dispatcher');
-//                    $jobDispatcher->setQueueName('import_imports');
-//                    try {
-//                        $jobDispatcher->sendLongRunning('Import_Job_Import', array(
-//                            'importId' => $import->id,
-//                        ));
-//                        $this->flash('Import started');
-//                    } catch (Exception $e) {
-//                        $import->status = 'error';
-//                        $this->flash('Import start failed', 'error');
-//                    }
-//
-//                    $this->redirect('import');
-//                }
-//            } else {
-//                $this->flash(__('Form is invalid'), 'error');
-//                foreach ($form->getMessages() as $messages) {
-//                    foreach ($messages as $message) {
-//                        $this->flash($message, 'error');
-//                    }
-//                }
-//            }
-//        }
-//
-//        $form = call_user_func($formCallback);
-//        $this->view->form = $form;
     }
 
     protected function getStartFormsCallbacks($importer)
     {
         $controller = $this;
-        $formsCallbacks = array();
+        $formsCallbacks = [];
 
         $reader = $importer->getReader();
         if ($reader instanceof Parametrizable) {
-            $formsCallbacks['reader'] = function() use($reader, $controller) {
+            $formsCallbacks['reader'] = function () use ($reader, $controller) {
                 $readerForm = $controller->getForm($reader->getParamsFormClass());
                 $readerConfig = ($reader->getConfig()) ? $reader->getConfig() : [];
                 $readerForm->setData($readerConfig);
@@ -446,11 +369,13 @@ class ImportersController extends AbstractActionController
         $processor = $importer->getProcessor();
         $processor->setReader($reader);
         if ($processor instanceof Parametrizable) {
-            $formsCallbacks['processor'] = function() use($processor, $controller) {
+            $formsCallbacks['processor'] = function () use ($processor, $controller) {
                 $processorForm = $controller->getForm($processor->getParamsFormClass(), [
                     'processor' => $processor,
                 ]);
-                $processorConfig = ($processor->getConfig()) ? $processor->getConfig() : [];
+                $processorConfig = ($processor->getConfig())
+                    ? $processor->getConfig()
+                    : [];
                 $processorForm->setData($processorConfig);
 
                 $processorForm->add([
@@ -476,7 +401,7 @@ class ImportersController extends AbstractActionController
             };
         }
 
-        $formsCallbacks['start'] = function() use($controller) {
+        $formsCallbacks['start'] = function () use ($controller) {
             $startForm = $controller->getForm(ImporterStartForm::class);
             $startForm->add([
                 'type'  => 'hidden',

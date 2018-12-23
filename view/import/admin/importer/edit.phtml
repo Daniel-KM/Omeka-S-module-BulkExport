@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Import\Form\ImporterDeleteForm $form
+ * @var \Import\Api\Representation\ImporterRepresentation $entity
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$this->htmlElement('body')->appendAttribute('class', 'importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$form->prepare();
+?>
+
+<?php echo $this->pageTitle($translate('Import'), 1, $translate('Edit importer')); ?>
+
+<div id="primary">
+    <h2><?php echo $escape($translate('Edit importer')); ?></h2>
+    <?php
+    echo $this->form()->openTag($form);
+    echo $this->formCollection($form);
+    echo $this->form()->closeTag();
+    ?>
+</div>

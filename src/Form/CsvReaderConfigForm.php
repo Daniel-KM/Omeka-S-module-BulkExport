@@ -2,6 +2,7 @@
 namespace Import\Form;
 
 use Import\Traits\ServiceLocatorAwareTrait;
+use Zend\Form\Element;
 use Zend\Form\Form;
 
 class CsvReaderConfigForm extends Form
@@ -14,31 +15,34 @@ class CsvReaderConfigForm extends Form
 
         $this->add([
             'name' => 'delimiter',
-            'type' => 'text',
+            'type' => Element\Text::class,
             'options' => [
                 'label' => 'Default delimiter', // @translate
             ],
             'attributes' => [
+                'id' => 'delimiter',
                 'value' => ',',
             ],
         ]);
         $this->add([
             'name' => 'enclosure',
-            'type' => 'text',
+            'type' => Element\Text::class,
             'options' => [
                 'label' => 'Default enclosure', // @translate
             ],
             'attributes' => [
+                'id' => 'enclosure',
                 'value' => '"',
             ],
         ]);
         $this->add([
             'name' => 'escape',
-            'type' => 'text',
+            'type' => Element\Text::class,
             'options' => [
                 'label' => 'Default escape', // @translate
             ],
             'attributes' => [
+                'id' => 'escape',
                 'value' => '\\',
             ],
         ]);

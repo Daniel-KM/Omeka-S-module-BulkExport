@@ -8,7 +8,7 @@ class LogRepresentation extends AbstractEntityRepresentation
     public function getJsonLd()
     {
         return [
-            'id' => $this->getId(),
+            'o:id' => $this->getId(),
             'severity' => $this->getSeverity(),
             'message' => $this->getMessage(),
             'params' => $this->getParams(),
@@ -18,7 +18,7 @@ class LogRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLdType()
     {
-        return 'o:importLog';
+        return 'o-module-import:Log';
     }
 
     /*

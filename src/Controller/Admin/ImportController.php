@@ -1,13 +1,13 @@
 <?php
-namespace Import\Controller;
+namespace Import\Controller\Admin;
 
 use Import\Traits\ServiceLocatorAwareTrait;
+use Zend\Log\Logger;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
-use Zend\Log\Logger;
 
-class ImportsController extends AbstractActionController
+class ImportController extends AbstractActionController
 {
     use ServiceLocatorAwareTrait;
 
@@ -19,7 +19,7 @@ class ImportsController extends AbstractActionController
     public function indexAction()
     {
         $page = $this->params()->fromQuery('page', 1);
-        $perPage = 20;
+        $perPage = 25;
         $query = $this->params()->fromQuery() + [
             'page' => $page,
             'per_page' => $perPage,
@@ -40,7 +40,7 @@ class ImportsController extends AbstractActionController
         $severity = (int) $this->params()->fromQuery('severity', Logger::NOTICE);
 
         $page = $this->params()->fromQuery('page', 1);
-        $perPage = 20;
+        $perPage = 25;
         $query = $this->params()->fromQuery() + [
             'page' => $page,
             'per_page' => $perPage,
@@ -58,6 +58,5 @@ class ImportsController extends AbstractActionController
         $view->setVariable('severity', $severity);
         $view->setVariable('logs', $response->getContent());
         return $view;
-
     }
 }

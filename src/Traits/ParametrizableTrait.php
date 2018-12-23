@@ -3,6 +3,9 @@ namespace Import\Traits;
 
 trait ParametrizableTrait
 {
+    /**
+     * @var array
+     */
     protected $params;
 
     public function setParams($params)

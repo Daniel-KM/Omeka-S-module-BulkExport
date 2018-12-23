@@ -1,6 +1,8 @@
 <?php
 namespace Import\Form;
 
+use Zend\Form\Element;
+
 class CsvReaderParamsForm extends CsvReaderConfigForm
 {
     protected $reader;
@@ -12,9 +14,12 @@ class CsvReaderParamsForm extends CsvReaderConfigForm
 
         $this->add([
             'name' => 'file',
-            'type' => 'file',
+            'type' => Element\File::class,
             'options' => [
                 'label' => 'CSV file', // @translate
+            ],
+            'attributes' => [
+                'file',
             ],
         ]);
 

@@ -2,9 +2,9 @@
 namespace Import\Service\Log;
 
 use Import\Log\Writer;
+use Interop\Container\ContainerInterface;
 use Zend\Log\Filter\Priority;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Interop\Container\ContainerInterface;
 
 /**
  * Logger factory.
@@ -16,7 +16,7 @@ class LoggerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $serviceLocator, $requestedName, array $options = null)
     {
-        $config = $serviceLocator->get('Config');
+        // $config = $serviceLocator->get('Config');
 
         $logger = new $requestedName();
 

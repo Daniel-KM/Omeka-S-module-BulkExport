@@ -5,7 +5,6 @@ namespace Import;
 use Import\Processor\ItemsProcessor;
 use Import\Reader\CsvReader;
 use Omeka\Module\AbstractModule;
-use Omeka\Entity\Job;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -19,57 +18,51 @@ class Module extends AbstractModule
     public function install(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
-        $sql = "
-            CREATE TABLE IF NOT EXISTS `import_importers` (
-                `id` int unsigned NOT NULL AUTO_INCREMENT,
-                `name` varchar(255) NOT NULL,
-                `reader_name` varchar(255) NOT NULL,
-                `reader_config` text NULL DEFAULT NULL,
-                `processor_name` varchar(255) NOT NULL,
-                `processor_config` text NULL DEFAULT NULL,
-                PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-            
-            CREATE TABLE IF NOT EXISTS `import_imports` (
-                `id` int unsigned NOT NULL AUTO_INCREMENT,
-                `importer_id` int unsigned NOT NULL,
-                `reader_params` text NULL DEFAULT NULL,
-                `processor_params` text NULL DEFAULT NULL,
-                `status` varchar(255) NULL DEFAULT NULL,
-                `started` timestamp NULL DEFAULT NULL,
-                `ended` timestamp NULL DEFAULT NULL,
-                PRIMARY KEY (`id`),
-                KEY (`importer_id`),
-                CONSTRAINT `import_imports_fk_importer_id`
-                  FOREIGN KEY (`importer_id`) REFERENCES `import_importers` (`id`)
-                  ON DELETE RESTRICT ON UPDATE RESTRICT
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-            
-            CREATE TABLE IF NOT EXISTS `import_logs` (
-                `id` int unsigned NOT NULL AUTO_INCREMENT,
-                `import_id` int unsigned NOT NULL,
-                `severity` int NOT NULL DEFAULT 0,
-                `message` text NOT NULL,
-                `params` text NULL DEFAULT NULL,
-                `added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`),
-                KEY (`import_id`),
-                CONSTRAINT import_logs_fk_import_id
-                  FOREIGN KEY (`import_id`) REFERENCES `import_imports` (`id`)
-                  ON DELETE CASCADE ON UPDATE CASCADE
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-        ";
+        $sql = <<<SQL
+CREATE TABLE import_import (
+    id INT AUTO_INCREMENT NOT NULL,
+    importer_id INT DEFAULT NULL,
+    reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    status VARCHAR(255) DEFAULT NULL,
+    started DATETIME DEFAULT NULL,
+    ended DATETIME DEFAULT NULL,
+    UNIQUE INDEX UNIQ_E17F74057FCFE58E (importer_id),
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+CREATE TABLE import_importer (
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) DEFAULT NULL,
+    reader_name VARCHAR(255) DEFAULT NULL,
+    reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    processor_name VARCHAR(255) DEFAULT NULL,
+    processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+CREATE TABLE import_log (
+    id INT AUTO_INCREMENT NOT NULL,
+    import_id INT DEFAULT NULL,
+    severity VARCHAR(255) DEFAULT NULL,
+    message VARCHAR(255) DEFAULT NULL,
+    params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
+    added DATETIME DEFAULT NULL,
+    UNIQUE INDEX UNIQ_1B52C845B6A263D9 (import_id),
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+ALTER TABLE import_import ADD CONSTRAINT FK_E17F74057FCFE58E FOREIGN KEY (importer_id) REFERENCES import_importer (id);
+ALTER TABLE import_log ADD CONSTRAINT FK_1B52C845B6A263D9 FOREIGN KEY (import_id) REFERENCES import_import (id);
+SQL;
         $connection->exec($sql);
     }
 
     public function uninstall(ServiceLocatorInterface $serviceLocator)
     {
         $connection = $serviceLocator->get('Omeka\Connection');
-        $connection->exec("ALTER TABLE import_logs DROP FOREIGN KEY import_logs_fk_import_id;");
-        $connection->exec("ALTER TABLE import_imports DROP FOREIGN KEY import_imports_fk_importer_id;");
-        $connection->exec("DROP TABLE import_logs;");
-        $connection->exec("DROP TABLE import_imports;");
-        $connection->exec("DROP TABLE import_importers;");
+        $connection->exec('ALTER TABLE import_log DROP FOREIGN KEY FK_1B52C845B6A263D9;');
+        $connection->exec('ALTER TABLE import_import DROP FOREIGN KEY FK_E17F74057FCFE58E;');
+        $connection->exec('DROP TABLE import_log;');
+        $connection->exec('DROP TABLE import_import;');
+        $connection->exec('DROP TABLE import_importer;');
     }
 
     /**
@@ -79,8 +72,16 @@ class Module extends AbstractModule
      */
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
-        $sharedEventManager->attach(self::class, 'readers', array($this, 'getReaders'));
-        $sharedEventManager->attach(self::class, 'processors', array($this, 'getProcessors'));
+        $sharedEventManager->attach(
+            self::class,
+            'readers',
+            [$this, 'getReaders']
+        );
+        $sharedEventManager->attach(
+            self::class,
+            'processors',
+            [$this, 'getProcessors']
+        );
     }
 
     public function getReaders()

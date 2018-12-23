@@ -1,0 +1,24 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Import\Form\ImporterForm $form
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$this->htmlElement('body')->appendAttribute('class', 'importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$form->prepare();
+?>
+
+<?php echo $this->pageTitle($translate('Import'), 1, $translate('Start import')); ?>
+
+<div id="primary">
+    <h2><?php echo $escape($translate('Start import')); ?></h2>
+    <?php
+    echo $this->form()->openTag($form);
+    echo $this->formCollection($form);
+    echo $this->form()->closeTag();
+    ?>
+</div>

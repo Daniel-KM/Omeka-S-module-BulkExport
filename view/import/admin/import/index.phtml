@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Import\Api\Representation\ImportRepresentation[] $imports
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$this->htmlElement('body')->appendAttribute('class', 'importer jobs undo');
+$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+?>
+
+<?php echo $this->pageTitle($translate('Import'), 1, $translate('Imports')); ?>
+
+<div id="primary">
+    <h2><?php echo $escape($translate('Imports')); ?></h2>
+
+    <?php if (count($imports)): ?>
+        <?php echo $this->pagination(); ?>
+        <?php echo $this->partial('import/admin/import/import-table', ['imports' => $imports]); ?>
+    <?php else: ?>
+        <p><?php echo $escape($translate('No imports yet.')); ?></p>
+    <?php endif; ?>
+</div>

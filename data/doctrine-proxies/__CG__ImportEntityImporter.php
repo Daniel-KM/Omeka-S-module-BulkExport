@@ -36,7 +36,7 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
      *
      * @see \Doctrine\Common\Persistence\Proxy::__getLazyProperties
      */
-    public static $lazyPropertiesDefaults = ['name' => NULL, 'reader_name' => NULL, 'reader_config' => NULL, 'processor_name' => NULL, 'processor_config' => NULL];
+    public static $lazyPropertiesDefaults = [];
 
 
 
@@ -46,60 +46,16 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
      */
     public function __construct($initializer = null, $cloner = null)
     {
-        unset($this->name, $this->reader_name, $this->reader_config, $this->processor_name, $this->processor_config);
 
         $this->__initializer__ = $initializer;
         $this->__cloner__      = $cloner;
     }
 
-    /**
-     * 
-     * @param string $name
-     */
-    public function __get($name)
-    {
-        if (array_key_exists($name, $this->__getLazyProperties())) {
-            $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
 
-            return $this->$name;
-        }
 
-        trigger_error(sprintf('Undefined property: %s::$%s', __CLASS__, $name), E_USER_NOTICE);
-    }
 
-    /**
-     * 
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function __set($name, $value)
-    {
-        if (array_key_exists($name, $this->__getLazyProperties())) {
-            $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', [$name, $value]);
 
-            $this->$name = $value;
 
-            return;
-        }
-
-        $this->$name = $value;
-    }
-
-    /**
-     * 
-     * @param  string $name
-     * @return boolean
-     */
-    public function __isset($name)
-    {
-        if (array_key_exists($name, $this->__getLazyProperties())) {
-            $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', [$name]);
-
-            return isset($this->$name);
-        }
-
-        return false;
-    }
 
     /**
      * 
@@ -108,10 +64,10 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'name', 'reader_name', 'reader_config', 'processor_name', 'processor_config'];
+            return ['__isInitialized__', 'id', 'name', 'readerName', 'readerConfig', 'processorName', 'processorConfig'];
         }
 
-        return ['__isInitialized__', 'id'];
+        return ['__isInitialized__', 'id', 'name', 'readerName', 'readerConfig', 'processorName', 'processorConfig'];
     }
 
     /**
@@ -133,7 +89,6 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
                 }
             };
 
-            unset($this->name, $this->reader_name, $this->reader_config, $this->processor_name, $this->processor_config);
         }
     }
 
@@ -236,12 +191,12 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setId($value)
+    public function setName($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setId', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$value]);
 
-        return parent::setId($value);
+        return parent::setName($value);
     }
 
     /**
@@ -258,12 +213,12 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setName($value)
+    public function setReaderName($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderName', [$value]);
 
-        return parent::setName($value);
+        return parent::setReaderName($value);
     }
 
     /**
@@ -280,12 +235,12 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setReaderName($value)
+    public function setReaderConfig($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderConfig', [$value]);
 
-        return parent::setReaderName($value);
+        return parent::setReaderConfig($value);
     }
 
     /**
@@ -302,12 +257,12 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setReaderConfig($value)
+    public function setProcessorName($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderConfig', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorName', [$value]);
 
-        return parent::setReaderConfig($value);
+        return parent::setProcessorName($value);
     }
 
     /**
@@ -324,12 +279,12 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setProcessorName($value)
+    public function setProcessorConfig($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorName', [$value]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorConfig', [$value]);
 
-        return parent::setProcessorName($value);
+        return parent::setProcessorConfig($value);
     }
 
     /**
@@ -341,17 +296,6 @@ class Importer extends \Import\Entity\Importer implements \Doctrine\ORM\Proxy\Pr
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorConfig', []);
 
         return parent::getProcessorConfig();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setProcessorConfig($value)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorConfig', [$value]);
-
-        return parent::setProcessorConfig($value);
     }
 
     /**

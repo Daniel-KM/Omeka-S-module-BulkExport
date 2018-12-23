@@ -1,17 +1,16 @@
 <?php
 namespace Import\Reader;
 
+use Import\Entry\CsvRow;
 use Import\Form\CsvReaderConfigForm;
 use Import\Form\CsvReaderParamsForm;
-use Import\Traits\ServiceLocatorAwareTrait;
-use Zend\Form\Form;
-
-use Import\Interfaces\Reader;
 use Import\Interfaces\Configurable;
 use Import\Interfaces\Parametrizable;
+use Import\Interfaces\Reader;
 use Import\Traits\ConfigurableTrait;
 use Import\Traits\ParametrizableTrait;
-use Import\Entry\CsvRow;
+use Import\Traits\ServiceLocatorAwareTrait;
+use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CsvReader implements Reader, Configurable, Parametrizable
@@ -21,11 +20,14 @@ class CsvReader implements Reader, Configurable, Parametrizable
     protected $fh;
 
     protected $currentRow;
+
     protected $currentRowData;
+
     protected $headers;
 
     /**
      * CsvReader constructor.
+     *
      * @param ServiceLocatorInterface $serviceLocator
      */
     public function __construct(ServiceLocatorInterface $serviceLocator)
@@ -35,7 +37,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
     public function getLabel()
     {
-        return 'CSV';
+        return 'CSV'; // @translate
     }
 
     public function current()
@@ -76,7 +78,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
     public function getAvailableFields()
     {
-        $fields = array();
+        $fields = [];
 
         $filename = $this->getParam('filename');
         if ($filename && file_exists($filename)) {
@@ -118,24 +120,26 @@ class CsvReader implements Reader, Configurable, Parametrizable
         $values = $form->getData();
         $file = $form->get('file')->getValue();
 
-        //move file
+        // Move file.
         $systemConfig = $this->getServiceLocator()->get('Config');
-        $tempDir = isset($systemConfig['temp_dir']) ? $systemConfig['temp_dir'] : null;
-        if(!$tempDir) {
-            throw new \Exception('temp_dir is not configured');
+        $tempDir = isset($systemConfig['temp_dir'])
+            ? $systemConfig['temp_dir']
+            : null;
+        if (!$tempDir) {
+            throw new \Exception('temp_dir is not configured'); // @translate
         }
 
         $filename = tempnam($tempDir, 'omeka');
-        if(!move_uploaded_file($file['tmp_name'], $filename)) {
-            throw new \Exception(sprintf('Unable to move uploaded file to %s',$filename));
+        if (!move_uploaded_file($file['tmp_name'], $filename)) {
+            throw new \Exception(sprintf('Unable to move uploaded file to %s', $filename)); // @translate
         }
 
-        $this->setParams(array(
+        $this->setParams([
             'filename' => $filename,
             'delimiter' => $values['delimiter'],
             'enclosure' => $values['enclosure'],
             'escape' => $values['escape'],
-        ));
+        ]);
     }
 
     protected function getRow($fh)

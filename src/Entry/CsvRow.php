@@ -29,12 +29,12 @@ class CsvRow implements EntryInterface
 
     public function offsetSet($offset, $value)
     {
-        throw new \Exception("Modification forbidden");
+        throw new \Exception("Modification forbidden"); // @translate
     }
 
     public function offsetUnset($offset)
     {
-        throw new \Exception("Modification forbidden");
+        throw new \Exception("Modification forbidden"); // @translate
     }
 
     public function current()

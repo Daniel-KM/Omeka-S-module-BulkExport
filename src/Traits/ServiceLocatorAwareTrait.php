@@ -5,7 +5,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 trait ServiceLocatorAwareTrait
 {
-    /** @var  ServiceLocatorInterface */
+    /**
+     * @var ServiceLocatorInterface
+     */
     protected $serviceLocator;
 
     /**

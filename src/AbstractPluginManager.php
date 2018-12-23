@@ -1,9 +1,7 @@
 <?php
 namespace Import;
 
-use Import\Module;
 use Import\Traits\ServiceLocatorAwareTrait;
-
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ResponseCollection;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -12,13 +10,18 @@ abstract class AbstractPluginManager
 {
     use ServiceLocatorAwareTrait;
 
-    /** @var EventManagerInterface */
+    /**
+     * @var EventManagerInterface
+     */
     protected $eventManager;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $plugins;
 
     abstract protected function getEventName();
+
     abstract protected function getInterface();
 
     /**
@@ -34,7 +37,8 @@ abstract class AbstractPluginManager
     /**
      * @return EventManagerInterface
      */
-    public function getEventManager() {
+    public function getEventManager()
+    {
         return $this->eventManager;
     }
 
@@ -42,7 +46,8 @@ abstract class AbstractPluginManager
      * @param EventManagerInterface $eventManager
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $eventManager) {
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
         $this->eventManager = $eventManager;
         return $this;
     }
@@ -67,14 +72,16 @@ abstract class AbstractPluginManager
 
     public function getPlugins()
     {
-        if ($this->plugins) return $this->plugins;
+        if ($this->plugins) {
+            return $this->plugins;
+        }
 
         $this->plugins = [];
 
         $responseCollection = $this->trigger();
 
         $items = [];
-        foreach($responseCollection as $response) {
+        foreach ($responseCollection as $response) {
             $items = array_merge($items, $response);
         }
 

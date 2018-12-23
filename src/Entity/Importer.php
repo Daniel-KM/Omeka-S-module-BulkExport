@@ -5,7 +5,7 @@ use Omeka\Entity\AbstractEntity;
 
 /**
  * @Entity
- * @Table(name="import_importers")
+ * @Table(name="import_importer")
  */
 class Importer extends AbstractEntity
 {
@@ -14,47 +14,51 @@ class Importer extends AbstractEntity
      * @Column(type="integer")
      * @GeneratedValue
      */
-    public $id;
+    protected $id;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $name;
+    protected $name;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $reader_name;
+    protected $readerName;
 
     /**
-     * @Column(type="array", nullable=true)
+     * @Column(
+     *     type="array",
+     *     nullable=true
+     * )
      */
-    public $reader_config;
+    protected $readerConfig;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $processor_name;
+    protected $processorName;
 
     /**
-     * @Column(type="array", nullable=true)
+     * @Column(
+     *      type="array",
+     *      nullable=true
+     * )
      */
-    public $processor_config;
+    protected $processorConfig;
 
     public function getId()
     {
         return $this->id;
-    }
-
-    public function setId($value)
-    {
-        $this->id = $value;
-        return $this;
-    }
-
-    public function getName()
-    {
-        return $this->name;
     }
 
     public function setName($value)
@@ -63,47 +67,52 @@ class Importer extends AbstractEntity
         return $this;
     }
 
-    public function getReaderName()
+    public function getName()
     {
-        return $this->reader_name;
+        return $this->name;
     }
 
     public function setReaderName($value)
     {
-        $this->reader_name = $value;
+        $this->readerName = $value;
+        return $this;
+    }
+
+    public function getReaderName()
+    {
+        return $this->readerName;
+    }
+
+    public function setReaderConfig($value)
+    {
+        $this->readerConfig = $value;
         return $this;
     }
 
     public function getReaderConfig()
     {
-        return $this->reader_config;
+        return $this->readerConfig;
     }
 
-    public function setReaderConfig($value)
+    public function setProcessorName($value)
     {
-        $this->reader_config = $value;
+        $this->processorName = $value;
         return $this;
     }
 
     public function getProcessorName()
     {
-        return $this->processor_name;
+        return $this->processorName;
     }
 
-    public function setProcessorName($value)
+    public function setProcessorConfig($value)
     {
-        $this->processor_name = $value;
+        $this->processorConfig = $value;
         return $this;
     }
 
     public function getProcessorConfig()
     {
-        return $this->processor_config;
-    }
-
-    public function setProcessorConfig($value)
-    {
-        $this->processor_config = $value;
-        return $this;
+        return $this->processorConfig;
     }
 }

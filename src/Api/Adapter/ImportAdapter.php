@@ -1,17 +1,14 @@
 <?php
 namespace Import\Api\Adapter;
 
-
+use Doctrine\Common\Inflector\Inflector;
+use Doctrine\ORM\QueryBuilder;
 use Import\Api\Representation\ImportRepresentation;
 use Import\Entity\Import;
-
 use Omeka\Api\Adapter\AbstractEntityAdapter;
 use Omeka\Api\Request;
 use Omeka\Entity\EntityInterface;
 use Omeka\Stdlib\ErrorStore;
-
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Common\Inflector\Inflector;
 
 class ImportAdapter extends AbstractEntityAdapter
 {
@@ -34,8 +31,10 @@ class ImportAdapter extends AbstractEntityAdapter
     {
         $data = $request->getContent();
         foreach ($data as $key => $value) {
-            $method = 'set'.ucfirst(Inflector::camelize($key));
-            if(!method_exists($entity,$method)) continue;
+            $method = 'set' . ucfirst(Inflector::camelize($key));
+            if (!method_exists($entity, $method)) {
+                continue;
+            }
             $entity->$method($value);
         }
     }
@@ -43,9 +42,11 @@ class ImportAdapter extends AbstractEntityAdapter
     public function buildQuery(QueryBuilder $qb, array $query)
     {
         if (isset($query['id'])) {
-            $qb->andWhere($qb->expr()->eq(
-                $this->getEntityClass() . '.id',
-                $this->createNamedParameter($qb, $query['id']))
+            $qb->andWhere(
+                $qb->expr()->eq(
+                    $this->getEntityClass() . '.id',
+                    $this->createNamedParameter($qb, $query['id'])
+                )
             );
         }
     }

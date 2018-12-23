@@ -3,6 +3,9 @@ namespace Import\Traits;
 
 trait ConfigurableTrait
 {
+    /**
+     * @var array
+     */
     protected $config = [];
 
     public function setConfig($config)

@@ -1,8 +1,8 @@
 <?php
 namespace Import\Form;
 
-use Import\Entity\Importer;
-
+use Zend\Form\Element;
+use Zend\Form\Fieldset;
 use Zend\Form\Form;
 
 class ImporterDeleteForm extends Form
@@ -13,14 +13,17 @@ class ImporterDeleteForm extends Form
 
         $this->add([
             'name' => 'importer_submit',
-            'type' => 'fieldset',
+            'type' =>  Fieldset::class,
         ]);
-        $this->get('importer_submit')->add([
-            'type'  => 'submit',
+
+        $fieldset = $this->get('importer_submit');
+
+        $fieldset->add([
+            'type'  => Element\Submit::class,
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Delete importer',
                 'id' => 'submitbutton',
+                'value' => 'Delete importer', // @translate
             ],
         ]);
     }

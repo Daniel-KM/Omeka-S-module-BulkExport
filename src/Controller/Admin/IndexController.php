@@ -1,5 +1,5 @@
 <?php
-namespace Import\Controller;
+namespace Import\Controller\Admin;
 
 use Import\Traits\ServiceLocatorAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -17,11 +17,11 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        //importers
+        // Importers.
         $importers = $this->api()->search('import_importers');
 
-        //imports
-        $perPage = 5;
+        // Imports.
+        $perPage = 25;
         $query = [
             'page' => 1,
             'per_page' => $perPage,

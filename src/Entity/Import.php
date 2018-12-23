@@ -2,11 +2,10 @@
 namespace Import\Entity;
 
 use Omeka\Entity\AbstractEntity;
-use Omeka\Entity\Job;
 
 /**
  * @Entity
- * @Table(name="import_imports")
+ * @Table(name="import_import")
  */
 class Import extends AbstractEntity
 {
@@ -15,92 +14,127 @@ class Import extends AbstractEntity
      * @Column(type="integer")
      * @GeneratedValue
      */
-    public $id;
+    protected $id;
 
     /**
-     * @Column(type="array", nullable=true)
+     * @Column(
+     *     type="array",
+     *     nullable=true
+     * )
      */
-    public $reader_params;
+    protected $readerParams;
 
     /**
-     * @Column(type="array", nullable=true)
+     * @Column(
+     *     type="array",
+     *     nullable=true
+     * )
      */
-    public $processor_params;
+    protected $processorParams;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $status;
+    protected $status;
 
     /**
-     * @Column(type="datetime", nullable=true)
+     * @Column(
+     *     type="datetime",
+     *     nullable=true
+     * )
      */
-    public $started;
+    protected $started;
 
     /**
-     * @Column(type="datetime", nullable=true)
+     * @Column(
+     *     type="datetime",
+     *     nullable=true
+     * )
      */
-    public $ended;
+    protected $ended;
 
     /**
-     * @OneToOne(targetEntity="Import\Entity\Importer", fetch="EXTRA_LAZY")
-     * @JoinColumn(nullable=true)
+     * @OneToOne(
+     *     targetEntity="Import\Entity\Importer",
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @JoinColumn(
+     *     nullable=true
+     * )
      */
-    public $importer;
+    protected $importer;
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
-    public function setId($value) {
-        $this->id = $value;
+
+    public function setReaderParams($value)
+    {
+        $this->readerParams = $value;
         return $this;
     }
 
-    public function getReaderParams() {
-        return $this->reader_params;
+    public function getReaderParams()
+    {
+        return $this->readerParams;
     }
-    public function setReaderParams($value) {
-        $this->reader_params = $value;
+
+    public function setProcessorParams($value)
+    {
+        $this->processorParams = $value;
         return $this;
     }
 
-    public function getProcessorParams() {
-        return $this->processor_params;
-    }
-    public function setProcessorParams($value) {
-        $this->processor_params = $value;
-        return $this;
+    public function getProcessorParams()
+    {
+        return $this->processorParams;
     }
 
-    public function getStatus() {
-        return $this->status;
-    }
-    public function setStatus($value) {
+    public function setStatus($value)
+    {
         $this->status = $value;
         return $this;
     }
 
-    public function getStarted() {
-        return $this->started;
+    public function getStatus()
+    {
+        return $this->status;
     }
-    public function setStarted($value) {
+
+    public function setStarted($value)
+    {
         $this->started = $value;
         return $this;
     }
 
-    public function getEnded() {
-        return $this->ended;
+    public function getStarted()
+    {
+        return $this->started;
     }
-    public function setEnded($value) {
+
+    public function setEnded($value)
+    {
         $this->ended = $value;
         return $this;
     }
 
-    public function getImporter() {
-        return $this->importer;
+    public function getEnded()
+    {
+        return $this->ended;
     }
-    public function setImporter($value) {
+
+    public function setImporter($value)
+    {
         $this->importer = $value;
         return $this;
+    }
+
+    public function getImporter()
+    {
+        return $this->importer;
     }
 }

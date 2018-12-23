@@ -2,11 +2,8 @@
 namespace Import\Form;
 
 use Import\Traits\ServiceLocatorAwareTrait;
-
 use Omeka\Form\Element\ResourceSelect;
-
 use Zend\Form\Form;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ItemsProcessorConfigForm extends Form
 {
@@ -22,12 +19,6 @@ class ItemsProcessorConfigForm extends Form
         $this->add([
             'name' => 'o:item_set',
             'type' => ResourceSelect::class,
-            'attributes' => [
-                'id' => 'select-item-set',
-                'required' => false,
-                'multiple' => false,
-                'data-placeholder' => 'Select item set', // @translate
-            ],
             'options' => [
                 'label' => 'Item set', // @translate
                 'info' => 'Select Item set', // @translate
@@ -39,15 +30,17 @@ class ItemsProcessorConfigForm extends Form
                     },
                 ],
             ],
+            'attributes' => [
+                'id' => 'select-item-set',
+                'required' => false,
+                'multiple' => false,
+                'data-placeholder' => 'Select item set', // @translate
+            ],
         ]);
 
         $this->add([
             'name' => 'o:resource_template',
             'type' => ResourceSelect::class,
-            'attributes' => [
-                'id' => 'resource-template-select',
-                'data-api-base-url' => $urlHelper('api/default', ['resource' => 'resource_templates']),
-            ],
             'options' => [
                 'label' => 'Resource template', // @translate
                 'info' => 'A pre-defined template for resource creation', // @translate
@@ -60,14 +53,15 @@ class ItemsProcessorConfigForm extends Form
                     },
                 ],
             ],
+            'attributes' => [
+                'id' => 'resource-template-select',
+                'data-api-base-url' => $urlHelper('api/default', ['resource' => 'resource_templates']),
+            ],
         ]);
 
         $this->add([
             'name' => 'o:resource_class',
             'type' => ResourceSelect::class,
-            'attributes' => [
-                'id' => 'resource-class-select',
-            ],
             'options' => [
                 'label' => 'Class', // @translate
                 'info' => 'A type for the resource. Different types have different default properties attached to them.', // @translate
@@ -82,6 +76,9 @@ class ItemsProcessorConfigForm extends Form
                         ];
                     },
                 ],
+            ],
+            'attributes' => [
+                'id' => 'resource-class-select',
             ],
         ]);
     }

@@ -5,7 +5,7 @@ use Omeka\Entity\AbstractEntity;
 
 /**
  * @Entity
- * @Table(name="import_logs")
+ * @Table(name="import_log")
  */
 class Log extends AbstractEntity
 {
@@ -14,42 +14,59 @@ class Log extends AbstractEntity
      * @Column(type="integer")
      * @GeneratedValue
      */
-    public $id;
+    protected $id;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $severity;
+    protected $severity;
 
     /**
-     * @Column(type="string", nullable=true)
+     * @Column(
+     *     type="string",
+     *     nullable=true
+     * )
      */
-    public $message;
+    protected $message;
 
     /**
-     * @Column(type="array", nullable=true)
+     * @Column(
+     *     type="array",
+     *     nullable=true
+     * )
      */
-    public $params;
+    protected $params;
 
     /**
-     * @Column(type="datetime", nullable=true)
+     * @Column(
+     *     type="datetime",
+     *     nullable=true
+     * )
      */
-    public $added;
+    protected $added;
 
     /**
-     * @OneToOne(targetEntity="Import\Entity\Import", fetch="EXTRA_LAZY")
-     * @JoinColumn(nullable=true)
+     * @OneToOne(
+     *     targetEntity="Import\Entity\Import",
+     *     fetch="EXTRA_LAZY"
+     * )
+     * @JoinColumn(
+     *     nullable=true
+     * )
      */
-    public $import;
-
+    protected $import;
 
     public function getId()
     {
         return $this->id;
     }
-    public function setId($value)
+
+    public function setSeverity($value)
     {
-        $this->id = $value;
+        $this->severity = $value;
         return $this;
     }
 
@@ -57,9 +74,10 @@ class Log extends AbstractEntity
     {
         return $this->severity;
     }
-    public function setSeverity($value)
+
+    public function setMessage($value)
     {
-        $this->severity = $value;
+        $this->message = $value;
         return $this;
     }
 
@@ -67,9 +85,10 @@ class Log extends AbstractEntity
     {
         return $this->message;
     }
-    public function setMessage($value)
+
+    public function setParams($value)
     {
-        $this->message = $value;
+        $this->params = $value;
         return $this;
     }
 
@@ -77,9 +96,10 @@ class Log extends AbstractEntity
     {
         return $this->params;
     }
-    public function setParams($value)
+
+    public function setAdded($value)
     {
-        $this->params = $value;
+        $this->added = $value;
         return $this;
     }
 
@@ -87,19 +107,15 @@ class Log extends AbstractEntity
     {
         return $this->added;
     }
-    public function setAdded($value)
+
+    public function setImport($value)
     {
-        $this->added = $value;
+        $this->import = $value;
         return $this;
     }
 
     public function getImport()
     {
         return $this->import;
-    }
-    public function setImport($value)
-    {
-        $this->import = $value;
-        return $this;
     }
 }

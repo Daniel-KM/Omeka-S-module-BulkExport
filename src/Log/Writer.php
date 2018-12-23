@@ -5,16 +5,18 @@ use Import\Traits\ServiceLocatorAwareTrait;
 use Zend\Log\Writer\AbstractWriter;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-
 class Writer extends AbstractWriter
 {
     use ServiceLocatorAwareTrait;
 
-    /** @var \Omeka\Api\Manager */
+    /**
+     * @var \Omeka\Api\Manager
+     */
     protected $api;
 
     /**
      * Writer constructor.
+     *
      * @param ServiceLocatorInterface $serviceLocator
      * @param null $mapping
      * @param null $options
@@ -30,7 +32,9 @@ class Writer extends AbstractWriter
      */
     protected function getApi()
     {
-        if($this->api) return $this->api;
+        if ($this->api) {
+            return $this->api;
+        }
         $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         return $this->api;
     }
@@ -43,7 +47,9 @@ class Writer extends AbstractWriter
         $params = $event['extra'];
         $import = $params['import'];
         unset($params['import']);
-        if(!count($params)) $params = null;
+        if (!count($params)) {
+            $params = null;
+        }
 
         $data = [
             'severity' => $event['priority'],
@@ -54,6 +60,4 @@ class Writer extends AbstractWriter
         ];
         $this->getApi()->create('import_logs', $data);
     }
-
-
 }

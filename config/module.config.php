@@ -1,59 +1,61 @@
 <?php
+namespace Import;
 
 return [
     'service_manager' => [
         'factories' => [
-            \Import\Reader\Manager::class => \Import\Service\Plugin\PluginManagerFactory::class,
-            \Import\Processor\Manager::class => \Import\Service\Plugin\PluginManagerFactory::class,
-            \Import\Log\Logger::class => \Import\Service\Log\LoggerFactory::class,
-        ],
-    ],
-    'controllers' => [
-        'factories' => [
-            'Import\Controller\Index' => \Import\Service\Controller\ControllerFactory::class,
-            'Import\Controller\Imports' => \Import\Service\Controller\ControllerFactory::class,
-            'Import\Controller\Importers' => \Import\Service\Controller\ControllerFactory::class,
-        ],
-    ],
-    'api_adapters' => [
-        'invokables' => [
-            'import_importers' => \Import\Api\Adapter\ImporterAdapter::class,
-            'import_imports' => \Import\Api\Adapter\ImportAdapter::class,
-            'import_logs' => \Import\Api\Adapter\LogAdapter::class,
-        ],
-    ],
-    'translator' => [
-        'translation_file_patterns' => [
-            [
-                'type' => 'gettext',
-                'base_dir' => OMEKA_PATH . '/modules/Import/language',
-                'pattern' => '%s.mo',
-                'text_domain' => null,
-            ],
-        ],
-    ],
-    'view_manager' => [
-        'template_path_stack' => [
-            OMEKA_PATH . '/modules/Import/view',
+            Log\Logger::class => Service\Log\LoggerFactory::class,
+            Processor\Manager::class => Service\Plugin\PluginManagerFactory::class,
+            Reader\Manager::class => Service\Plugin\PluginManagerFactory::class,
         ],
     ],
     'entity_manager' => [
         'mapping_classes_paths' => [
-            OMEKA_PATH . '/modules/Import/src/Entity',
+            dirname(__DIR__) . '/src/Entity',
         ],
         'proxy_paths' => [
             dirname(__DIR__) . '/data/doctrine-proxies',
         ],
     ],
+    'api_adapters' => [
+        'invokables' => [
+            'import_importers' => Api\Adapter\ImporterAdapter::class,
+            'import_imports' => Api\Adapter\ImportAdapter::class,
+            'import_logs' => Api\Adapter\LogAdapter::class,
+        ],
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            dirname(__DIR__) . '/view',
+        ],
+    ],
     'form_elements' => [
         'factories' => [
-            \Import\Form\ImporterForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\ImporterDeleteForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\CsvReaderConfigForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\CsvReaderParamsForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\ItemsProcessorConfigForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\ItemsProcessorParamsForm::class => \Import\Service\Form\FormFactory::class,
-            \Import\Form\ImporterStartForm::class => \Import\Service\Form\FormFactory::class,
+            Form\CsvReaderConfigForm::class => Service\Form\FormFactory::class,
+            Form\CsvReaderParamsForm::class => Service\Form\FormFactory::class,
+            Form\ImporterDeleteForm::class => Service\Form\FormFactory::class,
+            Form\ImporterForm::class => Service\Form\FormFactory::class,
+            Form\ImporterStartForm::class => Service\Form\FormFactory::class,
+            Form\ItemsProcessorConfigForm::class => Service\Form\FormFactory::class,
+            Form\ItemsProcessorParamsForm::class => Service\Form\FormFactory::class,
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            // Class is not used as key, since it's set dynamically by sub-route
+            // and it should be available in acl (so alias is mapped later).
+            'Import\Controller\Admin\Import' => Service\Controller\ControllerFactory::class,
+            'Import\Controller\Admin\Importer' => Service\Controller\ControllerFactory::class,
+            'Import\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
+        ],
+    ],
+    'navigation' => [
+        'AdminModule' => [
+            [
+                'label' => 'Import', // @translate
+                'route' => 'admin/import',
+                'resource' => 'Import\Controller\Admin\Index',
+            ],
         ],
     ],
     'router' => [
@@ -65,7 +67,8 @@ return [
                         'options' => [
                             'route'    => '/import',
                             'defaults' => [
-                                '__NAMESPACE__' => 'Import\Controller',
+                                '__NAMESPACE__' => 'Import\Controller\Admin',
+                                '__ADMIN__' => true,
                                 'controller' => 'Index',
                                 'action'     => 'index',
                             ],
@@ -81,7 +84,6 @@ return [
                                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                     ],
                                     'defaults' => [
-                                        '__NAMESPACE__' => 'Import\Controller',
                                         'action' => 'index',
                                     ],
                                 ],
@@ -96,7 +98,6 @@ return [
                                         'id' => '\d+',
                                     ],
                                     'defaults' => [
-                                        '__NAMESPACE__' => 'Import\Controller',
                                         'action' => 'show',
                                     ],
                                 ],
@@ -107,12 +108,13 @@ return [
             ],
         ],
     ],
-    'navigation' => [
-        'AdminModule' => [
+    'translator' => [
+        'translation_file_patterns' => [
             [
-                'label' => 'Import',
-                'route' => 'admin/import',
-                'resource' => 'Import\Controller\Index',
+                'type' => 'gettext',
+                'base_dir' => dirname(__DIR__) . '/language',
+                'pattern' => '%s.mo',
+                'text_domain' => null,
             ],
         ],
     ],

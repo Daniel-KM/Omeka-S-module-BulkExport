@@ -2,38 +2,47 @@
 namespace Import\Api\Representation;
 
 use Import\Interfaces\Configurable;
-use Import\Reader\Manager as ReaderManager;
 use Import\Processor\Manager as ProcessorManager;
-
-use Omeka\Api\Representation\AbstractEntityRepresentation;
+use Import\Reader\Manager as ReaderManager;
 use Omeka\Api\Adapter\AdapterInterface;
+use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Entity\EntityInterface;
 
 class ImporterRepresentation extends AbstractEntityRepresentation
 {
-    /** @var  ReaderManager */
+    /**
+     * @var ReaderManager
+     */
     protected $readerManager;
 
-    /** @var  ProcessorManager */
+    /**
+     * @var ProcessorManager
+     */
     protected $processorManager;
 
+    /**
+     * @var ReaderManager
+     */
     protected $reader;
+
+    /**
+     * @var ProcessorManager
+     */
     protected $processor;
 
-    public function __construct(EntityInterface $resource,AdapterInterface $adapter)
+    public function __construct(EntityInterface $resource, AdapterInterface $adapter)
     {
         parent::__construct($resource, $adapter);
 
         $serviceLocator = $this->getServiceLocator();
         $this->setReaderManager($serviceLocator->get(ReaderManager::class));
         $this->setProcessorManager($serviceLocator->get(ProcessorManager::class));
-
     }
 
     public function getJsonLd()
     {
         return [
-            'id' => $this->getId(),
+            'o:id' => $this->getId(),
             'name' => $this->getName(),
             'reader_name' => $this->getReaderName(),
             'reader_config' => $this->getReaderConfig(),
@@ -44,17 +53,19 @@ class ImporterRepresentation extends AbstractEntityRepresentation
 
     public function getJsonLdType()
     {
-        return 'o:importImporter';
+        return 'o-module-import:Importer';
     }
 
-    public function getResource() {
+    public function getResource()
+    {
         return $this->resource;
     }
 
     /**
      * @return ReaderManager
      */
-    public function getReaderManager() {
+    public function getReaderManager()
+    {
         return $this->readerManager;
     }
 
@@ -62,7 +73,8 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      * @param ReaderManager $readerManager
      * @return $this
      */
-    public function setReaderManager(ReaderManager $readerManager) {
+    public function setReaderManager(ReaderManager $readerManager)
+    {
         $this->readerManager = $readerManager;
         return $this;
     }
@@ -70,7 +82,8 @@ class ImporterRepresentation extends AbstractEntityRepresentation
     /**
      * @return ProcessorManager
      */
-    public function getProcessorManager() {
+    public function getProcessorManager()
+    {
         return $this->processorManager;
     }
 
@@ -78,7 +91,8 @@ class ImporterRepresentation extends AbstractEntityRepresentation
      * @param ProcessorManager $processorManager
      * @return $this
      */
-    public function setProcessorManager(ProcessorManager $processorManager) {
+    public function setProcessorManager(ProcessorManager $processorManager)
+    {
         $this->processorManager = $processorManager;
         return $this;
     }
@@ -95,7 +109,9 @@ class ImporterRepresentation extends AbstractEntityRepresentation
 
     public function getReader()
     {
-        if ($this->reader) return $this->reader;
+        if ($this->reader) {
+            return $this->reader;
+        }
 
         $this->reader = $this->getReaderManager()->getPlugin($this->getReaderName());
         if ($this->reader instanceof Configurable) {
@@ -105,8 +121,11 @@ class ImporterRepresentation extends AbstractEntityRepresentation
         return $this->reader;
     }
 
-    public function getProcessor() {
-        if ($this->processor) return $this->processor;
+    public function getProcessor()
+    {
+        if ($this->processor) {
+            return $this->processor;
+        }
 
         $this->processor = $this->getProcessorManager()->getPlugin($this->getProcessorName());
         if ($this->processor instanceof Configurable) {
