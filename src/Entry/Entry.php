@@ -31,6 +31,14 @@ class Entry implements EntryInterface
         }
     }
 
+    public function isEmpty()
+    {
+        $data = array_filter($this->data, function ($v) {
+            return strlen($v) > 0;
+        });
+        return count($data) == 0;
+    }
+
     public function offsetExists($offset)
     {
         return array_key_exists($offset, $this->data);

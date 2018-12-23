@@ -70,6 +70,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     /**
      * @var int
      */
+    protected $totalSkipped = 0;
+
+    /**
+     * @var int
+     */
     protected $totalProcessed = 0;
 
     /**
@@ -150,6 +155,15 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 ['index' => $this->indexResource]
             );
 
+            if ($entry->isEmpty()) {
+                $this->logger->warn(
+                    'Resource index #{index} is empty and is skipped.', // @translate
+                    ['index' => $this->indexResource]
+                );
+                ++$this->totalSkipped;
+                continue;
+            }
+
             $resource = clone $base;
 
             foreach ($mapping as $sourceField => $targets) {
@@ -190,9 +204,10 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $this->createEntities($insert);
 
         $this->logger->notice(
-            'End of process: {total_resources} resources to process, {total_processed} processed, {total_errors} errors', // @translate
+            'End of process: {total_resources} resources to process, {total_skipped} skipped, {total_processed} processed, {total_errors} errors inside module.', // @translate
             [
                 'total_resources' => $this->totalIndexResources,
+                'total_skipped' => $this->totalSkipped,
                 'total_processed' => $this->totalProcessed,
                 'total_errors' => $this->totalErrors,
             ]
