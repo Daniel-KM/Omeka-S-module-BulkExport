@@ -32,8 +32,19 @@ class Import extends AbstractJob
             return;
         }
 
+        $reader = $this->getReader();
+        if (empty($reader)) {
+            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, sprintf('Reader "%s" is not available.', $import->getImporter()->getReaderName()));
+            return;
+        }
+
         $processor = $this->getProcessor();
-        $processor->setReader($this->getReader());
+        if (empty($processor)) {
+            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, sprintf('Processor "%s" is not available.', $import->getImporter()->getProcessorName()));
+            return;
+        }
+
+        $processor->setReader($reader);
         $processor->setLogger($this->getLogger());
 
         try {
@@ -47,9 +58,7 @@ class Import extends AbstractJob
             $data = ['status' => \BulkImport\Entity\Import::STATUS_COMPLETED, 'ended' => new \DateTime()];
             $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
         } catch (\Exception $e) {
-            $this->getLogger()->log(Logger::ERR, $e->__toString());
-            $data = ['status' => \BulkImport\Entity\Import::STATUS_ERROR];
-            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
+            $this->log(Logger::ERR, \BulkImport\Entity\Import::STATUS_ERROR, $e->__toString());
         }
     }
 
@@ -76,6 +85,9 @@ class Import extends AbstractJob
         return $this->api;
     }
 
+    /**
+     * @return \BulkImport\Api\Representation\ImportRepresentation|null
+     */
     protected function getImport()
     {
         if ($this->import) {
@@ -95,9 +107,13 @@ class Import extends AbstractJob
 
     public function getReader()
     {
+        $readerName = $this->getImport()->getImporter()->getReaderName();
         $readerManager = $this->getServiceLocator()->get(ReaderManager::class);
-        $reader = $readerManager
-            ->getPlugin($this->getImport()->getImporter()->getReaderName());
+        if (!$readerManager->has($readerName)) {
+            return;
+        }
+        $reader = $readerManager->get($readerName);
+        $reader->setServiceLocator($this->getServiceLocator());
         if ($reader instanceof Configurable && $reader instanceof Parametrizable) {
             $reader->setConfig($this->getImport()->getImporter()->getReaderConfig());
             $reader->setParams($this->getImport()->getReaderParams());
@@ -107,13 +123,24 @@ class Import extends AbstractJob
 
     public function getProcessor()
     {
+        $processorName = $this->getImport()->getImporter()->getProcessorName();
         $processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
-        $processor = $processorManager
-            ->getPlugin($this->getImport()->getImporter()->getProcessorName());
+        if (!$processorManager->has($processorName)) {
+            return;
+        }
+        $processor = $processorManager->get($processorName);
+        $processor->setServiceLocator($this->getServiceLocator());
         if ($processor instanceof Configurable && $processor instanceof Parametrizable) {
             $processor->setConfig($this->getImport()->getImporter()->getProcessorConfig());
             $processor->setParams($this->getImport()->getProcessorParams());
         }
         return $processor;
+    }
+
+    protected function log($severity, $status, $message)
+    {
+        $this->getLogger()->log($severity, $message);
+        $data = ['status' => $status];
+        $this->getApi()->update('bulk_imports', $this->getImport()->getId(), $data, [], ['isPartial' => true]);
     }
 }

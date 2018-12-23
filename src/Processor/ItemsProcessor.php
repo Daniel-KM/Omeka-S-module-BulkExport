@@ -140,6 +140,10 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
      */
     protected function createEntities($data)
     {
+        if (empty($data)) {
+            return;
+        }
+
         try {
             $items = $this->getApi()
                 ->batchCreate('items', $data, [], ['continueOnError' => true])->getContent();
