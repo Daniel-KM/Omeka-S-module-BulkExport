@@ -16,6 +16,7 @@
     "o:id": 33
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -33,6 +34,7 @@
   "o:source": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Fyodor_Matveyev_1.jpg",
   "o:media_type": "image/jpeg",
   "o:sha256": "d7e142796425914f0a81c17c2e24b7cd336db3bb591d9553e02ea4494546a14d",
+  "o:size": 27482,
   "o:filename": "48ceb3fdc7940118c1da747d62ce9fa2bbcb7122.jpg",
   "o:lang": null,
   "o:original_url": "http://localhost/files/original/48ceb3fdc7940118c1da747d62ce9fa2bbcb7122.jpg",
@@ -47,7 +49,8 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "The Colosseum in Rome"
+      "@value": "The Colosseum in Rome",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Coliseum m2"
+      "@value": "Coliseum m2",
+      "is_public": true
     }
   ],
   "dcterms:creator": [
@@ -63,13 +67,15 @@
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "Fedor Mikhailovich Matveev (1753-1826)"
+      "@value": "Fedor Mikhailovich Matveev (1753-1826)",
+      "is_public": true
     },
     {
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "Фёдор Михайлович Матвеев (1753-1826)"
+      "@value": "Фёдор Михайлович Матвеев (1753-1826)",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -77,7 +83,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "1816"
+      "@value": "1816",
+      "is_public": true
     }
   ],
   "dcterms:rights": [
@@ -85,7 +92,8 @@
       "type": "literal",
       "property_id": 15,
       "property_label": "Rights",
-      "@value": "Public domain"
+      "@value": "Public domain",
+      "is_public": true
     }
   ]
 }

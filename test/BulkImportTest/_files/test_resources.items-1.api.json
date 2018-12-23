@@ -16,6 +16,7 @@
     "o:id": 32
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -41,13 +42,15 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Mont Saint-Michel"
+      "@value": "Mont Saint-Michel",
+      "is_public": true
     },
     {
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "English: Saint Michael's Mount"
+      "@value": "English: Saint Michael's Mount",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Mont Saint-Michel"
+      "@value": "Mont Saint-Michel",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -63,7 +67,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "709"
+      "@value": "709",
+      "is_public": true
     }
   ],
   "dcterms:format": [
@@ -71,7 +76,8 @@
       "type": "literal",
       "property_id": 9,
       "property_label": "Format",
-      "@value": "92 m"
+      "@value": "92 m",
+      "is_public": true
     }
   ]
 }

@@ -16,6 +16,7 @@
     "o:id": 33
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -33,6 +34,7 @@
   "o:source": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/France-Mont-Saint-Michel-1900_bordercropped.jpg/1200px-France-Mont-Saint-Michel-1900_bordercropped.jpg",
   "o:media_type": "image/jpeg",
   "o:sha256": "1326e32a20b07986a95899e1506bb412c08cabd8c2004a3466358ea81ba88c7b",
+  "o:size": 27482,
   "o:filename": "9c9f2577ad19d8e94f4b39d00ba529b9e5047397.jpg",
   "o:lang": null,
   "o:original_url": "http://localhost/files/original/9c9f2577ad19d8e94f4b39d00ba529b9e5047397.jpg",
@@ -47,7 +49,8 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Looking east at high water in 1900, Mont St. Michel, France"
+      "@value": "Looking east at high water in 1900, Mont St. Michel, France",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Mont Saint-Michel m1"
+      "@value": "Mont Saint-Michel m1",
+      "is_public": true
     }
   ],
   "dcterms:creator": [
@@ -63,7 +67,8 @@
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "Unknown"
+      "@value": "Unknown",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -71,7 +76,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "Between 1890 and 1905"
+      "@value": "Between 1890 and 1905",
+      "is_public": true
     }
   ],
   "dcterms:rights": [
@@ -79,7 +85,8 @@
       "type": "literal",
       "property_id": 15,
       "property_label": "Rights",
-      "@value": "Public domain"
+      "@value": "Public domain",
+      "is_public": true
     }
   ]
 }

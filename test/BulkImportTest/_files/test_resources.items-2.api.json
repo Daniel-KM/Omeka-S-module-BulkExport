@@ -16,6 +16,7 @@
     "o:id": 32
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -45,13 +46,15 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Coliseum"
+      "@value": "Coliseum",
+      "is_public": true
     },
     {
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "English: Colosseum"
+      "@value": "English: Colosseum",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -59,7 +62,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Coliseum"
+      "@value": "Coliseum",
+      "is_public": true
     }
   ],
   "dcterms:creator": [
@@ -67,13 +71,15 @@
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "Vespasian"
+      "@value": "Vespasian",
+      "is_public": true
     },
     {
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "Titus"
+      "@value": "Titus",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -81,7 +87,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "70-80"
+      "@value": "70-80",
+      "is_public": true
     }
   ],
   "dcterms:format": [
@@ -89,7 +96,8 @@
       "type": "literal",
       "property_id": 9,
       "property_label": "Format",
-      "@value": "61 m"
+      "@value": "61 m",
+      "is_public": true
     }
   ]
 }

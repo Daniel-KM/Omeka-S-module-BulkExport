@@ -16,6 +16,7 @@
     "@id": "http://localhost/api/resource_templates/1",
     "o:id": 1
   },
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -33,6 +34,7 @@
   "o:source": "http://localhost/modules/BulkImport/test/BulkImportTest/_files/image_test_3.png",
   "o:media_type": "image/png",
   "o:sha256": "e74458bf3fc15580952a63efa00125cc238539de67af565c19ece4bc976b91e8",
+  "o:size": 45302,
   "o:filename": "27ccca59d165fe6f4d728fbf2563b6c1a1eb6f9a.png",
   "o:lang": null,
   "o:original_url": "http://localhost/files/original/27ccca59d165fe6f4d728fbf2563b6c1a1eb6f9a.png",
@@ -47,7 +49,8 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "cc title"
+      "@value": "cc title",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "cc"
+      "@value": "cc",
+      "is_public": true
     }
   ]
 }

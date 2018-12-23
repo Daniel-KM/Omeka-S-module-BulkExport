@@ -1,39 +1,55 @@
 {
-    "filename": "test_empty_rows.csv",
-    "filesize": "107",
-    "filepath": "/tmp/omeka3ERNHH",
-    "media_type": "text/csv",
-    "csrf": "7a29e1b60d54536632b5d70dd9ddb1b4-6b95b83bf7819a0ae9c3cd4c1b1803b2",
-    "resource_type": "items",
-    "automap_check_names_alone": "1",
-    "comment": "",
-    "o:resource_template": {
-        "o:id": ""
+  "importer": {
+    "label": "Spreadsheet mixed",
+    "reader_class": "BulkImport\\Reader\\SpreadsheetReader",
+    "reader_config": {
+      "delimiter": ",",
+      "enclosure": "\"",
+      "escape": "\\",
+      "separator": ","
     },
-    "o:resource_class": {
-        "o:id": ""
+    "processor_class": "BulkImport\\Processor\\ResourceProcessor",
+    "processor_config": {
+      "o:resource_template": "1",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "resource_type": "items",
+      "o:item_set": [],
+      "o:item": ""
+    }
+  },
+  "import": {
+    "reader_params": {
+      "filename": "/tmp/omk_a",
+      "file": {
+        "name": "test_empty_rows.csv",
+        "type": "text/csv",
+        "error": 0,
+        "size": 107
+      },
+      "delimiter": ",",
+      "enclosure": "\"",
+      "escape": "\\",
+      "separator": "|"
     },
-    "o:owner": {
-        "o:id": 1
-    },
-    "global_language": "",
-    "action": "create",
-    "identifier_property": "dcterms:identifier",
-    "action_unidentified": "skip",
-    "column-property": [
-        {
-            "dcterms:identifier": 10
-        },
-        {
-            "dcterms:title": 1
-        },
-        {
-            "dcterms:description": 4
-        }
-    ],
-    "column-multivalue": [],
-    "delimiter": ",",
-    "enclosure": "\"",
-    "escape": "\\",
-    "multivalue_separator": "|"
+    "processor_params": {
+      "o:resource_template": "",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "resource_type": "items",
+      "o:item_set": [],
+      "o:item": "",
+      "mapping": {
+        "Identifier": [
+          "dcterms:identifier"
+        ],
+        "Title": [
+          "dcterms:title"
+        ],
+        "Description": [
+          "dcterms:description"
+        ]
+      }
+    }
+  }
 }

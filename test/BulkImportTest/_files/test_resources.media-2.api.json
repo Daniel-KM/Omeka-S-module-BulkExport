@@ -16,6 +16,7 @@
     "o:id": 33
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -33,6 +34,7 @@
   "o:source": "https://upload.wikimedia.org/wikipedia/commons/8/87/Exterior_of_the_Coliseum_Rome_Italy.jpg",
   "o:media_type": "image/jpeg",
   "o:sha256": "7eb749f37fca5f255967c1945767602133ecf28bbca6af7fca86cf1cf80601ac",
+  "o:size": 27482,
   "o:filename": "8859161eae760477643e8976de812c3ebdb854f9.jpg",
   "o:lang": null,
   "o:original_url": "http://localhost/files/original/8859161eae760477643e8976de812c3ebdb854f9.jpg",
@@ -47,7 +49,8 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Exterior of the Coliseum, Rome, Italy"
+      "@value": "Exterior of the Coliseum, Rome, Italy",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "Coliseum m1"
+      "@value": "Coliseum m1",
+      "is_public": true
     }
   ],
   "dcterms:creator": [
@@ -63,7 +67,8 @@
       "type": "literal",
       "property_id": 2,
       "property_label": "Creator",
-      "@value": "The Library of Congress"
+      "@value": "The Library of Congress",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -71,7 +76,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "Between ca. 1890 and ca. 1900"
+      "@value": "Between ca. 1890 and ca. 1900",
+      "is_public": true
     }
   ],
   "dcterms:rights": [
@@ -79,7 +85,8 @@
       "type": "literal",
       "property_id": 15,
       "property_label": "Rights",
-      "@value": "Public domain"
+      "@value": "Public domain",
+      "is_public": true
     }
   ]
 }
