@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright 2017 Daniel Berthereau
+ * Copyright 2017-2019 Daniel Berthereau
  *
  * This software is governed by the CeCILL license under French law and abiding
  * by the rules of distribution of free software. You can use, modify and/or
@@ -30,9 +30,14 @@
 namespace BulkImport\Mvc\Controller\Plugin;
 
 use Doctrine\DBAL\Connection;
-use Omeka\Api\Manager as ApiManager;
+use Omeka\Mvc\Controller\Plugin\Api;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
+/**
+ * Copy of the controller plugin of the module Csv Import
+ *
+ * @see \CSVImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+ */
 class FindResourcesFromIdentifiers extends AbstractPlugin
 {
     /**
@@ -41,22 +46,22 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
     protected $connection;
 
     /**
-     * @var ApiManager
+     * @var Api
      */
     protected $api;
 
     /**
      * @param Connection $connection
-     * @param ApiManager $apiManager
+     * @param Api $api
      */
-    public function __construct(Connection $connection, ApiManager $apiManager)
+    public function __construct(Connection $connection, Api $api)
     {
         $this->connection = $connection;
-        $this->api = $apiManager;
+        $this->api = $api;
     }
 
     /**
-     * Find a list of resource ids from a list of identifiers.
+     * Find a list of resource ids from a list of identifiers (or one id).
      *
      * When there are true duplicates and case insensitive duplicates, the first
      * case sensitive is returned, else the first case insensitive resource.
@@ -66,7 +71,8 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
      * @param array|string $identifiers Identifiers should be unique. If a
      * string is sent, the result will be the resource.
      * @param string|int|array $identifierName Property as integer or term,
-     * media ingester or "internal_id", or an array with multiple conditions.
+     * "internal_id", a media ingester (url or file), or an associative array
+     * with multiple conditions (for media source).
      * @param string $resourceType The resource type if any.
      * @return array|int|null Associative array with the identifiers as key and the ids
      * or null as value. Order is kept, but duplicate identifiers are removed.
@@ -78,6 +84,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         if ($isSingle) {
             $identifiers = [$identifiers];
         }
+
         $identifiers = array_unique(array_filter(array_map(function ($v) {
             return trim($v, "\t\n\r   ");
         }, $identifiers)));
@@ -85,67 +92,99 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             return $isSingle ? null : [];
         }
 
+        $args = $this->normalizeArgs($identifierName, $resourceType);
+        if (empty($args)) {
+            return $isSingle ? null : [];
+        }
+        list($identifierType, $identifierName, $resourceType, $itemId) = $args;
+
+        $result = $this->findResources($identifierType, $identifiers, $identifierName, $resourceType, $itemId);
+        return $isSingle ? ($result ? reset($result) : null) : $result;
+    }
+
+    protected function findResources($identifierType, $identifiers, $identifierName, $resourceType, $itemId)
+    {
+        switch ($identifierType) {
+            case 'internal_id':
+                return $this->findResourcesFromInternalIds($identifiers, $resourceType);
+            case 'property':
+                return $this->findResourcesFromPropertyId($identifiers, $identifierName, $resourceType);
+            case 'media_source':
+                return $this->findResourcesFromMediaSource($identifiers, $identifierName, $itemId);
+        }
+    }
+
+    protected function normalizeArgs($identifierName, $resourceType)
+    {
         $identifierType = null;
-        // Process identifierName as an array.
+        $identifierTypeName = null;
+        $itemId = null;
+
+        // Process identifier metadata names as an array.
         if (is_array($identifierName)) {
             if (isset($identifierName['o:ingester'])) {
                 // TODO Currently, the media source cannot be html.
                 if ($identifierName['o:ingester'] === 'html') {
-                    return $isSingle ? null : [];
+                    return;
                 }
                 $identifierType = 'media_source';
+                $identifierTypeName = $identifierName['o:ingester'];
                 $resourceType = 'media';
                 $itemId = empty($identifierName['o:item']['o:id']) ? null : $identifierName['o:item']['o:id'];
-                $identifierName = $identifierName['o:ingester'];
             }
         }
-        // Here, identifierName is a string or an integer.
-        elseif (in_array($identifierName, ['internal_id'])) {
+        // Next, identifierName is a string or an integer.
+        elseif ($identifierName === 'internal_id') {
             $identifierType = 'internal_id';
+            $identifierTypeName = $identifierTypeName;
         } elseif (is_numeric($identifierName)) {
             $identifierType = 'property';
-            $identifierName = (int) $identifierName;
+            // No check of the property id for quicker process.
+            $identifierTypeName = (int) $identifierName;
         } else {
-            $result = $this->api
-                ->search('properties', ['term' => $identifierName])->getContent();
-            $identifierType = 'property';
-            $identifierName = $result ? $result[0]->id() : null;
+            $property = $this->api
+                ->searchOne('properties', ['term' => $identifierName])->getContent();
+            if ($property) {
+                $identifierType = 'property';
+                $identifierTypeName = $property->id();
+            } elseif (in_array($identifierName, ['url', 'file'])) {
+                $identifierType = 'media_source';
+                $identifierTypeName = $identifierName;
+                $resourceType = 'media';
+                $itemId = null;
+            }
         }
-        if (empty($identifierName)) {
-            return $isSingle ? null : [];
+        if (empty($identifierTypeName)) {
+            return;
         }
 
         if (!empty($resourceType)) {
             $resourceTypes = [
-                'item_sets' => \Omeka\Entity\ItemSet::class,
                 'items' => \Omeka\Entity\Item::class,
+                'item_sets' => \Omeka\Entity\ItemSet::class,
                 'media' => \Omeka\Entity\Media::class,
                 'resources' => '',
                 // Avoid a check and make the plugin more flexible.
-                'Omeka\Entity\ItemSet' => \Omeka\Entity\ItemSet::class,
-                'Omeka\Entity\Item' => \Omeka\Entity\Item::class,
-                'Omeka\Entity\Media' => \Omeka\Entity\Media::class,
-                'Omeka\Entity\Resource' => '',
+                \Omeka\Entity\Item::class => \Omeka\Entity\Item::class,
+                \Omeka\Entity\ItemSet::class => \Omeka\Entity\ItemSet::class,
+                \Omeka\Entity\Media::class => \Omeka\Entity\Media::class,
+                \Omeka\Entity\Resource::class => '',
+                'o:item' => \Omeka\Entity\Item::class,
+                'o:item_set' => \Omeka\Entity\ItemSet::class,
+                'o:media' => \Omeka\Entity\Media::class,
             ];
             if (!isset($resourceTypes[$resourceType])) {
-                return $isSingle ? null : [];
+                return;
             }
             $resourceType = $resourceTypes[$resourceType];
         }
 
-        switch ($identifierType) {
-            case 'internal_id':
-                $result = $this->findResourcesFromInternalIds($identifiers, $resourceType);
-                break;
-            case 'property':
-                $result = $this->findResourcesFromPropertyIds($identifiers, $identifierName, $resourceType);
-                break;
-            case 'media_source':
-                $result = $this->findResourcesFromMediaSource($identifiers, $identifierName, $itemId);
-                break;
-        }
-
-        return $isSingle ? ($result ? reset($result) : null) : $result;
+        return [
+            $identifierType,
+            $identifierTypeName,
+            $resourceType,
+            $itemId,
+        ];
     }
 
     protected function findResourcesFromInternalIds($identifiers, $resourceType)
@@ -157,9 +196,9 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         $qb = $conn->createQueryBuilder()
             ->select('resource.id')
             ->from('resource', 'resource')
-            // ->andWhere('resource.id in (:ids)')
+            // ->andWhere('resource.id IN (:ids)')
             // ->setParameter(':ids', $identifiers)
-            ->andWhere("resource.id in ($quotedIdentifiers)")
+            ->andWhere("resource.id IN ($quotedIdentifiers)")
             ->addOrderBy('resource.id', 'ASC');
         if ($resourceType) {
             $qb
@@ -174,7 +213,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         return array_replace(array_fill_keys($identifiers, null), array_combine($result, $result));
     }
 
-    protected function findResourcesFromPropertyIds($identifiers, $identifierPropertyId, $resourceType)
+    protected function findResourcesFromPropertyId($identifiers, $propertyId, $resourceType)
     {
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
@@ -183,14 +222,14 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         $quotedIdentifiers = array_map([$conn, 'quote'], $identifiers);
         $quotedIdentifiers = implode(',', $quotedIdentifiers);
         $qb = $conn->createQueryBuilder()
-            ->select('value.value as identifier', 'value.resource_id as id')
+            ->select('value.value AS identifier', 'value.resource_id AS id')
             ->from('value', 'value')
             ->leftJoin('value', 'resource', 'resource', 'value.resource_id = resource.id')
             ->andwhere('value.property_id = :property_id')
-            ->setParameter(':property_id', $identifierPropertyId)
-            // ->andWhere('value.value in (:values)')
+            ->setParameter(':property_id', $propertyId)
+            // ->andWhere('value.value IN (:values)')
             // ->setParameter(':values', $identifiers)
-            ->andWhere("value.value in ($quotedIdentifiers)")
+            ->andWhere("value.value IN ($quotedIdentifiers)")
             ->addOrderBy('resource.id', 'ASC')
             ->addOrderBy('value.id', 'ASC');
         if ($resourceType) {
@@ -215,13 +254,13 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         $quotedIdentifiers = array_map([$conn, 'quote'], $identifiers);
         $quotedIdentifiers = implode(',', $quotedIdentifiers);
         $qb = $conn->createQueryBuilder()
-            ->select('media.source as identifier', 'media.id as id')
+            ->select('media.source AS identifier', 'media.id AS id')
             ->from('media', 'media')
             ->andwhere('media.ingester = :ingester')
             ->setParameter(':ingester', $ingesterName)
-            // ->andWhere('media.source in (:sources)')
+            // ->andWhere('media.source IN (:sources)')
             // ->setParameter(':sources', $identifiers)
-            ->andwhere("media.source in ($quotedIdentifiers)")
+            ->andwhere("media.source IN ($quotedIdentifiers)")
             ->addOrderBy('media.id', 'ASC');
         if ($itemId) {
             $qb
@@ -255,7 +294,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             return ['identifier' => strtolower($v['identifier']), 'id' => $v['id']];
         }, $result);
 
-        foreach ($cleanedResult as $key => $value) {
+        foreach (array_keys($cleanedResult) as $key) {
             // Look for the first case sensitive result.
             foreach ($result as $resultValue) {
                 if ($resultValue['identifier'] == $key) {
