@@ -20,7 +20,7 @@ class ResourceProcessorConfigForm extends AbstractResourceProcessorConfigForm
                 'value_options' => [
                     'items' => 'Item', // @translate
                     'item_sets' => 'Item set', // @translate
-                    'media' => 'media', // @translate
+                    'media' => 'Media', // @translate
                 ],
             ],
             'attributes' => [

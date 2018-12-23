@@ -100,7 +100,7 @@ class AutomapFields extends AbstractHelper
         // lower case version.
         $automapList = [];
         if ($this->map) {
-            $automapList = $this->checkAutomapList($this->map, $propertyLists['names']);
+            $automapList = $this->map;
             $automapLists['base'] = array_combine(
                 array_keys($automapList),
                 array_keys($automapList)
@@ -262,33 +262,6 @@ class AutomapFields extends AbstractHelper
     protected function cleanUnicode($string)
     {
         return trim(preg_replace('/[\h\v\s[:blank:][:space:]]+/u', ' ', $string));
-    }
-
-    /**
-     * Clean the automap list to remove old properties.
-     *
-     * @param array $automapList
-     * @param array $propertyList
-     * @return array
-     */
-    protected function checkAutomapList($automapList, $propertyList)
-    {
-        $result = $automapList;
-        foreach ($automapList as $name => $value) {
-            if (empty($value)) {
-                unset($result[$name]);
-                continue;
-            }
-            $isProperty = preg_match('/^[a-z0-9_-]+:[a-z0-9_-]+$/i', $value);
-            if ($isProperty) {
-                if (empty($propertyList[$value])) {
-                    unset($result[$name]);
-                } else {
-                    $result[$name] = $propertyList[$value];
-                }
-            }
-        }
-        return $result;
     }
 
     protected function api()
