@@ -3,12 +3,12 @@ namespace BulkImport\Entry;
 
 use BulkImport\Interfaces\Entry as EntryInterface;
 
-class CsvRow implements EntryInterface
+class SpreadsheetRow implements EntryInterface, \Countable, \JsonSerializable
 {
     /**
      * @var array|\Traversable
      */
-    protected $row;
+    protected $row = [];
 
     /**
      * @var bool
@@ -40,12 +40,12 @@ class CsvRow implements EntryInterface
 
     public function offsetSet($offset, $value)
     {
-        throw new \Exception("Modification forbidden"); // @translate
+        throw new \Exception('Modification forbidden'); // @translate
     }
 
     public function offsetUnset($offset)
     {
-        throw new \Exception("Modification forbidden"); // @translate
+        throw new \Exception('Modification forbidden'); // @translate
     }
 
     public function current()
@@ -60,9 +60,7 @@ class CsvRow implements EntryInterface
 
     public function next()
     {
-        if (false === next($this->row)) {
-            $this->valid = false;
-        }
+        $this->valid = next($this->row) !== false;
     }
 
     public function rewind()
@@ -74,5 +72,20 @@ class CsvRow implements EntryInterface
     public function valid()
     {
         return $this->valid;
+    }
+
+    public function count()
+    {
+        return count($this->row);
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->row;
+    }
+
+    public function __toString()
+    {
+        return print_r($this->row, true);
     }
 }

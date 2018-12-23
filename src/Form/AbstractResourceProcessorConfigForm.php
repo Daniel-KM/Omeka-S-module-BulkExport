@@ -102,7 +102,8 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         $fieldset = $this->get('mapping');
 
         // Add all columns from file as inputs.
-        foreach ($reader->getAvailableFields() as $name) {
+        $availableFields = $reader->getAvailableFields();
+        foreach ($availableFields as $name) {
             $fieldset->add([
                 'name' => $name,
                 'type' => PropertySelect::class,

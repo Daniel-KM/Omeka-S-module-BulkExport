@@ -1,7 +1,8 @@
 <?php
 namespace BulkImport\Reader;
 
-use BulkImport\Entry\CsvRow;
+use Box\Spout\Common\Type;
+use BulkImport\Entry\SpreadsheetRow;
 use BulkImport\Form\CsvReaderConfigForm;
 use BulkImport\Form\CsvReaderParamsForm;
 use BulkImport\Interfaces\Configurable;
@@ -13,17 +14,28 @@ use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Box Spout Spreadshet reader doesn't support escape for csv (even if it
+ * manages end of line and encoding). So the basic file handler is used for csv.
+ * The format tsv uses the Spout reader, because there is no escape.
+ */
 class CsvReader implements Reader, Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait, ServiceLocatorAwareTrait;
 
+    protected $label = 'CSV'; // @translate
+    protected $mediaType = 'text/csv';
+    protected $spreadsheetType = Type::CSV;
+    protected $configFormClass = CsvReaderConfigForm::class;
+    protected $paramsFormClass = CsvReaderParamsForm::class;
+
     protected $fh;
 
-    protected $currentRow;
+    protected $currentRow = 0;
 
-    protected $currentRowData;
+    protected $currentRowData = [];
 
-    protected $headers;
+    protected $headers = [];
 
     /**
      * CsvReader constructor.
@@ -37,64 +49,17 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
     public function getLabel()
     {
-        return 'CSV'; // @translate
-    }
-
-    public function current()
-    {
-        $entry = new CsvRow($this->headers, $this->currentRowData);
-
-        return $entry;
-    }
-
-    public function key()
-    {
-        return $this->currentRow;
-    }
-
-    public function next()
-    {
-        $this->currentRowData = $this->getRow($this->fh);
-        $this->currentRow++;
-    }
-
-    public function rewind()
-    {
-        if (!isset($this->fh)) {
-            $this->fh = fopen($this->getParam('filename'), 'r');
-        } else {
-            fseek($this->fh, 0);
-        }
-
-        $this->headers = $this->getRow($this->fh);
-        $this->currentRowData = $this->getRow($this->fh);
-        $this->currentRow = 0;
-    }
-
-    public function valid()
-    {
-        return is_array($this->currentRowData);
+        return $this->label;
     }
 
     public function getAvailableFields()
     {
-        $fields = [];
-
-        $filename = $this->getParam('filename');
-        if ($filename && file_exists($filename)) {
-            $fh = fopen($filename, 'r');
-            if (false !== $fh) {
-                $fields = $this->getRow($fh);
-                fclose($fh);
-            }
-        }
-
-        return $fields;
+        return $this->getHeaders();
     }
 
     public function getConfigFormClass()
     {
-        return CsvReaderConfigForm::class;
+        return $this->configFormClass;
     }
 
     public function handleConfigForm(Form $form)
@@ -113,7 +78,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
     public function getParamsFormClass()
     {
-        return CsvReaderParamsForm::class;
+        return $this->paramsFormClass;
     }
 
     public function handleParamsForm(Form $form)
@@ -142,6 +107,65 @@ class CsvReader implements Reader, Configurable, Parametrizable
             'escape' => $values['escape'],
             'separator' => $values['separator'],
         ]);
+    }
+
+    public function current()
+    {
+        $entry = new SpreadsheetRow($this->headers, $this->currentRowData);
+        return $entry;
+    }
+
+    public function key()
+    {
+        return $this->currentRow;
+    }
+
+    public function next()
+    {
+        $this->currentRowData = $this->getRow($this->fh);
+        ++$this->currentRow;
+    }
+
+    /**
+     * Reader use a foreach loop to get data. So the first output should not be
+     * the available fields, but the data (numbered as 0-based).
+     *
+     * {@inheritDoc}
+     * @see \Iterator::rewind()
+     */
+    public function rewind()
+    {
+        if (isset($this->fh)) {
+            fseek($this->fh, 0);
+        } else {
+            $filepath = $this->getParam('filename');
+            $this->fh = fopen($filepath, 'r');
+        }
+
+        // The headers and the first row are prepared, so the "foreach" loop
+        // starts on the first row, numbered current row 0.
+        $this->headers = $this->getRow($this->fh);
+        $this->currentRowData = $this->getRow($this->fh);
+        $this->currentRow = 0;
+    }
+
+    public function valid()
+    {
+        return is_array($this->currentRowData);
+    }
+
+    protected function getHeaders()
+    {
+        $fields = [];
+        $filepath = $this->getParam('filename');
+        if ($filepath && file_exists($filepath) && is_readable($filepath)) {
+            $fh = fopen($filepath, 'r');
+            if (false !== $fh) {
+                $fields = $this->getRow($fh);
+                fclose($fh);
+            }
+        }
+        return $fields;
     }
 
     protected function getRow($fh)

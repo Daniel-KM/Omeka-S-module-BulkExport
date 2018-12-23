@@ -131,6 +131,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $insert = [];
         foreach ($this->reader as $index => $entry) {
             ++$this->totalIndexResources;
+            // The first row is #1, but the iterator (array) numbered it 0.
             $this->indexResource = $index + 1;
             $this->logger->log(Logger::NOTICE, new PsrMessage('Processing resource index #{index}', ['index' => $this->indexResource])); // @translate
 

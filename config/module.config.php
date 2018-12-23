@@ -47,6 +47,8 @@ return [
             Form\MediaProcessorParamsForm::class => Service\Form\FormFactory::class,
             Form\ResourceProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\ResourceProcessorParamsForm::class => Service\Form\FormFactory::class,
+            Form\SpreadsheetReaderConfigForm::class => Service\Form\FormFactory::class,
+            Form\SpreadsheetReaderParamsForm::class => Service\Form\FormFactory::class,
         ],
     ],
     'controllers' => [
@@ -131,6 +133,8 @@ return [
     'bulk_import' => [
         'readers' => [
             Reader\CsvReader::class => Reader\CsvReader::class,
+            Reader\TsvReader::class => Reader\TsvReader::class,
+            Reader\OpenDocumentSpreadsheetReader::class => Reader\OpenDocumentSpreadsheetReader::class,
         ],
         'processors' => [
             Processor\ItemProcessor::class => Processor\ItemProcessor::class,

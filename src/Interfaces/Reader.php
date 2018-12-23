@@ -1,7 +1,9 @@
 <?php
 namespace BulkImport\Interfaces;
 
-interface Reader extends \Iterator
+use Iterator;
+
+interface Reader extends Iterator
 {
     /**
      * @var string
@@ -12,6 +14,9 @@ interface Reader extends \Iterator
      * List of fields used in the input, for example the first spreadsheet row.
      *
      * It allows to do the mapping in the user interface.
+     *
+     * Note that these available fields should not be the first output when
+     * `rewind()` is called.
      *
      * @return array
      */
