@@ -132,15 +132,15 @@ class CsvReader extends AbstractReader
         $this->availableFields = array_map([$this, 'trimUnicode'], $fields);
     }
 
-    protected function isValidFilepath($filepath)
+    protected function isValidFilepath($filepath, $file)
     {
-        if (!parent::isValidFilepath($filepath)) {
+        if (!parent::isValidFilepath($filepath, $file)) {
             return false;
         }
         if (!$this->isUtf8($filepath)) {
             $this->lastErrorMessage = new PsrMessage(
                 'File "{filepath}" is not fully utf-8.', // @translate
-                ['filepath' => $filepath]
+                ['filename' => $file['name']]
             );
             return false;
         }

@@ -285,7 +285,12 @@ class ImporterController extends AbstractActionController
                     case 'reader':
                         $reader->handleParamsForm($form);
                         $session->reader = $reader->getParams();
-                        $next = isset($formsCallbacks['processor']) ? 'processor' : 'start';
+                        if (!$reader->isValid()) {
+                            $this->messenger()->addError($reader->getLastErrorMessage());
+                            $next = 'reader';
+                        } else {
+                            $next = isset($formsCallbacks['processor']) ? 'processor' : 'start';
+                        }
                         $formCallback = $formsCallbacks[$next];
                         break;
 
@@ -374,6 +379,7 @@ class ImporterController extends AbstractActionController
 
         $reader = $importer->reader();
         if ($reader instanceof Parametrizable) {
+            /** @return \Zend\Form\Form */
             $formsCallbacks['reader'] = function () use ($reader, $controller) {
                 $readerForm = $controller->getForm($reader->getParamsFormClass());
                 $readerConfig = $reader->getConfig() ?: [];
@@ -405,6 +411,7 @@ class ImporterController extends AbstractActionController
         $processor = $importer->processor();
         $processor->setReader($reader);
         if ($processor instanceof Parametrizable) {
+            /** @return \Zend\Form\Form */
             $formsCallbacks['processor'] = function () use ($processor, $controller) {
                 $processorForm = $controller->getForm($processor->getParamsFormClass(), [
                     'processor' => $processor,
@@ -435,6 +442,7 @@ class ImporterController extends AbstractActionController
             };
         }
 
+        /** @return \Zend\Form\Form */
         $formsCallbacks['start'] = function () use ($controller) {
             $startForm = $controller->getForm(ImporterStartForm::class);
             $startForm->add([

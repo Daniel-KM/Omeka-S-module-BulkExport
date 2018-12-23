@@ -35,6 +35,11 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     /**
      * @var string
      */
+    protected $mediaType;
+
+    /**
+     * @var string
+     */
     protected $configFormClass;
 
     /**
@@ -93,8 +98,9 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
         if (array_search('filename', $this->paramsKeys) === false) {
             return true;
         }
+        $file = $this->getParam('file');
         $filepath = $this->getParam('filename');
-        return $this->isValidFilepath($filepath);
+        return $this->isValidFilepath($filepath, $file);
     }
 
     public function getLastErrorMessage()
@@ -281,28 +287,37 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
 
     /**
      * @param string $filepath
+     * @param array $file
      * @return boolean
      */
-    protected function isValidFilepath($filepath)
+    protected function isValidFilepath($filepath, $file)
     {
         if (empty($filepath)) {
             $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" doesn’t exist.', // @translate
-                ['filepath' => $filepath]
+                'File "{filename}" doesn’t exist.', // @translate
+                ['filename' => $file['name']]
             );
             return false;
         }
         if (!filesize($filepath)) {
             $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" is empty.', // @translate
-                ['filepath' => $filepath]
+                'File "{filename}" is empty.', // @translate
+                ['filename' => $file['name']]
             );
             return false;
         }
         if (!is_readable($filepath)) {
             $this->lastErrorMessage = new PsrMessage(
-                'File "{filepath}" is not readable.', // @translate
-                ['filepath' => $filepath]
+                'File "{filename}" is not readable.', // @translate
+                ['filename' => $file['name']]
+            );
+            return false;
+        }
+        $mediaType = $this->getParam('file')['type'];
+        if ($mediaType !== $this->mediaType) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filename}" is not a {media_type}, but a {file_media_type}.', // @translate
+                ['filename' => $file['name'], 'media_type' => $this->mediaType, 'file_media_type' => $mediaType]
             );
             return false;
         }
