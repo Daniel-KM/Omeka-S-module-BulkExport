@@ -14,6 +14,11 @@ class ImportTest extends OmekaControllerTestCase
     protected $api;
     protected $basepath;
 
+    /**
+     * @var \Omeka\Module\Manager
+     */
+    protected $moduleManager;
+
     protected $tempfile;
 
     public function setUp()
@@ -27,6 +32,7 @@ class ImportTest extends OmekaControllerTestCase
         $this->auth = $services->get('Omeka\AuthenticationService');
         $this->api = $services->get('Omeka\ApiManager');
         $this->basepath = dirname(__DIR__) . '/_files/';
+        $this->moduleManager = $services->get('Omeka\ModuleManager');
 
         $this->loginAsAdmin();
 
@@ -356,7 +362,23 @@ SQL;
             }
         }
 
+        if (!$this->hasModule('Mapping')) {
+            unset($resource['o-module-mapping:lat']);
+            unset($resource['o-module-mapping:lng']);
+            unset($resource['o-module-mapping:bounds']);
+            unset($resource['o-module-mapping:default_lat']);
+            unset($resource['o-module-mapping:default_lng']);
+            unset($resource['o-module-mapping:default_zoom']);
+        }
+
         return $resource;
+    }
+
+    protected function hasModule($module)
+    {
+        $module = $this->moduleManager->getModule($module);
+        return $module
+            && $module->getState() === \Omeka\Module\Manager::STATE_ACTIVE;
     }
 
     protected function importerArgs()
@@ -381,6 +403,7 @@ SQL;
             ],
         ];
     }
+
     protected function importArgs()
     {
         return [
