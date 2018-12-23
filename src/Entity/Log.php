@@ -49,12 +49,13 @@ class Log extends AbstractEntity
     protected $added;
 
     /**
-     * @OneToOne(
-     *     targetEntity="BulkImport\Entity\Import",
+     * @ManyToOne(
+     *     targetEntity=Import::class,
      *     fetch="EXTRA_LAZY"
      * )
      * @JoinColumn(
-     *     nullable=true
+     *     nullable=false,
+     *     onDelete="CASCADE"
      * )
      */
     protected $import;

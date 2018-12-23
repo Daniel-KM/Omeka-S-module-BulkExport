@@ -57,9 +57,10 @@ class Import extends AbstractEntity
     protected $ended;
 
     /**
-     * @OneToOne(
-     *     targetEntity="BulkImport\Entity\Importer",
-     *     fetch="EXTRA_LAZY"
+     * @ManyToOne(
+     *     targetEntity=Importer::class,
+     *     inversedBy="import",
+     *     fetch="EXTRA_LAZY",
      * )
      * @JoinColumn(
      *     nullable=true

@@ -27,7 +27,7 @@ CREATE TABLE bulk_import (
     status VARCHAR(255) DEFAULT NULL,
     started DATETIME DEFAULT NULL,
     ended DATETIME DEFAULT NULL,
-    UNIQUE INDEX UNIQ_BD98E8747FCFE58E (importer_id),
+    INDEX IDX_BD98E8747FCFE58E (importer_id),
     PRIMARY KEY(id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
 CREATE TABLE bulk_importer (
@@ -41,16 +41,16 @@ CREATE TABLE bulk_importer (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
 CREATE TABLE bulk_log (
     id INT AUTO_INCREMENT NOT NULL,
-    import_id INT DEFAULT NULL,
+    import_id INT NOT NULL,
     severity VARCHAR(255) DEFAULT NULL,
     message VARCHAR(255) DEFAULT NULL,
     params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:array)',
     added DATETIME DEFAULT NULL,
-    UNIQUE INDEX UNIQ_3B78A07DB6A263D9 (import_id),
+    INDEX IDX_3B78A07DB6A263D9 (import_id),
     PRIMARY KEY(id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
 ALTER TABLE bulk_import ADD CONSTRAINT FK_BD98E8747FCFE58E FOREIGN KEY (importer_id) REFERENCES bulk_importer (id);
-ALTER TABLE bulk_log ADD CONSTRAINT FK_3B78A07DB6A263D9 FOREIGN KEY (import_id) REFERENCES bulk_import (id);
+ALTER TABLE bulk_log ADD CONSTRAINT FK_3B78A07DB6A263D9 FOREIGN KEY (import_id) REFERENCES bulk_import (id) ON DELETE CASCADE;
 SQL;
         $connection->exec($sql);
     }
