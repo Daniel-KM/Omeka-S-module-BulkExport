@@ -51,7 +51,7 @@ class ImportController extends AbstractActionController
             'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
 
             'severity' => $severity,
-            'import' => (int) $this->params()->fromRoute('id')
+            'import_id' => (int) $this->params()->fromRoute('id')
         ];
 
         $response = $this->api()->search('bulk_logs', $query);

@@ -50,11 +50,11 @@ class LogAdapter extends AbstractEntityAdapter
             );
         }
 
-        if (isset($query['import'])) {
+        if (isset($query['import_id'])) {
             $qb->andWhere(
                 $qb->expr()->eq(
                     $this->getEntityClass() . '.import',
-                    $this->createNamedParameter($qb, $query['import'])
+                    $this->createNamedParameter($qb, $query['import_id'])
                 )
             );
         }
