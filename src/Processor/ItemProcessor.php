@@ -6,11 +6,11 @@ use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Log\Logger;
 use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
-use BulkImport\Form\ItemsProcessorConfigForm;
-use BulkImport\Form\ItemsProcessorParamsForm;
+use BulkImport\Form\ItemProcessorConfigForm;
+use BulkImport\Form\ItemProcessorParamsForm;
 use Zend\Form\Form;
 
-class ItemsProcessor extends AbstractProcessor implements Configurable, Parametrizable
+class ItemProcessor extends AbstractProcessor implements Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait;
 
@@ -31,7 +31,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
 
     public function getConfigFormClass()
     {
-        return ItemsProcessorConfigForm::class;
+        return ItemProcessorConfigForm::class;
     }
 
     public function handleConfigForm(Form $form)
@@ -49,7 +49,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
 
     public function getParamsFormClass()
     {
-        return ItemsProcessorParamsForm::class;
+        return ItemProcessorParamsForm::class;
     }
 
     public function handleParamsForm(Form $form)

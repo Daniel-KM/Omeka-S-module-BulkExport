@@ -8,7 +8,7 @@ use Omeka\Form\Element\ResourceSelect;
 use Zend\Form\Element;
 use Zend\Form\Form;
 
-class ItemsProcessorConfigForm extends Form
+class ItemProcessorConfigForm extends Form
 {
     use ServiceLocatorAwareTrait;
 

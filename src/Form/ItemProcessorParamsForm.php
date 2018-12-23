@@ -4,7 +4,7 @@ namespace BulkImport\Form;
 use Omeka\Form\Element\PropertySelect;
 use Zend\Form\Fieldset;
 
-class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
+class ItemProcessorParamsForm extends ItemProcessorConfigForm
 {
     public function init()
     {

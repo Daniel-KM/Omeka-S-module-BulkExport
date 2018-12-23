@@ -41,8 +41,8 @@ return [
             Form\ImporterDeleteForm::class => Service\Form\FormFactory::class,
             Form\ImporterForm::class => Service\Form\FormFactory::class,
             Form\ImporterStartForm::class => Service\Form\FormFactory::class,
-            Form\ItemsProcessorConfigForm::class => Service\Form\FormFactory::class,
-            Form\ItemsProcessorParamsForm::class => Service\Form\FormFactory::class,
+            Form\ItemProcessorConfigForm::class => Service\Form\FormFactory::class,
+            Form\ItemProcessorParamsForm::class => Service\Form\FormFactory::class,
         ],
     ],
     'controllers' => [
@@ -129,7 +129,7 @@ return [
             'csv' => Reader\CsvReader::class
         ],
         'processors' => [
-            'items' => Processor\ItemsProcessor::class,
+            'items' => Processor\ItemProcessor::class,
         ],
     ],
 ];
