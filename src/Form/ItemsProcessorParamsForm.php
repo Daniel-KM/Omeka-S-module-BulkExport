@@ -1,7 +1,7 @@
 <?php
 namespace BulkImport\Form;
 
-use Omeka\Form\Element\ResourceSelect;
+use Omeka\Form\Element\PropertySelect;
 use Zend\Form\Fieldset;
 
 class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
@@ -19,28 +19,24 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
             'name' => 'mapping',
             'type' => Fieldset::class,
             'options' => [
-                'label' => 'Mapping', // Text label
+                'label' => 'Mapping', // @translate
             ],
         ]);
 
+        $fieldset = $this->get('mapping');
+
         // Add all columns from file as inputs.
         foreach ($reader->getAvailableFields() as $name) {
-            $this->get('mapping')->add([
+            $fieldset->add([
                 'name' => $name,
-                'type' => ResourceSelect::class,
+                'type' => PropertySelect::class,
                 'options' => [
-                    'label' => $name, // @translate
-                    'empty_option' => 'Select Class', // @translate
-                    'resource_value_options' => [
-                        'resource' => 'properties',
-                        'query' => [],
-                        'option_text_callback' => function ($property) {
-                            return [
-                                $property->vocabulary()->label(),
-                                $property->label(),
-                            ];
-                        },
-                    ],
+                    'label' => $name,
+                    'empty_option' => 'Select one or more property…', // @translate
+                ],
+                'attributes' => [
+                    'required' => false,
+                    'class' => 'chosen-select',
                 ],
             ]);
         }

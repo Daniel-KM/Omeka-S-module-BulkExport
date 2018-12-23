@@ -10,6 +10,8 @@ use BulkImport\Interfaces\Processor;
 use BulkImport\Job\Import as JobImport;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Omeka\Media\Ingester\Manager as MediaIngesterManager ;
+use Zend\Form\Element;
+use Zend\Form\Fieldset;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
@@ -135,11 +137,11 @@ class ImporterController extends AbstractActionController
 
         $form->add([
             'name' => 'importer_submit',
-            'type' => 'fieldset',
+            'type'  => Fieldset::class,
         ]);
         $form->get('importer_submit')->add([
-            'type'  => 'submit',
             'name' => 'submit',
+            'type'  => Element\Submit::class,
             'attributes' => [
                 'value' => 'Save', // @translate
                 'id' => 'submitbutton',
@@ -189,11 +191,11 @@ class ImporterController extends AbstractActionController
 
         $form->add([
             'name' => 'importer_submit',
-            'type' => 'fieldset',
+            'type'  => Fieldset::class,
         ]);
         $form->get('importer_submit')->add([
-            'type'  => 'submit',
             'name' => 'submit',
+            'type'  => Element\Submit::class,
             'attributes' => [
                 'value' => 'Save', // @translate
                 'id' => 'submitbutton',
@@ -356,19 +358,19 @@ class ImporterController extends AbstractActionController
                 $readerForm->setData($readerConfig);
 
                 $readerForm->add([
-                    'type'  => 'hidden',
                     'name' => 'current_form',
+                    'type'  => Element\Hidden::class,
                     'attributes' => [
                         'value' => 'reader',
                     ],
                 ]);
                 $readerForm->add([
                     'name' => 'reader_submit',
-                    'type' => 'fieldset',
+                    'type'  => Fieldset::class,
                 ]);
                 $readerForm->get('reader_submit')->add([
-                    'type'  => 'submit',
                     'name' => 'submit',
+                    'type'  => Element\Submit::class,
                     'attributes' => [
                         'value' => 'Continue', // @translate
                     ],
@@ -391,19 +393,19 @@ class ImporterController extends AbstractActionController
                 $processorForm->setData($processorConfig);
 
                 $processorForm->add([
-                    'type'  => 'hidden',
                     'name' => 'current_form',
+                    'type'  => Element\Hidden::class,
                     'attributes' => [
                         'value' => 'processor',
                     ],
                 ]);
                 $processorForm->add([
                     'name' => 'reader_submit',
-                    'type' => 'fieldset',
+                    'type'  => Fieldset::class,
                 ]);
                 $processorForm->get('reader_submit')->add([
-                    'type'  => 'submit',
                     'name' => 'submit',
+                    'type'  => Element\Submit::class,
                     'attributes' => [
                         'value' => 'Continue', // @translate
                     ],
@@ -416,8 +418,8 @@ class ImporterController extends AbstractActionController
         $formsCallbacks['start'] = function () use ($controller) {
             $startForm = $controller->getForm(ImporterStartForm::class);
             $startForm->add([
-                'type'  => 'hidden',
                 'name' => 'current_form',
+                'type'  => Element\Hidden::class,
                 'attributes' => [
                     'value' => 'start',
                 ],
