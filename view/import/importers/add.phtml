@@ -1,0 +1,19 @@
+<?php
+$this->htmlElement('body')->appendAttribute('class', 'importer');
+$escape = $this->plugin('escapeHtml');
+$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$form->prepare();
+?>
+
+<?php echo $this->pageTitle($this->translate('Import'), 1, $this->translate('Create new importer')); ?>
+
+<div id="primary">
+    <h2><?php echo $escape($this->translate('Create new importer'));?></h2>
+
+    <?php
+        echo $this->form()->openTag($form);
+        echo $this->formCollection($form);
+        echo $this->form()->closeTag();
+    ?>
+
+</div>

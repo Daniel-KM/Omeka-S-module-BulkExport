@@ -1,0 +1,59 @@
+<?php
+$this->htmlElement('body')->appendAttribute('class', 'importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$escape = $this->plugin('escapeHtml');
+$severityNames = [
+    $escape($this->translate('Emergency')),
+    $escape($this->translate('Alert')),
+    $escape($this->translate('Critical')),
+    $escape($this->translate('Error')),
+    $escape($this->translate('Warning')),
+    $escape($this->translate('Notice')),
+    $escape($this->translate('Info')),
+    $escape($this->translate('Debug')),
+];
+?>
+
+<?php echo $this->pageTitle($this->translate('Import'), 1, $this->translate('Import logs')); ?>
+<div id="primary">
+    <h2><?php echo $escape($this->translate('Import logs'));?></h2>
+
+    <form>
+        <label>
+            <?php echo $escape($this->translate('Show only messages whose severity is higher than or equal to')) ?>
+            <select name="severity">
+                <?php foreach ($severityNames as $i => $name) { ?>
+                    <?php $selected = ($i === $severity) ? 'selected' : ''; ?>
+                    <option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $name; ?></option>
+                <?php } ?>
+            </select>
+        </label>
+        <button type="submit"><?php echo $this->translate('Show') ?></button>
+    </form>
+
+    <?php if (!empty($logs)) {?>
+        <?php echo $this->pagination(); ?>
+
+        <table class="tablesaw" data-tablesaw-mode="stack">
+            <thead>
+            <tr>
+                <th><?php echo $escape($this->translate('Time'));?></th>
+                <th><?php echo $escape($this->translate('Message'));?></th>
+                <th><?php echo $escape($this->translate('Severity'));?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($logs as $log) { ?>
+                <tr>
+                    <td><?php echo $log->getAdded()->format('Y-m-d H:i:s'); ?></td>
+                    <td><?php echo $log->getMessage(); ?></td>
+                    <td><?php echo isset($severityNames[$log->getSeverity()]) ? $severityNames[$log->getSeverity()] : $log->getSeverity() ?></td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+
+    <?php } else { ?>
+        <p><?php echo $escape($this->translate('No logs yet.'));?> <a href=""><?php echo $escape($this->translate('Refresh page'));?></a></p>
+    <?php } ?>
+</div>

@@ -1,0 +1,28 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+?>
+
+<table class="tablesaw" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+            <th><?php echo $escape($this->translate('Importer'));?></th>
+            <th><?php echo $escape($this->translate('Status'));?></th>
+            <th><?php echo $escape($this->translate('Started'));?></th>
+            <th><?php echo $escape($this->translate('Completed'));?></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($imports as $import) { ?>
+            <tr>
+                <td><?php echo $import->getImporter()->getName(); ?></td>
+                <td><?php echo $import->getStatus(); ?></td>
+                <td><?php echo ($import->getStarted()) ? $import->getStarted()->format('Y-m-d H:i:s') : ''; ?></td>
+                <td><?php echo ($import->getEnded()) ? $import->getEnded()->format('Y-m-d H:i:s') : ''; ?></td>
+                <td>
+                    <?php echo $this->hyperlink('See logs', $this->url('admin/import/id', array('controller' => 'imports', 'action' => 'logs', 'id' => $import->getId()))); ?>
+                </td>
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
