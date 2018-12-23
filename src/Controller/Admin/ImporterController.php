@@ -287,7 +287,7 @@ class ImporterController extends AbstractActionController
 
                     case 'start':
                         $importData = [
-                            'status' => 'queued',
+                            'status' => \BulkImport\Entity\Import::STATUS_STARTING,
                             'importer' => $importer->getResource(),
                         ];
                         if ($reader instanceof Parametrizable) {

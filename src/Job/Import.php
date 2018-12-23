@@ -38,17 +38,17 @@ class Import extends AbstractJob
 
         try {
             $this->getLogger()->log(Logger::NOTICE, 'Import started'); // @translate
-            $data = ['status' => 'in progress', 'started' => new \DateTime()];
+            $data = ['status' => \BulkImport\Entity\Import::STATUS_IN_PROGRESS, 'started' => new \DateTime()];
             $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
 
             $processor->process();
 
             $this->getLogger()->log(Logger::NOTICE, 'Import completed'); // @translate
-            $data = ['status' => 'completed', 'ended' => new \DateTime()];
+            $data = ['status' => \BulkImport\Entity\Import::STATUS_COMPLETED, 'ended' => new \DateTime()];
             $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
         } catch (\Exception $e) {
             $this->getLogger()->log(Logger::ERR, $e->__toString());
-            $data = ['status' => 'error'];
+            $data = ['status' => \BulkImport\Entity\Import::STATUS_ERROR];
             $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
         }
     }

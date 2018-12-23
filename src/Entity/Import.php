@@ -5,11 +5,21 @@ use DateTime;
 use Omeka\Entity\AbstractEntity;
 
 /**
+ * @todo Implement the job inside the import to avoid duplication.
+ *
  * @Entity
  * @Table(name="bulk_import")
  */
 class Import extends AbstractEntity
 {
+    // All job statuses are not implemented currently.
+    const STATUS_STARTING = 'starting'; // @translate
+    // const STATUS_STOPPING = 'stopping'; // @translate
+    const STATUS_IN_PROGRESS = 'in_progress'; // @translate
+    // const STATUS_STOPPED = 'stopped'; // @translate
+    const STATUS_COMPLETED = 'completed'; // @translate
+    const STATUS_ERROR = 'error'; // @translate
+
     /**
      * @Id
      * @Column(type="integer")
