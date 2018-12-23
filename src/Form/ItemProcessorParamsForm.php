@@ -1,76 +1,30 @@
 <?php
 namespace BulkImport\Form;
 
-use Omeka\Form\Element\PropertySelect;
-use Zend\Form\Fieldset;
-
 class ItemProcessorParamsForm extends ItemProcessorConfigForm
 {
     public function init()
     {
-        $this->hasInputFilter = false;
-        parent::init();
-        $this->hasInputFilter = true;
+        $this->baseFieldset();
+        $this->addFieldsets();
+        $this->addMapping();
 
-        /** @var \BulkImport\Interfaces\Processor $processor */
-        $processor = $this->getOption('processor');
-        /** @var \BulkImport\Interfaces\Reader $reader */
-        $reader = $processor->getReader();
-
-        $this->add([
-            'name' => 'mapping',
-            'type' => Fieldset::class,
-            'options' => [
-                'label' => 'Mapping', // @translate
-            ],
-        ]);
-
-        $fieldset = $this->get('mapping');
-
-        // Add all columns from file as inputs.
-        foreach ($reader->getAvailableFields() as $name) {
-            $fieldset->add([
-                'name' => $name,
-                'type' => PropertySelect::class,
-                'options' => [
-                    'label' => $name,
-                    'empty_option' => 'Select one or more targets…', // @translate
-                    'term_as_value' => true,
-                    'prepend_value_options' => [
-                        'metadata' => [
-                            'label' => 'Resource metadata', // @translate
-                            'options' => [
-                                'o:is_public' => 'Is public', // @translate
-                            ],
-                        ],
-                        'media' => [
-                            'label' => 'Media', // @translate
-                            'options' => [
-                                'url' => 'Url', // @translate
-                                'sideload' => 'File (via sideload)', // @translate
-                            ],
-                        ],
-                    ],
-                ],
-                'attributes' => [
-                    'required' => false,
-                    'multiple' => true,
-                    'class' => 'chosen-select',
-                    'data-placeholder' => 'Select one or more targets…', // @translate
-                ],
-            ]);
-        }
-
-        $this->updateInputFilters();
+        $this->baseInputFilter();
+        $this->addInputFilter();
+        $this->addMappingFilter();
     }
 
-    protected function updateInputFilters()
+    protected function prependMappingOptions()
     {
-        parent::updateInputFilters();
-
-        // Change required to false.
-        foreach ($this->getInputFilter()->get('mapping')->getInputs() as $input) {
-            $input->setRequired(false);
-        }
+        $mapping = parent::prependMappingOptions();
+        return array_merge_recursive($mapping, [
+            'media' => [
+                'label' => 'Media', // @translate
+                'options' => [
+                    'url' => 'Url', // @translate
+                    'sideload' => 'File (via sideload)', // @translate
+                ],
+            ],
+        ]);
     }
 }

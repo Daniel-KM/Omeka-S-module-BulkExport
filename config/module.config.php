@@ -43,6 +43,8 @@ return [
             Form\ImporterStartForm::class => Service\Form\FormFactory::class,
             Form\ItemProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\ItemProcessorParamsForm::class => Service\Form\FormFactory::class,
+            Form\ResourceProcessorConfigForm::class => Service\Form\FormFactory::class,
+            Form\ResourceProcessorParamsForm::class => Service\Form\FormFactory::class,
         ],
     ],
     'controllers' => [
