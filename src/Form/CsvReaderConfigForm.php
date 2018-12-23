@@ -11,7 +11,7 @@ class CsvReaderConfigForm extends SpreadsheetReaderConfigForm
             'name' => 'delimiter',
             'type' => Element\Text::class,
             'options' => [
-                'label' => 'Default delimiter', // @translate
+                'label' => 'Delimiter', // @translate
             ],
             'attributes' => [
                 'id' => 'delimiter',
@@ -22,7 +22,7 @@ class CsvReaderConfigForm extends SpreadsheetReaderConfigForm
             'name' => 'enclosure',
             'type' => Element\Text::class,
             'options' => [
-                'label' => 'Default enclosure', // @translate
+                'label' => 'Enclosure', // @translate
             ],
             'attributes' => [
                 'id' => 'enclosure',
@@ -33,7 +33,7 @@ class CsvReaderConfigForm extends SpreadsheetReaderConfigForm
             'name' => 'escape',
             'type' => Element\Text::class,
             'options' => [
-                'label' => 'Default escape', // @translate
+                'label' => 'Escape', // @translate
             ],
             'attributes' => [
                 'id' => 'escape',

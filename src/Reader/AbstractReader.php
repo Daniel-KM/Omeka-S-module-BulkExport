@@ -134,6 +134,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
 
     public function handleParamsForm(Form $form)
     {
+        $this->lastErrorMessage = null;
         $values = $form->getData();
         $params = array_intersect_key($values, array_flip($this->paramsKeys));
         if (array_search('filename', $this->paramsKeys) !== false) {
@@ -314,10 +315,18 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
             return false;
         }
         $mediaType = $this->getParam('file')['type'];
-        if ($mediaType !== $this->mediaType) {
+        if (is_array($this->mediaType)) {
+            if (!in_array($mediaType, $this->mediaType)) {
+                $this->lastErrorMessage = new PsrMessage(
+                    'File "{filename}" has media type "{file_media_type}" and is not managed.', // @translate
+                    ['filename' => $file['name'], 'file_media_type' => $mediaType]
+                );
+                return false;
+            }
+        } elseif ($mediaType !== $this->mediaType) {
             $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" is not a {media_type}, but a {file_media_type}.', // @translate
-                ['filename' => $file['name'], 'media_type' => $this->mediaType, 'file_media_type' => $mediaType]
+                'File "{filename}" has media type "{file_media_type}", not "{media_type}.', // @translate
+                ['filename' => $file['name'], 'file_media_type' => $mediaType, 'media_type' => $this->mediaType]
             );
             return false;
         }

@@ -170,6 +170,7 @@ class ImporterController extends AbstractActionController
         }
 
         $view = new ViewModel;
+        $view->setVariable('reader', $reader);
         $view->setVariable('form', $form);
         return $view;
     }
@@ -225,6 +226,7 @@ class ImporterController extends AbstractActionController
         }
 
         $view = new ViewModel;
+        $view->setVariable('processor', $processor);
         $view->setVariable('form', $form);
         return $view;
     }

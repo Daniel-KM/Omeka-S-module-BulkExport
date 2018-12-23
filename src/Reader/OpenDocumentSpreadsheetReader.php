@@ -5,7 +5,7 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
 use BulkImport\Form\SpreadsheetReaderConfigForm;
-use BulkImport\Form\SpreadsheetReaderParamsForm;
+use BulkImport\Form\OpenDocumentSpreadsheetReaderParamsForm;
 use Log\Stdlib\PsrMessage;
 
 class OpenDocumentSpreadsheetReader extends AbstractReader
@@ -13,7 +13,7 @@ class OpenDocumentSpreadsheetReader extends AbstractReader
     protected $label = 'OpenDocument Spreadsheet'; // @translate
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
     protected $configFormClass = SpreadsheetReaderConfigForm::class;
-    protected $paramsFormClass = SpreadsheetReaderParamsForm::class;
+    protected $paramsFormClass = OpenDocumentSpreadsheetReaderParamsForm::class;
 
     protected $configKeys = [
         'separator',

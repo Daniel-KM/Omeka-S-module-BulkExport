@@ -3,7 +3,7 @@ namespace BulkImport\Reader;
 
 use Box\Spout\Common\Type;
 use BulkImport\Form\SpreadsheetReaderConfigForm;
-use BulkImport\Form\SpreadsheetReaderParamsForm;
+use BulkImport\Form\TsvReaderParamsForm;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -13,7 +13,7 @@ class TsvReader extends CsvReader
     protected $mediaType = 'text/tab-separated-values';
     protected $spreadsheetType = Type::CSV;
     protected $configFormClass = SpreadsheetReaderConfigForm::class;
-    protected $paramsFormClass = SpreadsheetReaderParamsForm::class;
+    protected $paramsFormClass = TsvReaderParamsForm::class;
 
     protected $configKeys = [
         'separator',

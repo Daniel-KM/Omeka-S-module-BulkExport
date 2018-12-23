@@ -13,12 +13,13 @@ Because multiple importers can be prepared with the same readers and processors,
 it is possible to import multiple times the same type of files without needing
 to do the mapping each time.
 
-As an example, this module defines a sample reader for CSV files and a processor
-that create items based on a user-defined mapping. Note: if your only need is to
-import a CSV file into Omeka, you should probably use [CSV Import module], which
-does a perfect job for that.
+As an example, this module defines a sample reader for spreadsheet files and a
+processor that creates resources based on a user-defined mapping. Note: if your
+only need is to import a CSV file into Omeka, you should probably use [CSV Import module],
+which does a perfect job for that.
 
-This module is a port of the [Omeka Classic] [Import plugin], build by [Biblibre].
+This module was initially based on a port of the [Omeka Classic] [Import plugin],
+built by [Biblibre].
 
 
 Installation
