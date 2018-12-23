@@ -8,7 +8,7 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
 {
     protected $connection;
     protected $api;
-    protected $findResourcesFromIdentifier;
+    protected $findResourcesFromIdentifiers;
 
     protected $resources;
 
@@ -19,7 +19,7 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
         $services = $this->getServiceLocator();
         $this->connection = $services->get('Omeka\Connection');
         $this->api = $services->get('ControllerPluginManager')->get('api');
-        $this->findResourcesFromIdentifier = new FindResourcesFromIdentifiers($this->connection, $this->api);
+        $this->findResourcesFromIdentifiers = new FindResourcesFromIdentifiers($this->connection, $this->api);
 
         $this->loginAsAdmin();
 
@@ -79,37 +79,20 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
 
     public function testNoIdentifier()
     {
-        $findResourcesFromIdentifier = $this->findResourcesFromIdentifier;
+        $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
         $this->api->create('items', [])->getContent();
 
         $identifierProperty = 'o:id';
         $resourceType = null;
 
         $identifier = '';
-        $resource = $findResourcesFromIdentifier($identifier, $identifierProperty, $resourceType);
+        $resource = $findResourcesFromIdentifiers($identifier, $identifierProperty, $resourceType);
         $this->assertNull($resource);
 
         $identifiers = [];
-        $resources = $findResourcesFromIdentifier($identifiers, $identifierProperty, $resourceType);
+        $resources = $findResourcesFromIdentifiers($identifiers, $identifierProperty, $resourceType);
         $this->assertTrue(is_array($resources));
         $this->assertEmpty($resources);
-    }
-
-    /**
-     * @dataProvider resourceIdentifierProvider
-     */
-    public function testResourceIdentifier($identifier, $identifierProperty, $resourceType, $expected)
-    {
-        $expected = is_null($expected) ? null : $this->resources[$expected]->id();
-
-        $findResourcesFromIdentifier = $this->findResourcesFromIdentifier;
-
-        $resource = $findResourcesFromIdentifier($identifier, $identifierProperty, $resourceType);
-        $this->assertEquals($expected, $resource);
-
-        $resources = $findResourcesFromIdentifier([$identifier], $identifierProperty, $resourceType);
-        $this->assertEquals(1, count($resources));
-        $this->assertEquals($expected, $resources[$identifier]);
     }
 
     public function resourceIdentifierProvider()
@@ -126,19 +109,20 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
     }
 
     /**
-     * @dataProvider resourceIdentifiersProvider
+     * @dataProvider resourceIdentifierProvider
      */
-    public function testResourceIdentifiers($identifiers, $identifierProperty, $resourceType, $expecteds)
+    public function testResourceIdentifier($identifier, $identifierProperty, $resourceType, $expected)
     {
-        foreach ($expecteds as &$expected) {
-            $expected = is_null($expected) ? null : $this->resources[$expected]->id();
-        }
+        $expected = is_null($expected) ? null : $this->resources[$expected]->id();
 
-        $findResourcesFromIdentifier = $this->findResourcesFromIdentifier;
+        $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
 
-        $resources = $findResourcesFromIdentifier($identifiers, $identifierProperty, $resourceType);
-        $this->assertEquals(count(array_unique($identifiers)), count($resources));
-        $this->assertEquals($expecteds, array_values($resources));
+        $resource = $findResourcesFromIdentifiers($identifier, $identifierProperty, $resourceType);
+        $this->assertEquals($expected, $resource);
+
+        $resources = $findResourcesFromIdentifiers([$identifier], $identifierProperty, $resourceType);
+        $this->assertEquals(1, count($resources));
+        $this->assertEquals($expected, $resources[$identifier]);
     }
 
     public function resourceIdentifiersProvider()
@@ -150,5 +134,21 @@ class FindResourcesFromIdentifiersTest extends OmekaControllerTestCase
             [['foo item set', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, 0]],
             [['foo item set', 'unknown', 'Foo Item Set', 'foo item set'], 10, 'item_sets', [3, null, 0]],
         ];
+    }
+
+    /**
+     * @dataProvider resourceIdentifiersProvider
+     */
+    public function testResourceIdentifiers($identifiers, $identifierProperty, $resourceType, $expecteds)
+    {
+        foreach ($expecteds as &$expected) {
+            $expected = is_null($expected) ? null : $this->resources[$expected]->id();
+        }
+
+        $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
+
+        $resources = $findResourcesFromIdentifiers($identifiers, $identifierProperty, $resourceType);
+        $this->assertEquals(count(array_unique($identifiers)), count($resources));
+        $this->assertEquals($expecteds, array_values($resources));
     }
 }
