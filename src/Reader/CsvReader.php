@@ -11,6 +11,9 @@ use BulkImport\Interfaces\Reader;
 use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
+use LimitIterator;
+use Log\Stdlib\PsrMessage;
+use SplFileObject;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -139,6 +142,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
             fseek($this->fh, 0);
         } else {
             $filepath = $this->getParam('filename');
+            $this->isValid($filepath);
             $this->fh = fopen($filepath, 'r');
         }
 
@@ -156,8 +160,10 @@ class CsvReader implements Reader, Configurable, Parametrizable
 
     protected function getHeaders()
     {
-        $fields = [];
         $filepath = $this->getParam('filename');
+        $this->isValid($filepath);
+
+        $fields = [];
         if ($filepath && file_exists($filepath) && is_readable($filepath)) {
             $fh = fopen($filepath, 'r');
             if (false !== $fh) {
@@ -183,5 +189,74 @@ class CsvReader implements Reader, Configurable, Parametrizable
     protected function trimUnicode($string)
     {
         return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
+    }
+
+    /**
+     * @param string $filepath
+     * @throw \Omeka\Service\Exception\InvalidArgumentException
+     */
+    protected function isValid($filepath)
+    {
+        if (empty($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" doesn’t exist.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+        if (!filesize($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" is empty.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+        if (!is_readable($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" is not readable.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+
+        if (!$this->isUtf8($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" is not fully utf-8.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+    }
+
+    /**
+     * Check if the file is utf-8 formatted.
+     *
+     * @param string $filepath
+     * @return bool
+     */
+    protected function isUtf8($filepath)
+    {
+        // TODO Use another check when mb is not installed.
+        if (!function_exists('mb_detect_encoding')) {
+            return true;
+        }
+
+        // Check all the file, because the headers are generally ascii.
+        // Nevertheless, check the lines one by one as text to avoid a memory
+        // overflow with a big csv file.
+        $iterator = new SplFileObject($filepath);
+        $iterator->setFlags(0);
+        $iterator->setCsvControl($this->getParam('delimiter', ','), $this->getParam('enclosure', '"'), $this->getParam('escape', '\\'));
+        $iterator->rewind();
+        foreach (new LimitIterator($iterator) as $line) {
+            if (mb_detect_encoding($line, 'UTF-8', true) !== 'UTF-8') {
+                return false;
+            }
+        }
+        return true;
     }
 }

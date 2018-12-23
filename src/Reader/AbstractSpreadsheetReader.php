@@ -156,17 +156,20 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
 
     public function current()
     {
+        $this->getIterator();
         $entry = new SpreadsheetRow($this->headers, $this->currentRowData);
         return $entry;
     }
 
     public function key()
     {
+        $this->getIterator();
         return $this->currentRow - 1;
     }
 
     public function next()
     {
+        $this->getIterator();
         ++$this->currentRow;
         $this->currentRowData = $this->getRow($this->currentRow);
     }
@@ -180,14 +183,12 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
      */
     public function rewind()
     {
-        // rewind() is the first method called by "foreach" in processor (Reader
-        // is an Iterator). Then, valid() is checked and current() is returned.
-        // For next steps, next() is called, then valid() and current().
         $this->prepareIterator();
     }
 
     public function valid()
     {
+        $this->getIterator();
         return is_array($this->currentRowData);
     }
 
@@ -244,31 +245,6 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
         if ($this->iterator) {
             return $this->iterator;
         }
-        $filepath = $this->getParam('filename');
-        if (empty($filepath)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                new PsrMessage(
-                    'File "{filepath}" doesn’t exist.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
-        if (!filesize($filepath)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                new PsrMessage(
-                    'File "{filepath}" is empty.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
-        if (!is_readable($filepath)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                new PsrMessage(
-                    'File "{filepath}" is not readable.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
         return $this->prepareIterator();
     }
 
@@ -282,6 +258,7 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
         $this->reset();
 
         $filepath = $this->getParam('filename');
+        $this->isValid($filepath);
 
         $this->spreadsheetReader = ReaderFactory::create($this->spreadsheetType);
         $this->initializeSpreadsheetReader();
@@ -289,7 +266,7 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
         try {
             $this->spreadsheetReader->open($filepath);
         } catch (\Box\Spout\Common\Exception\IOException $e) {
-            throw new \Omeka\Service\Exception\RuntimeException(
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
                 new PsrMessage(
                     'File "{filepath}" cannot be open.', // @translate
                     ['filepath' => $filepath]
@@ -323,6 +300,38 @@ abstract class AbstractSpreadsheetReader implements Reader, Configurable, Parame
         $this->currentRow = 1;
         $this->currentRowData = null;
         $this->headers = null;
+    }
+
+    /**
+     * @param string $filepath
+     * @throw \Omeka\Service\Exception\InvalidArgumentException
+     */
+    protected function isValid($filepath)
+    {
+        if (empty($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" doesn’t exist.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+        if (!filesize($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" is empty.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
+        if (!is_readable($filepath)) {
+            throw new \Omeka\Service\Exception\InvalidArgumentException(
+                new PsrMessage(
+                    'File "{filepath}" is not readable.', // @translate
+                    ['filepath' => $filepath]
+                )
+            );
+        }
     }
 
     /**
