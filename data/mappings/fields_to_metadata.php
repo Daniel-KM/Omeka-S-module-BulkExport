@@ -83,11 +83,12 @@ return [
     // From module Mapping.
     'latitude' => 'o-module-mapping:lat',
     'longitude' => 'o-module-mapping:lng',
-    'latitude/longitude' => 'o-module-mapping:lat/o-module-mapping:lng',
-    // 'default latitude' => 'mapping_default_latitude',
-    // 'default longitude' => 'mapping_default_longitude',
-    // 'default zoom' => 'mapping_default_zoom',
+    'latitude/longitude' => 'o-module-mapping:lat o-module-mapping:lng',
     'bounds' => 'o-module-mapping:bounds',
+    'default latitude' => 'o-module-mapping:default_lat',
+    'default longitude' => 'o-module-mapping:default_lng',
+    'default latitude/longitude' => 'o-module-mapping:default_lat o-module-mapping:default_lng',
+    'default zoom' => 'o-module-mapping:default_zoom',
 
     // From module Folksonomy.
     'tag' => 'o-module-folksonomy:tag',
