@@ -12,6 +12,13 @@ abstract class AbstractProcessor implements Processor
     use ServiceLocatorAwareTrait;
 
     /**
+     * Default limit for the loop to avoid heavy sql requests.
+     *
+     * @var int
+     */
+    const BATCH = 20;
+
+    /**
      * @var Reader
      */
     protected $reader;

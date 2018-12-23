@@ -123,7 +123,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
 
             $insert[] = $item;
             // Only add every X for batch import.
-            if (($index + 1) % 20 == 0) {
+            if (($index + 1) % self::BATCH == 0) {
                 // Batch create.
                 $this->createEntities($insert);
                 $insert = [];
