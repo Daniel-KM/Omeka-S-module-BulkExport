@@ -85,7 +85,7 @@ class ItemsProcessor extends AbstractProcessor implements Configurable, Parametr
 
         $insert = [];
         foreach ($this->reader as $index => $entry) {
-            $this->logger->log(Logger::NOTICE, sprintf('Processing row %s', $index + 1));
+            $this->logger->log(Logger::NOTICE, sprintf('Processing row %s', $index + 1)); // @translate
 
             $item = [
                 'o:is_public' => true,

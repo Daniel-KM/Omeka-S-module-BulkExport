@@ -35,7 +35,7 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if ($id && !$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
+            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -55,10 +55,10 @@ class ImporterController extends AbstractActionController
                 }
 
                 if ($response) {
-                    $this->messenger()->addSuccess('Importer successfully saved');
+                    $this->messenger()->addSuccess('Importer successfully saved'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 } else {
-                    $this->messenger()->addError('Save of importer failed ');
+                    $this->messenger()->addError('Save of importer failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
@@ -77,7 +77,7 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
+            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -90,10 +90,10 @@ class ImporterController extends AbstractActionController
             if ($form->isValid()) {
                 $response = $this->api($form)->delete('bulk_importers', $id);
                 if ($response) {
-                    $this->messenger()->addSuccess('Importer successfully deleted');
+                    $this->messenger()->addSuccess('Importer successfully deleted'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 } else {
-                    $this->messenger()->addError('Delete of importer failed');
+                    $this->messenger()->addError('Delete of importer failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
@@ -113,7 +113,7 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
+            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -130,7 +130,7 @@ class ImporterController extends AbstractActionController
             'type'  => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Save',
+                'value' => 'Save', // @translate
                 'id' => 'submitbutton',
             ],
         ]);
@@ -144,10 +144,10 @@ class ImporterController extends AbstractActionController
                 $response = $this->api($form)->update('bulk_importers', $this->params('id'), $data, [], ['isPartial' => true]);
 
                 if ($response) {
-                    $this->messenger()->addSuccess('Reader configuration saved');
+                    $this->messenger()->addSuccess('Reader configuration saved'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 } else {
-                    $this->messenger()->addError('Save of reader configuration failed');
+                    $this->messenger()->addError('Save of reader configuration failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
@@ -166,7 +166,7 @@ class ImporterController extends AbstractActionController
         $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
+            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -184,7 +184,7 @@ class ImporterController extends AbstractActionController
             'type'  => 'submit',
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Save',
+                'value' => 'Save', // @translate
                 'id' => 'submitbutton',
             ],
         ]);
@@ -199,10 +199,10 @@ class ImporterController extends AbstractActionController
                 $response = $this->api($form)->update('bulk_importers', $this->params('id'), $update, [], ['isPartial' => true]);
 
                 if ($response) {
-                    $this->messenger()->addSuccess('Processor configuration saved');
+                    $this->messenger()->addSuccess('Processor configuration saved'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 } else {
-                    $this->messenger()->addError('Save of processor configuration failed');
+                    $this->messenger()->addError('Save of processor configuration failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
@@ -221,7 +221,7 @@ class ImporterController extends AbstractActionController
         $importer = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$importer) {
-            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
+            $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id)); // @translate
             return $this->redirect()->toRoute('admin/bulk');
         }
 
@@ -294,7 +294,7 @@ class ImporterController extends AbstractActionController
 
                         $response = $this->api()->create('bulk_imports', $importData);
                         if (!$response) {
-                            $this->messenger()->addError('Save of import failed');
+                            $this->messenger()->addError('Save of import failed'); // @translate
                             break;
                         }
                         $import = $response->getContent();
@@ -306,9 +306,9 @@ class ImporterController extends AbstractActionController
                         try {
                             //$dispatcher->dispatch(JobImport::class, ['import_id' => $import->getId()], $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
                             $dispatcher->dispatch(JobImport::class, ['import_id' => $import->getId()]);
-                            $this->messenger()->addSuccess('Import started');
+                            $this->messenger()->addSuccess('Import started'); // @translate
                         } catch (\Exception $e) {
-                            $this->messenger()->addError('Import start failed');
+                            $this->messenger()->addError('Import start failed'); // @translate
                         }
 
                         return $this->redirect()->toRoute('admin/bulk');
@@ -358,7 +358,7 @@ class ImporterController extends AbstractActionController
                     'type'  => 'submit',
                     'name' => 'submit',
                     'attributes' => [
-                        'value' => 'Continue',
+                        'value' => 'Continue', // @translate
                     ],
                 ]);
 
@@ -393,7 +393,7 @@ class ImporterController extends AbstractActionController
                     'type'  => 'submit',
                     'name' => 'submit',
                     'attributes' => [
-                        'value' => 'Continue',
+                        'value' => 'Continue', // @translate
                     ],
                 ]);
 
