@@ -7,7 +7,7 @@ bulk import of resources.
 
 The two main concepts are readers and processors. Readers read data from a
 source (file, url…) and make it accessible for processors which turn these data
-into Omeka objects (items, item sets, media, annotations…).
+into Omeka objects (items, item sets, media, annotations…) via a mapping.
 
 Because multiple importers can be prepared with the same readers and processors,
 it is possible to import multiple times the same type of files without needing

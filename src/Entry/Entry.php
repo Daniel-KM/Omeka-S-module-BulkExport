@@ -3,7 +3,7 @@ namespace BulkImport\Entry;
 
 use BulkImport\Interfaces\Entry as EntryInterface;
 
-class Entry implements EntryInterface, \JsonSerializable
+class Entry implements EntryInterface
 {
     /**
      * @var array|\Traversable
@@ -19,7 +19,12 @@ class Entry implements EntryInterface, \JsonSerializable
      * @param array $fields
      * @param array $data
      */
-    public function __construct($fields, $data)
+    public function __construct(array $fields, array $data)
+    {
+        $this->init($fields, $data);
+    }
+
+    protected function init(array $fields, array $data)
     {
         foreach ($data as $i => $value) {
             $this->data[$fields[$i]] = $value;

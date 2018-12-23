@@ -27,7 +27,7 @@ class MediaProcessor extends ResourceProcessor
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case $this->fillMedia($resource, $target, $values):
                 return true;
             default:

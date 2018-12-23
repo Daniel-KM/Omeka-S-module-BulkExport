@@ -77,7 +77,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case 'resource_type':
                 $value = array_pop($values);
                 if (in_array($value, ['items', 'item_sets', 'media'])) {
@@ -97,7 +97,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillItem(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case 'o:item_set':
                 foreach ($values as $value) {
                     $resource['o:item_set'][] = ['o:id' => $value];
@@ -135,9 +135,9 @@ class ResourceProcessor extends AbstractResourceProcessor
             case 'o:media {dcterms:title}':
                 foreach ($values as $value) {
                     $resourceProperty = [
-                        '@value' => $value,
-                        'property_id' => $this->getProperty($target)->getId(),
+                        'property_id' => $this->getProperty($target['target'])->getId(),
                         'type' => 'literal',
+                        '@value' => $value,
                     ];
                     $media = [];
                     $media['dcterms:title'][] = $resourceProperty;
@@ -156,7 +156,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillItemSet(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case 'o:is_open':
                 $value = array_pop($values);
                 $resource['o:is_open'] = in_array(strtolower($value), ['false', 'no', 'off', 'closed'])
@@ -169,7 +169,7 @@ class ResourceProcessor extends AbstractResourceProcessor
 
     protected function fillMedia(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case 'o:item':
                 $value = array_pop($values);
                 $resource['o:item'] = ['o:id' => $value];

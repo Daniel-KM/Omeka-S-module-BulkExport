@@ -37,17 +37,38 @@ class AutomapFields extends AbstractHelper
     /**
      * Automap a list of field names with a standard Omeka metadata names.
      *
-     * This is a simplified version of the full automap of an old version of the
-     * module CSVImport. it returns all the input fields.
-     * User mappings are replaced by the file /data/mappings/fields_to_metadata.php.
+     * This is a simplified but improved version of the full automap of an old
+     * version of the automap of the module CSVImport. it returns all the input
+     * fields, with field name, identified metadata, language and datatype.
+     * It manages language and datatype, as in "dcterms:title@fr-fr^^xsd:string",
+     * following turtle convention, without the double quote.
+     * Furthermore, user mappings are replaced by the file /data/mappings/fields_to_metadata.php.
+     *
+     * Default supported datatypes are the ones managed by omeka (cf. config[data_types]:
+     * literal, resource, uri, resource:item, resource:itemset, resource:media.
+     * Supported datatypes if modules are present:
+     * numeric:timestamp, numeric:integer, numeric:duration, geometry:geography,
+     * geometry:geometry.
+     * The prefixes can be omitted, so item, itemset, media, timestamp, integer,
+     * duration, geography, geometry.
+     * Datatype for modules CustomVocab and ValueSuggest are supported too:
+     * customvocab:xxx and valuesuggest:xxx, as well as rdf datatypes managed by
+     * module DataTypeRdf: xsd:string (literal), rdf:XMLLiteral, xsd:boolean,
+     * xsd:date, xsd:dateTime, xsd:decimal, xsd:gDay, xsd:gMonth, xsd:gMonthDay,
+     * xsd:gYear, xsd:gYearMonth, xsd:integer, xsd:time, rdf:HTML, with or
+     * without prefix. The datatypes are checked by the processor.
+     *
      * @see \CSVImport\Mvc\Controller\Plugin\AutomapHeadersToMetadata
      *
      * @param array $fields
      * @param array $options Associative array of options:
      * - map (array)
      * - check_names_alone (boolean)
-     * @return array Associative array of all fields with their metadata names,
-     * or null.
+     * - output_full_matches (boolean) Returns the language and datatype too.
+     * - resource_type (string) Useless, except for quicker process.
+     * @return array Associative array of all fields with the normalized name,
+     * or with their normalized name, language and datatype when option
+     * "output_full_matches" is set, or null.
      */
     public function __invoke($fields, array $options = [])
     {
@@ -56,11 +77,15 @@ class AutomapFields extends AbstractHelper
         $defaultOptions = [
             'map' => [],
             'check_names_alone' => true,
+            'output_full_matches' => false,
             'resource_type' => null,
         ];
         $options += $defaultOptions;
         $this->map = array_merge($this->map, $options['map']);
         unset($options['map']);
+
+        $checkNamesAlone = (bool) $options['check_names_alone'];
+        $outputFullMatches = (bool) $options['output_full_matches'];
 
         $fields = $this->cleanStrings($fields);
 
@@ -100,7 +125,6 @@ class AutomapFields extends AbstractHelper
         $lists['lower_labels'] = array_map('strtolower', $lists['labels']);
 
         // Check names alone, like "Title", for "dcterms:title".
-        $checkNamesAlone = !empty($options['check_names_alone']);
         if ($checkNamesAlone) {
             $lists['local_names'] = array_map(function ($v) {
                 $w = explode(':', $v);
@@ -114,15 +138,40 @@ class AutomapFields extends AbstractHelper
             $lists['lower_local_labels'] = array_map('strtolower', $lists['local_labels']);
         }
 
+        // Pattern is a value, then optional @language and ^^datatype, with or
+        // without prefix.
+        $pattern = '~'
+            . '^([a-zA-Z][^@^]*)'
+            . '\s*(?:@\s*([a-zA-Z]+-[a-zA-Z]+|[a-zA-Z]+|))?'
+            . '\s*(?:\^\^\s*([a-zA-Z][a-zA-Z0-9]*:[a-zA-Z][\w-]*|[a-zA-Z][\w-]*|))?$'
+            . '~';
+        $matches = [];
+
         foreach ($fields as $index => $field) {
+            $meta = preg_match($pattern, $field, $matches);
+            if (!$meta) {
+                $automaps[$index] = null;
+                continue;
+            }
+
+            $field = trim($matches[1]);
             $lowerField = strtolower($field);
+
             // Check first with the specific auto-mapping list.
             foreach ($automapLists as $listName => $list) {
                 $toSearch = strpos($listName, 'lower_') === 0 ? $lowerField : $field;
                 $found = array_search($toSearch, $list, true);
                 if ($found) {
                     // The automap list is used to keep the sensitive value.
-                    $automaps[$index] = $automapList[$found];
+                    if ($outputFullMatches) {
+                        $result = [];
+                        $result['field'] = $automapList[$found];
+                        $result['@language'] = empty($matches[2]) ? null : trim($matches[2]);
+                        $result['type'] = empty($matches[3]) ? null : trim($matches[3]);
+                        $automaps[$index] = $result;
+                    } else {
+                        $automaps[$index] = $automapList[$found];
+                    }
                     continue 2;
                 }
             }
@@ -136,8 +185,16 @@ class AutomapFields extends AbstractHelper
                 $toSearch = strpos($listName, 'lower_') === 0 ? $lowerField : $field;
                 $found = array_search($toSearch, $list, true);
                 if ($found) {
-                    $property = $propertyLists['names'][$found];
-                    $automaps[$index] = $property;
+                    if ($outputFullMatches) {
+                        $result = [];
+                        $result['field'] = $propertyLists['names'][$found];
+                        $result['@language'] = empty($matches[2]) ? null : trim($matches[2]);
+                        $result['type'] = empty($matches[3]) ? null : trim($matches[3]);
+                        $automaps[$index] = $result;
+                    } else {
+                        $property = $propertyLists['names'][$found];
+                        $automaps[$index] = $property;
+                    }
                     continue 2;
                 }
             }

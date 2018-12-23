@@ -27,7 +27,7 @@ class ItemProcessor extends ResourceProcessor
 
     protected function fillSpecific(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case $this->fillItem($resource, $target, $values):
                 return true;
             default:

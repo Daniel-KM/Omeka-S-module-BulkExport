@@ -43,6 +43,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected $properties;
 
     /**
+     * @var array
+     */
+    protected $resourceClasses;
+
+    /**
+     * @var array
+     */
+    protected $dataTypes;
+
+    /**
      * @var int
      */
     protected $indexResource = 0;
@@ -122,6 +132,10 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $base = $this->baseResource();
 
         $mapping = $this->getParam('mapping', []);
+        $mapping = $this->fullMapping($mapping);
+
+        // Filter the mapping to avoid to loop of entry without targets.
+        $mapping = array_filter($mapping);
 
         $multivalueSeparator = $this->reader->getParam('separator' , '');
         $hasMultivalueSeparator = $multivalueSeparator !== '';
@@ -139,21 +153,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             $resource = clone $base;
 
             foreach ($mapping as $sourceField => $targets) {
-                if (empty($targets)) {
-                    continue;
-                }
                 // Check if the entry has a value for this source field.
                 if (!isset($entry[$sourceField])) {
                     continue;
                 }
 
                 $value = $entry[$sourceField];
-                if ($hasMultivalueSeparator) {
-                    $values = explode($multivalueSeparator, $value);
-                    $values = array_map([$this, 'trimUnicode'], $values);
-                } else {
-                    $values = [$this->trimUnicode($value)];
-                }
+                $values = $hasMultivalueSeparator
+                    ? explode($multivalueSeparator, $value)
+                    : [$value];
+                $values = array_map([$this, 'trimUnicode'], $values);
                 $values = array_filter($values, 'strlen');
                 if (!$values) {
                     continue;
@@ -218,28 +227,61 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected function fillResource(ArrayObject $resource, array $targets, array $values)
     {
         foreach ($targets as $target) {
-            switch ($target) {
+            switch ($target['target']) {
+                case $this->fillProperty($resource, $target, $values):
+                    break;
                 case $this->fillGeneric($resource, $target, $values):
                     break;
                 case $this->fillSpecific($resource, $target, $values):
                     break;
                 default:
-                    $resource[$target] = array_pop($values);
+                    $resource[$target['target']] = array_pop($values);
                     break;
             }
         }
     }
 
+    protected function fillProperty(ArrayObject $resource, $target, array $values)
+    {
+        if (!isset($target['value']['property_id'])) {
+            return false;
+        }
+
+        foreach ($values as $value) {
+            $resourceValue = $target['value'];
+            switch ($resourceValue['type']) {
+                // Currently, most of the datatypes are literal.
+                case 'literal':
+                // case strpos($resourceValue['type'], 'customvocab:') === 0:
+                default:
+                    $resourceValue['@value'] = $value;
+                    break;
+                case 'uri':
+                case strpos($resourceValue['type'], 'valuesuggest:') === 0:
+                    $resourceValue['@id'] = $value;
+                    // $resourceValue['o:label'] = null;
+                    break;
+                case 'resource':
+                case 'resource:item':
+                case 'resource:itemset':
+                case 'resource:media':
+                    $resourceValue['value_resource_id'] = $value;
+                    $resourceValue['@language'] = null;
+                    break;
+            }
+            $resource[$target['target']][] = $resourceValue;
+        }
+        return true;
+    }
+
     protected function fillGeneric(ArrayObject $resource, $target, array $values)
     {
-        switch ($target) {
+        switch ($target['target']) {
             case 'o:resource_template':
                 $value = array_pop($values);
-                if ($value) {
-                    $resource['o:resource_template'] = ['o:id' => $value];
-                } else {
-                    $resource['o:resource_template'] = null;
-                }
+                $resource['o:resource_template'] = $value
+                    ? ['o:id' => $value]
+                    : null;
                 return true;
             case 'o:resource_class':
                 $value = array_pop($values);
@@ -253,17 +295,6 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 $resource['o:is_public'] = in_array(strtolower($value), ['false', 'no', 'off', 'private'])
                     ? false
                     : (bool) $value;
-                return true;
-            // Literal.
-            case $this->isTerm($target):
-                foreach ($values as $value) {
-                    $resourceProperty = [
-                        '@value' => $value,
-                        'property_id' => $this->getProperty($target)->getId(),
-                        'type' => 'literal',
-                    ];
-                    $resource[$target][] = $resourceProperty;
-                }
                 return true;
         }
         return false;
@@ -424,6 +455,85 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
+     * @param string $type
+     * @return string|null
+     */
+    protected function getDataType($type)
+    {
+        $dataTypes = $this->getDataTypes();
+        return isset($dataTypes[$type])
+            ? $dataTypes[$type]
+            : null;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDataTypes()
+    {
+        if (isset($this->dataTypes)) {
+            return $this->dataTypes;
+        }
+
+        $dataTypes = $this->getServiceLocator()->get('Omeka\DataTypeManager')
+            ->getRegisteredNames();
+
+        // Append the short data types for easier process.
+        $this->dataTypes = array_combine($dataTypes, $dataTypes);
+
+        foreach ($dataTypes as $dataType) {
+            $pos = strpos($dataType, ':');
+            if ($pos === false) {
+                continue;
+            }
+            $short = substr($dataType, $pos + 1);
+            if (!is_numeric($short) && !isset($this->dataTypes[$short])) {
+                $this->dataTypes[$short] = $dataType;
+            }
+        }
+        return $this->dataTypes;
+    }
+
+    /**
+     * Add automapped metadata for properties (language and datatype).
+     *
+     * @param array $mapping
+     * @return array Each target is an array with metadata.
+     */
+    protected function fullMapping(array $mapping)
+    {
+        $automapFields = $this->getServiceLocator()->get('ViewHelperManager')->get('automapFields');
+        $sourceFields = $automapFields(array_keys($mapping), ['output_full_matches' => true]);
+        $index = -1;
+        foreach ($mapping as $sourceField => $targets) {
+            ++$index;
+            if (empty($targets)) {
+                continue;
+            }
+            $metadata = $sourceFields[$index];
+            $fullTargets = [];
+            foreach ($targets as $target) {
+                $result = [];
+                $result['field'] = $metadata['field'];
+                $result['target'] = $target;
+                $property = $this->getProperty($target);
+                if ($property) {
+                    $result['value']['property_id'] = $property->getId();
+                    $result['value']['type'] = $this->getDataType($metadata['type']) ?: 'literal';
+                    $result['value']['@language'] = $metadata['@language'];
+                    $result['value']['is_public'] = true;
+                } else {
+                    $result['@language'] = $metadata['@language'];
+                    $result['type'] = $metadata['type'];
+                }
+                $fullTargets[] = $result;
+            }
+            $mapping[$sourceField] = $fullTargets;
+        }
+        return $mapping;
+    }
+
+    /**
      * Trim all whitespaces.
      *
      * @param string $string
@@ -435,7 +545,9 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * Check if a string seems to be an url. Doesn't use FILTER_VALIDATE_URL.
+     * Check if a string seems to be an url.
+     *
+     * Doesn't use FILTER_VALIDATE_URL, so allow non-encoded urls.
      *
      * @param string $string
      * @return bool
@@ -452,10 +564,9 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      */
     protected function api()
     {
-        if ($this->api) {
-            return $this->api;
+        if (!$this->api) {
+            $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         }
-        $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
         return $this->api;
     }
 }
