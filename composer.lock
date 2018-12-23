@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f522d2a9f5e77af1f9ba89fe6ac42c0",
+    "content-hash": "db6179fce13ae7a9d73b39378944ac3c",
     "packages": [
         {
             "name": "box/spout",
@@ -75,10 +75,48 @@
             "time": "2017-09-25T19:44:35+00:00"
         }
     ],
-    "packages-dev": [],
+    "packages-dev": [
+        {
+            "name": "biblibre/omeka-s-test-helper",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/biblibre/omeka-s-test-helper.git",
+                "reference": "a02c8dc4259365f7de1d09626a97347ba19cbf6e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/biblibre/omeka-s-test-helper/zipball/a02c8dc4259365f7de1d09626a97347ba19cbf6e",
+                "reference": "a02c8dc4259365f7de1d09626a97347ba19cbf6e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OmekaTestHelper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Test helpers for Omeka S",
+            "homepage": "https://github.com/biblibre/omeka-s-test-helper",
+            "keywords": [
+                "omeka",
+                "test"
+            ],
+            "time": "2016-09-22T16:40:26+00:00"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "biblibre/omeka-s-test-helper": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

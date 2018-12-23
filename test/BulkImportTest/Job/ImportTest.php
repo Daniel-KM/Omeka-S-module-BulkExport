@@ -273,7 +273,31 @@ SQL;
             $this->markTestSkipped(new Message('No argument files (%s).', basename($argspath))); // @translate
         }
         $args = json_decode(file_get_contents($filebase . '.args.json'), true);
-        $args['filepath'] = $this->tempfile;
+
+        $argsImporter = empty($args['importer']) ? $this->importerArgs() : $args['importer'];
+        $argsImport = empty($args['import']) ? $this->importArgs() : $args['import'];
+
+        $argsImport['reader_params']['filename'] = $this->tempfile;
+
+        $importer = new \BulkImport\Entity\Importer;
+        $importer
+            ->setOwner($this->auth->getIdentity())
+            ->setLabel($argsImporter['label'])
+            ->setReaderClass($argsImporter['reader_class'])
+            ->setReaderConfig($argsImporter['reader_config'])
+            ->setProcessorClass($argsImporter['processor_class'])
+            ->setProcessorConfig($argsImporter['processor_config']);
+        $this->entityManager->persist($importer);
+
+        $import = new \BulkImport\Entity\Import;
+        $import
+            ->setImporter($importer)
+            ->setReaderParams($argsImport['reader_params'])
+            ->setProcessorParams($argsImport['processor_params']);
+        $this->entityManager->persist($import);
+        $this->entityManager->flush();
+
+        $args = ['import_id' => $import->getId()];
 
         $job = new Job;
         $job->setStatus(Job::STATUS_STARTING);
@@ -323,5 +347,56 @@ SQL;
         }
 
         return $resource;
+    }
+
+    protected function importerArgs()
+    {
+        return [
+            'label'=> 'Spreadsheet mixed',
+            'reader_class' => \BulkImport\Reader\SpreadsheetReader::class,
+            'reader_config' => [
+                'delimiter' => ',',
+                'enclosure' => '"',
+                'escape' => '\\',
+                'separator' => ','
+            ],
+            'processor_class' => \BulkImport\Processor\ResourceProcessor::class,
+            'processor_config' => [
+                'o:resource_template' => '1',
+                'o:resource_class' => '',
+                'o:is_public' => 'true',
+                'resource_type' => 'items',
+                'o:item_set' => [],
+                'o:item'=> '',
+            ],
+        ];
+    }
+    protected function importArgs()
+    {
+        return [
+            'reader_params' => [
+                'separator' => '|',
+                'filename' => '/tmp/omk_a',
+                'file' => [
+                    'name' => 'filename.tsv',
+                    'type' => 'text/tab-separated-values',
+                    'error' => 0,
+                    'size' => 1000
+                ],
+                'delimiter' => "\t",
+                'enclosure' => chr(0),
+                'escape' => chr(0)
+            ],
+            'processor_params' => [
+                'o:resource_template' => '1',
+                'o:resource_class' => '',
+                'o:is_public' => 'true',
+                'resource_type' => 'items',
+                'o:item_set' => [],
+                'o:item' => '',
+                'mapping' => [
+                ]
+            ]
+        ];
     }
 }
