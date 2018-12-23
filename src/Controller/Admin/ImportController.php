@@ -21,16 +21,12 @@ class ImportController extends AbstractActionController
 
     public function indexAction()
     {
-        $page = $this->params()->fromQuery('page', 1);
-        $perPage = 25;
-        $query = $this->params()->fromQuery() + [
-            'page' => $page,
-            'per_page' => $perPage,
-            'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
-            'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
-        ];
-        $response = $this->api()->search('bulk_imports', $query);
+        $this->setBrowseDefaults('started');
 
+        $page = $this->params()->fromQuery('page', 1);
+        $query = $this->params()->fromQuery();
+
+        $response = $this->api()->search('bulk_imports', $query);
         $this->paginator($response->getTotalResults(), $page);
 
         $view = new ViewModel;
@@ -40,21 +36,16 @@ class ImportController extends AbstractActionController
 
     public function logsAction()
     {
-        $severity = (int) $this->params()->fromQuery('severity', Logger::NOTICE);
+        $this->setBrowseDefaults('created');
 
+        $id = $this->params()->fromRoute('id');
+        $severity = $this->params()->fromQuery('severity', Logger::NOTICE);
+        $severity = (int) preg_replace('/[^0-9]+/', '', $severity);
         $page = $this->params()->fromQuery('page', 1);
-        $perPage = 25;
-        $query = $this->params()->fromQuery() + [
-            'page' => $page,
-            'per_page' => $perPage,
-            'sort_by' => $this->params()->fromQuery('sort_by', 'added'),
-            'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
+        $query = $this->params()->fromQuery();
+        $query['reference'] = 'bulk/import/' . $id;
+        $query['severity'] = '<=' . $severity;
 
-            'severity' => $severity,
-            'import_id' => (int) $this->params()->fromRoute('id')
-        ];
-
-        $response = $this->api()->search('bulk_logs', $query);
         $this->paginator($response->getTotalResults(), $page);
 
         $view = new ViewModel;

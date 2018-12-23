@@ -8,6 +8,7 @@ use BulkImport\Form\ImporterStartForm;
 use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Job\Import as JobImport;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
+use Omeka\Stdlib\Message;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -314,11 +315,23 @@ class ImporterController extends AbstractActionController
                         // Clear import session.
                         $session->exchangeArray([]);
 
+                        $args = ['import_id' => $import->getId()];
+
                         $dispatcher = $this->jobDispatcher();
                         try {
-                            //$dispatcher->dispatch(JobImport::class, ['import_id' => $import->getId()], $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
-                            $dispatcher->dispatch(JobImport::class, ['import_id' => $import->getId()]);
-                            $this->messenger()->addSuccess('Import started'); // @translate
+                            // Synchronous dispatcher for testing purpose.
+                            // $job = $dispatcher->dispatch(JobImport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
+                            $job = $dispatcher->dispatch(JobImport::class, $args);
+                            $message = new Message(
+                                'Import started in background (%sjob #%d%s)', // @translate
+                                sprintf('<a href="%s">',
+                                    htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()]))
+                                ),
+                                $job->getId(),
+                                '</a>'
+                            );
+                            $message->setEscapeHtml(false);
+                            $this->messenger()->addSuccess($message);
                         } catch (\Exception $e) {
                             $this->messenger()->addError('Import start failed'); // @translate
                         }

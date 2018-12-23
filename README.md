@@ -24,6 +24,8 @@ This module is a port of the [Omeka Classic] [Import plugin], build by [Biblibre
 Installation
 ------------
 
+This module requires the module [Log].
+
 See general end user documentation for [installing a module].
 
 * From the zip
@@ -111,6 +113,7 @@ Copyright
 [CSV Import module]: https://omeka.org/s/modules/CSVImport
 [Omeka Classic]: https://omeka.org/classic
 [Import plugin]: https://github.com/BibLibre/Omeka-plugin-Import
+[Log]: https://github.com/Daniel-KM/Omeka-S-module-Log
 [`BulkImport.zip`]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport/issues

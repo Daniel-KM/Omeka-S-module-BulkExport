@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \Zend\View\Renderer\PhpRenderer $this
- * @var \BulkImport\Api\Representation\LogRepresentation[] $logs
+ * @var \Log\Api\Representation\LogRepresentation[] $logs
  * @var int $severity
  */
 
@@ -11,14 +11,14 @@ $escape = $this->plugin('escapeHtml');
 $this->htmlElement('body')->appendAttribute('class', 'bulk-import import');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $severityNames = [
-    $escape($translate('Emergency')),
-    $escape($translate('Alert')),
-    $escape($translate('Critical')),
-    $escape($translate('Error')),
-    $escape($translate('Warning')),
-    $escape($translate('Notice')),
-    $escape($translate('Info')),
-    $escape($translate('Debug')),
+    \Zend\Log\Logger::EMERG => $escape($translate('Emergency')),
+    \Zend\Log\Logger::ALERT => $escape($translate('Alert')),
+    \Zend\Log\Logger::CRIT => $escape($translate('Critical')),
+    \Zend\Log\Logger::ERR => $escape($translate('Error')),
+    \Zend\Log\Logger::WARN => $escape($translate('Warning')),
+    \Zend\Log\Logger::NOTICE => $escape($translate('Notice')),
+    \Zend\Log\Logger::INFO => $escape($translate('Info')),
+    \Zend\Log\Logger::DEBUG => $escape($translate('Debug')),
 ];
 ?>
 
@@ -53,9 +53,9 @@ $severityNames = [
             <tbody>
             <?php foreach ($logs as $log) { ?>
                 <tr>
-                    <td><?php echo $log->getAdded()->format('Y-m-d H:i:s'); ?></td>
-                    <td><?php echo $log->getMessage(); ?></td>
-                    <td><?php echo isset($severityNames[$log->getSeverity()]) ? $severityNames[$log->getSeverity()] : $log->getSeverity(); ?></td>
+                    <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
+                    <td><?php echo $log->message()->translate(); ?></td>
+                    <td><?php echo $translate($log->severityLabel()); ?> </td>
                 </tr>
             <?php } ?>
             </tbody>

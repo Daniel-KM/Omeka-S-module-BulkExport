@@ -27,18 +27,6 @@ class ImportAdapter extends AbstractEntityAdapter
         return Import::class;
     }
 
-    public function hydrate(Request $request, EntityInterface $entity, ErrorStore $errorStore)
-    {
-        $data = $request->getContent();
-        foreach ($data as $key => $value) {
-            $method = 'set' . ucfirst(Inflector::camelize($key));
-            if (!method_exists($entity, $method)) {
-                continue;
-            }
-            $entity->$method($value);
-        }
-    }
-
     public function buildQuery(QueryBuilder $qb, array $query)
     {
         if (isset($query['id'])) {
@@ -57,6 +45,18 @@ class ImportAdapter extends AbstractEntityAdapter
                     $this->createNamedParameter($qb, $query['importer_id'])
                 )
             );
+        }
+    }
+
+    public function hydrate(Request $request, EntityInterface $entity, ErrorStore $errorStore)
+    {
+        $data = $request->getContent();
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucfirst(Inflector::camelize($key));
+            if (!method_exists($entity, $method)) {
+                continue;
+            }
+            $entity->$method($value);
         }
     }
 }

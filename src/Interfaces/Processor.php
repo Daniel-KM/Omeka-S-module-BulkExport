@@ -16,9 +16,9 @@ interface Processor
     public function setReader(Reader $reader);
 
     /**
-     * @param Logger $log
+     * @param Logger $logger
      */
-    public function setLogger(Logger $log);
+    public function setLogger(Logger $logger);
 
     /**
      * Perform the process.

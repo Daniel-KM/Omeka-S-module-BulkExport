@@ -4,10 +4,11 @@ namespace BulkImport\Processor;
 use ArrayObject;
 use BulkImport\Interfaces\Configurable;
 use BulkImport\Interfaces\Parametrizable;
-use BulkImport\Log\Logger;
 use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
+use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
+use Zend\Log\Logger;
 
 abstract class AbstractResourceProcessor extends AbstractProcessor implements Configurable, Parametrizable
 {
@@ -66,7 +67,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     /**
      * @var int
      */
-    protected $totalError = 0;
+    protected $totalErrors = 0;
 
     public function getResourceType()
     {
@@ -131,7 +132,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         foreach ($this->reader as $index => $entry) {
             ++$this->totalIndexResources;
             $this->indexResource = $index + 1;
-            $this->logger->log(Logger::NOTICE, sprintf('Processing resource index #%d', $this->indexResource)); // @translate
+            $this->logger->log(Logger::NOTICE, new PsrMessage('Processing resource index #{index}', ['index' => $this->indexResource])); // @translate
 
             $resource = clone $base;
 
@@ -163,7 +164,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 ++$this->totalProcessed;
                 $insert[] = $resource->getArrayCopy();
             } else {
-                ++$this->totalError;
+                ++$this->totalErrors;
             }
             // Only add every X for batch import.
             if ($this->processing >= self::BATCH) {
@@ -178,11 +179,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
         $this->logger->log(
             Logger::NOTICE,
-            sprintf(
-                'End of process: %d resources to process, %d processed, %d errors.', // @translate
-                $this->totalIndexResources,
-                $this->totalProcessed,
-                $this->totalError
+            new PsrMessage(
+                'End of process: {total_resources} resources to process, {total_processed} processed, {total_errors} errors', // @translate
+                [
+                    'total_resources' => $this->totalIndexResources,
+                    'total_processed' => $this->totalProcessed,
+                    'total_errors' => $this->totalErrors,
+                ]
             )
         );
     }
@@ -303,21 +306,31 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         if (!count($data)) {
             return;
         }
+
+        $labels = [
+            'items' => 'item',
+            'item_sets' => 'item set',
+            'media' => 'media',
+        ];
+        $label = $labels[$resourceType];
+
         try {
             $resources = $this->api()
                 ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
             foreach ($resources as $resource) {
                 $this->logger->log(
                     Logger::NOTICE,
-                    sprintf(
-                        'Created %s #%d', // @translate
-                        $this->getLabel(),
-                        $resource->id()
+                    new PsrMessage(
+                        'Created {resource_type} #{resource_id}', // @translate
+                        [
+                            'resource_type' => $label,
+                            'resource_id' => $resource->id(),
+                        ]
                     )
                 );
             }
         } catch (\Exception $e) {
-            $this->logger->log(Logger::ERR, $e->__toString());
+            $this->logger->log(Logger::ERR, new PsrMessage('Core error: {exception}', ['exception' => $e]));
         }
     }
 

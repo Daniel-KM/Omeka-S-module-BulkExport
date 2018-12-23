@@ -4,7 +4,6 @@ namespace BulkImport;
 return [
     'service_manager' => [
         'factories' => [
-            Log\Logger::class => Service\Log\LoggerFactory::class,
             Processor\Manager::class => Service\Plugin\PluginManagerFactory::class,
             Reader\Manager::class => Service\Plugin\PluginManagerFactory::class,
         ],
@@ -21,7 +20,6 @@ return [
         'invokables' => [
             'bulk_importers' => Api\Adapter\ImporterAdapter::class,
             'bulk_imports' => Api\Adapter\ImportAdapter::class,
-            'bulk_logs' => Api\Adapter\LogAdapter::class,
         ],
     ],
     'view_manager' => [
