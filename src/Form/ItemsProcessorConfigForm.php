@@ -11,6 +11,13 @@ class ItemsProcessorConfigForm extends Form
 {
     use ServiceLocatorAwareTrait;
 
+    /**
+     * @todo Clean mix of form and fieldset, that makes an issue in the sub form input filter.
+     *
+     * @var bool
+     */
+    protected $hasInputFilter = true;
+
     public function init()
     {
         parent::init();
@@ -70,6 +77,13 @@ class ItemsProcessorConfigForm extends Form
             ],
         ]);
 
+        if ($this->hasInputFilter) {
+            $this->updateInputFilters();
+        }
+    }
+
+    protected function updateInputFilters()
+    {
         $inputFilter = $this->getInputFilter();
         $inputFilter->add([
             'name' => 'o:resource_template',

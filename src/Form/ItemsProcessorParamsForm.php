@@ -8,7 +8,9 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
 {
     public function init()
     {
+        $this->hasInputFilter = false;
         parent::init();
+        $this->hasInputFilter = true;
 
         /** @var \BulkImport\Interfaces\Processor $processor */
         $processor = $this->getOption('processor');
@@ -40,6 +42,13 @@ class ItemsProcessorParamsForm extends ItemsProcessorConfigForm
                 ],
             ]);
         }
+
+        $this->updateInputFilters();
+    }
+
+    protected function updateInputFilters()
+    {
+        parent::updateInputFilters();
 
         // Change required to false.
         foreach ($this->getInputFilter()->get('mapping')->getInputs() as $input) {
