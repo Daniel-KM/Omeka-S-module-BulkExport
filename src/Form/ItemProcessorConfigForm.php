@@ -14,7 +14,6 @@ class ItemProcessorConfigForm extends AbstractResourceProcessorConfigForm
             'type' => ItemSetSelect::class,
             'options' => [
                 'label' => 'Item set', // @translate
-                'empty_option' => 'Select one or more item sets…', // @translate
             ],
             'attributes' => [
                 'id' => 'o-item-set',

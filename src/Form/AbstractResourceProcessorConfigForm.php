@@ -32,7 +32,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
             'type' => ResourceSelect::class,
             'options' => [
                 'label' => 'Resource template', // @translate
-                'empty_option' => 'Select a template…', // @translate
+                'empty_option' => '',
                 'resource_value_options' => [
                     'resource' => 'resource_templates',
                     'query' => [],
@@ -54,7 +54,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
             'type' => ResourceClassSelect::class,
             'options' => [
                 'label' => 'Resource class', // @translate
-                'empty_option' => 'Select a class…', // @translate
+                'empty_option' => '',
                 'term_as_value' => true,
             ],
             'attributes' => [
@@ -113,7 +113,6 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'type' => PropertySelect::class,
                 'options' => [
                     'label' => $name,
-                    'empty_option' => 'Select one or more targets…', // @translate
                     'term_as_value' => true,
                     'prepend_value_options' => $this->prependMappingOptions(),
                 ],

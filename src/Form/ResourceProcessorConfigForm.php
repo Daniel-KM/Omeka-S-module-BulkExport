@@ -16,7 +16,7 @@ class ResourceProcessorConfigForm extends AbstractResourceProcessorConfigForm
             'type' => Element\Select::class,
             'options' => [
                 'label' => 'Resource type', // @translate
-                'empty_option' => 'Select the resource type…', // @translate
+                'empty_option' => '',
                 'value_options' => [
                     'items' => 'Item', // @translate
                     'item_sets' => 'Item set', // @translate
@@ -44,7 +44,6 @@ class ResourceProcessorConfigForm extends AbstractResourceProcessorConfigForm
             'type' => ItemSetSelect::class,
             'options' => [
                 'label' => 'Item set', // @translate
-                'empty_option' => 'Select one or more item sets…', // @translate
             ],
             'attributes' => [
                 'id' => 'o-item-set',
@@ -84,7 +83,7 @@ class ResourceProcessorConfigForm extends AbstractResourceProcessorConfigForm
             'type' => ResourceSelect::class,
             'options' => [
                 'label' => 'Item', // @translate
-                'empty_option' => 'Select one item…', // @translate
+                'empty_option' => '',
                 'resource_value_options' => [
                     'resource' => 'items',
                     'query' => [],
