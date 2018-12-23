@@ -4,8 +4,6 @@ namespace BulkImport\Processor;
 use ArrayObject;
 use BulkImport\Form\MediaProcessorConfigForm;
 use BulkImport\Form\MediaProcessorParamsForm;
-use Log\Stdlib\PsrMessage;
-use Zend\Log\Logger;
 
 class MediaProcessor extends ResourceProcessor
 {
@@ -40,11 +38,9 @@ class MediaProcessor extends ResourceProcessor
     protected function checkResource(ArrayObject $resource)
     {
         if (empty($resource['o:item']['o:id'])) {
-            $this->logger->log(
-                Logger::ERR,
-                new PsrMessage('Skipped media index {index}: no item is set', // @translate
-                    ['index' => $this->indexRow]
-                )
+            $this->logger->err(
+                'Skipped media index {index}: no item is set', // @translate
+                ['index' => $this->indexResource]
             );
             return false;
         }

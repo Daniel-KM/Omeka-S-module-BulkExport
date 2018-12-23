@@ -4,8 +4,6 @@ namespace BulkImport\Processor;
 use ArrayObject;
 use BulkImport\Form\ResourceProcessorConfigForm;
 use BulkImport\Form\ResourceProcessorParamsForm;
-use Log\Stdlib\PsrMessage;
-use Zend\Log\Logger;
 
 class ResourceProcessor extends AbstractResourceProcessor
 {
@@ -233,24 +231,19 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function checkResource(ArrayObject $resource)
     {
         if (empty($resource['resource_type'])) {
-            $this->logger->log(
-                Logger::ERR,
-                new PsrMessage('Skipped resource index {index}: no resource type set',  // @translate
-                    ['index' => $this->indexRow]
-                )
+            $this->logger->err(
+                'Skipped resource index #{index}: no resource type set',  // @translate
+                ['index' => $this->indexResource]
             );
             return false;
         }
         if (!in_array($resource['resource_type'], ['items', 'item_sets', 'media'])) {
-            $this->logger->log(
-                Logger::ERR,
-                new PsrMessage(
-                    'Skipped resource index {index}: resource type "{resource_type}" not managed', // @translate
-                    [
-                        'index' => $this->indexRow,
-                        'resource_type' => $resource['resource_type'],
-                    ]
-                )
+            $this->logger->err(
+                'Skipped resource index #{index}: resource type "{resource_type}" not managed', // @translate
+                [
+                    'index' => $this->indexResource,
+                    'resource_type' => $resource['resource_type'],
+                ]
             );
             return false;
         }

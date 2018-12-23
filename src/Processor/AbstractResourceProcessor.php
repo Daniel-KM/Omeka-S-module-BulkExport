@@ -6,9 +6,7 @@ use BulkImport\Interfaces\Configurable;
 use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
-use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
-use Zend\Log\Logger;
 
 abstract class AbstractResourceProcessor extends AbstractProcessor implements Configurable, Parametrizable
 {
@@ -131,9 +129,12 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $insert = [];
         foreach ($this->reader as $index => $entry) {
             ++$this->totalIndexResources;
-            // The first row is #1, but the iterator (array) numbered it 0.
+            // The first entry is #1, but the iterator (array) numbered it 0.
             $this->indexResource = $index + 1;
-            $this->logger->log(Logger::NOTICE, new PsrMessage('Processing resource index #{index}', ['index' => $this->indexResource])); // @translate
+            $this->logger->notice(
+                'Processing resource index #{index}', // @translate
+                ['index' => $this->indexResource]
+            );
 
             $resource = clone $base;
 
@@ -141,6 +142,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 if (empty($targets)) {
                     continue;
                 }
+                // Check if the entry has a value for this source field.
                 if (!isset($entry[$sourceField])) {
                     continue;
                 }
@@ -178,16 +180,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         // Take care of remainder from the modulo check.
         $this->createEntities($insert);
 
-        $this->logger->log(
-            Logger::NOTICE,
-            new PsrMessage(
-                'End of process: {total_resources} resources to process, {total_processed} processed, {total_errors} errors', // @translate
-                [
-                    'total_resources' => $this->totalIndexResources,
-                    'total_processed' => $this->totalProcessed,
-                    'total_errors' => $this->totalErrors,
-                ]
-            )
+        $this->logger->notice(
+            'End of process: {total_resources} resources to process, {total_processed} processed, {total_errors} errors', // @translate
+            [
+                'total_resources' => $this->totalIndexResources,
+                'total_processed' => $this->totalProcessed,
+                'total_errors' => $this->totalErrors,
+            ]
         );
     }
 
@@ -319,19 +318,14 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             $resources = $this->api()
                 ->batchCreate($resourceType, $data, [], ['continueOnError' => true])->getContent();
             foreach ($resources as $resource) {
-                $this->logger->log(
-                    Logger::NOTICE,
-                    new PsrMessage(
-                        'Created {resource_type} #{resource_id}', // @translate
-                        [
-                            'resource_type' => $label,
-                            'resource_id' => $resource->id(),
-                        ]
-                    )
+                $this->logger->notice(
+                    'Created {resource_type} #{resource_id}', // @translate
+                    ['resource_type' => $label, 'resource_id' => $resource->id()]
                 );
             }
         } catch (\Exception $e) {
-            $this->logger->log(Logger::ERR, new PsrMessage('Core error: {exception}', ['exception' => $e]));
+            $this->logger->err('Core error: {exception}', ['exception' => $e]);
+            ++$this->totalErrors;
         }
     }
 
