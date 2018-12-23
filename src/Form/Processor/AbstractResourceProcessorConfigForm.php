@@ -69,6 +69,31 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         ]);
 
         $this->add([
+            'name' => 'o:owner',
+            'type' => ResourceSelect::class,
+            'options' => [
+                'label' => 'Owner', // @translate
+                'prepend_value_options' => [
+                    'current' => 'Current user' // @translate
+                ],
+                'resource_value_options' => [
+                    'resource' => 'users',
+                    'query' => ['sort_by' => 'name', 'sort_dir' => 'ASC'],
+                    'option_text_callback' => function ($user) {
+                        return sprintf('%s (%s)', $user->name(), $user->email());
+                    },
+                ],
+            ],
+            'attributes' => [
+                'id' => 'select-owner',
+                'value' => 'current',
+                'class' => 'chosen-select',
+                'data-placeholder' => 'Select a user', // @translate
+                'data-api-base-url' => $urlHelper('api/default', ['resource' => 'users'], ['query' => ['sort_by' => 'email', 'sort_dir' => 'ASC']]),
+            ],
+        ]);
+
+        $this->add([
             'name' => 'o:is_public',
             'type' => Element\Radio::class,
             'options' => [
@@ -164,6 +189,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'options' => [
                     'o:resource_template' => 'Resource template', // @translate
                     'o:resource_class' => 'Resource class', // @translate
+                    'o:owner' => 'Owner', // @translate
                     'o:is_public' => 'Visibility public/private', // @translate
                 ],
             ],
@@ -179,6 +205,10 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         ]);
         $inputFilter->add([
             'name' => 'o:resource_class',
+            'required' => false,
+        ]);
+        $inputFilter->add([
+            'name' => 'o:owner',
             'required' => false,
         ]);
         $inputFilter->add([

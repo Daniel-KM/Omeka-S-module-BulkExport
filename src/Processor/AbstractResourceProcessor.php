@@ -152,6 +152,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $defaults = [
             'o:resource_template' => null,
             'o:resource_class' => null,
+            'o:owner' => null,
             'o:is_public' => null,
             'identifier_name' => null,
             'entries_by_batch' => null,
@@ -285,6 +286,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         if ($resourceClassId) {
             $resource['o:resource_class'] = ['o:id' => $resourceClassId];
         }
+        $ownerId = $this->getParam('o:owner', 'current') ?: 'current';
+        if ($ownerId === 'current') {
+            $identity = $this->getServiceLocator()->get('ControllerPluginManager')
+                ->get('identity');
+            $ownerId = $identity()->getId();
+        }
+        $resource['o:owner'] = ['o:id' => $ownerId];
         $resource['o:is_public'] = $this->getParam('o:is_public') !== 'false';
     }
 
@@ -347,16 +355,24 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         switch ($target['target']) {
             case 'o:resource_template':
                 $value = array_pop($values);
-                $resourceTemplateId =$this->getResourceTemplateId($value);
-                if ($resourceTemplateId) {
-                    $resource['o:resource_template'] = ['o:id' => $resourceTemplateId];
+                $id = $this->getResourceTemplateId($value);
+                if ($id) {
+                    $resource['o:resource_template'] = ['o:id' => $id];
                 }
                 return true;
             case 'o:resource_class':
                 $value = array_pop($values);
-                $resourceClassId =$this->getResourceClassId($value);
-                if ($resourceClassId) {
-                    $resource['o:resource_class'] = ['o:id' => $resourceClassId];
+                $id = $this->getResourceClassId($value);
+                if ($id) {
+                    $resource['o:resource_class'] = ['o:id' => $id];
+                }
+                return true;
+            case 'o:owner':
+            case 'o:email':
+                $value = array_pop($values);
+                $id = $this->getUserId($value);
+                if ($id) {
+                    $resource['o:owner'] = ['o:id' => $id];
                 }
                 return true;
             case 'o:is_public':
@@ -434,6 +450,28 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 ['resource_type' => $label, 'resource_id' => $resource->id()]
             );
         }
+    }
+
+    /**
+     * Get a user id by email or id or name.
+     *
+     * @param string|int $emailOrIdOrName
+     * @return int|null
+     */
+    protected function getUserId($emailOrIdOrName)
+    {
+        if (is_numeric($emailOrIdOrName)) {
+            $data = ['id' => $emailOrIdOrName];
+        } elseif (filter_var($emailOrIdOrName, FILTER_VALIDATE_EMAIL)) {
+            $data = ['email' => $emailOrIdOrName];
+        } else {
+            $data = ['name' => $emailOrIdOrName];
+        }
+        $data['limit'] = 1;
+
+        $users = $this->api()
+            ->search('users', $data, ['responseContent' => 'resource'])->getContent();
+        return $users ? (reset($users))->getId() : null;
     }
 
     /**
