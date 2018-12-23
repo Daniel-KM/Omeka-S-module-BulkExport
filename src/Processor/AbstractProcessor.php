@@ -36,6 +36,36 @@ abstract class AbstractProcessor implements Processor
     protected $logger;
 
     /**
+     * @var \Omeka\Api\Manager
+     */
+    protected $api;
+
+    /**
+     * @var \BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     */
+    protected $findResourcesFromIdentifiers;
+
+    /**
+     * @var array
+     */
+    protected $properties;
+
+    /**
+     * @var array
+     */
+    protected $resourceClasses;
+
+    /**
+     * @var array
+     */
+    protected $resourceTemplates;
+
+    /**
+     * @var array
+     */
+    protected $dataTypes;
+
+    /**
      * Processor constructor.
      *
      * @param ServiceLocatorInterface $serviceLocator
@@ -63,5 +93,293 @@ abstract class AbstractProcessor implements Processor
     {
         $this->logger = $logger;
         return $this;
+    }
+
+    /**
+     * Get a user id by email or id or name.
+     *
+     * @param string|int $emailOrIdOrName
+     * @return int|null
+     */
+    protected function getUserId($emailOrIdOrName)
+    {
+        if (is_numeric($emailOrIdOrName)) {
+            $data = ['id' => $emailOrIdOrName];
+        } elseif (filter_var($emailOrIdOrName, FILTER_VALIDATE_EMAIL)) {
+            $data = ['email' => $emailOrIdOrName];
+        } else {
+            $data = ['name' => $emailOrIdOrName];
+        }
+        $data['limit'] = 1;
+
+        $users = $this->api()
+            ->search('users', $data, ['responseContent' => 'resource'])->getContent();
+        return $users ? (reset($users))->getId() : null;
+    }
+
+    /**
+     * Check if a string or a id is a managed term.
+     *
+     * @param string|int $termOrId
+     * @return bool
+     */
+    protected function isPropertyTerm($termOrId)
+    {
+        return $this->getPropertyId($termOrId) !== null;
+    }
+
+    /**
+     * Get a property id by term or id.
+     *
+     * @param string|int $termOrId
+     * @return int|null
+     */
+    protected function getPropertyId($termOrId)
+    {
+        $propertyIds = $this->getPropertyIds();
+        return is_numeric($termOrId)
+            ? (array_search($termOrId, $propertyIds) ? $termOrId : null)
+            : (isset($propertyIds[$termOrId]) ? $propertyIds[$termOrId] : null);
+    }
+
+    /**
+     * Get all property ids by term.
+     *
+     * @return array Associative array of ids by term.
+     */
+    protected function getPropertyIds()
+    {
+        if (isset($this->properties)) {
+            return $this->properties;
+        }
+
+        $this->properties = [];
+        $properties = $this->api()
+            ->search('properties', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($properties as $property) {
+            $term = $property->getVocabulary()->getPrefix() . ':' . $property->getLocalName();
+            $this->properties[$term] = $property->getId();
+        }
+
+        return $this->properties;
+    }
+
+    /**
+     * Check if a string or a id is a resource class.
+     *
+     * @param string|int $termOrId
+     * @return bool
+     */
+    protected function isResourceClass($termOrId)
+    {
+        return $this->getResourceClassId($termOrId) !== null;
+    }
+
+    /**
+     * Get a resource class by term or by id.
+     *
+     * @param string|int $termOrId
+     * @return int|null
+     */
+    protected function getResourceClassId($termOrId)
+    {
+        $resourceClassIds = $this->getResourceClassIds();
+        return is_numeric($termOrId)
+            ? (array_search($termOrId, $resourceClassIds) ? $termOrId : null)
+            : (isset($resourceClassIds[$termOrId]) ? $resourceClassIds[$termOrId] : null);
+    }
+
+    /**
+     * Get all resource classes by term.
+     *
+     * @return array Associative array of ids by term.
+     */
+    protected function getResourceClassIds()
+    {
+        if (isset($this->resourceClasses)) {
+            return $this->resourceClasses;
+        }
+
+        $this->resourceClasses = [];
+        $resourceClasses = $this->api()
+            ->search('resource_classes', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($resourceClasses as $resourceClass) {
+            $term = $resourceClass->getVocabulary()->getPrefix() . ':' . $resourceClass->getLocalName();
+            $this->resourceClasses[$term] = $resourceClass->getId();
+        }
+
+        return $this->resourceClasses;
+    }
+
+    /**
+     * Check if a string or a id is a resource template.
+     *
+     * @param string|int $labelOrId
+     * @return bool
+     */
+    protected function isResourceTemplate($labelOrId)
+    {
+        return $this->getResourceTemplateId($labelOrId) !== null;
+    }
+
+    /**
+     * Get a resource template by label or by id.
+     *
+     * @param string|int $labelOrId
+     * @return int|null
+     */
+    protected function getResourceTemplateId($labelOrId)
+    {
+        $resourceTemplateIds = $this->getResourceTemplateIds();
+        return is_numeric($labelOrId)
+            ? (array_search($labelOrId, $resourceTemplateIds) ? $labelOrId : null)
+            : (isset($resourceTemplateIds[$labelOrId]) ? $resourceTemplateIds[$labelOrId] : null);
+    }
+
+    /**
+     * Get all resource templates by label.
+     *
+     * @return array Associative array of ids by label.
+     */
+    protected function getResourceTemplateIds()
+    {
+        if (isset($this->resourceTemplates)) {
+            return $this->resourceTemplates;
+        }
+
+        $this->resourceTemplate = [];
+        $resourceTemplates = $this->api()
+            ->search('resource_templates', [], ['responseContent' => 'resource'])->getContent();
+        foreach ($resourceTemplates as $resourceTemplate) {
+            $this->resourceTemplates[$resourceTemplate->getLabel()] = $resourceTemplate->getId();
+        }
+
+        return $this->resourceTemplates;
+    }
+
+    /**
+     * @param string $type
+     * @return string|null
+     */
+    protected function getDataType($type)
+    {
+        $dataTypes = $this->getDataTypes();
+        return isset($dataTypes[$type])
+            ? $dataTypes[$type]
+            : null;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDataTypes()
+    {
+        if (isset($this->dataTypes)) {
+            return $this->dataTypes;
+        }
+
+        $dataTypes = $this->getServiceLocator()->get('Omeka\DataTypeManager')
+            ->getRegisteredNames();
+
+        // Append the short data types for easier process.
+        $this->dataTypes = array_combine($dataTypes, $dataTypes);
+
+        foreach ($dataTypes as $dataType) {
+            $pos = strpos($dataType, ':');
+            if ($pos === false) {
+                continue;
+            }
+            $short = substr($dataType, $pos + 1);
+            if (!is_numeric($short) && !isset($this->dataTypes[$short])) {
+                $this->dataTypes[$short] = $dataType;
+            }
+        }
+        return $this->dataTypes;
+    }
+
+    /**
+     * Trim all whitespaces.
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function trimUnicode($string)
+    {
+        return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
+    }
+
+    /**
+     * Check if a string seems to be an url.
+     *
+     * Doesn't use FILTER_VALIDATE_URL, so allow non-encoded urls.
+     *
+     * @param string $string
+     * @return bool
+     */
+    protected function isUrl($string)
+    {
+        return strpos($string, 'https:') === 0
+            || strpos($string, 'http:') === 0
+            || strpos($string, 'ftp:') === 0;
+    }
+
+    /**
+     * @return \Omeka\Api\Manager
+     */
+    protected function api()
+    {
+        if (!$this->api) {
+            $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
+        }
+        return $this->api;
+    }
+
+    /**
+     * Find a list of resource ids from a list of identifiers (or one id).
+     *
+     * When there are true duplicates and case insensitive duplicates, the first
+     * case sensitive is returned, else the first case insensitive resource.
+     *
+     * @todo Manage Media source html.
+     *
+     * @uses\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     *
+     * @param array|string $identifiers Identifiers should be unique. If a
+     * string is sent, the result will be the resource.
+     * @param string $resourceType The resource type if any.
+     * @param string|int|array $identifierName Property as integer or term,
+     * "o:id", a media ingester (url or file), or an associative array with
+     * multiple conditions (for media source). May be a list of identifier
+     * metadata names, in which case the identifiers are searched in a list of
+     * properties and/or in internal ids.
+     * @return array|int|null Associative array with the identifiers as key and the ids
+     * or null as value. Order is kept, but duplicate identifiers are removed.
+     * If $identifiers is a string, return directly the resource id, or null.
+     */
+    protected function findResourcesFromIdentifiers($identifiers, $resourceType = null, $identifierName = null)
+    {
+        if (!$this->findResourcesFromIdentifiers) {
+            $this->findResourcesFromIdentifiers = $this->getServiceLocator()->get('ControllerPluginManager')
+                // Use class name to use it even when CsvImport is installed.
+                ->get(\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class);
+        }
+
+        $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
+        $identifierName = $identifierName ?: $this->identifierName;
+        return $findResourcesFromIdentifiers($identifiers, $identifierName, $resourceType);
+    }
+
+    /**
+     * Find a resource id from a an identifier.
+     *
+     * @param string $identifier
+     * @param string $resourceType The resource type if any.
+     * @param string|int|array $identifierName Property as integer or term,
+     * media ingester or "o:id", or an array with multiple conditions.
+     * @return int|null
+     */
+    protected function findResourceFromIdentifier($identifier, $resourceType = null, $identifierName = null)
+    {
+        return $this->findResourcesFromIdentifiers($identifier, $resourceType, $identifierName);
     }
 }
