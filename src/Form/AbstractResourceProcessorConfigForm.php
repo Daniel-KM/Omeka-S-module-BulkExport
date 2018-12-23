@@ -24,8 +24,8 @@ abstract class AbstractResourceProcessorConfigForm extends Form
 
     protected function baseFieldset()
     {
-        $serviceLocator = $this->getServiceLocator();
-        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('url');
+        $services = $this->getServiceLocator();
+        $urlHelper = $services->get('ViewHelperManager')->get('url');
 
         $this->add([
             'name' => 'o:resource_template',
@@ -91,6 +91,9 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         /** @var \BulkImport\Interfaces\Reader $reader */
         $reader = $processor->getReader();
 
+        $services = $this->getServiceLocator();
+        $automapFields = $services->get('ViewHelperManager')->get('automapFields');
+
         $this->add([
             'name' => 'mapping',
             'type' => Fieldset::class,
@@ -103,7 +106,8 @@ abstract class AbstractResourceProcessorConfigForm extends Form
 
         // Add all columns from file as inputs.
         $availableFields = $reader->getAvailableFields();
-        foreach ($availableFields as $name) {
+        $fields = $automapFields($availableFields);
+        foreach ($availableFields as $index => $name) {
             $fieldset->add([
                 'name' => $name,
                 'type' => PropertySelect::class,
@@ -114,6 +118,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                     'prepend_value_options' => $this->prependMappingOptions(),
                 ],
                 'attributes' => [
+                    'value' => isset($fields[$index]) ? $fields[$index] : null,
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',

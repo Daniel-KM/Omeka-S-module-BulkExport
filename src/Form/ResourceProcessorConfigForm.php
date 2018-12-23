@@ -76,8 +76,8 @@ class ResourceProcessorConfigForm extends AbstractResourceProcessorConfigForm
 
     protected function addFieldsetMedia()
     {
-        $serviceLocator = $this->getServiceLocator();
-        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('url');
+        $services = $this->getServiceLocator();
+        $urlHelper = $services->get('ViewHelperManager')->get('url');
 
         $this->add([
             'name' => 'o:item',

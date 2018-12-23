@@ -9,8 +9,8 @@ class MediaProcessorConfigForm extends AbstractResourceProcessorConfigForm
     {
         parent::addFieldsets();
 
-        $serviceLocator = $this->getServiceLocator();
-        $urlHelper = $serviceLocator->get('ViewHelperManager')->get('url');
+        $services = $this->getServiceLocator();
+        $urlHelper = $services->get('ViewHelperManager')->get('url');
 
         $this->add([
             'name' => 'o:item',

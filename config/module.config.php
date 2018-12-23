@@ -32,6 +32,11 @@ return [
             Controller\Admin\ImporterController::class => 'bulk/admin/importer',
         ],
     ],
+    'view_helpers' => [
+        'factories' => [
+            'automapFields' => Service\ViewHelper\AutomapFieldsFactory::class,
+        ],
+    ],
     'form_elements' => [
         'factories' => [
             Form\CsvReaderConfigForm::class => Service\Form\FormFactory::class,
