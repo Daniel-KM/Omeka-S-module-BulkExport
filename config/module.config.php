@@ -19,14 +19,19 @@ return [
     ],
     'api_adapters' => [
         'invokables' => [
-            'import_importers' => Api\Adapter\ImporterAdapter::class,
-            'import_imports' => Api\Adapter\ImportAdapter::class,
-            'import_logs' => Api\Adapter\LogAdapter::class,
+            'bulk_importers' => Api\Adapter\ImporterAdapter::class,
+            'bulk_imports' => Api\Adapter\ImportAdapter::class,
+            'bulk_logs' => Api\Adapter\LogAdapter::class,
         ],
     ],
     'view_manager' => [
         'template_path_stack' => [
             dirname(__DIR__) . '/view',
+        ],
+        'controller_map' => [
+            Controller\Admin\IndexController::class => 'bulk/admin/index',
+            Controller\Admin\ImportController::class => 'bulk/admin/import',
+            Controller\Admin\ImporterController::class => 'bulk/admin/importer',
         ],
     ],
     'form_elements' => [
@@ -51,10 +56,11 @@ return [
     ],
     'navigation' => [
         'AdminModule' => [
-            [
-                'label' => 'Import', // @translate
-                'route' => 'admin/import',
+            'bulk' => [
+                'label' => 'Bulk Import', // @translate
+                'route' => 'admin/bulk',
                 'resource' => 'BulkImport\Controller\Admin\Index',
+                'class' => 'o-icon-install',
             ],
         ],
     ],
@@ -62,10 +68,10 @@ return [
         'routes' => [
             'admin' => [
                 'child_routes' => [
-                    'import' => [
+                    'bulk' => [
                         'type' => \Zend\Router\Http\Literal::class,
                         'options' => [
-                            'route'    => '/import',
+                            'route'    => '/bulk',
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkImport\Controller\Admin',
                                 '__ADMIN__' => true,

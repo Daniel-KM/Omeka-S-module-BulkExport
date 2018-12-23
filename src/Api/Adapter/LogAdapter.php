@@ -13,7 +13,7 @@ class LogAdapter extends AbstractEntityAdapter
 {
     public function getResourceName()
     {
-        return 'import_logs';
+        return 'bulk_logs';
     }
 
     public function getRepresentationClass()

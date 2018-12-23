@@ -7,15 +7,15 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'importer');
-$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$this->htmlElement('body')->appendAttribute('class', 'bulk-import importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $form->prepare();
 ?>
 
-<?php echo $this->pageTitle($translate('Import'), 1, $translate('Configure reader')); ?>
+<?php echo $this->pageTitle($translate('Configure processor'), 1, $translate('Bulk Import')); ?>
 
 <div id="primary">
-    <h2><?php echo $escape($translate('Configure reader')); ?></h2>
+    <h2><?php echo $escape($translate('Configure processor')); ?></h2>
     <?php
     echo $this->form()->openTag($form);
     echo $this->formCollection($form);

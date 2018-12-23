@@ -11,14 +11,14 @@ $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 $hyperlink = $this->plugin('hyperlink');
 
-$this->htmlElement('body')->appendAttribute('class', 'importer jobs undo');
-$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$this->htmlElement('body')->appendAttribute('class', 'bulk-import import importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 ?>
 
-<?php echo $this->pageTitle($translate('Import'), 1, $translate('Import')); ?>
+<?php echo $this->pageTitle($translate('Bulk import'), 1, $translate('Bulk import')); ?>
 
 <h2><?php echo $escape($translate('Available importers')); ?></h2>
-<?php echo $hyperlink('Add an importer', $this->url('admin/import/default', ['controller' => 'importer', 'action' => 'add'])); ?>
+<?php echo $hyperlink('Add an importer', $this->url('admin/bulk/default', ['controller' => 'importer', 'action' => 'add'])); ?>
 
 <?php if (count($importers)): ?>
     <table class="tablesaw" data-tablesaw-mode="stack">
@@ -34,25 +34,25 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'))
         <?php foreach ($importers as $importer): ?>
             <tr>
                 <td>
-                    <?php echo $hyperlink($importer->getName(), $this->url('admin/import/id', ['controller' => 'importer', 'action' => 'start', 'id' => $importer->getId()])); ?>
+                    <?php echo $hyperlink($importer->getName(), $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'start', 'id' => $importer->getId()])); ?>
                 </td>
                 <td>
                     <?php $reader = $importer->getReader(); ?>
                     <?php echo $reader->getLabel(); ?>
                     <?php if ($reader instanceof ConfigurableImport): ?>
-                        (<?php echo $hyperlink('Configure', $this->url('admin/import/id', ['controller' => 'importer', 'action' => 'configure-reader', 'id' => $importer->getId()])); ?>)
+                        (<?php echo $hyperlink('Configure', $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'configure-reader', 'id' => $importer->getId()])); ?>)
                     <?php endif; ?>
                 </td>
                 <td>
                     <?php $processor = $importer->getProcessor(); ?>
                     <?php echo $processor->getLabel(); ?>
                     <?php if ($processor instanceof ConfigurableImport): ?>
-                        (<?php echo $hyperlink('Configure', $this->url('admin/import/id', ['controller' => 'importer', 'action' => 'configure-processor', 'id' => $importer->getId()])); ?>)
+                        (<?php echo $hyperlink('Configure', $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'configure-processor', 'id' => $importer->getId()])); ?>)
                     <?php endif; ?>
                 </td>
                 <td>
-                <?php echo $hyperlink('Edit', $this->url('admin/import/id', ['controller' => 'importer', 'action' => 'edit', 'id' => $importer->getId()])); ?>
-                <?php echo $hyperlink('Delete', $this->url('admin/import/id', ['controller' => 'importer', 'action' => 'delete', 'id' => $importer->getId()])); ?>
+                <?php echo $hyperlink('Edit', $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'edit', 'id' => $importer->getId()])); ?>
+                <?php echo $hyperlink('Delete', $this->url('admin/bulk/id', ['controller' => 'importer', 'action' => 'delete', 'id' => $importer->getId()])); ?>
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -62,6 +62,6 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'))
 
 <?php if (!empty($imports)): ?>
     <h2><?php echo $escape($translate('Last imports')); ?></h2>
-    <?php echo $hyperlink('See all imports', $this->url('admin/import/default', ['controller' => 'import', 'action' => 'index'])); ?>
-    <?php echo $this->partial('import/admin/import/import-table', ['imports' => $imports]); ?>
+    <?php echo $hyperlink('See all imports', $this->url('admin/bulk/default', ['controller' => 'import', 'action' => 'index'])); ?>
+    <?php echo $this->partial('bulk/admin/import/import-table', ['imports' => $imports]); ?>
 <?php endif; ?>

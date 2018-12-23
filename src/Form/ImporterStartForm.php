@@ -20,10 +20,11 @@ class ImporterStartForm extends Form
         $fieldset = $this->get('start_submit');
 
         $fieldset->add([
-            'type'  => Element\Submit::class,
             'name' => 'submit',
+            'type'  => Element\Submit::class,
             'attributes' => [
                 'value' => 'Start import', // @translate
+                'required' => true,
             ],
         ]);
     }

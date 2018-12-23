@@ -1,7 +1,7 @@
-Import (module for Omeka S)
-===========================
+Bulk Import (module for Omeka S)
+================================
 
-[Import] is yet another import module for [Omeka S]. This one intends to be
+[Bulk Import] is yet another import module for [Omeka S]. This one intends to be
 easily extensible by other modules. It allows to manage importers and to process
 bulk import of resources.
 
@@ -28,13 +28,13 @@ See general end user documentation for [installing a module].
 
 * From the zip
 
-Download the last release [`Import.zip`] from the list of releases, and
+Download the last release [`BulkImport.zip`] from the list of releases, and
 uncompress it in the `modules` directory.
 
 * From the source and for development
 
 If the module was installed from the source, rename the name of the folder of
-the module to `Import`.
+the module to `BulkImport`.
 
 
 Quick start
@@ -106,13 +106,14 @@ Copyright
 * Copyright Daniel Berthereau, 2018 (see [Daniel-KM] on GitHub)
 
 
-[Import]: https://github.com/Daniel-KM/Omeka-S-module-Import
+[Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka S]: https://omeka.org/s
 [CSV Import module]: https://omeka.org/s/modules/CSVImport
 [Omeka Classic]: https://omeka.org/classic
 [Import plugin]: https://github.com/BibLibre/Omeka-plugin-Import
+[`BulkImport.zip`]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
-[module issues]: https://github.com/Daniel-KM/Omeka-S-module-Import/issues
+[module issues]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org

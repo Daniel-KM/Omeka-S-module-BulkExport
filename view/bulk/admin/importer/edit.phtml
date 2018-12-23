@@ -8,16 +8,15 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'importer');
-$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$this->htmlElement('body')->appendAttribute('class', 'bulk-import importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $form->prepare();
 ?>
 
-<?php echo $this->pageTitle($translate('Import'), 1, $translate('Delete importer')); ?>
+<?php echo $this->pageTitle($translate('Edit importer'), 1, $translate('Bulk import')); ?>
 
 <div id="primary">
-    <h2><?php echo $escape(sprintf($translate('Delete importer (%s)'), $entity->getName())); ?></h2>
-    <p><?php echo $escape($translate('Are you sure you want to delete this importer ?')); ?></p>
+    <h2><?php echo $escape($translate('Edit importer')); ?></h2>
     <?php
     echo $this->form()->openTag($form);
     echo $this->formCollection($form);

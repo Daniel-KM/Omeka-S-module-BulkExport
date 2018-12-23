@@ -39,17 +39,17 @@ class Import extends AbstractJob
         try {
             $this->getLogger()->log(Logger::NOTICE, 'Import started'); // @translate
             $data = ['status' => 'in progress', 'started' => new \DateTime()];
-            $this->getApi()->update('import_imports', $import->getId(), $data, [], ['isPartial' => true]);
+            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
 
             $processor->process();
 
             $this->getLogger()->log(Logger::NOTICE, 'Import completed'); // @translate
             $data = ['status' => 'completed', 'ended' => new \DateTime()];
-            $this->getApi()->update('import_imports', $import->getId(), $data, [], ['isPartial' => true]);
+            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
         } catch (\Exception $e) {
             $this->getLogger()->log(Logger::ERR, $e->__toString());
             $data = ['status' => 'error'];
-            $this->getApi()->update('import_imports', $import->getId(), $data, [], ['isPartial' => true]);
+            $this->getApi()->update('bulk_imports', $import->getId(), $data, [], ['isPartial' => true]);
         }
     }
 
@@ -87,7 +87,7 @@ class Import extends AbstractJob
             return null;
         }
 
-        $content = $this->getApi()->search('import_imports', ['id' => $id, 'limit' => 1])->getContent();
+        $content = $this->getApi()->search('bulk_imports', ['id' => $id, 'limit' => 1])->getContent();
         $this->import = is_array($content) && count($content) ? $content[0] : null;
 
         return $this->import;

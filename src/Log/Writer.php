@@ -58,6 +58,6 @@ class Writer extends AbstractWriter
             'params' => $params,
             'import' => $import,
         ];
-        $this->getApi()->create('import_logs', $data);
+        $this->getApi()->create('bulk_logs', $data);
     }
 }

@@ -5,7 +5,7 @@ use Omeka\Entity\AbstractEntity;
 
 /**
  * @Entity
- * @Table(name="import_import")
+ * @Table(name="bulk_import")
  */
 class Import extends AbstractEntity
 {
@@ -58,7 +58,7 @@ class Import extends AbstractEntity
 
     /**
      * @OneToOne(
-     *     targetEntity="Import\Entity\Importer",
+     *     targetEntity="BulkImport\Entity\Importer",
      *     fetch="EXTRA_LAZY"
      * )
      * @JoinColumn(

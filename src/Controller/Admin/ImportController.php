@@ -26,7 +26,7 @@ class ImportController extends AbstractActionController
             'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
             'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
         ];
-        $response = $this->api()->search('import_imports', $query);
+        $response = $this->api()->search('bulk_imports', $query);
 
         $this->paginator($response->getTotalResults(), $page);
 
@@ -51,7 +51,7 @@ class ImportController extends AbstractActionController
             'import' => (int) $this->params()->fromRoute('id')
         ];
 
-        $response = $this->api()->search('import_logs', $query);
+        $response = $this->api()->search('bulk_logs', $query);
         $this->paginator($response->getTotalResults(), $page);
 
         $view = new ViewModel;

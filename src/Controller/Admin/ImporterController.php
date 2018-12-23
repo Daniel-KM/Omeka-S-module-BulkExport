@@ -32,11 +32,11 @@ class ImporterController extends AbstractActionController
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('import_importers', ['id' => $id])->getContent() : null;
+        $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if ($id && !$entity) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
-            return $this->redirect()->toRoute('admin/import');
+            return $this->redirect()->toRoute('admin/bulk');
         }
 
         $form = $this->getForm(ImporterForm::class);
@@ -49,17 +49,17 @@ class ImporterController extends AbstractActionController
             $form->setData($data);
             if ($form->isValid()) {
                 if ($entity) {
-                    $response = $this->api($form)->update('import_importers', $this->params('id'), $data, [], ['isPartial' => true]);
+                    $response = $this->api($form)->update('bulk_importers', $this->params('id'), $data, [], ['isPartial' => true]);
                 } else {
-                    $response = $this->api($form)->create('import_importers', $data);
+                    $response = $this->api($form)->create('bulk_importers', $data);
                 }
 
                 if ($response) {
                     $this->messenger()->addSuccess('Importer successfully saved');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 } else {
                     $this->messenger()->addError('Save of importer failed ');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -74,11 +74,11 @@ class ImporterController extends AbstractActionController
     public function deleteAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('import_importers', ['id' => $id])->getContent() : null;
+        $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
-            return $this->redirect()->toRoute('admin/import');
+            return $this->redirect()->toRoute('admin/bulk');
         }
 
         $form = $this->getForm(ImporterDeleteForm::class);
@@ -88,13 +88,13 @@ class ImporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $response = $this->api($form)->delete('import_importers', $id);
+                $response = $this->api($form)->delete('bulk_importers', $id);
                 if ($response) {
                     $this->messenger()->addSuccess('Importer successfully deleted');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 } else {
                     $this->messenger()->addError('Delete of importer failed');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -110,11 +110,11 @@ class ImporterController extends AbstractActionController
     public function configureReaderAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('import_importers', ['id' => $id])->getContent() : null;
+        $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
-            return $this->redirect()->toRoute('admin/import');
+            return $this->redirect()->toRoute('admin/bulk');
         }
 
         $reader = $entity->getReader();
@@ -141,14 +141,14 @@ class ImporterController extends AbstractActionController
             if ($form->isValid()) {
                 $reader->handleConfigForm($form);
                 $data['reader_config'] = $reader->getConfig();
-                $response = $this->api($form)->update('import_importers', $this->params('id'), $data, [], ['isPartial' => true]);
+                $response = $this->api($form)->update('bulk_importers', $this->params('id'), $data, [], ['isPartial' => true]);
 
                 if ($response) {
                     $this->messenger()->addSuccess('Reader configuration saved');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 } else {
                     $this->messenger()->addError('Save of reader configuration failed');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -163,11 +163,11 @@ class ImporterController extends AbstractActionController
     public function configureProcessorAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('import_importers', ['id' => $id])->getContent() : null;
+        $entity = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$entity) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
-            return $this->redirect()->toRoute('admin/import');
+            return $this->redirect()->toRoute('admin/bulk');
         }
 
         /** @var Processor $processor */
@@ -196,14 +196,14 @@ class ImporterController extends AbstractActionController
                 $processor->handleConfigForm($form);
 
                 $update = ['processor_config' => $processor->getConfig()];
-                $response = $this->api($form)->update('import_importers', $this->params('id'), $update, [], ['isPartial' => true]);
+                $response = $this->api($form)->update('bulk_importers', $this->params('id'), $update, [], ['isPartial' => true]);
 
                 if ($response) {
                     $this->messenger()->addSuccess('Processor configuration saved');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 } else {
                     $this->messenger()->addError('Save of processor configuration failed');
-                    return $this->redirect()->toRoute('admin/import');
+                    return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -218,11 +218,11 @@ class ImporterController extends AbstractActionController
     public function startAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $importer = ($id) ? $this->api()->searchOne('import_importers', ['id' => $id])->getContent() : null;
+        $importer = ($id) ? $this->api()->searchOne('bulk_importers', ['id' => $id])->getContent() : null;
 
         if (!$importer) {
             $this->messenger()->addError(sprintf('Importer with id %s does not exist', $id));
-            return $this->redirect()->toRoute('admin/import');
+            return $this->redirect()->toRoute('admin/bulk');
         }
 
         $reader = $importer->getReader();
@@ -292,7 +292,7 @@ class ImporterController extends AbstractActionController
                             $importData['processor_params'] = $processor->getParams();
                         }
 
-                        $response = $this->api()->create('import_imports', $importData);
+                        $response = $this->api()->create('bulk_imports', $importData);
                         if (!$response) {
                             $this->messenger()->addError('Save of import failed');
                             break;
@@ -311,7 +311,7 @@ class ImporterController extends AbstractActionController
                             $this->messenger()->addError('Import start failed');
                         }
 
-                        return $this->redirect()->toRoute('admin/import');
+                        return $this->redirect()->toRoute('admin/bulk');
                         break;
                 }
 

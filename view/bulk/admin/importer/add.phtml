@@ -7,15 +7,15 @@
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
-$this->htmlElement('body')->appendAttribute('class', 'importer');
-$this->headLink()->appendStylesheet($this->assetUrl('css/import.css', 'Import'));
+$this->htmlElement('body')->appendAttribute('class', 'bulk-import importer');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-import.css', 'BulkImport'));
 $form->prepare();
 ?>
 
-<?php echo $this->pageTitle($translate('Import'), 1, $translate('Start import')); ?>
+<?php echo $this->pageTitle($translate('Create new importer'), 1, $translate('Bulk Import')); ?>
 
 <div id="primary">
-    <h2><?php echo $escape($translate('Start import')); ?></h2>
+    <h2><?php echo $escape($translate('Create new importer')); ?></h2>
     <?php
     echo $this->form()->openTag($form);
     echo $this->formCollection($form);

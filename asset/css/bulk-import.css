@@ -1,0 +1,12 @@
+/* Import: styles */
+
+@media screen {
+    header nav .bulk-import::before,
+    .bulk-import .subhead::before {
+        content:"";
+    }
+    .bulk-import .no-resources:before,
+    .bulk-import .no-resources:before {
+        content:"";
+    }
+}

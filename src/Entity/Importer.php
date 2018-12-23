@@ -5,7 +5,7 @@ use Omeka\Entity\AbstractEntity;
 
 /**
  * @Entity
- * @Table(name="import_importer")
+ * @Table(name="bulk_importer")
  */
 class Importer extends AbstractEntity
 {

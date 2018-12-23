@@ -14,7 +14,7 @@ class ImportAdapter extends AbstractEntityAdapter
 {
     public function getResourceName()
     {
-        return 'import_imports';
+        return 'bulk_imports';
     }
 
     public function getRepresentationClass()

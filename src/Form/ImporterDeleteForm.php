@@ -1,12 +1,15 @@
 <?php
 namespace BulkImport\Form;
 
+use BulkImport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 use Zend\Form\Form;
 
 class ImporterDeleteForm extends Form
 {
+    use ServiceLocatorAwareTrait;
+
     public function init()
     {
         parent::init();
@@ -19,8 +22,8 @@ class ImporterDeleteForm extends Form
         $fieldset = $this->get('importer_submit');
 
         $fieldset->add([
-            'type'  => Element\Submit::class,
             'name' => 'submit',
+            'type'  => Element\Submit::class,
             'attributes' => [
                 'id' => 'submitbutton',
                 'value' => 'Delete importer', // @translate

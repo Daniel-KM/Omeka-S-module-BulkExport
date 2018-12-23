@@ -18,7 +18,7 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
         // Importers.
-        $importers = $this->api()->search('import_importers');
+        $importers = $this->api()->search('bulk_importers');
 
         // Imports.
         $perPage = 25;
@@ -28,7 +28,7 @@ class IndexController extends AbstractActionController
             'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
             'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
         ];
-        $imports = $this->api()->search('import_imports', $query);
+        $imports = $this->api()->search('bulk_imports', $query);
 
         $view = new ViewModel;
         $view->setVariable('importers', $importers->getContent());
