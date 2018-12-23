@@ -54,7 +54,8 @@ Finally, process the import.
 TODO
 ----
 
-- Dry-run.
+- Full dry-run.
+- Fix numeric data type (doctrine issue).
 
 
 Warning
@@ -106,7 +107,8 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2018 (see [Daniel-KM] on GitHub)
+* Copyright Roy Rosenzweig Center for History and New Media, 2015-2018
+* Copyright Daniel Berthereau, 2017-2019 (see [Daniel-KM] on GitHub)
 
 
 [Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
