@@ -36,7 +36,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     /**
      * @var string|int|array
      */
-    protected $identifierName;
+    protected $identifierNames;
 
     /**
      * @var ArrayObject
@@ -125,9 +125,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             'o:owner' => null,
             'o:is_public' => null,
             'identifier_name' => null,
+            'allow_duplicate_identifiers' => false,
             'entries_by_batch' => null,
         ];
         $result = array_intersect_key($values, $defaults) + $args->getArrayCopy() + $defaults;
+        $result['allow_duplicate_identifiers'] = (bool) $result['allow_duplicate_identifiers'];
         $args->exchangeArray($result);
     }
 
@@ -137,9 +139,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     public function process()
     {
-        $this->prepareIdentifierName();
+        $this->prepareIdentifierNames();
 
         $this->prepareMapping();
+
+        $this->allowDuplicateIdentifiers = (bool) $this->getParam('allow_duplicate_identifiers');
 
         $batch = (int) $this->getParam('entries_by_batch') ?: self::ENTRIES_BY_BATCH;
 
@@ -235,7 +239,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     protected function baseEntity()
     {
+        // TODO Use a specific class that extends ArrayObject to manage process metadata (check and errors).
         $resource = new ArrayObject;
+        $resource['o:id'] = null;
+        $resource['checked_id'] = false;
+        $resource['has_error'] = false;
         $this->baseGeneric($resource);
         $this->baseSpecific($resource);
         return $resource;
@@ -318,6 +326,24 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected function fillGeneric(ArrayObject $resource, $target, array $values)
     {
         switch ($target['target']) {
+            case 'o:id':
+                $value = (int) array_pop($values);
+                if (!$value) {
+                    return true;
+                }
+                $resourceType = isset($resource['resource_type']) ? $resource['resource_type'] : null;
+                $id = $this->findResourceFromIdentifier($value, 'o:id', $resourceType);
+                if ($id) {
+                    $resource['o:id'] = $id;
+                    $resource['checked_id'] = !empty($resourceType) && $resourceType !== 'resources';
+                } else {
+                    $resource['has_error'] = true;
+                    $this->logger->err(
+                        'Internal id #{id} cannot be found: the entry is skipped.', // @translate
+                        ['id' => $id]
+                    );
+                }
+                return true;
             case 'o:resource_template':
                 $value = array_pop($values);
                 $id = $this->getResourceTemplateId($value);
@@ -363,7 +389,22 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      */
     protected function checkEntity(ArrayObject $resource)
     {
-        return true;
+        if (!$this->checkId($resource)) {
+            $this->fillId($resource);
+        }
+        if ($resource['o:id']) {
+            if ($this->allowDuplicateIdentifiers) {
+                $this->logger->warn(
+                    'The identifier is not unique.' // @translate
+                );
+            } else {
+                $this->logger->err(
+                    'The identifier is not unique.' // @translate
+                );
+                $resource['has_error'] = true;
+            }
+        }
+        return !$resource['has_error'];
     }
 
     /**
@@ -427,35 +468,35 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         }
     }
 
-    protected function prepareIdentifierName()
+    protected function prepareIdentifierNames()
     {
-        $this->identifierName = $this->getParam('identifier_name', ['o:id', 'dcterms:identifier']);
-        if (empty($this->identifierName)) {
+        $this->identifierNames = [];
+        $identifierNames = $this->getParam('identifier_name', ['o:id', 'dcterms:identifier']);
+        if (empty($identifierNames)) {
             $this->logger->warn(
                 'No identifier name was selected.' // @translate
             );
-            $this->identifierName = null;
             return;
+        }
+
+        if (!is_array($identifierNames)) {
+            $identifierNames = [$identifierNames];
         }
 
         // For quicker search, prepare the ids of the properties.
-        $isSingle = !is_array($this->identifierName);
-        if ($isSingle) {
-            $this->identifierName = $this->getPropertyId($this->identifierName) ?: $this->identifierName;
-            return;
+        foreach ($identifierNames as $identifierName) {
+            $id = $this->getPropertyId($identifierName);
+            if ($id) {
+                $this->identifierNames[$this->getPropertyTerm($id)] = $id;
+            } else {
+                $this->identifierNames[$identifierName] = $identifierName;
+            }
         }
-
-        foreach ($this->identifierName as $key => $idName) {
-            $this->identifierName[$key] = $this->getPropertyId($idName) ?: $idName;
-        }
-        $this->identifierName = array_filter($this->identifierName);
-        if (count($this->identifierName) === 1) {
-            $this->identifierName = reset($this->identifierName);
-        } elseif (empty($this->identifierName)) {
+        $this->identifierNames = array_filter($this->identifierNames);
+        if (empty($this->identifierNames)) {
             $this->logger->err(
                 'Invalid identifier names: check your params.' // @translate
             );
-            $this->identifierName = null;
         }
     }
 

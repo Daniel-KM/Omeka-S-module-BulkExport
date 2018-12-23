@@ -1,6 +1,7 @@
 <?php
 namespace BulkImport\Processor;
 
+use ArrayObject;
 use BulkImport\Interfaces\Processor;
 use BulkImport\Interfaces\Reader;
 use BulkImport\Traits\ServiceLocatorAwareTrait;
@@ -44,6 +45,11 @@ abstract class AbstractProcessor implements Processor
      * @var \BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
      */
     protected $findResourcesFromIdentifiers;
+
+    /**
+     * @var bool
+     */
+    protected $allowDuplicateIdentifiers = false;
 
     /**
      * @var array
@@ -140,6 +146,20 @@ abstract class AbstractProcessor implements Processor
         return is_numeric($termOrId)
             ? (array_search($termOrId, $propertyIds) ? $termOrId : null)
             : (isset($propertyIds[$termOrId]) ? $propertyIds[$termOrId] : null);
+    }
+
+    /**
+     * Get a property term by term or id.
+     *
+     * @param string|int $termOrId
+     * @return string|null
+     */
+    protected function getPropertyTerm($termOrId)
+    {
+        $propertyIds = $this->getPropertyIds();
+        return is_numeric($termOrId)
+            ? (array_search($termOrId, $propertyIds) ?: null)
+            : (isset($propertyIds[$termOrId]) ? $termOrId : null);
     }
 
     /**
@@ -298,6 +318,145 @@ abstract class AbstractProcessor implements Processor
     }
 
     /**
+     * Check the id of a resource.
+     *
+     * @param ArrayObject $resource
+     * @return boolean The action should be checked separately, else the result
+     * may have no meaning.
+     */
+    protected function checkId(ArrayObject $resource)
+    {
+        if ($resource['checked_id']) {
+            return !empty($resource['o:id']);
+        }
+        // The id is set, but not checked. So check it.
+        if ($resource['o:id']) {
+            $resourceType = empty($resource['resource_type'])
+                ? $this->getResourceType()
+                : $resource['resource_type'];
+            if (empty($resourceType) || $resourceType === 'resources') {
+                $this->logger->err(
+                    'The resource id cannot be checked: the resource type is undefined.' // @translate
+                );
+                $resource['has_error'] = true;
+            }
+            else {
+                $id = $this->findResourceFromIdentifier($resource['o:id'], 'o:id', $resourceType);
+                if (!$id) {
+                    $this->logger->err(
+                        'The id of this resource doesn’t exist.' // @translate
+                    );
+                    $resource['has_error'] = true;
+                }
+            }
+        }
+        $resource['checked_id'] = true;
+        return !empty($resource['o:id']);
+    }
+
+    /**
+     * Fill id of a resource if not set. No check is done if set, so use
+     * checkId() first.
+     *
+     * The resource type is required, so this method should be used in the end
+     * of the process.
+     *
+     * @param ArrayObject $resource
+     * @return boolean
+     */
+    protected function fillId(ArrayObject $resource)
+    {
+        if (is_numeric($resource['o:id'])) {
+            return true;
+        }
+
+        $resourceType = empty($resource['resource_type'])
+            ? $this->getResourceType()
+            : $resource['resource_type'];
+        if (empty($resourceType) || $resourceType === 'resources') {
+            $this->logger->err(
+                'The resource id cannot be filled: the resource type is undefined.' // @translate
+            );
+            $resource['has_error'] = true;
+        }
+
+        $identifierNames = $this->identifierNames;
+        $key = array_search('o:id', $identifierNames);
+        if ($key !== false) {
+            unset($identifierNames[$key]);
+        }
+        if (empty($identifierNames)) {
+            $this->logger->err(
+                'The resource id cannot be filled: no metadata defined as identifier.' // @translate
+            );
+            $resource['has_error'] = true;
+        }
+
+        // Don't try to fill id of a resource that has an error.
+        if ($resource['has_error']) {
+            return false;
+        }
+
+        foreach (array_keys($identifierNames) as $identifierName) {
+            // Get the list of identifiers from the resource metadata.
+            $identifiers = [];
+            if (!empty($resource[$identifierName])) {
+                // Check if it is a property value.
+                if (is_array($resource[$identifierName])) {
+                    foreach ($resource[$identifierName] as $value) {
+                        if (is_array($value)) {
+                            // Check the different type of value. Only value is
+                            // managed currently.
+                            // TODO Check identifier that is not a property value.
+                            if (isset($value['@value']) && strlen($value['@value'])) {
+                                $identifiers[] = $value['@value'];
+                            }
+                        }
+                    }
+                } else {
+                    // TODO Check identifier that is not a property.
+                    $identifiers[] = $value;
+                }
+            }
+
+            if (!$identifiers) {
+                continue;
+            }
+
+            $ids = $this->findResourcesFromIdentifiers($identifiers, $identifierName, $resourceType);
+            if (!$ids) {
+                continue;
+            }
+
+            $flipped = array_flip($ids);
+            if (count($flipped) > 1) {
+                $this->logger->warn(
+                    'Resource doesn’t have a unique identifier.' // @translate
+                );
+                if (!$this->allowDuplicateIdentifiers) {
+                    $this->logger->err(
+                        'Duplicate identifiers are not allowed.' // @translate
+                    );
+                    break;
+                }
+            }
+            $resource['o:id'] = reset($ids);
+            $this->logger->info(
+                'Identifier "{identifier}" ({metadata}) matches {resource_type} #{resource_id}.', // @translate
+                [
+                    'identifier' => key($ids),
+                    'metadata' => $identifierName,
+                    'resource_type' => $resourceType,
+                    'resource_id' => $resource['o:id'],
+                ]
+            );
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Trim all whitespaces.
      *
      * @param string $string
@@ -346,17 +505,23 @@ abstract class AbstractProcessor implements Processor
      *
      * @param array|string $identifiers Identifiers should be unique. If a
      * string is sent, the result will be the resource.
-     * @param string $resourceType The resource type if any.
      * @param string|int|array $identifierName Property as integer or term,
      * "o:id", a media ingester (url or file), or an associative array with
      * multiple conditions (for media source). May be a list of identifier
      * metadata names, in which case the identifiers are searched in a list of
      * properties and/or in internal ids.
-     * @return array|int|null Associative array with the identifiers as key and the ids
-     * or null as value. Order is kept, but duplicate identifiers are removed.
-     * If $identifiers is a string, return directly the resource id, or null.
+     * @param string $resourceType The resource type if any.
+     * @return array|int|null|Object Associative array with the identifiers as key
+     * and the ids or null as value. Order is kept, but duplicate identifiers
+     * are removed. If $identifiers is a string, return directly the resource
+     * id, or null. Returns standard object when there is at least one duplicated
+     * identifiers in resource and the option "$uniqueOnly" is set.
+     *
+     * Note: The option uniqueOnly is not taken in account. The object or the
+     * boolean are not returned, but logged.
+     * Furthermore, the identifiers without id are not returned.
      */
-    protected function findResourcesFromIdentifiers($identifiers, $resourceType = null, $identifierName = null)
+    protected function findResourcesFromIdentifiers($identifiers, $identifierName = null, $resourceType = null)
     {
         if (!$this->findResourcesFromIdentifiers) {
             $this->findResourcesFromIdentifiers = $this->getServiceLocator()->get('ControllerPluginManager')
@@ -365,21 +530,60 @@ abstract class AbstractProcessor implements Processor
         }
 
         $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;
-        $identifierName = $identifierName ?: $this->identifierName;
-        return $findResourcesFromIdentifiers($identifiers, $identifierName, $resourceType);
+        $identifierName = $identifierName ?: $this->identifierNames;
+        $result = $findResourcesFromIdentifiers($identifiers, $identifierName, $resourceType, true);
+
+        $isSingle = !is_array($identifiers);
+
+        // Log duplicate identifiers.
+        if (is_object($result)) {
+            $result = (array) $result;
+            if ($isSingle) {
+                $result['result'] = [$result['result']];
+                $result['count'] = [$result['count']];
+            }
+
+            // Remove empty identifiers.
+            $result['result'] = array_filter($result['result']);
+            foreach (array_keys($result['result']) as $identifier) {
+                if ($result['count'][$identifier] > 1) {
+                    $this->logger->warn(
+                        'Identifier "{identifier}" is not unique ({count} values).', // @translate
+                        ['identifier' => $identifier, 'count' => $result['count'][$identifier]]
+                    );
+                }
+            }
+
+            if (!$this->allowDuplicateIdentifiers) {
+                $this->logger->err(
+                    'Duplicate identifiers are not allowed.' // @translate
+                );
+                return $isSingle ? null : [];
+            }
+
+            $result = $isSingle ? reset($result['result']) : $result['result'];
+        } else {
+            // Remove empty identifiers.
+            if (!$isSingle) {
+                $result = array_filter($result);
+            }
+        }
+
+        return $result;
     }
 
     /**
      * Find a resource id from a an identifier.
      *
+     * @uses self::findResourcesFromIdentifiers()
      * @param string $identifier
-     * @param string $resourceType The resource type if any.
      * @param string|int|array $identifierName Property as integer or term,
      * media ingester or "o:id", or an array with multiple conditions.
-     * @return int|null
+     * @param string $resourceType The resource type if any.
+     * @return int|null|false
      */
-    protected function findResourceFromIdentifier($identifier, $resourceType = null, $identifierName = null)
+    protected function findResourceFromIdentifier($identifier, $identifierName = null, $resourceType = null)
     {
-        return $this->findResourcesFromIdentifiers($identifier, $resourceType, $identifierName);
+        return $this->findResourcesFromIdentifiers($identifier, $identifierName, $resourceType);
     }
 }

@@ -132,6 +132,18 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'data-placeholder' => 'Select an identifier name…', // @translate
             ],
         ]);
+
+        $this->add([
+            'name' => 'allow_duplicate_identifiers',
+            'type' => Element\Checkbox::class,
+            'options' => [
+                'label' => 'Allow duplicate identifiers', // @translate
+                'info' => 'Not recommended, but needed to be compliant with old databases. Duplicates are logged.' // @translate
+            ],
+            'attributes' => [
+                'id' => 'allow_duplicate_identifiers',
+            ],
+        ]);
     }
 
     protected function addFieldsets()
@@ -217,6 +229,10 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         ]);
         $inputFilter->add([
             'name' => 'identifier_name',
+            'required' => false,
+        ]);
+        $inputFilter->add([
+            'name' => 'allow_duplicate_identifiers',
             'required' => false,
         ]);
     }

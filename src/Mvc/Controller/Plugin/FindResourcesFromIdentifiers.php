@@ -66,6 +66,8 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
      * When there are true duplicates and case insensitive duplicates, the first
      * case sensitive is returned, else the first case insensitive resource.
      *
+     * All identifiers are returned, even without id.
+     *
      * @todo Manage Media source html.
      *
      * @param array|string $identifiers Identifiers should be unique. If a
@@ -76,11 +78,19 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
      * metadata names, in which case the identifiers are searched in a list of
      * properties and/or in internal ids.
      * @param string $resourceType The resource type if any.
-     * @return array|int|null Associative array with the identifiers as key and the ids
-     * or null as value. Order is kept, but duplicate identifiers are removed.
-     * If $identifiers is a string, return directly the resource id, or null.
+     * @param bool $uniqueOnly When true and there are duplicate identifiers,
+     * returns an object with the list of identifiers and their count. When the
+     * option is false, when there are true duplicates, it returns the first and
+     * when there are case insensitive duplicates, it returns the first too.
+     * This option is useless when identifiers are ids and not recommended when
+     * there are multiple fields.
+     * @return array|int|null|Object Associative array with the identifiers as key
+     * and the ids or null as value. Order is kept, but duplicate identifiers
+     * are removed. If $identifiers is a string, return directly the resource
+     * id, or null. Returns standard object when there is at least one duplicated
+     * identifiers in resource and the option "$uniqueOnly" is set.
      */
-    public function __invoke($identifiers, $identifierName, $resourceType = null)
+    public function __invoke($identifiers, $identifierName, $resourceType = null, $uniqueOnly = false)
     {
         $isSingle = is_string($identifiers);
 
@@ -106,21 +116,38 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
 
         foreach ($identifierTypeNames as $identifierType => $identifierName) {
             $result = $this->findResources($identifierType, $identifiers, $identifierName, $resourceType, $itemId);
-            if ($result) {
-                return $isSingle ? reset($result) : $result;
+            if (empty($result['result'])) {
+                continue;
             }
+            if ($result['has_duplicate'] && $uniqueOnly) {
+                if ($isSingle) {
+                    return (object) ['result' => reset($result['result']), 'count' => reset($result['count'])];
+                }
+                unset($result['has_duplicate']);
+                return (object) $result;
+            }
+            return $isSingle ? reset($result['result']) : $result['result'];
         }
         return $isSingle ? null : [];
     }
 
-    protected function findResources($identifierType, $identifiers, $identifierName, $resourceType, $itemId)
+    protected function findResources($identifierType, array $identifiers, $identifierName, $resourceType, $itemId)
     {
         switch ($identifierType) {
             case 'o:id':
-                return $this->findResourcesFromInternalIds($identifiers, $resourceType);
+                return [
+                    'result' => $this->findResourcesFromInternalIds($identifiers, $resourceType),
+                    'has_duplicate' => false,
+                ];
             case 'property':
+                if (!is_array($identifierName)) {
+                    $identifierName = [$identifierName];
+                }
                 return $this->findResourcesFromPropertyIds($identifiers, $identifierName, $resourceType);
             case 'media_source':
+                if (is_array($identifierName)) {
+                    $identifierName = reset($identifierName);
+                }
                 return $this->findResourcesFromMediaSource($identifiers, $identifierName, $itemId);
         }
     }
@@ -196,6 +223,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
                 $identifierType = key($identifierTypeName);
                 switch ($identifierType) {
                     case 'o:id':
+                    case 'media_source':
                         $identifierTypeNames[$identifierType] = $identifierName;
                         break;
                     default:
@@ -243,7 +271,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             : null;
     }
 
-    protected function findResourcesFromInternalIds($identifiers, $resourceType)
+    protected function findResourcesFromInternalIds(array $identifiers, $resourceType)
     {
         $identifiers = array_filter(array_map('intval', $identifiers));
         if (empty($identifiers)) {
@@ -277,7 +305,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         return array_replace(array_fill_keys($identifiers, null), array_combine($result, $result));
     }
 
-    protected function findResourcesFromPropertyIds($identifiers, $propertyIds, $resourceType)
+    protected function findResourcesFromPropertyIds(array $identifiers, array $propertyIds, $resourceType)
     {
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
@@ -288,7 +316,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
-            ->select('value.value AS identifier', 'value.resource_id AS id')
+            ->select('value.value AS identifier', 'value.resource_id AS id', 'COUNT(value.value) AS "count"')
             ->from('value', 'value')
             ->leftJoin('value', 'resource', 'resource', 'value.resource_id = resource.id')
             // ->andwhere($expr->in('value.property_id', ':property_ids'))
@@ -305,17 +333,19 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         if ($resourceType) {
             $qb
                 ->andWhere($expr->eq('resource.resource_type', ':resource_type'))
-                ->setParameter(':resource_type', $resourceType);
+                ->setParameter('resource_type', $resourceType);
         }
+
         $stmt = $conn->executeQuery($qb, $qb->getParameters());
         // $stmt->fetchAll(\PDO::FETCH_KEY_PAIR) cannot be used, because it
         // replaces the first id by later ids in case of true duplicates.
+        // Anyway, count() is needed now.
         $result = $stmt->fetchAll();
 
         return $this->cleanResult($identifiers, $result);
     }
 
-    protected function findResourcesFromMediaSource($identifiers, $ingesterName, $itemId = null)
+    protected function findResourcesFromMediaSource(array $identifiers, $ingesterName, $itemId = null)
     {
         // The api manager doesn't manage this type of search.
         $conn = $this->connection;
@@ -326,7 +356,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
-            ->select('media.source AS identifier', 'media.id AS id')
+            ->select('media.source AS identifier', 'media.id AS id', 'COUNT(media.source) AS "count"')
             ->from('media', 'media')
             ->andwhere('media.ingester = :ingester')
             ->setParameter('ingester', $ingesterName)
@@ -339,11 +369,12 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         if ($itemId) {
             $qb
                 ->andWhere($expr->eq('media.item_id', ':item_id'))
-                ->setParameter(':item_id', $itemId);
+                ->setParameter('item_id', $itemId);
         }
         $stmt = $conn->executeQuery($qb, $qb->getParameters());
         // $stmt->fetchAll(\PDO::FETCH_KEY_PAIR) cannot be used, because it
         // replaces the first id by later ids in case of true duplicates.
+        // Anyway, count() is needed now.
         $result = $stmt->fetchAll();
 
         return $this->cleanResult($identifiers, $result);
@@ -351,9 +382,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
 
     /**
      * Reorder the result according to the input (simpler in php and there is no
-     * duplicated identifiers). When there are true duplicates, it returns the
-     * first. When there are case insensitive duplicates, it returns the first
-     * too.
+     * duplicated identifiers).
      *
      * @param array $identifiers
      * @param array $result
@@ -363,9 +392,11 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
     {
         $cleanedResult = array_fill_keys($identifiers, null);
 
+        $count = [];
+
         // Prepare the lowercase result one time only.
         $lowerResult = array_map(function ($v) {
-            return ['identifier' => strtolower($v['identifier']), 'id' => $v['id']];
+            return ['identifier' => strtolower($v['identifier']), 'id' => $v['id'], 'count' => $v['count']];
         }, $result);
 
         foreach (array_keys($cleanedResult) as $key) {
@@ -373,20 +404,30 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
             foreach ($result as $resultValue) {
                 if ($resultValue['identifier'] == $key) {
                     $cleanedResult[$key] = $resultValue['id'];
+                    $count[$key] = $resultValue['count'];
                     continue 2;
                 }
             }
             // Look for the first case insensitive result.
             $lowerKey = strtolower($key);
-            foreach ($lowerResult as $resultValue) {
-                if ($resultValue['identifier'] == $lowerKey) {
-                    $cleanedResult[$key] = $resultValue['id'];
+            foreach ($lowerResult as $lowerResultValue) {
+                if ($lowerResultValue['identifier'] == $lowerKey) {
+                    $cleanedResult[$key] = $lowerResultValue['id'];
+                    $count[$key] = $lowerResultValue['count'];
                     continue 2;
                 }
             }
         }
 
-        return $cleanedResult;
+        $duplicates = array_filter($count, function ($v) {
+            return $v > 1;
+        });
+
+        return [
+            'result' => $cleanedResult,
+            'count' => $count,
+            'has_duplicate' => !empty($duplicates),
+        ];
     }
 
     /**

@@ -28,7 +28,7 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormItem(ArrayObject $args, array $values)
     {
         if (isset($values['o:item_set'])) {
-            $ids = $this->findResourcesFromIdentifiers($values['o:item_set'], 'item_sets', 'o:id');
+            $ids = $this->findResourcesFromIdentifiers($values['o:item_set'], 'o:id', 'item_sets');
             foreach ($ids as $id) {
                 $args['o:item_set'][] = ['o:id' => $id];
             }
@@ -45,7 +45,7 @@ class ResourceProcessor extends AbstractResourceProcessor
     protected function handleFormMedia(ArrayObject $args, array $values)
     {
         if (isset($values['o:item'])) {
-            $id = $this->findResourceFromIdentifier($values['o:item'], 'items', 'o:id');
+            $id = $this->findResourceFromIdentifier($values['o:item'], 'o:id', 'items');
             if ($id) {
                 $args['o:item'] = ['o:id' => $id];
             }
@@ -137,10 +137,13 @@ class ResourceProcessor extends AbstractResourceProcessor
     {
         switch ($target['target']) {
             case 'o:item_set':
-                $identifierName = isset($target['target_data']) ? $target['target_data'] : $this->identifierName;
-                $ids = $this->findResourcesFromIdentifiers($values, 'item_sets', $identifierName);
+                $identifierName = isset($target['target_data']) ? $target['target_data'] : $this->identifierNames;
+                $ids = $this->findResourcesFromIdentifiers($values, $identifierName, 'item_sets');
                 foreach ($ids as $id) {
-                    $resource['o:item_set'][] = ['o:id' => $id];
+                    $resource['o:item_set'][] = [
+                        'o:id' => $id,
+                        'checked_id' => true,
+                    ];
                 }
                 return true;
             case 'url':
@@ -216,9 +219,12 @@ class ResourceProcessor extends AbstractResourceProcessor
         switch ($target['target']) {
             case 'o:item':
                 $value = array_pop($values);
-                $identifierName = isset($target["target_data"]) ? $target["target_data"] : $this->identifierName;
-                $id = $this->findResourceFromIdentifier($value, 'items', $identifierName);
-                $resource['o:item'] = ['o:id' => $id];
+                $identifierName = isset($target["target_data"]) ? $target["target_data"] : $this->identifierNames;
+                $id = $this->findResourceFromIdentifier($value, $identifierName, 'items');
+                $resource['o:item'] = [
+                    'o:id' => $id,
+                    'checked_id' => true,
+                ];
                 return true;
             case 'url':
                 $value = array_pop($values);
@@ -314,7 +320,8 @@ class ResourceProcessor extends AbstractResourceProcessor
                 }
                 break;
         }
-        return true;
+
+        return parent::checkEntity($resource);
     }
 
     protected function checkItem(ArrayObject $resource)
