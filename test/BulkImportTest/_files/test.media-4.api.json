@@ -22,8 +22,8 @@
   "o:ingester": "url",
   "o:renderer": "file",
   "o:item": {
-    "@id": "https://localhost/api/items/3",
-    "o:id": 3
+    "@id": "https://localhost/api/items/6",
+    "o:id": 6
   },
   "o:source": "http://upload.wikimedia.org/wikipedia/commons/f/f5/Sketchofdouglass.jpg",
   "o:media_type": "image/jpeg",
@@ -37,5 +37,5 @@
     "medium": "https://localhost/files/medium/4a8bdee2e8674fdccd304688e6c938b64af22e0b.jpg",
     "square": "https://localhost/files/square/4a8bdee2e8674fdccd304688e6c938b64af22e0b.jpg"
   },
-  "data": []
+  "data": null
 }

@@ -1,8 +1,8 @@
 {
   "@context": "https://localhost/api-context",
-  "@id": "https://localhost/api/media/6",
+  "@id": "https://localhost/api/media/5",
   "@type": "o:Media",
-  "o:id": 6,
+  "o:id": 5,
   "o:is_public": true,
   "o:owner": {
     "@id": "https://localhost/api/users/1",
@@ -22,8 +22,8 @@
   "o:ingester": "url",
   "o:renderer": "file",
   "o:item": {
-    "@id": "https://localhost/api/items/2",
-    "o:id": 2
+    "@id": "https://localhost/api/items/4",
+    "o:id": 4
   },
   "o:source": "http://upload.wikimedia.org/wikipedia/commons/c/c3/Edmond_Dant%C3%A8s.JPG",
   "o:media_type": "image/jpeg",
@@ -37,5 +37,5 @@
     "medium": "https://localhost/files/medium/79c3fa90e5c1f794a3560bac71d1b22ab3ff5bd1.jpg",
     "square": "https://localhost/files/square/79c3fa90e5c1f794a3560bac71d1b22ab3ff5bd1.jpg"
   },
-  "data": []
+  "data": null
 }
