@@ -1,0 +1,68 @@
+{
+    "filename": "test_update_g_replace.tsv",
+    "filesize": "489",
+    "filepath": "/tmp/omekaREgHoA",
+    "media_type": "text/tab-separated-values",
+    "csrf": "06400f10441a08f44918f53c53044431-4b993316c229ce112b762238b56a56d7",
+    "resource_type": "item_sets",
+    "automap_check_names_alone": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": ""
+    },
+    "global_language": "",
+    "action": "replace",
+    "identifier_property": "dcterms:title",
+    "action_unidentified": "create",
+    "column-property": {
+        "0": {
+            "dcterms:identifier": 10
+        },
+        "5": {
+            "dcterms:title": 1
+        },
+        "6": {
+            "dcterms:description": 4
+        },
+        "7": {
+            "dcterms:date": 7
+        }
+    },
+    "column-multivalue": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+    ],
+    "column-resource_template": {
+        "1": "1"
+    },
+    "column-resource_class": {
+        "2": "1"
+    },
+    "column-is_public": {
+        "3": "1"
+    },
+    "column-is_open": {
+        "4": "1"
+    },
+    "column-media_source": {
+        "9": "url"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": "|"
+}

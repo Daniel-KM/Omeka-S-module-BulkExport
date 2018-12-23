@@ -1,0 +1,84 @@
+{
+    "filename": "test_resources.tsv",
+    "filesize": "1604",
+    "filepath": "\/tmp\/omekaxDqIlX",
+    "media_type": "text/tab-separated-values",
+    "csrf": "54f388e341f7723835cf5b1302fbfa7c-ce9d8538934dc961ba10af58e9d84244",
+    "resource_type": "resources",
+    "automap_check_names_alone": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": 1
+    },
+    "global_language": "",
+    "action": "create",
+    "identifier_property": "dcterms:identifier",
+    "action_unidentified": "skip",
+    "rows_by_batch": 20,
+    "column-property": {
+        "0": {
+            "dcterms:identifier": 10
+        },
+        "6": {
+            "dcterms:title": 1
+        },
+        "7": {
+            "dcterms:creator": 2
+        },
+        "8": {
+            "dcterms:date": 7
+        },
+        "9": {
+            "dcterms:rights": 15
+        },
+        "10": {
+            "dcterms:description": 4
+        },
+        "11": {
+            "dcterms:format": 9
+        }
+    },
+    "column-multivalue": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+    ],
+    "column-resource_type": {
+        "1": "1"
+    },
+    "column-item_set": {
+        "2": "dcterms:identifier"
+    },
+    "column-item": {
+        "3": "dcterms:identifier"
+    },
+    "column-media_source": {
+        "4": "url"
+    },
+    "column-resource_class": {
+        "5": "1"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": "|"
+}

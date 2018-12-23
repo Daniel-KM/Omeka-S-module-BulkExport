@@ -1,0 +1,57 @@
+{
+    "filename": "test_many_rows_url.tsv",
+    "filesize": "4063",
+    "filepath": "\/tmp\/omekasJBbcP",
+    "media_type": "text/tab-separated-values",
+    "csrf": "1a7a7f2f7aa1f135f693dffeed71cf4e-bfd5139dc15129f60cfcc036256b5559",
+    "resource_type": "items",
+    "automap_check_names_alone": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": 1
+    },
+    "global_language": "",
+    "action": "create",
+    "identifier_property": "dcterms:identifier",
+    "action_unidentified": "skip",
+    "column-property": [
+        {
+            "dcterms:identifier": 10
+        },
+        {
+            "dcterms:title": 1
+        }
+    ],
+    "column-multivalue": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+    ],
+    "column-item_set": {
+        "2": "internal_id"
+    },
+    "column-resource_template": {
+        "4": "1"
+    },
+    "column-resource_class": {
+        "5": "1"
+    },
+    "column-media_source": {
+        "6": "url"
+    },
+    "delimiter": "\t",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": "|",
+    "rows_by_batch": 5
+}

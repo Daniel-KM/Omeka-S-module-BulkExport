@@ -1,0 +1,47 @@
+{
+    "filename": "test.csv",
+    "filesize": "645",
+    "filepath": "/tmp/omeka9SxswE",
+    "media_type": "text/csv",
+    "csrf": "2b68b12d589d1e8825321c7483482f03-ceb14f686327dcd75bba6a85601c6389",
+    "resource_type": "items",
+    "automap_check_names_alone": "0",
+    "comment": "",
+    "o:resource_template": {
+        "o:id": ""
+    },
+    "o:resource_class": {
+        "o:id": ""
+    },
+    "o:owner": {
+        "o:id": 1
+    },
+    "global_language": "",
+    "action": "create",
+    "identifier_property": "",
+    "action_unidentified": "skip",
+    "column-property": [
+        {
+            "dcterms:title": 1
+        },
+        {
+            "dcterms:creator": 2
+        },
+        {
+            "dcterms:description": 4
+        }
+    ],
+    "column-multivalue": {
+        "0": "1",
+        "1": "1",
+        "2": "1",
+        "4": "1"
+    },
+    "column-media_source": {
+        "4": "url"
+    },
+    "delimiter": ",",
+    "enclosure": "\"",
+    "escape": "\\",
+    "multivalue_separator": ","
+}
