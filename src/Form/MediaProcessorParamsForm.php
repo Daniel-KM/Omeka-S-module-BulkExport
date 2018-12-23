@@ -29,6 +29,7 @@ class MediaProcessorParamsForm extends MediaProcessorConfigForm
                 'options' => [
                     'url' => 'Url', // @translate
                     'file' => 'File', // @translate
+                    'html' => 'Html', // @translate
                 ],
             ],
         ]);
