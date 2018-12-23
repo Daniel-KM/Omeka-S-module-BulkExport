@@ -31,6 +31,7 @@ class ItemProcessorParamsForm extends ItemProcessorConfigForm
                     'file' => 'File', // @translate
                     'html' => 'Html', // @translate
                     'o:media {dcterms:title}' => 'Title', // @translate
+                    'o:media {o:is_public}' => 'Visibility public/private', // @translate
                 ],
             ],
         ]);

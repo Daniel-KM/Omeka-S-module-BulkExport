@@ -50,6 +50,7 @@ return [
     'media title' => 'o:media {dcterms:title}',
     'media url' => 'url',
     'media html' => 'html',
+    'media public' => 'o:media {o:is_public}',
     'html' => 'html',
     'iiif' => 'iiif',
     'iiif image' => 'iiif',

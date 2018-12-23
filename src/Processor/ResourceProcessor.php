@@ -108,7 +108,6 @@ class ResourceProcessor extends AbstractResourceProcessor
             case 'url':
                 foreach ($values as $value) {
                     $media = [];
-                    $media['o:is_public'] = true;
                     $media['o:ingester'] = 'url';
                     $media['ingest_url'] = $value;
                     $this->appendRelated($resource, $media);
@@ -117,7 +116,6 @@ class ResourceProcessor extends AbstractResourceProcessor
             case 'file':
                 foreach ($values as $value) {
                     $media = [];
-                    $media['o:is_public'] = true;
                     if ($this->isUrl($value)) {
                         $media['o:ingester'] = 'url';
                         $media['ingest_url'] = $value;
@@ -131,7 +129,6 @@ class ResourceProcessor extends AbstractResourceProcessor
             case 'html':
                 foreach ($values as $value) {
                     $media = [];
-                    $media['o:is_public'] = true;
                     $media['o:ingester'] = 'html';
                     $media['html'] = $value;
                     $this->appendRelated($resource, $media);
@@ -148,6 +145,12 @@ class ResourceProcessor extends AbstractResourceProcessor
                     $media['dcterms:title'][] = $resourceProperty;
                     $this->appendRelated($resource, $media, 'o:media', 'dcterms:title');
                 }
+                return true;
+            case 'o:media {o:is_public}':
+                $value = array_pop($values);
+                $media = [];
+                $media['o:is_public'] = $value;
+                $this->appendRelated($resource, $media, 'o:media', 'o:is_public');
                 return true;
         }
         return false;
@@ -250,6 +253,20 @@ class ResourceProcessor extends AbstractResourceProcessor
                 )
             );
             return false;
+        }
+        if ($resource['resource_type'] === 'items') {
+            $this->checkItem($resource);
+        }
+        return true;
+    }
+
+    protected function checkItem(ArrayObject $resource)
+    {
+        // Media of an item are public by default.
+        foreach ($resource['o:media'] as &$media) {
+            if (!array_key_exists('o:is_public', $media) || is_null($media['o:is_public'])) {
+                $media['o:is_public'] = true;
+            }
         }
         return true;
     }
