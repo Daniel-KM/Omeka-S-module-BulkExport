@@ -2,86 +2,104 @@
 namespace BulkImport\Reader;
 
 use Box\Spout\Common\Type;
-use BulkImport\Entry\SpreadsheetRow;
 use BulkImport\Form\CsvReaderConfigForm;
 use BulkImport\Form\CsvReaderParamsForm;
-use BulkImport\Interfaces\Configurable;
-use BulkImport\Interfaces\Parametrizable;
-use BulkImport\Interfaces\Reader;
-use BulkImport\Traits\ConfigurableTrait;
-use BulkImport\Traits\ParametrizableTrait;
-use BulkImport\Traits\ServiceLocatorAwareTrait;
-use LimitIterator;
 use Log\Stdlib\PsrMessage;
 use SplFileObject;
 use Zend\Form\Form;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Box Spout Spreadshet reader doesn't support escape for csv (even if it
  * manages end of line and encoding). So the basic file handler is used for csv.
  * The format tsv uses the Spout reader, because there is no escape.
  */
-class CsvReader implements Reader, Configurable, Parametrizable
+class CsvReader extends AbstractReader
 {
-    use ConfigurableTrait, ParametrizableTrait, ServiceLocatorAwareTrait;
+    const DEFAULT_DELIMITER = ',';
+    const DEFAULT_ENCLOSURE = '"';
+    const DEFAULT_ESCAPE = '\\';
 
     protected $label = 'CSV'; // @translate
     protected $mediaType = 'text/csv';
-    protected $spreadsheetType = Type::CSV;
     protected $configFormClass = CsvReaderConfigForm::class;
     protected $paramsFormClass = CsvReaderParamsForm::class;
 
-    protected $fh;
+    protected $configKeys = [
+        'delimiter',
+        'enclosure',
+        'escape',
+        'separator',
+    ];
 
-    protected $currentRow = 0;
-
-    protected $currentRowData = [];
-
-    protected $headers = [];
+    protected $paramsKeys = [
+        'filename',
+        'delimiter',
+        'enclosure',
+        'escape',
+        'separator',
+    ];
 
     /**
-     * CsvReader constructor.
-     *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @var \SplFileObject.
      */
-    public function __construct(ServiceLocatorInterface $serviceLocator)
+    protected $iterator;
+
+    /**
+     * Type of spreadsheet.
+     *
+     * @var string
+     */
+    protected $spreadsheetType = Type::CSV;
+
+    /**
+     * @var string
+     */
+    protected $delimiter = self::DEFAULT_DELIMITER;
+
+    /**
+     * @var string
+     */
+    protected $enclosure = self::DEFAULT_ENCLOSURE;
+
+    /**
+     * @var string
+     */
+    protected $escape = self::DEFAULT_ESCAPE;
+
+    public function isValid()
     {
-        $this->setServiceLocator($serviceLocator);
-    }
+        $this->lastErrorMessage = null;
 
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    public function getAvailableFields()
-    {
-        return $this->getHeaders();
-    }
-
-    public function getConfigFormClass()
-    {
-        return $this->configFormClass;
-    }
-
-    public function handleConfigForm(Form $form)
-    {
-        $values = $form->getData();
-
-        $config = [
-            'delimiter' => $values['delimiter'],
-            'enclosure' => $values['enclosure'],
-            'escape' => $values['escape'],
-            'separator' => $values['separator'],
-        ];
-
-        $this->setConfig($config);
-    }
-
-    public function getParamsFormClass()
-    {
-        return $this->paramsFormClass;
+        $filepath = $this->getParam('filename');
+        if (empty($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" doesn’t exist.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        if (!filesize($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is empty.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        if (!is_readable($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is not readable.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        if (!$this->isUtf8($filepath)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'File "{filepath}" is not fully utf-8.', // @translate
+                ['filepath' => $filepath]
+            );
+            return false;
+        }
+        return true;
     }
 
     public function handleParamsForm(Form $form)
@@ -95,38 +113,30 @@ class CsvReader implements Reader, Configurable, Parametrizable
             ? $systemConfig['temp_dir']
             : null;
         if (!$tempDir) {
-            throw new \Exception('temp_dir is not configured'); // @translate
+            throw new \Omeka\Service\Exception\RuntimeException(
+                'The "temp_dir" is not configured' // @translate
+            );
         }
 
         $filename = tempnam($tempDir, 'omeka');
         if (!move_uploaded_file($file['tmp_name'], $filename)) {
-            throw new \Exception(sprintf('Unable to move uploaded file to %s', $filename)); // @translate
+            throw new \Omeka\Service\Exception\RuntimeException(
+                new PsrMessage(
+                    'Unable to move uploaded file to %s', // @translate
+                    ['filename' => $filename]
+                )
+            );
         }
 
-        $this->setParams([
-            'filename' => $filename,
-            'delimiter' => $values['delimiter'],
-            'enclosure' => $values['enclosure'],
-            'escape' => $values['escape'],
-            'separator' => $values['separator'],
-        ]);
-    }
-
-    public function current()
-    {
-        $entry = new SpreadsheetRow($this->headers, $this->currentRowData);
-        return $entry;
+        $params = array_intersect_key($values, array_flip($this->paramsKeys));
+        $params['filename'] = $filename;
+        $this->setParams($params);
+        $this->reset();
     }
 
     public function key()
     {
-        return $this->currentRow;
-    }
-
-    public function next()
-    {
-        $this->currentRowData = $this->getRow($this->fh);
-        ++$this->currentRow;
+        return parent::key() - 1;
     }
 
     /**
@@ -138,98 +148,65 @@ class CsvReader implements Reader, Configurable, Parametrizable
      */
     public function rewind()
     {
-        if (isset($this->fh)) {
-            fseek($this->fh, 0);
-        } else {
-            $filepath = $this->getParam('filename');
-            $this->isValid($filepath);
-            $this->fh = fopen($filepath, 'r');
+        $this->isReady();
+        $this->iterator->rewind();
+        $this->next();
+    }
+
+    protected function reset()
+    {
+        parent::reset();
+        $this->delimiter = self::DEFAULT_DELIMITER;
+        $this->enclosure = self::DEFAULT_ENCLOSURE;
+        $this->escape = self::DEFAULT_ESCAPE;
+    }
+
+    protected function prepareIterator()
+    {
+        $this->reset();
+        if (!$this->isValid()) {
+            throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
 
-        // The headers and the first row are prepared, so the "foreach" loop
-        // starts on the first row, numbered current row 0.
-        $this->headers = $this->getRow($this->fh);
-        $this->currentRowData = $this->getRow($this->fh);
-        $this->currentRow = 0;
-    }
-
-    public function valid()
-    {
-        return is_array($this->currentRowData);
-    }
-
-    protected function getHeaders()
-    {
         $filepath = $this->getParam('filename');
-        $this->isValid($filepath);
+        $this->iterator = new SplFileObject($filepath);
+        $this->initializeReader();
 
-        $fields = [];
-        if ($filepath && file_exists($filepath) && is_readable($filepath)) {
-            $fh = fopen($filepath, 'r');
-            if (false !== $fh) {
-                $fields = $this->getRow($fh);
-                fclose($fh);
-            }
-        }
-        return $fields;
+        $this->finalizePrepareIterator();
+        $this->prepareAvailableFields();
+
+        $this->isReady = true;
+        $this->next();
     }
 
-    protected function getRow($fh)
+    protected function initializeReader()
     {
-        $delimiter = $this->getParam('delimiter', ',');
-        $enclosure = $this->getParam('enclosure', '"');
-        $escape = $this->getParam('escape', '\\');
-
-        $fields = fgetcsv($fh, 0, $delimiter, $enclosure, $escape);
-        if (is_array($fields)) {
-            return array_map([$this, 'trimUnicode'], $fields);
-        }
+        $this->delimiter = $this->getParam('delimiter', self::DEFAULT_DELIMITER);
+        $this->enclosure = $this->getParam('enclosure', self::DEFAULT_ENCLOSURE);
+        $this->escape = $this->getParam('escape', self::DEFAULT_ESCAPE);
+        $this->iterator->setFlags(
+            SplFileObject::READ_CSV
+            | SplFileObject::READ_AHEAD
+            | SplFileObject::SKIP_EMPTY
+            | SplFileObject::DROP_NEW_LINE
+        );
+        $this->iterator->setCsvControl($this->delimiter, $this->enclosure, $this->escape);
     }
 
-    protected function trimUnicode($string)
+    protected function finalizePrepareIterator()
     {
-        return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
+        $this->totalEntries = iterator_count($this->iterator) - 1;
     }
 
-    /**
-     * @param string $filepath
-     * @throw \Omeka\Service\Exception\InvalidArgumentException
-     */
-    protected function isValid($filepath)
+    protected function prepareAvailableFields()
     {
-        if (empty($filepath)) {
-            throw new \Omeka\Service\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'File "{filepath}" doesn’t exist.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
+        $this->iterator->rewind();
+        $fields = $this->iterator->current();
+        if (!is_array($fields)) {
+            $this->lastErrorMessage = 'File has no available fields.'; // @translate
+            throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
-        if (!filesize($filepath)) {
-            throw new \Omeka\Service\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'File "{filepath}" is empty.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
-        if (!is_readable($filepath)) {
-            throw new \Omeka\Service\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'File "{filepath}" is not readable.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
-
-        if (!$this->isUtf8($filepath)) {
-            throw new \Omeka\Service\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'File "{filepath}" is not fully utf-8.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
+        $this->availableFields = array_map([$this, 'trimUnicode'], $fields);
     }
 
     /**
@@ -249,10 +226,7 @@ class CsvReader implements Reader, Configurable, Parametrizable
         // Nevertheless, check the lines one by one as text to avoid a memory
         // overflow with a big csv file.
         $iterator = new SplFileObject($filepath);
-        $iterator->setFlags(0);
-        $iterator->setCsvControl($this->getParam('delimiter', ','), $this->getParam('enclosure', '"'), $this->getParam('escape', '\\'));
-        $iterator->rewind();
-        foreach (new LimitIterator($iterator) as $line) {
+        foreach ($iterator as $line) {
             if (mb_detect_encoding($line, 'UTF-8', true) !== 'UTF-8') {
                 return false;
             }

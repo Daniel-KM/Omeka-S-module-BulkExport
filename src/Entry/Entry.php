@@ -3,12 +3,12 @@ namespace BulkImport\Entry;
 
 use BulkImport\Interfaces\Entry as EntryInterface;
 
-class SpreadsheetRow implements EntryInterface, \Countable, \JsonSerializable
+class Entry implements EntryInterface, \JsonSerializable
 {
     /**
      * @var array|\Traversable
      */
-    protected $row = [];
+    protected $data = [];
 
     /**
      * @var bool
@@ -16,25 +16,25 @@ class SpreadsheetRow implements EntryInterface, \Countable, \JsonSerializable
     protected $valid;
 
     /**
-     * @param array $headers
-     * @param array $rowData
+     * @param array $fields
+     * @param array $data
      */
-    public function __construct($headers, $rowData)
+    public function __construct($fields, $data)
     {
-        foreach ($rowData as $i => $columnData) {
-            $this->row[$headers[$i]] = $columnData;
+        foreach ($data as $i => $value) {
+            $this->data[$fields[$i]] = $value;
         }
     }
 
     public function offsetExists($offset)
     {
-        return array_key_exists($offset, $this->row);
+        return array_key_exists($offset, $this->data);
     }
 
     public function offsetGet($offset)
     {
-        if (array_key_exists($offset, $this->row)) {
-            return $this->row[$offset];
+        if (array_key_exists($offset, $this->data)) {
+            return $this->data[$offset];
         }
     }
 
@@ -50,22 +50,22 @@ class SpreadsheetRow implements EntryInterface, \Countable, \JsonSerializable
 
     public function current()
     {
-        return current($this->row);
+        return current($this->data);
     }
 
     public function key()
     {
-        return key($this->row);
+        return key($this->data);
     }
 
     public function next()
     {
-        $this->valid = next($this->row) !== false;
+        $this->valid = next($this->data) !== false;
     }
 
     public function rewind()
     {
-        reset($this->row);
+        reset($this->data);
         $this->valid = true;
     }
 
@@ -76,16 +76,16 @@ class SpreadsheetRow implements EntryInterface, \Countable, \JsonSerializable
 
     public function count()
     {
-        return count($this->row);
+        return count($this->data);
     }
 
     public function jsonSerialize()
     {
-        return $this->row;
+        return $this->data;
     }
 
     public function __toString()
     {
-        return print_r($this->row, true);
+        return print_r($this->data, true);
     }
 }

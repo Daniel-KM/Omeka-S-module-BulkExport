@@ -4,11 +4,10 @@ namespace BulkImport\Reader;
 use Box\Spout\Common\Type;
 use BulkImport\Form\SpreadsheetReaderConfigForm;
 use BulkImport\Form\SpreadsheetReaderParamsForm;
-use LimitIterator;
-use Log\Stdlib\PsrMessage;
-use SplFileObject;
+use Zend\Form\Form;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
-class TsvReader extends AbstractSpreadsheetReader
+class TsvReader extends CsvReader
 {
     protected $label = 'TSV (tab-separated values)'; // @translate
     protected $mediaType = 'text/tab-separated-values';
@@ -16,78 +15,39 @@ class TsvReader extends AbstractSpreadsheetReader
     protected $configFormClass = SpreadsheetReaderConfigForm::class;
     protected $paramsFormClass = SpreadsheetReaderParamsForm::class;
 
-    /**
-     * Box Spout is not used for tsv, because it cannot set the escape.
-     *
-     * {@inheritDoc}
-     * @see \BulkImport\Reader\AbstractSpreadsheetReader::prepareIterator()
-     */
-    protected function prepareIterator()
+    protected $configKeys = [
+        'separator',
+    ];
+
+    protected $paramsKeys = [
+        'filename',
+        'separator',
+    ];
+
+    public function __construct(ServiceLocatorInterface  $services)
     {
-        $this->reset();
-
-        $filepath = $this->getParam('filename');
-        $this->isValid($filepath);
-
-        $this->iterator = new SplFileObject($filepath);
-        $this->initializeSpreadsheetReader();
-
-        $this->finalizePrepareIterator();
-        $this->prepareHeaders();
-        return $this->iterator;
+        parent::__construct($services);
+        $this->delimiter = "\t";
+        $this->enclosure = chr(0);
+        $this->escape = chr(0);
     }
 
-    protected function isValid($filepath)
+    public function handleParamsForm(Form $form)
     {
-        parent::isValid($filepath);
-        if (!$this->isUtf8($filepath)) {
-            throw new \Omeka\Service\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'File "{filepath}" is not fully utf-8.', // @translate
-                    ['filepath' => $filepath]
-                )
-            );
-        }
+        parent::handleParamsForm($form);
+        $params = $this->getParams();
+        $params['delimiter'] = "\t";
+        $params['enclosure'] = chr(0);
+        $params['escape'] = chr(0);
+        $this->setParams($params);
     }
 
-    protected function initializeSpreadsheetReader()
-    {
-        if ($this->iterator) {
-            $this->iterator->setFlags(
-                SplFileObject::READ_CSV
-                | SplFileObject::READ_AHEAD
-                | SplFileObject::SKIP_EMPTY
-                | SplFileObject::DROP_NEW_LINE
-            );
-            $this->iterator->setCsvControl("\t", chr(0), chr(0));
-        }
-    }
 
-    /**
-     * Check if the file is utf-8 formatted.
-     *
-     * @param string $filepath
-     * @return bool
-     */
-    protected function isUtf8($filepath)
+    protected function reset()
     {
-        // TODO Use another check when mb is not installed.
-        if (!function_exists('mb_detect_encoding')) {
-            return true;
-        }
-
-        // Check all the file, because the headers are generally ascii.
-        // Nevertheless, check the lines one by one as text to avoid a memory
-        // overflow with a big csv file.
-        $iterator = new SplFileObject($filepath);
-        $iterator->setFlags(0);
-        $iterator->setCsvControl($this->getParam('delimiter', ','), $this->getParam('enclosure', '"'), $this->getParam('escape', '\\'));
-        $iterator->rewind();
-        foreach (new LimitIterator($iterator) as $line) {
-            if (mb_detect_encoding($line, 'UTF-8', true) !== 'UTF-8') {
-                return false;
-            }
-        }
-        return true;
+        parent::reset();
+        $this->delimiter = "\t";
+        $this->enclosure = chr(0);
+        $this->escape = chr(0);
     }
 }
