@@ -3,6 +3,7 @@ namespace BulkImport\Processor;
 
 use ArrayObject;
 use BulkImport\Interfaces\Configurable;
+use BulkImport\Interfaces\Entry;
 use BulkImport\Interfaces\Parametrizable;
 use BulkImport\Traits\ConfigurableTrait;
 use BulkImport\Traits\ParametrizableTrait;
@@ -56,6 +57,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * @var array
      */
     protected $dataTypes;
+
+    /**
+     * @var ArrayObject
+     */
+    protected $base;
+
+    /**
+     * @var array
+     */
+    protected $mapping;
 
     /**
      * @var int
@@ -139,16 +150,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     public function process()
     {
-        $base = $this->baseResource();
+        $this->base = $this->baseResource();
 
         $mapping = $this->getParam('mapping', []);
         $mapping = $this->fullMapping($mapping);
-
         // Filter the mapping to avoid to loop of entry without targets.
-        $mapping = array_filter($mapping);
-
-        $multivalueSeparator = $this->reader->getParam('separator' , '');
-        $hasMultivalueSeparator = $multivalueSeparator !== '';
+        $this->mapping = array_filter($mapping);
+        unset($mapping);
 
         $insert = [];
         foreach ($this->reader as $index => $entry) {
@@ -160,34 +168,9 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 ['index' => $this->indexResource]
             );
 
-            if ($entry->isEmpty()) {
-                $this->logger->warn(
-                    'Resource index #{index} is empty and is skipped.', // @translate
-                    ['index' => $this->indexResource]
-                );
-                ++$this->totalSkipped;
+            $resource = $this->processEntry($entry);
+            if (!$resource) {
                 continue;
-            }
-
-            $resource = clone $base;
-
-            foreach ($mapping as $sourceField => $targets) {
-                // Check if the entry has a value for this source field.
-                if (!isset($entry[$sourceField])) {
-                    continue;
-                }
-
-                $value = $entry[$sourceField];
-                $values = $hasMultivalueSeparator
-                    ? explode($multivalueSeparator, $value)
-                    : [$value];
-                $values = array_map([$this, 'trimUnicode'], $values);
-                $values = array_filter($values, 'strlen');
-                if (!$values) {
-                    continue;
-                }
-
-                $this->fillResource($resource, $targets, $values);
             }
 
             if ($this->checkResource($resource)) {
@@ -197,6 +180,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             } else {
                 ++$this->totalErrors;
             }
+
             // Only add every X for batch import.
             if ($this->processing >= self::BATCH) {
                 // Batch create.
@@ -217,6 +201,50 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 'total_errors' => $this->totalErrors,
             ]
         );
+    }
+
+    /**
+     * Process one entry to create one resource (and eventually attached ones).
+     *
+     * @param Entry $entry
+     * @return ArrayObject|null
+     */
+    protected function processEntry(Entry $entry)
+    {
+        if ($entry->isEmpty()) {
+            $this->logger->warn(
+                'Resource index #{index} is empty and is skipped.', // @translate
+                ['index' => $this->indexResource]
+            );
+            ++$this->totalSkipped;
+            return null;
+        }
+
+        $resource = clone $this->base;
+
+        // TODO Manage the multivalue separator at field level.
+        $multivalueSeparator = $this->reader->getParam('separator' , '');
+
+        foreach ($this->mapping as $sourceField => $targets) {
+            // Check if the entry has a value for this source field.
+            if (!isset($entry[$sourceField])) {
+                continue;
+            }
+
+            $value = $entry[$sourceField];
+            $values = $multivalueSeparator !== ''
+                ? explode($multivalueSeparator, $value)
+                : [$value];
+            $values = array_map([$this, 'trimUnicode'], $values);
+            $values = array_filter($values, 'strlen');
+            if (!$values) {
+                continue;
+            }
+
+            $this->fillResource($resource, $targets, $values);
+        }
+
+        return $resource;
     }
 
     protected function baseResource()
