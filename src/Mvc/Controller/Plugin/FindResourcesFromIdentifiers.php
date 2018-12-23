@@ -86,7 +86,7 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         }
 
         $identifiers = array_unique(array_filter(array_map(function ($v) {
-            return trim($v, "\t\n\r   ");
+            return $this->trimUnicode($v);
         }, $identifiers)));
         if (empty($identifiers)) {
             return $isSingle ? null : [];
@@ -313,5 +313,16 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         }
 
         return $cleanedResult;
+    }
+
+    /**
+     * Trim all whitespaces.
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function trimUnicode($string)
+    {
+        return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
     }
 }
