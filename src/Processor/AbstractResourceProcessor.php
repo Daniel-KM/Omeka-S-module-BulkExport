@@ -12,6 +12,7 @@ use Zend\Form\Form;
 abstract class AbstractResourceProcessor extends AbstractProcessor implements Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait;
+    use ResourceUpdateTrait;
 
     /**
      * @var string
@@ -42,6 +43,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      * @var ArrayObject
      */
     protected $base;
+
+    /**
+     * @var string
+     */
+    protected $action;
+
+    /**
+     * @var string
+     */
+    protected $actionUnidentified;
 
     /**
      * @var array
@@ -124,6 +135,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             'o:resource_class' => null,
             'o:owner' => null,
             'o:is_public' => null,
+            'action' => null,
+            'action_unidentified' => null,
             'identifier_name' => null,
             'allow_duplicate_identifiers' => false,
             'entries_by_batch' => null,
@@ -139,6 +152,16 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
 
     public function process()
     {
+        $this->prepareAction();
+        if (empty($this->action)) {
+            return;
+        }
+
+        $this->prepareActionUnidentified();
+        if (empty($this->actionUnidentified)) {
+            return;
+        }
+
         $this->prepareIdentifierNames();
 
         $this->prepareMapping();
@@ -183,7 +206,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $this->processEntities($dataToProcess);
 
         $this->logger->notice(
-            'End of process: {total_resources} resources to process, {total_skipped} skipped, {total_processed} processed, {total_errors} errors inside module.', // @translate
+            'End of process: {total_resources} resources to process, {total_skipped} skipped, {total_processed} processed, {total_errors} errors inside data.', // @translate
             [
                 'total_resources' => $this->totalIndexResources,
                 'total_skipped' => $this->totalSkipped,
@@ -215,9 +238,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         // TODO Manage the multivalue separator at field level.
         $multivalueSeparator = $this->reader->getParam('separator', '');
 
+        $this->skippedSourceFields = [];
         foreach ($this->mapping as $sourceField => $targets) {
             // Check if the entry has a value for this source field.
             if (!isset($entry[$sourceField])) {
+                $this->skippedSourceFields[] = $sourceField;
                 continue;
             }
 
@@ -228,6 +253,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             $values = array_map([$this, 'trimUnicode'], $values);
             $values = array_filter($values, 'strlen');
             if (!$values) {
+                $this->skippedSourceFields[] = $sourceField;
                 continue;
             }
 
@@ -392,17 +418,29 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         if (!$this->checkId($resource)) {
             $this->fillId($resource);
         }
-        if ($resource['o:id']) {
+
+        $requiresId = $this->actionRequiresId();
+        $checkUnidentified = $requiresId
+            && $this->actionUnidentified === self::ACTION_SKIP;
+
+        if ($resource['o:id'] && !$requiresId) {
+            if (!$this->allowDuplicateIdentifiers) {
+                // Message is already displayed.
+                $resource['has_error'] = true;
+            }
+        } elseif (!$resource['o:id'] && $checkUnidentified) {
             if ($this->allowDuplicateIdentifiers) {
-                $this->logger->warn(
-                    'The identifier is not unique.' // @translate
+                $this->logger->err(
+                    'The action "{action}" requires an identifier.', // @translate
+                    ['action' => $this->action]
                 );
             } else {
                 $this->logger->err(
-                    'The identifier is not unique.' // @translate
+                    'The action "{action}" requires a unique identifier.', // @translate
+                    ['action' => $this->action]
                 );
-                $resource['has_error'] = true;
             }
+            $resource['has_error'] = true;
         }
         return !$resource['has_error'];
     }
@@ -414,7 +452,23 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
      */
     protected function processEntities(array $data)
     {
-        $this->createEntities($data);
+        switch ($this->action) {
+            case self::ACTION_CREATE:
+                $this->createEntities($data);
+                break;
+            case self::ACTION_APPEND:
+            case self::ACTION_REVISE:
+            case self::ACTION_UPDATE:
+            case self::ACTION_REPLACE:
+                $this->updateEntities($data);
+                break;
+            case self::ACTION_SKIP:
+                $this->skipEntities($data);
+                break;
+            case self::ACTION_DELETE:
+                $this->deleteEntities($data);
+                break;
+        }
     }
 
     /**
@@ -454,16 +508,213 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
             return;
         }
 
-        $labels = [
-            'items' => 'item', // @translate
-            'item_sets' => 'item set', // @translate
-            'media' => 'media', // @translate
-        ];
-        $label = $labels[$resourceType];
         foreach ($resources as $resource) {
             $this->logger->notice(
                 'Created {resource_type} #{resource_id}', // @translate
-                ['resource_type' => $label, 'resource_id' => $resource->id()]
+                ['resource_type' => $this->label($resourceType), 'resource_id' => $resource->id()]
+            );
+        }
+    }
+
+    /**
+     * Process update of entities.
+     *
+     * @param array $data
+     */
+    protected function updateEntities(array $data)
+    {
+        $resourceType = $this->getResourceType();
+
+        $dataToCreateOrSkip = [];
+        foreach ($data as $key => $value) {
+            if (empty($value['o:id'])) {
+                $dataToCreateOrSkip[] = $value;
+                unset($data[$key]);
+            }
+        }
+        if ($this->actionUnidentified === self::ACTION_CREATE) {
+            $this->createResources($resourceType, $dataToCreateOrSkip);
+        }
+
+        $this->updateResources($resourceType, $data);
+    }
+
+    /**
+     * Process update of resources.
+     *
+     * @param array $data
+     */
+    protected function updateResources($resourceType, array $data)
+    {
+        if (!count($data)) {
+            return;
+        }
+
+        // In the api manager, batchUpdate() allows to update a set of resources
+        // with the same data. Here, data are specific to each entry, so each
+        // resource is updated separately.
+        $options = [];
+        $fileData = [];
+        foreach ($data as $dataResource) {
+            switch ($this->action) {
+                case self::ACTION_APPEND:
+                    $dataResource = $this->updateData($resourceType, $dataResource, $this->action);
+                    $options['isPartial'] = false;
+                    break;
+                case self::ACTION_REVISE:
+                case self::ACTION_UPDATE:
+                    $dataResource = $this->updateData($resourceType, $dataResource, $this->action);
+                    $options['isPartial'] = true;
+                    $options['collectionAction'] = 'replace';
+                    break;
+                case self::ACTION_REPLACE:
+                    $options['isPartial'] = false;
+                    break;
+            }
+
+            try {
+                $this->api()->update($resourceType, $dataResource['o:id'], $dataResource, $fileData, $options);
+                $this->logger->notice(
+                    'Updated {resource_type} #{resource_id}', // @translate
+                    ['resource_type' => $this->label($resourceType), 'resource_id' => $dataResource['o:id']]
+                );
+            } catch (\Exception $e) {
+                $this->logger->err('Core error during update: {exception}', ['exception' => $e]);
+                ++$this->totalErrors;
+            }
+        }
+    }
+
+    /**
+     * Process deletion of entities.
+     *
+     * @param array $data
+     */
+    protected function deleteEntities(array $data)
+    {
+        $resourceType = $this->getResourceType();
+        $this->deleteResources($resourceType, $data);
+    }
+
+    /**
+     * Process deletion of resources.
+     *
+     * @param array $data
+     */
+    protected function deleteResources($resourceType, array $data)
+    {
+        if (!count($data)) {
+            return;
+        }
+
+        // Get ids (already checked normally).
+        $ids = [];
+        foreach ($data as $values) {
+            if (isset($values['o:id'])) {
+                $ids[] = $values['o:id'];
+            }
+        }
+
+        try {
+            if (count($ids) === 1) {
+                $this->api()
+                    ->delete($resourceType, reset($ids))->getContent();
+            } else {
+                $this->api()
+                    ->batchDelete($resourceType, $ids, [], ['continueOnError' => true])->getContent();
+            }
+        } catch (\Exception $e) {
+            // There is no error, only ids already deleted, so continue.
+            $this->logger->err('Core error during deletion: {exception}', ['exception' => $e]);
+            ++$this->totalErrors;
+        }
+
+        foreach ($ids as $id) {
+            $this->logger->notice(
+                'Deleted {resource_type} #{resource_id}', // @translate
+                ['resource_type' => $this->label($resourceType), 'resource_id' => $id]
+            );
+        }
+    }
+
+    /**
+     * Process skipping of entities.
+     *
+     * @param array $data
+     */
+    protected function skipEntities(array $data)
+    {
+        $resourceType = $this->getResourceType();
+        $this->skipResources($resourceType, $data);
+    }
+
+    /**
+     * Process skipping of resources.
+     *
+     * @param array $data
+     */
+    protected function skipResources($resourceType, array $data)
+    {
+    }
+
+    protected function actionRequiresId($action = null)
+    {
+        $actionsRequireId = [
+            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_DELETE,
+        ];
+        if (empty($action)) {
+            $action = $this->action;
+        }
+        return in_array($action, $actionsRequireId);
+    }
+
+    protected function actionIsUpdate($action = null)
+    {
+        $actionsUpdate = [
+            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
+        ];
+        if (empty($action)) {
+            $action = $this->action;
+        }
+        return in_array($action, $actionsUpdate);
+    }
+
+    protected function prepareAction()
+    {
+        $this->action = $this->getParam('action') ?: self::ACTION_CREATE;
+        if (!in_array($this->action, [
+            \BulkImport\Processor\AbstractProcessor::ACTION_CREATE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_DELETE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_SKIP,
+        ])) {
+            $this->logger->err(
+                'Action "{action}" is not managed.', // @translate
+                ['action' => $this->action]
+            );
+        }
+    }
+
+    protected function prepareActionUnidentified()
+    {
+        $this->actionUnidentified = $this->getParam('action_unidentified') ?: self::ACTION_SKIP;
+        if (!in_array($this->actionUnidentified, [
+            \BulkImport\Processor\AbstractProcessor::ACTION_CREATE,
+            \BulkImport\Processor\AbstractProcessor::ACTION_SKIP,
+        ])) {
+            $this->logger->err(
+                'Action "{action}" for unidentified resource is not managed.', // @translate
+                ['action' => $this->actionUnidentified]
             );
         }
     }

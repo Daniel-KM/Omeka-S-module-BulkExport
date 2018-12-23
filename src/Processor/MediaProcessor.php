@@ -35,7 +35,7 @@ class MediaProcessor extends ResourceProcessor
         }
     }
 
-    protected function checkResource(ArrayObject $resource)
+    protected function checkEntity(ArrayObject $resource)
     {
         return $this->checkMedia($resource);
     }

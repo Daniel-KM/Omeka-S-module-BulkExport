@@ -313,10 +313,11 @@ class FindResourcesFromIdentifiers extends AbstractPlugin
         // Search in multiple resource types in one time.
         $quotedIdentifiers = array_map([$conn, 'quote'], $identifiers);
         $quotedIdentifiers = implode(',', $quotedIdentifiers);
+
         $qb = $conn->createQueryBuilder();
         $expr = $qb->expr();
         $qb
-            ->select('value.value AS identifier', 'value.resource_id AS id', 'COUNT(value.value) AS "count"')
+            ->select('value.value AS identifier', 'value.resource_id AS id', 'COUNT(DISTINCT(value.resource_id)) AS "count"')
             ->from('value', 'value')
             ->leftJoin('value', 'resource', 'resource', 'value.resource_id = resource.id')
             // ->andwhere($expr->in('value.property_id', ':property_ids'))

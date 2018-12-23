@@ -113,10 +113,10 @@ SQL;
         $filebase = substr($filepath, 0, -4);
 
         if ($createItem) {
-            $item = $this->api->create('items')->getContent();
+            $this->api->create('items')->getContent();
         }
 
-        $job = $this->performProcessForFile($filepath);
+        $this->performProcessForFile($filepath);
 
         foreach ($totals as $resourceType => $total) {
             $result = $this->api->search($resourceType)->getContent();
@@ -147,19 +147,22 @@ SQL;
      */
     public function testPerformCreateOne()
     {
+        // Create items and media.
         $filepath = 'test.csv';
         $filepath = $this->basepath . $filepath;
-        $job = $this->performProcessForFile($filepath);
+        $this->performProcessForFile($filepath);
+
+        // Create item sets.
         $filepath = 'test_update_g_replace.tsv';
         $filepath = $this->basepath . $filepath;
-        $job = $this->performProcessForFile($filepath);
-        $totals = ['item_sets' => 3, 'items' => 3, 'media' => 4];
-
-        $this->assertTrue(true);
+        $this->performProcessForFile($filepath);
 
         $resources = [];
+        $totals = ['item_sets' => 3, 'items' => 3, 'media' => 4];
         foreach ($totals as $resourceType => $total) {
-            $result = $this->api->search($resourceType)->getContent();
+            $response = $this->api->search($resourceType);
+            $this->assertEquals($total, $response->getTotalResults(), 'Resource type: ' . $resourceType);
+            $result = $response->getContent();
             foreach ($result as $key => $resource) {
                 $resources[$resourceType][$key + 1] = $resource;
             }
@@ -188,6 +191,8 @@ SQL;
     }
 
     /**
+     * Tests are cumulative.
+     *
      * @dataProvider sourceUpdateProvider
      * @depends testPerformCreateOne
      */
@@ -202,7 +207,7 @@ SQL;
         $resource = $this->api->read($resourceType, $resourceId)->getContent();
         $this->assertNotEmpty($resource);
 
-        $job = $this->performProcessForFile($filepath);
+        $this->performProcessForFile($filepath);
 
         $resource = $this->api->search($resourceType, ['id' => $resourceId])->getContent();
         $this->assertNotEmpty($resource);
@@ -237,7 +242,7 @@ SQL;
     public function testPerformDelete($filepath, $options, $resources)
     {
         $filepath = $this->basepath . $filepath;
-        $filebase = substr($filepath, 0, -4);
+        // $filebase = substr($filepath, 0, -4);
         list($resourceType, $index) = $options;
 
         $resource = $resources[$resourceType][$index];
@@ -245,7 +250,7 @@ SQL;
         $resource = $this->api->read($resourceType, $resourceId)->getContent();
         $this->assertNotEmpty($resource);
 
-        $job = $this->performProcessForFile($filepath);
+        $this->performProcessForFile($filepath);
 
         $resource = $this->api->search($resourceType, ['id' => $resourceId])->getContent();
         $this->assertEmpty($resource);

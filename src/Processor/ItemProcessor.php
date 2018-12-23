@@ -35,7 +35,7 @@ class ItemProcessor extends ResourceProcessor
         }
     }
 
-    protected function checkResource(ArrayObject $resource)
+    protected function checkEntity(ArrayObject $resource)
     {
         return $this->checkItem($resource);
     }

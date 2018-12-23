@@ -303,6 +303,11 @@ class ResourceProcessor extends AbstractResourceProcessor
             return false;
         }
 
+        // The parent is checked first, because id may be needed in next checks.
+        if (!parent::checkEntity($resource)) {
+            return false;
+        }
+
         switch ($resource['resource_type']) {
             case 'items':
                 if (!$this->checkItem($resource)) {
@@ -321,15 +326,40 @@ class ResourceProcessor extends AbstractResourceProcessor
                 break;
         }
 
-        return parent::checkEntity($resource);
+        return !$resource['has_error'];
     }
 
     protected function checkItem(ArrayObject $resource)
     {
         // Media of an item are public by default.
-        foreach ($resource['o:media'] as &$media) {
+        foreach ($resource['o:media'] as $key => $media) {
             if (!array_key_exists('o:is_public', $media) || is_null($media['o:is_public'])) {
-                $media['o:is_public'] = true;
+                $resource['o:media'][$key]['o:is_public'] = true;
+            }
+        }
+
+        // Manage the special case where an item is updated and a media is
+        // provided: it should be identified too in order to update the one that
+        // belongs to this specified item.
+        // It cannot be done during mapping, because the id of the item is not
+        // known from the media source. In particular, it avoids false positives
+        // in case of multiple files with the same name for different items.
+        if ($resource['o:id'] && $resource['o:media'] && $this->actionIsUpdate()) {
+            foreach ($resource['o:media'] as $key => $media) {
+                if (!empty($media['o:id'])) {
+                    continue;
+                }
+                if (empty($media['o:source']) || empty($media['o:ingester'])) {
+                    continue;
+                }
+                $identifierProperties = [];
+                $identifierProperties['o:ingester'] = $media['o:ingester'];
+                $identifierProperties['o:item']['o:id'] = $resource['o:id'];
+                $resource['o:media'][$key]['o:id'] = $this->findResourceFromIdentifier(
+                    $media['o:source'],
+                    $identifierProperties,
+                    'media'
+                );
             }
         }
 
@@ -370,15 +400,15 @@ class ResourceProcessor extends AbstractResourceProcessor
         return true;
     }
 
-    protected function createEntities(array $data)
+    protected function processEntities(array $data)
     {
         $resourceType = $this->getResourceType();
         if ($resourceType !== 'resources') {
-            $this->createResources($resourceType, $data);
+            parent::processEntities($data);
             return;
         }
 
-        if (empty($data)) {
+        if (!count($data)) {
             return;
         }
 
@@ -389,14 +419,18 @@ class ResourceProcessor extends AbstractResourceProcessor
         $previousResourceType = $data[0]['resource_type'];
         foreach ($data as $dataResource) {
             if ($previousResourceType !== $dataResource['resource_type']) {
-                $this->createResources($previousResourceType, $datas);
+                $this->resourceType = $previousResourceType;
+                parent::processEntities($datas);
+                $this->resourceType = 'resources';
                 $previousResourceType = $dataResource['resource_type'];
                 $datas = [];
             }
             $datas[] = $dataResource;
         }
         if ($datas) {
-            $this->createResources($previousResourceType, $datas);
+            $this->resourceType = $previousResourceType;
+            parent::processEntities($datas);
+            $this->resourceType = 'resources';
         }
     }
 }

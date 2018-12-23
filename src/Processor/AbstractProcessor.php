@@ -26,6 +26,22 @@ abstract class AbstractProcessor implements Processor
      */
     const ENTRIES_BY_BATCH = 1;
 
+    /**#@+
+     * Processor actions
+     *
+     * The various update actions are probably too much related to spreadsheet
+     * (what is the meaning of an empty cell?), and may be replaced with a more
+     * simpler second option or automatic determination.
+     */
+    const ACTION_CREATE = 'create'; // @translate
+    const ACTION_APPEND = 'append'; // @translate
+    const ACTION_REVISE = 'revise'; // @translate
+    const ACTION_UPDATE = 'update'; // @translate
+    const ACTION_REPLACE = 'replace'; // @translate
+    const ACTION_DELETE = 'delete'; // @translate
+    const ACTION_SKIP = 'skip'; // @translate
+    /**#@-*/
+
     /**
      * @var Reader
      */
@@ -446,7 +462,7 @@ abstract class AbstractProcessor implements Processor
                 [
                     'identifier' => key($ids),
                     'metadata' => $identifierName,
-                    'resource_type' => $resourceType,
+                    'resource_type' => $this->label($resourceType),
                     'resource_id' => $resource['o:id'],
                 ]
             );
@@ -480,6 +496,46 @@ abstract class AbstractProcessor implements Processor
         return strpos($string, 'https:') === 0
             || strpos($string, 'http:') === 0
             || strpos($string, 'ftp:') === 0;
+    }
+
+    /**
+     * Allows to log resources with a singular name from the resource type, that
+     * is plural in Omeka.
+     *
+     * @param string $resourceType
+     * @return string
+     */
+    protected function label($resourceType)
+    {
+        $labels = [
+            'items' => 'item', // @translate
+            'item_sets' => 'item set', // @translate
+            'media' => 'media', // @translate
+            'resources' => 'resource', // @translate
+        ];
+        return isset($labels[$resourceType])
+            ? $labels[$resourceType]
+            : $resourceType;
+    }
+
+    /**
+     * Allows to log resources with a singular name from the resource type, that
+     * is plural in Omeka.
+     *
+     * @param string $resourceType
+     * @return string
+     */
+    protected function labelPlural($resourceType)
+    {
+        $labels = [
+            'items' => 'items', // @translate
+            'item_sets' => 'item sets', // @translate
+            'media' => 'media', // @translate
+            'resources' => 'resources', // @translate
+        ];
+        return isset($labels[$resourceType])
+            ? $labels[$resourceType]
+            : $resourceType;
     }
 
     /**
