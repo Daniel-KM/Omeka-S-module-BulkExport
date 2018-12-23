@@ -12,6 +12,7 @@
     "o:id": 31
   },
   "o:resource_template": null,
+  "o:thumbnail": null,
   "o:created": {
     "@value": "2000-01-01T00:00:00+00:00",
     "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -41,13 +42,15 @@
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Walden"
+      "@value": "Walden",
+      "is_public": true
     },
     {
       "type": "literal",
       "property_id": 1,
       "property_label": "Title",
-      "@value": "Walden; or, Life in the Wood"
+      "@value": "Walden; or, Life in the Wood",
+      "is_public": true
     }
   ],
   "dcterms:identifier": [
@@ -55,7 +58,8 @@
       "type": "literal",
       "property_id": 10,
       "property_label": "Identifier",
-      "@value": "thoreau_walden_1854"
+      "@value": "thoreau_walden_1854",
+      "is_public": true
     }
   ],
   "dcterms:date": [
@@ -63,7 +67,8 @@
       "type": "literal",
       "property_id": 7,
       "property_label": "Date",
-      "@value": "1854"
+      "@value": "1854",
+      "is_public": true
     }
   ],
   "dcterms:publisher": [
@@ -71,7 +76,8 @@
       "type": "literal",
       "property_id": 5,
       "property_label": "Publisher",
-      "@value": "Ticknor and Fields: Boston"
+      "@value": "Ticknor and Fields: Boston",
+      "is_public": true
     }
   ]
 }

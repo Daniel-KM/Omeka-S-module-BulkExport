@@ -1,69 +1,75 @@
 {
-    "@context": "https://localhost/api-context",
-    "@id": "https://localhost/api/item_sets/11",
-    "@type": [
-        "o:ItemSet",
-        "dctype:Collection"
-    ],
-    "o:id": 11,
-    "o:is_public": false,
-    "o:owner": {
-        "@id": "https://localhost/api/users/1",
-        "o:id": 1
+  "@context": "https://localhost/api-context",
+  "@id": "https://localhost/api/item_sets/8",
+  "@type": [
+      "o:ItemSet",
+      "dctype:Collection"
+  ],
+  "o:id": 8,
+  "o:is_public": false,
+  "o:owner": {
+      "@id": "https://localhost/api/users/1",
+      "o:id": 1
+  },
+  "o:resource_class": {
+      "@id": "https://localhost/api/resource_classes/23",
+      "o:id": 23
+  },
+  "o:resource_template": null,
+  "o:thumbnail": null,
+  "o:created": {
+      "@value": "2000-01-01T00:00:00+00:00",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:modified": {
+      "@value": "2000-01-01T00:00:00+00:00",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:is_open": true,
+  "o:items": {
+      "@id": "https://localhost/api/items?item_set_id=8"
+  },
+  "dcterms:title": [
+    {
+      "type": "literal",
+      "property_id": 1,
+      "property_label": "Title",
+      "@value": "Collection of novels",
+      "is_public": true
+    }
+  ],
+  "dcterms:description": [
+    {
+      "type": "literal",
+      "property_id": 4,
+      "property_label": "Description",
+      "@value": "A collection of novels",
+      "is_public": true
+    }
+  ],
+  "dcterms:identifier": [
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "novels",
+      "is_public": true
     },
-    "o:resource_class": {
-        "@id": "https://localhost/api/resource_classes/23",
-        "o:id": 23
-    },
-    "o:resource_template": null,
-    "o:created": {
-        "@value": "2000-01-01T00:00:00+00:00",
-        "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-    },
-    "o:modified": {
-        "@value": "2000-01-01T00:00:00+00:00",
-        "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-    },
-    "o:is_open": true,
-    "o:items": {
-        "@id": "https://localhost/api/items?item_set_id=11"
-    },
-    "dcterms:title": [
-        {
-            "type": "literal",
-            "property_id": 1,
-            "property_label": "Title",
-            "@value": "Collection of novels"
-        }
-    ],
-    "dcterms:description": [
-        {
-            "type": "literal",
-            "property_id": 4,
-            "property_label": "Description",
-            "@value": "A collection of novels"
-        }
-    ],
-    "dcterms:identifier": [
-        {
-            "type": "literal",
-            "property_id": 10,
-            "property_label": "Identifier",
-            "@value": "novels"
-        },
-        {
-            "type": "literal",
-            "property_id": 10,
-            "property_label": "Identifier",
-            "@value": "issn: 0123456789"
-        }
-    ],
-    "dcterms:date": [
-        {
-            "type": "literal",
-            "property_id": 7,
-            "property_label": "Date",
-            "@value": "2017"
-        }
-    ]
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "issn: 0123456789",
+      "is_public": true
+    }
+  ],
+  "dcterms:date": [
+    {
+      "type": "literal",
+      "property_id": 7,
+      "property_label": "Date",
+      "@value": "2017",
+      "is_public": true
+    }
+  ]
 }

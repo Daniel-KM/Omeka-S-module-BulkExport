@@ -1,36 +1,58 @@
 {
-    "filename": "test_delete_media.tsv",
-    "filesize": "96",
-    "filepath": "/tmp/omekaTeoRPm",
-    "media_type": "text/tab-separated-values",
-    "csrf": "11837f4c74166e59a661f000907a4cc7-31fc6e9b5b99b783a5267cb6029c21b4",
-    "resource_type": "media",
-    "automap_check_names_alone": "0",
-    "comment": "",
-    "o:resource_template": {
-        "o:id": ""
+  "importer": {
+    "label": "Spreadsheet mixed",
+    "reader_class": "BulkImport\\Reader\\TsvReader",
+    "reader_config": {
+      "separator": ","
     },
-    "o:resource_class": {
-        "o:id": ""
+    "processor_class": "BulkImport\\Processor\\ResourceProcessor",
+    "processor_config": {
+      "o:resource_template": "1",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "resource_type": "items",
+      "o:item_set": [],
+      "o:item": "",
+      "identifier_name": [
+        "o:id",
+        "dcterms:identifier"
+      ]
+    }
+  },
+  "import": {
+    "reader_params": {
+      "filename": "/tmp/omk_a",
+      "file": {
+        "name": "test_delete_items.csv",
+        "type": "text/tab-separated-values",
+        "error": 0,
+        "size": 96
+      },
+      "delimiter": "\t",
+      "enclosure": "\u0000",
+      "escape": "\u0000",
+      "separator": ","
     },
-    "o:owner": {
-        "o:id": ""
-    },
-    "global_language": "",
-    "action": "delete",
-    "identifier_property": "internal_id",
-    "action_unidentified": "skip",
-    "column-resource": [
-        "internal_id"
-    ],
-    "column-multivalue": {
-        "1": "1"
-    },
-    "column-media_source": {
-        "1": "url"
-    },
-    "delimiter": "\t",
-    "enclosure": "\"",
-    "escape": "\\",
-    "multivalue_separator": ","
+    "processor_params": {
+      "o:resource_template": "",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "action": "delete",
+      "action_unidentified": "skip",
+      "identifier_name": [
+        "o:id"
+      ],
+      "resource_type": "media",
+      "o:item_set": [],
+      "o:item": "",
+      "mapping": {
+        "Internal id": [
+          "o:id"
+        ],
+        "Media url": [
+          "url"
+        ]
+      }
+    }
+  }
 }

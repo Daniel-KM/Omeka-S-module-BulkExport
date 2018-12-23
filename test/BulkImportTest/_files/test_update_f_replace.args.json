@@ -1,51 +1,69 @@
 {
-    "filename": "test_update_f_replace.tsv",
-    "filesize": "359",
-    "filepath": "/tmp/omeka6fQJqp",
-    "media_type": "text/tab-separated-values",
-    "csrf": "a2d625785a91be0ae5fc753f4608766d-2d7924c0d92aaedc583451b3546182d2",
-    "resource_type": "items",
-    "automap_check_names_alone": "0",
-    "comment": "",
-    "o:resource_template": {
-        "o:id": ""
+  "importer": {
+    "label": "Tsv mixed",
+    "reader_class": "BulkImport\\Reader\\TsvReader",
+    "reader_config": {
+      "separator": "|"
     },
-    "o:resource_class": {
-        "o:id": ""
+    "processor_class": "BulkImport\\Processor\\ResourceProcessor",
+    "processor_config": {
+      "o:resource_template": "1",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "action": "create",
+      "action_unidentified": "skip",
+      "identifier_name": [
+        "o:id",
+        "dcterms:identifier"
+      ],
+      "allow_duplicate_identifiers": false,
+      "resource_type": "resources",
+      "o:item_set": [],
+      "o:item": ""
+    }
+  },
+  "import": {
+    "reader_params": {
+      "filename": "/tmp/omk_a",
+      "file": {
+        "name": "test_update_f_replace.tsv",
+        "type": "text/tab-separated-values",
+        "error": 0,
+        "size": 359
+      },
+      "delimiter": "\t",
+      "enclosure": "\u0000",
+      "escape": "\u0000",
+      "separator": ","
     },
-    "o:owner": {
-        "o:id": ""
-    },
-    "global_language": "",
-    "action": "replace",
-    "identifier_property": "dcterms:title",
-    "action_unidentified": "skip",
-    "column-property": [
-        {
-            "dcterms:title": 1
-        },
-        {
-            "dcterms:creator": 2
-        },
-        {
-            "dcterms:description": 4
-        },
-        {
-            "dcterms:rights": 15
-        }
-    ],
-    "column-multivalue": {
-        "0": "1",
-        "1": "1",
-        "2": "1",
-        "3": "1",
-        "5": "1"
-    },
-    "column-media_source": {
-        "5": "url"
-    },
-    "delimiter": "\t",
-    "enclosure": "\"",
-    "escape": "\\",
-    "multivalue_separator": ","
+    "processor_params": {
+      "o:resource_template": "",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "action": "replace",
+      "action_unidentified": "skip",
+      "identifier_name": [
+        "dcterms:title"
+      ],
+      "allow_duplicate_identifiers": false,
+      "resource_type": "items",
+      "o:item_set": [],
+      "o:item": "",
+      "mapping": {
+        "title": [
+          "dcterms:title"
+        ],
+        "creator": [
+          "dcterms:creator"
+        ],
+        "description": [
+          "dcterms:description"
+        ],
+        "rights": [
+          "dcterms:rights"
+        ],
+        "tags": null
+      }
+    }
+  }
 }

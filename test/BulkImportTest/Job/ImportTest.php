@@ -213,6 +213,7 @@ SQL;
         $this->assertNotEmpty($resource);
 
         $resource = reset($resource);
+
         $expectedFile = $filebase . '.' . $resourceType . '-' . ($index) . '.api.json';
         if (!file_exists($expectedFile)) {
             return;

@@ -1,56 +1,75 @@
 {
-    "filename": "test_update_b_revise.tsv",
-    "filesize": "400",
-    "filepath": "/tmp/omekaVC7i6I",
-    "media_type": "text/tab-separated-values",
-    "csrf": "f52591fce61290ca7e37476b6016d391-fae7ff339cb9c2377aa89c39cbaf683f",
-    "resource_type": "items",
-    "automap_check_names_alone": "0",
-    "comment": "",
-    "o:resource_template": {
-        "o:id": ""
+  "importer": {
+    "label": "Tsv mixed",
+    "reader_class": "BulkImport\\Reader\\TsvReader",
+    "reader_config": {
+      "separator": "|"
     },
-    "o:resource_class": {
-        "o:id": ""
+    "processor_class": "BulkImport\\Processor\\ResourceProcessor",
+    "processor_config": {
+      "o:resource_template": "1",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "action": "create",
+      "action_unidentified": "skip",
+      "identifier_name": [
+        "o:id",
+        "dcterms:identifier"
+      ],
+      "allow_duplicate_identifiers": false,
+      "resource_type": "resources",
+      "o:item_set": [],
+      "o:item": ""
+    }
+  },
+  "import": {
+    "reader_params": {
+      "filename": "/tmp/omk_a",
+      "file": {
+        "name": "test_update_b_revise.tsv",
+        "type": "text/tab-separated-values",
+        "error": 0,
+        "size": 400
+      },
+      "delimiter": "\t",
+      "enclosure": "\u0000",
+      "escape": "\u0000",
+      "separator": "|"
     },
-    "o:owner": {
-        "o:id": ""
-    },
-    "global_language": "",
-    "action": "revise",
-    "identifier_property": "dcterms:title",
-    "action_unidentified": "skip",
-    "column-property": [
-        {
-            "dcterms:title": 1
-        },
-        {
-            "dcterms:description": 4
-        },
-        {
-            "dcterms:identifier": 10
-        },
-        {
-            "dcterms:publisher": 5
-        },
-        {
-            "dcterms:rights": 15
-        }
-    ],
-    "column-multivalue": [
-        "1",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1",
-        "1"
-    ],
-    "column-media_source": {
-        "6": "url"
-    },
-    "delimiter": "\t",
-    "enclosure": "\"",
-    "escape": "\\",
-    "multivalue_separator": "|"
+    "processor_params": {
+      "o:resource_template": "",
+      "o:resource_class": "",
+      "o:is_public": "true",
+      "action": "revise",
+      "action_unidentified": "skip",
+      "identifier_name": [
+        "dcterms:title"
+      ],
+      "allow_duplicate_identifiers": false,
+      "resource_type": "items",
+      "o:item_set": [],
+      "o:item": "",
+      "mapping": {
+        "Title": [
+          "dcterms:title"
+        ],
+        "Description": [
+          "dcterms:description"
+        ],
+        "Identifier": [
+          "dcterms:identifier"
+        ],
+        "Publisher": [
+          "dcterms:publisher"
+        ],
+        "Rights": [
+          "dcterms:rights"
+        ],
+        "Tags": null,
+        "Media url": [
+          "url"
+        ]
+      }
+    }
+  }
 }

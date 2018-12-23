@@ -51,6 +51,13 @@ Then, config the reader and the processor.
 Finally, process the import.
 
 
+Internal differences with Csv Import
+------------------------------------
+
+- Two columns with the same headers should be mapped the same.
+- Empty boolean values with the action "replace" are skipped and they don't mean
+  "false".
+
 TODO
 ----
 

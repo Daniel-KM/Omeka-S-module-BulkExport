@@ -242,6 +242,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         foreach ($this->mapping as $sourceField => $targets) {
             // Check if the entry has a value for this source field.
             if (!isset($entry[$sourceField])) {
+                // Probably an issue in the config.
+                if (!$entry->offsetExists($sourceField)) {
+                    $this->logger->warn(
+                        'The source field "{field}" is set in the mapping, but not in the entry. The params may have an issue.', // @translate
+                        ['field' => $sourceField]
+                    );
+                }
                 $this->skippedSourceFields[] = $sourceField;
                 continue;
             }

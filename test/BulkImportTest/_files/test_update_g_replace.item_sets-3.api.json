@@ -1,66 +1,71 @@
 {
-    "@context": "https://localhost/api-context",
-    "@id": "https://localhost/api/item_sets/13",
-    "@type": [
-        "o:ItemSet",
-        "dctype:Collection"
-    ],
-    "o:id": 13,
-    "o:is_public": true,
-    "o:owner": {
-        "@id": "https://localhost/api/users/1",
-        "o:id": 1
-    },
-    "o:resource_class": {
-        "@id": "https://localhost/api/resource_classes/23",
-        "o:id": 23
-    },
-    "o:resource_template": {
-        "@id": "https://localhost/api/resource_templates/1",
-        "o:id": 1
-    },
-    "o:created": {
-        "@value": "2000-01-01T00:00:00+00:00",
-        "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-    },
-    "o:modified": {
-        "@value": "2000-01-01T00:00:00+00:00",
-        "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
-    },
-    "o:is_open": false,
-    "o:items": {
-        "@id": "https://localhost/api/items?item_set_id=13"
-    },
-    "dcterms:title": [
-        {
-            "type": "literal",
-            "property_id": 1,
-            "property_label": "Title",
-            "@value": "Collection of paints"
-        }
-    ],
-    "dcterms:date": [
-        {
-            "type": "literal",
-            "property_id": 7,
-            "property_label": "Date",
-            "@value": "2016"
-        }
-    ],
-    "dcterms:description": [
-        {
-            "type": "literal",
-            "property_id": 4,
-            "property_label": "Description",
-            "@value": "A collection of paints"
-        }
-    ],
-    "dcterms:identifier": [
-        {
-            "type": "literal",
-            "property_id": 10,
-            "property_label": "Identifier",
-            "@value": "paints"
-        }
-    ]
+  "@context": "https://localhost/api-context",
+  "@id": "https://localhost/api/item_sets/10",
+  "@type": [
+    "o:ItemSet",
+    "dctype:Collection"
+  ],
+  "o:id": 10,
+  "o:is_public": true,
+  "o:owner": {
+    "@id": "https://localhost/api/users/1",
+    "o:id": 1
+  },
+  "o:resource_class": {
+    "@id": "https://localhost/api/resource_classes/23",
+    "o:id": 23
+  },
+  "o:resource_template": {
+    "@id": "https://localhost/api/resource_templates/1",
+    "o:id": 1
+  },
+  "o:thumbnail": null,
+  "o:created": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:modified": {
+    "@value": "2000-01-01T00:00:00+00:00",
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+  },
+  "o:is_open": false,
+  "o:items": {
+    "@id": "https://localhost/api/items?item_set_id=10"
+  },
+  "dcterms:title": [
+    {
+      "type": "literal",
+      "property_id": 1,
+      "property_label": "Title",
+      "@value": "Collection of paints",
+      "is_public": true
+    }
+  ],
+  "dcterms:date": [
+    {
+      "type": "literal",
+      "property_id": 7,
+      "property_label": "Date",
+      "@value": "2016",
+      "is_public": true
+    }
+  ],
+  "dcterms:description": [
+    {
+      "type": "literal",
+      "property_id": 4,
+      "property_label": "Description",
+      "@value": "A collection of paints",
+      "is_public": true
+    }
+  ],
+  "dcterms:identifier": [
+    {
+      "type": "literal",
+      "property_id": 10,
+      "property_label": "Identifier",
+      "@value": "paints",
+      "is_public": true
+    }
+  ]
 }
