@@ -43,7 +43,7 @@ class ResourceProcessorParamsForm extends ResourceProcessorConfigForm
                 'label' => 'Media', // @translate
                 'options' => [
                     'url' => 'Url', // @translate
-                    'sideload' => 'File (via sideload)', // @translate
+                    'file' => 'File', // @translate
                 ],
             ],
         ];

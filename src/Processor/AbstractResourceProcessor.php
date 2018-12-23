@@ -441,6 +441,19 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     }
 
     /**
+     * Check if a string seems to be an url. Doesn't use FILTER_VALIDATE_URL.
+     *
+     * @param string $string
+     * @return bool
+     */
+    protected function isUrl($string)
+    {
+        return strpos($string, 'https:') === 0
+            || strpos($string, 'http:') === 0
+            || strpos($string, 'ftp:') === 0;
+    }
+
+    /**
      * @return \Omeka\Api\Manager
      */
     protected function api()

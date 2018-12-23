@@ -69,14 +69,14 @@ return [
 
     // Automapping from external modules.
 
-    // From module File Sideload, in order to set them by default.
-    'file' => 'sideload',
-    'files' => 'sideload',
-    'filename' => 'sideload',
-    'filenames' => 'sideload',
-    'upload' => 'sideload',
-    'sideload' => 'sideload',
-    'file sideload' => 'sideload',
+    // A file can be a url or a local address (for sideload).
+    'file' => 'file',
+    'files' => 'file',
+    'filename' => 'file',
+    'filenames' => 'file',
+    'upload' => 'file',
+    'sideload' => 'file',
+    'file sideload' => 'file',
 
     // From module Mapping.
     'latitude' => 'o-module-mapping:lat',
