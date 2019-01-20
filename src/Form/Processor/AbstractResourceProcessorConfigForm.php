@@ -1,8 +1,8 @@
 <?php
-namespace BulkImport\Form\Processor;
+namespace BulkExport\Form\Processor;
 
-use BulkImport\Traits\ServiceLocatorAwareTrait;
-use BulkImport\Form\EntriesByBatchTrait;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Form\EntriesByBatchTrait;
 use Omeka\Form\Element\PropertySelect;
 use Omeka\Form\Element\ResourceClassSelect;
 use Omeka\Form\Element\ResourceSelect;
@@ -119,13 +119,13 @@ abstract class AbstractResourceProcessorConfigForm extends Form
 - update: replace existing data by the ones set in each entry, even empty (don’t modify data that are not provided, except for default values);
 - replace: remove all properties of the resource, and fill new ones from the entry.', // @translate
                 'value_options' => [
-                    \BulkImport\Processor\AbstractProcessor::ACTION_CREATE => 'Create new resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_APPEND => 'Append data to resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_REVISE => 'Revise data of resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE => 'Update data of resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE => 'Replace all data of resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_DELETE => 'Delete resources', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_SKIP => 'Skip entries (dry run)', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_CREATE => 'Create new resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_APPEND => 'Append data to resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_REVISE => 'Revise data of resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_UPDATE => 'Update data of resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_REPLACE => 'Replace all data of resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_DELETE => 'Delete resources', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_SKIP => 'Skip entries (dry run)', // @translate
                 ],
             ],
             'attributes' => [
@@ -143,13 +143,13 @@ abstract class AbstractResourceProcessorConfigForm extends Form
                 'label' => 'Action on unidentified resources', // @translate
                 'info' => 'What to do when a resource to update does not exist.', // @translate
                 'value_options' => [
-                    \BulkImport\Processor\AbstractProcessor::ACTION_SKIP => 'Skip entry', // @translate
-                    \BulkImport\Processor\AbstractProcessor::ACTION_CREATE => 'Create a new resource', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_SKIP => 'Skip entry', // @translate
+                    \BulkExport\Processor\AbstractProcessor::ACTION_CREATE => 'Create a new resource', // @translate
                 ],
             ],
             'attributes' => [
                 'id' => 'action_unidentified',
-                'value' => \BulkImport\Processor\AbstractProcessor::ACTION_SKIP,
+                'value' => \BulkExport\Processor\AbstractProcessor::ACTION_SKIP,
             ],
         ]);
 
@@ -197,9 +197,9 @@ abstract class AbstractResourceProcessorConfigForm extends Form
 
     protected function addMapping()
     {
-        /** @var \BulkImport\Interfaces\Processor $processor */
+        /** @var \BulkExport\Interfaces\Processor $processor */
         $processor = $this->getOption('processor');
-        /** @var \BulkImport\Interfaces\Reader $reader */
+        /** @var \BulkExport\Interfaces\Reader $reader */
         $reader = $processor->getReader();
 
         $services = $this->getServiceLocator();

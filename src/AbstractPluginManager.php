@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport;
+namespace BulkExport;
 
-use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractPluginManager
@@ -48,7 +48,7 @@ abstract class AbstractPluginManager
         $config = $services->get('Config');
         $interface = $this->getInterface();
 
-        $items = $config['bulk_import'][$name];
+        $items = $config['bulk_export'][$name];
         foreach ($items as $name => $class) {
             if (class_exists($class) && in_array($interface, class_implements($class))) {
                 $this->plugins[$name] = new $class($services);

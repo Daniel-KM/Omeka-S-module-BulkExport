@@ -1,12 +1,12 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 /**
  * Helper to manage specific update modes.
  *
- * The functions are adapted from the module Csv Import. Will be simplified later.
+ * The functions are adapted from the module Csv Export. Will be simplified later.
  *
- * @see \CSVImport\Job\Import
+ * @see \CSVImport\Job\Export
  */
 trait ResourceUpdateTrait
 {

@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Controller\Admin;
+namespace BulkExport\Controller\Admin;
 
-use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
@@ -21,13 +21,13 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        // Importers.
-        $response = $this->api()->search('bulk_importers');
-        $importers = $response->getContent();
+        // Exporters.
+        $response = $this->api()->search('bulk_exporters');
+        $exporters = $response->getContent();
 
         $this->setBrowseDefaults('id');
 
-        // Imports.
+        // Exports.
         $perPage = 25;
         $query = [
             'page' => 1,
@@ -35,14 +35,14 @@ class IndexController extends AbstractActionController
             'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
             'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
         ];
-        $response = $this->api()->search('bulk_imports', $query);
+        $response = $this->api()->search('bulk_exports', $query);
         $this->paginator($response->getTotalResults(), 1);
 
-        $imports = $response->getContent();
+        $exports = $response->getContent();
 
         $view = new ViewModel;
-        $view->setVariable('importers', $importers);
-        $view->setVariable('imports', $imports);
+        $view->setVariable('exporters', $exporters);
+        $view->setVariable('exports', $exports);
         return $view;
     }
 }

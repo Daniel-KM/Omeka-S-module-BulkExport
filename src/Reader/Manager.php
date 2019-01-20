@@ -1,8 +1,8 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
-use BulkImport\AbstractPluginManager;
-use BulkImport\Interfaces\Reader;
+use BulkExport\AbstractPluginManager;
+use BulkExport\Interfaces\Reader;
 
 class Manager extends AbstractPluginManager
 {

@@ -1,11 +1,11 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
-use BulkImport\Form\Reader\OpenDocumentSpreadsheetReaderParamsForm;
-use BulkImport\Form\Reader\SpreadsheetReaderConfigForm;
+use BulkExport\Form\Reader\OpenDocumentSpreadsheetReaderParamsForm;
+use BulkExport\Form\Reader\SpreadsheetReaderConfigForm;
 use Log\Stdlib\PsrMessage;
 
 class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
@@ -45,7 +45,7 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->errorMessage = new PsrMessage(
-                'To process import of "{label}", the php extensions "zip" and "xml" are required.', // @translate
+                'To process export of "{label}", the php extensions "zip" and "xml" are required.', // @translate
                 ['label' => $this->getLabel()]
             );
             return false;
@@ -68,7 +68,7 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
      * the available fields, but the data (numbered as 0-based).
      *
      * {@inheritDoc}
-     * @see \BulkImport\Reader\AbstractReader::rewind()
+     * @see \BulkExport\Reader\AbstractReader::rewind()
      */
     public function rewind()
     {

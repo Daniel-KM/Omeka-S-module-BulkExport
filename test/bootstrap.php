@@ -7,4 +7,4 @@ use OmekaTestHelper\Bootstrap;
 Bootstrap::bootstrap(__DIR__);
 Bootstrap::loginAsAdmin();
 Bootstrap::enableModule('Log');
-Bootstrap::enableModule('BulkImport');
+Bootstrap::enableModule('BulkExport');

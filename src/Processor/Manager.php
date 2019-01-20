@@ -1,8 +1,8 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
-use BulkImport\AbstractPluginManager;
-use BulkImport\Interfaces\Processor;
+use BulkExport\AbstractPluginManager;
+use BulkExport\Interfaces\Processor;
 
 class Manager extends AbstractPluginManager
 {

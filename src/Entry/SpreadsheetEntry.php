@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Entry;
+namespace BulkExport\Entry;
 
 /**
  * Like Entry, but allows to manage multi-valued cells.

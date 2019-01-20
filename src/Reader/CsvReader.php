@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
 use Box\Spout\Common\Type;
-use BulkImport\Form\Reader\CsvReaderConfigForm;
-use BulkImport\Form\Reader\CsvReaderParamsForm;
+use BulkExport\Form\Reader\CsvReaderConfigForm;
+use BulkExport\Form\Reader\CsvReaderParamsForm;
 use Log\Stdlib\PsrMessage;
 use SplFileObject;
 

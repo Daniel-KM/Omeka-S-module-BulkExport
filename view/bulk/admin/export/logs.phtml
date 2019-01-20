@@ -1,0 +1,100 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExportRepresentation $export
+ * @var \BulkExport\Api\Representation\ExportRepresentation $resource
+ * @var \Log\Api\Representation\LogRepresentation[] $logs
+ * @var int $severity
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$hyperlink = $this->plugin('hyperlink');
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-exports logs browse');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
+$this->headLink()->appendStylesheet($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.css', 'Log'));
+$this->headLink()->appendStylesheet($this->assetUrl('css/log.css', 'Log'));
+$this->headScript()->appendFile($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.js', 'Log'));
+$this->headScript()->appendFile($this->assetUrl('js/log.js', 'Log'));
+$severityNames = [
+    \Zend\Log\Logger::EMERG => $escape($translate('Emergency')),
+    \Zend\Log\Logger::ALERT => $escape($translate('Alert')),
+    \Zend\Log\Logger::CRIT => $escape($translate('Critical')),
+    \Zend\Log\Logger::ERR => $escape($translate('Error')),
+    \Zend\Log\Logger::WARN => $escape($translate('Warning')),
+    \Zend\Log\Logger::NOTICE => $escape($translate('Notice')),
+    \Zend\Log\Logger::INFO => $escape($translate('Info')),
+    \Zend\Log\Logger::DEBUG => $escape($translate('Debug')),
+];
+?>
+
+<?php echo $this->pageTitle($translate('Export logs'), 1, $translate('Bulk export')); ?>
+<div id="content">
+    <h2><?php echo $escape($translate('Export logs')); ?></h2>
+
+    <form>
+        <label>
+            <?php echo $escape($translate('Show only messages whose severity is higher than or equal to')); ?>
+            <select name="severity">
+                <?php foreach ($severityNames as $i => $name): ?>
+                    <?php $selected = ($i === $severity) ? 'selected' : ''; ?>
+                    <option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $name; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <button type="submit"><?php echo $translate('Show'); ?></button>
+    </form>
+
+<?php if (count($logs)): ?>
+    <?php echo $this->pagination(); ?>
+
+    <table class="tablesaw batch-edit" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+            <th><?php echo $escape($translate('Message')); ?></th>
+            <th><?php echo $escape($translate('Severity')); ?></th>
+            <th><?php echo $escape($translate('Time')); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($logs as $log) { ?>
+            <tr>
+                <td class="webui-popover-parent">
+                    <span class="log-message">
+                        <?php $text = $log->text(); ?>
+                        <?php $isLong = strlen($text) > 240; ?>
+                        <?php if ($isLong): ?>
+                        <span class="log-message-truncated truncate"><?php echo nl2br(substr($text, 0, 240)) . '…'; ?></span>
+                        <?php else: ?>
+                        <?php echo nl2br($text); ?>
+                        <?php endif; ?>
+                    </span>
+                    <ul class="actions">
+                        <?php if ($isLong): ?>
+                        <li><?php
+                            echo $hyperlink('', '#', [
+                                'class' => 'o-icon- fa fa-expand popover',
+                                'title' => $translate('Full log'),
+                            ]); ?>
+                            <div class="log-message-full webui-popover-content webui-popover-current"><?php echo nl2br($escape($text)); ?></div>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+                </td>
+                <td><?php echo $translate($log->severityLabel()); ?> </td>
+                <td><?php echo $log->created()->format('Y-m-d H:i:s'); ?></td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
+
+    <p>
+        <?php echo $this->hyperlink(sprintf($translate('Manage logs')),
+            $this->url('admin/log/default', [], ['query' => ['reference' => 'bulk/export/' . $export->id()]])); ?>
+    </p>
+
+<?php else: ?>
+    <p><?php echo $escape($translate('No logs yet.')); ?> <a href=""><?php echo $escape($translate('Refresh page')); ?></a></p>
+<?php endif; ?>
+</div>

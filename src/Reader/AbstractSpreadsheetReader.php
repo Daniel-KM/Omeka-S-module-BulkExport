@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
-use BulkImport\Entry\SpreadsheetEntry;
+use BulkExport\Entry\SpreadsheetEntry;
 
 abstract class AbstractSpreadsheetReader extends AbstractReader
 {

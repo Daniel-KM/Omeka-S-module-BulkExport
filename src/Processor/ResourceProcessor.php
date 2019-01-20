@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\Processor\ResourceProcessorConfigForm;
-use BulkImport\Form\Processor\ResourceProcessorParamsForm;
+use BulkExport\Form\Processor\ResourceProcessorConfigForm;
+use BulkExport\Form\Processor\ResourceProcessorParamsForm;
 
 class ResourceProcessor extends AbstractResourceProcessor
 {

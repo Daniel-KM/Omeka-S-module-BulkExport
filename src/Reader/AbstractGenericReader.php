@@ -1,15 +1,15 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
-use BulkImport\Interfaces\Configurable;
-use BulkImport\Interfaces\Parametrizable;
+use BulkExport\Interfaces\Configurable;
+use BulkExport\Interfaces\Parametrizable;
 
 abstract class AbstractGenericReader extends AbstractReader
 {
     protected $mediaTypeReaders = [];
 
     /**
-     * @var \BulkImport\Interfaces\Reader
+     * @var \BulkExport\Interfaces\Reader
      */
     protected $reader;
 

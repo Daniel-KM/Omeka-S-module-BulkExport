@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport;
+namespace BulkExport;
 
 return [
     'service_manager' => [
@@ -18,8 +18,8 @@ return [
     ],
     'api_adapters' => [
         'invokables' => [
-            'bulk_importers' => Api\Adapter\ImporterAdapter::class,
-            'bulk_imports' => Api\Adapter\ImportAdapter::class,
+            'bulk_exporters' => Api\Adapter\ExporterAdapter::class,
+            'bulk_exports' => Api\Adapter\ExportAdapter::class,
         ],
     ],
     'view_manager' => [
@@ -28,8 +28,8 @@ return [
         ],
         'controller_map' => [
             Controller\Admin\IndexController::class => 'bulk/admin/index',
-            Controller\Admin\ImportController::class => 'bulk/admin/import',
-            Controller\Admin\ImporterController::class => 'bulk/admin/importer',
+            Controller\Admin\ExportController::class => 'bulk/admin/export',
+            Controller\Admin\ExporterController::class => 'bulk/admin/exporter',
         ],
     ],
     'view_helpers' => [
@@ -39,9 +39,9 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            Form\ImporterDeleteForm::class => Service\Form\FormFactory::class,
-            Form\ImporterForm::class => Service\Form\FormFactory::class,
-            Form\ImporterStartForm::class => Service\Form\FormFactory::class,
+            Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,
+            Form\ExporterForm::class => Service\Form\FormFactory::class,
+            Form\ExporterStartForm::class => Service\Form\FormFactory::class,
             Form\Processor\ItemProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\Processor\ItemProcessorParamsForm::class => Service\Form\FormFactory::class,
             Form\Processor\ItemSetProcessorConfigForm::class => Service\Form\FormFactory::class,
@@ -62,9 +62,9 @@ return [
         'factories' => [
             // Class is not used as key, since it's set dynamically by sub-route
             // and it should be available in acl (so alias is mapped later).
-            'BulkImport\Controller\Admin\Import' => Service\Controller\ControllerFactory::class,
-            'BulkImport\Controller\Admin\Importer' => Service\Controller\ControllerFactory::class,
-            'BulkImport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
+            'BulkExport\Controller\Admin\Export' => Service\Controller\ControllerFactory::class,
+            'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
+            'BulkExport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
         ],
     ],
     'controller_plugins' => [
@@ -79,9 +79,9 @@ return [
     'navigation' => [
         'AdminModule' => [
             'bulk' => [
-                'label' => 'Bulk Import', // @translate
+                'label' => 'Bulk Export', // @translate
                 'route' => 'admin/bulk',
-                'resource' => 'BulkImport\Controller\Admin\Index',
+                'resource' => 'BulkExport\Controller\Admin\Index',
                 'class' => 'o-icon-install',
             ],
         ],
@@ -95,7 +95,7 @@ return [
                         'options' => [
                             'route'    => '/bulk',
                             'defaults' => [
-                                '__NAMESPACE__' => 'BulkImport\Controller\Admin',
+                                '__NAMESPACE__' => 'BulkExport\Controller\Admin',
                                 '__ADMIN__' => true,
                                 'controller' => 'Index',
                                 'action'     => 'index',
@@ -146,7 +146,7 @@ return [
             ],
         ],
     ],
-    'bulk_import' => [
+    'bulk_export' => [
         'readers' => [
             Reader\SpreadsheetReader::class => Reader\SpreadsheetReader::class,
             Reader\CsvReader::class => Reader\CsvReader::class,

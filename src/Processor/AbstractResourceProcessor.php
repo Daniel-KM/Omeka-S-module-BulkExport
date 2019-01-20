@@ -1,12 +1,12 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 use ArrayObject;
-use BulkImport\Interfaces\Configurable;
-use BulkImport\Interfaces\Entry;
-use BulkImport\Interfaces\Parametrizable;
-use BulkImport\Traits\ConfigurableTrait;
-use BulkImport\Traits\ParametrizableTrait;
+use BulkExport\Interfaces\Configurable;
+use BulkExport\Interfaces\Entry;
+use BulkExport\Interfaces\Parametrizable;
+use BulkExport\Traits\ConfigurableTrait;
+use BulkExport\Traits\ParametrizableTrait;
 use Zend\Form\Form;
 
 abstract class AbstractResourceProcessor extends AbstractProcessor implements Configurable, Parametrizable
@@ -195,7 +195,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
                 ++$this->totalErrors;
             }
 
-            // Only add every X for batch import.
+            // Only add every X for batch export.
             if ($this->processing >= $batch) {
                 $this->processEntities($dataToProcess);
                 $dataToProcess = [];
@@ -659,11 +659,11 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected function actionRequiresId($action = null)
     {
         $actionsRequireId = [
-            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_DELETE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REPLACE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_DELETE,
         ];
         if (empty($action)) {
             $action = $this->action;
@@ -674,10 +674,10 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     protected function actionIsUpdate($action = null)
     {
         $actionsUpdate = [
-            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REPLACE,
         ];
         if (empty($action)) {
             $action = $this->action;
@@ -689,13 +689,13 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     {
         $this->action = $this->getParam('action') ?: self::ACTION_CREATE;
         if (!in_array($this->action, [
-            \BulkImport\Processor\AbstractProcessor::ACTION_CREATE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_APPEND,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REVISE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_UPDATE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_REPLACE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_DELETE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_SKIP,
+            \BulkExport\Processor\AbstractProcessor::ACTION_CREATE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_APPEND,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REVISE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_UPDATE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_REPLACE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_DELETE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_SKIP,
         ])) {
             $this->logger->err(
                 'Action "{action}" is not managed.', // @translate
@@ -708,8 +708,8 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
     {
         $this->actionUnidentified = $this->getParam('action_unidentified') ?: self::ACTION_SKIP;
         if (!in_array($this->actionUnidentified, [
-            \BulkImport\Processor\AbstractProcessor::ACTION_CREATE,
-            \BulkImport\Processor\AbstractProcessor::ACTION_SKIP,
+            \BulkExport\Processor\AbstractProcessor::ACTION_CREATE,
+            \BulkExport\Processor\AbstractProcessor::ACTION_SKIP,
         ])) {
             $this->logger->err(
                 'Action "{action}" for unidentified resource is not managed.', // @translate

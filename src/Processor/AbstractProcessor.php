@@ -1,10 +1,10 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 use ArrayObject;
-use BulkImport\Interfaces\Processor;
-use BulkImport\Interfaces\Reader;
-use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Interfaces\Processor;
+use BulkExport\Interfaces\Reader;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -58,7 +58,7 @@ abstract class AbstractProcessor implements Processor
     protected $api;
 
     /**
-     * @var \BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     * @var \BulkExport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
      */
     protected $findResourcesFromIdentifiers;
 
@@ -104,7 +104,7 @@ abstract class AbstractProcessor implements Processor
     }
 
     /**
-     * @return \BulkImport\Interfaces\Reader
+     * @return \BulkExport\Interfaces\Reader
      */
     public function getReader()
     {
@@ -556,7 +556,7 @@ abstract class AbstractProcessor implements Processor
      *
      * @todo Manage Media source html.
      *
-     * @uses\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
+     * @uses\BulkExport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
      *
      * @param array|string $identifiers Identifiers should be unique. If a
      * string is sent, the result will be the resource.
@@ -581,7 +581,7 @@ abstract class AbstractProcessor implements Processor
         if (!$this->findResourcesFromIdentifiers) {
             $this->findResourcesFromIdentifiers = $this->getServiceLocator()->get('ControllerPluginManager')
                 // Use class name to use it even when CsvImport is installed.
-                ->get(\BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class);
+                ->get(\BulkExport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class);
         }
 
         $findResourcesFromIdentifiers = $this->findResourcesFromIdentifiers;

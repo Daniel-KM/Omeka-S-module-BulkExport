@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Form\Reader;
+namespace BulkExport\Form\Reader;
 
-use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Form;
 

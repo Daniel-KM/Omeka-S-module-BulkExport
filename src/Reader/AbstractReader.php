@@ -1,13 +1,13 @@
 <?php
-namespace BulkImport\Reader;
+namespace BulkExport\Reader;
 
-use BulkImport\Entry\Entry;
-use BulkImport\Interfaces\Configurable;
-use BulkImport\Interfaces\Parametrizable;
-use BulkImport\Interfaces\Reader;
-use BulkImport\Traits\ConfigurableTrait;
-use BulkImport\Traits\ParametrizableTrait;
-use BulkImport\Traits\ServiceLocatorAwareTrait;
+use BulkExport\Entry\Entry;
+use BulkExport\Interfaces\Configurable;
+use BulkExport\Interfaces\Parametrizable;
+use BulkExport\Interfaces\Reader;
+use BulkExport\Traits\ConfigurableTrait;
+use BulkExport\Traits\ParametrizableTrait;
+use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Iterator;
 use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
@@ -164,7 +164,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
      *
      * May be overridden with a different entry sub-class.
      *
-     * @return \BulkImport\Entry\Entry
+     * @return \BulkExport\Entry\Entry
      */
     protected function currentEntry()
     {

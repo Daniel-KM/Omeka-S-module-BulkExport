@@ -27,14 +27,14 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace BulkImport\Mvc\Controller\Plugin;
+namespace BulkExport\Mvc\Controller\Plugin;
 
 use Doctrine\DBAL\Connection;
 use Omeka\Mvc\Controller\Plugin\Api;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
 /**
- * Copy of the controller plugin of the module Csv Import
+ * Copy of the controller plugin of the module Csv Export
  *
  * @see \CSVImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers
  */

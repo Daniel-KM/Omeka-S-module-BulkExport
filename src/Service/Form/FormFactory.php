@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Service\Form;
+namespace BulkExport\Service\Form;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;

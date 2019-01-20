@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Traits;
+namespace BulkExport\Traits;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 

@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Entry;
+namespace BulkExport\Entry;
 
-use BulkImport\Interfaces\Entry as EntryInterface;
+use BulkExport\Interfaces\Entry as EntryInterface;
 
 class Entry implements EntryInterface
 {

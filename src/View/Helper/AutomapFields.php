@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\View\Helper;
+namespace BulkExport\View\Helper;
 
 use Omeka\View\Helper\Api;
 use Zend\I18n\View\Helper\Translate;

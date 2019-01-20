@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExportRepresentation[] $exports
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+?>
+<table class="tablesaw" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+            <th><?php echo $escape($translate('Exporter')); ?></th>
+            <th><?php echo $escape($translate('Status')); ?></th>
+            <th><?php echo $escape($translate('Started')); ?></th>
+            <th><?php echo $escape($translate('Completed')); ?></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($exports as $export): ?>
+            <tr>
+                <td><?php echo $export->exporter()->label(); ?></td>
+                <td><?php echo $export->status(); ?></td>
+                <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
+                <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
+                <td>
+                    <?php echo $this->hyperlink($translate('See logs'), $this->url('admin/bulk/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])); ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

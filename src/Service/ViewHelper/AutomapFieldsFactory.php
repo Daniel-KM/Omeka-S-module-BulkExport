@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Service\ViewHelper;
+namespace BulkExport\Service\ViewHelper;
 
-use BulkImport\View\Helper\AutomapFields;
+use BulkExport\View\Helper\AutomapFields;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

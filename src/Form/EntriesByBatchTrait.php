@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Form;
+namespace BulkExport\Form;
 
 use Zend\Form\Element;
 

@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Interfaces;
+namespace BulkExport\Interfaces;
 
 interface Entry extends \Iterator, \ArrayAccess, \Countable, \JsonSerializable
 {

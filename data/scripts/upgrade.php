@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport;
+namespace BulkExport;
 
 /**
  * @var Module $this
@@ -29,7 +29,7 @@ if (version_compare($oldVersion, '3.0.1', '<')) {
     $version = $module->getDb('version');
     if (version_compare($version, '3.2.2', '<')) {
         throw new \Omeka\Module\Exception\ModuleCannotInstallException(
-            'BulkImport requires module Log version 3.2.2 or higher.' // @translate
+            'BulkExport requires module Log version 3.2.2 or higher.' // @translate
         );
     }
 
@@ -42,18 +42,18 @@ SQL;
 
 if (version_compare($oldVersion, '3.0.2', '<')) {
     $sql = <<<'SQL'
-ALTER TABLE bulk_import
-    ADD job_id INT DEFAULT NULL AFTER importer_id,
+ALTER TABLE bulk_export
+    ADD job_id INT DEFAULT NULL AFTER exporter_id,
     DROP status,
     DROP started,
     DROP ended,
-    CHANGE importer_id importer_id INT DEFAULT NULL,
+    CHANGE exporter_id exporter_id INT DEFAULT NULL,
     CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
-ALTER TABLE bulk_import
+ALTER TABLE bulk_export
     ADD CONSTRAINT FK_BD98E874BE04EA9 FOREIGN KEY (job_id) REFERENCES job (id);
-CREATE UNIQUE INDEX UNIQ_BD98E874BE04EA9 ON bulk_import (job_id);
-ALTER TABLE bulk_importer
+CREATE UNIQUE INDEX UNIQ_BD98E874BE04EA9 ON bulk_export (job_id);
+ALTER TABLE bulk_exporter
     CHANGE name name VARCHAR(190) DEFAULT NULL,
     CHANGE reader_name reader_name VARCHAR(190) DEFAULT NULL,
     CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
@@ -65,21 +65,21 @@ SQL;
 
 if (version_compare($oldVersion, '3.0.3', '<')) {
     $sql = <<<'SQL'
-ALTER TABLE bulk_import
-    CHANGE importer_id importer_id INT DEFAULT NULL,
+ALTER TABLE bulk_export
+    CHANGE exporter_id exporter_id INT DEFAULT NULL,
     CHANGE job_id job_id INT DEFAULT NULL,
     CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
-ALTER TABLE bulk_importer
+ALTER TABLE bulk_exporter
     ADD owner_id INT DEFAULT NULL AFTER id,
     CHANGE name `label` VARCHAR(190) DEFAULT NULL,
     CHANGE reader_name reader_class VARCHAR(190) DEFAULT NULL,
     CHANGE processor_name processor_class VARCHAR(190) DEFAULT NULL,
     CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_config processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
-ALTER TABLE bulk_importer
+ALTER TABLE bulk_exporter
     ADD CONSTRAINT FK_2DAF62D7E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE SET NULL;
-CREATE INDEX IDX_2DAF62D7E3C61F9 ON bulk_importer (owner_id);
+CREATE INDEX IDX_2DAF62D7E3C61F9 ON bulk_exporter (owner_id);
 SQL;
     $connection->exec($sql);
 }

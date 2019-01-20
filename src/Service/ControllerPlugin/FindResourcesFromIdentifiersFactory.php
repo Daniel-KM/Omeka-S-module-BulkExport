@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Service\ControllerPlugin;
+namespace BulkExport\Service\ControllerPlugin;
 
-use BulkImport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers;
+use BulkExport\Mvc\Controller\Plugin\FindResourcesFromIdentifiers;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

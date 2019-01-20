@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport;
+namespace BulkExport;
 
 require_once __DIR__ . '/src/Module/AbstractGenericModule.php';
 
-use BulkImport\Module\AbstractGenericModule;
+use BulkExport\Module\AbstractGenericModule;
 
 class Module extends AbstractGenericModule
 {

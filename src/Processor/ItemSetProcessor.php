@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\Processor\ItemSetProcessorConfigForm;
-use BulkImport\Form\Processor\ItemSetProcessorParamsForm;
+use BulkExport\Form\Processor\ItemSetProcessorConfigForm;
+use BulkExport\Form\Processor\ItemSetProcessorParamsForm;
 
 class ItemSetProcessor extends ResourceProcessor
 {

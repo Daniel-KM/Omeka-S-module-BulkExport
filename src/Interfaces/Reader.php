@@ -1,5 +1,5 @@
 <?php
-namespace BulkImport\Interfaces;
+namespace BulkExport\Interfaces;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
 

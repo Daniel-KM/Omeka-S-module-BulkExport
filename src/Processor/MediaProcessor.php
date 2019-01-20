@@ -1,9 +1,9 @@
 <?php
-namespace BulkImport\Processor;
+namespace BulkExport\Processor;
 
 use ArrayObject;
-use BulkImport\Form\Processor\MediaProcessorConfigForm;
-use BulkImport\Form\Processor\MediaProcessorParamsForm;
+use BulkExport\Form\Processor\MediaProcessorConfigForm;
+use BulkExport\Form\Processor\MediaProcessorParamsForm;
 
 class MediaProcessor extends ResourceProcessor
 {

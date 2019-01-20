@@ -26,7 +26,7 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
-namespace BulkImport\Module;
+namespace BulkExport\Module;
 
 use Omeka\Module\AbstractModule;
 use Omeka\Module\Exception\ModuleCannotInstallException;

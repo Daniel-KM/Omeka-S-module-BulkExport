@@ -1,7 +1,7 @@
 <?php
-namespace BulkImport\Form\Processor;
+namespace BulkExport\Form\Processor;
 
-use BulkImport\Form\EntriesByBatchTrait;
+use BulkExport\Form\EntriesByBatchTrait;
 
 class ItemSetProcessorParamsForm extends ItemSetProcessorConfigForm
 {

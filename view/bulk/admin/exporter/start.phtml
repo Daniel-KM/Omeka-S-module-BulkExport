@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExporterRepresentation $exporter
+ * @var \BulkExport\Form\ExporterForm $form
+ * @var array $exportArgs
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-exporters bulk-exports edit');
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
+$form->prepare();
+?>
+
+<?php echo $this->pageTitle($translate('Start export'), 1, $translate('Bulk export')); ?>
+
+<div id="content">
+    <h2><?php echo $escape($translate('Start export')); ?></h2>
+    <h3><?php echo $escape(sprintf($translate('Exporter: %s'), $exporter->label())); ?></h3>
+    <?php if (isset($exportArgs)): ?>
+    <h3><?php echo $escape($translate('Parameters')); ?></h3>
+    <div class="value">
+        <pre><?php
+            echo $escape(json_encode($exportArgs, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        ?></pre>
+    </div>
+    <?php endif; ?>
+    <?php
+    echo $this->form()->openTag($form);
+    echo $this->formCollection($form);
+    echo $this->form()->closeTag();
+    ?>
+</div>
