@@ -178,63 +178,6 @@ class ExporterController extends AbstractActionController
         return $view;
     }
 
-    public function configureProcessorAction()
-    {
-        $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
-
-        if (!$entity) {
-            $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
-            $this->messenger()->addError($message);
-            return $this->redirect()->toRoute('admin/bulk');
-        }
-
-        /** @var Processor $processor */
-        $processor = $entity->processor();
-        $form = $this->getForm($processor->getConfigFormClass());
-        $processorConfig = ($processor->getConfig()) ? $processor->getConfig() : [];
-        $form->setData($processorConfig);
-
-        $form->add([
-            'name' => 'exporter_submit',
-            'type'  => Fieldset::class,
-        ]);
-        $form->get('exporter_submit')->add([
-            'name' => 'submit',
-            'type'  => Element\Submit::class,
-            'attributes' => [
-                'value' => 'Save', // @translate
-                'id' => 'submitbutton',
-            ],
-        ]);
-
-        if ($this->getRequest()->isPost()) {
-            $data = $this->params()->fromPost();
-            $form->setData($data);
-            if ($form->isValid()) {
-                $processor->handleConfigForm($form);
-
-                $update = ['processor_config' => $processor->getConfig()];
-                $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $update, [], ['isPartial' => true]);
-
-                if ($response) {
-                    $this->messenger()->addSuccess('Processor configuration saved'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk');
-                } else {
-                    $this->messenger()->addError('Save of processor configuration failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk');
-                }
-            } else {
-                $this->messenger()->addFormErrors($form);
-            }
-        }
-
-        $view = new ViewModel;
-        $view->setVariable('processor', $processor);
-        $view->setVariable('form', $form);
-        return $view;
-    }
-
     public function startAction()
     {
         $id = (int) $this->params()->fromRoute('id');
@@ -248,8 +191,6 @@ class ExporterController extends AbstractActionController
         }
 
         $writer = $exporter->writer();
-        $processor = $exporter->processor();
-        $processor->setWriter($writer);
 
         /** @var \Zend\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
@@ -260,9 +201,6 @@ class ExporterController extends AbstractActionController
         }
         if (isset($session->writer)) {
             $writer->setParams($session->writer);
-        }
-        if (isset($session->processor)) {
-            $processor->setParams($session->processor);
         }
 
         $formsCallbacks = $this->getStartFormsCallbacks($exporter);
@@ -296,16 +234,9 @@ class ExporterController extends AbstractActionController
                             $this->messenger()->addError($writer->getLastErrorMessage());
                             $next = 'writer';
                         } else {
-                            $next = isset($formsCallbacks['processor']) ? 'processor' : 'start';
+                            $next = 'start';
                         }
                         $formCallback = $formsCallbacks[$next];
-                        break;
-
-                    case 'processor':
-                        $processor->handleParamsForm($form);
-                        $session->processor = $processor->getParams();
-                        $next = 'start';
-                        $formCallback = $formsCallbacks['start'];
                         break;
 
                     case 'start':
@@ -313,9 +244,6 @@ class ExporterController extends AbstractActionController
                         $exportData['o-module-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {
                             $exportData['o-module-bulk:writer_params'] = $writer->getParams();
-                        }
-                        if ($processor instanceof Parametrizable) {
-                            $exportData['o-module-bulk:processor_params'] = $processor->getParams();
                         }
 
                         $response = $this->api()->create('bulk_exports', $exportData);
@@ -371,7 +299,6 @@ class ExporterController extends AbstractActionController
         if ($next === 'start') {
             $exportArgs = [];
             $exportArgs['writer'] = $session['writer'];
-            $exportArgs['processor'] = $currentForm === 'writer' ? [] : $session['processor'];
             // For security purpose.
             unset($exportArgs['writer']['filename']);
             $view->setVariable('exportArgs', $exportArgs);
@@ -412,40 +339,6 @@ class ExporterController extends AbstractActionController
                 ]);
 
                 return $writerForm;
-            };
-        }
-
-        $processor = $exporter->processor();
-        $processor->setWriter($writer);
-        if ($processor instanceof Parametrizable) {
-            /** @return \Zend\Form\Form */
-            $formsCallbacks['processor'] = function () use ($processor, $controller) {
-                $processorForm = $controller->getForm($processor->getParamsFormClass(), [
-                    'processor' => $processor,
-                ]);
-                $processorConfig = $processor->getConfig() ?: [];
-                $processorForm->setData($processorConfig);
-
-                $processorForm->add([
-                    'name' => 'current_form',
-                    'type'  => Element\Hidden::class,
-                    'attributes' => [
-                        'value' => 'processor',
-                    ],
-                ]);
-                $processorForm->add([
-                    'name' => 'writer_submit',
-                    'type'  => Fieldset::class,
-                ]);
-                $processorForm->get('writer_submit')->add([
-                    'name' => 'submit',
-                    'type'  => Element\Submit::class,
-                    'attributes' => [
-                        'value' => 'Continue', // @translate
-                    ],
-                ]);
-
-                return $processorForm;
             };
         }
 

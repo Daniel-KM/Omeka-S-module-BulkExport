@@ -298,16 +298,13 @@ SQL;
             ->setOwner($this->auth->getIdentity())
             ->setLabel($argsExporter['label'])
             ->setWriterClass($argsExporter['writer_class'])
-            ->setWriterConfig($argsExporter['writer_config'])
-            ->setProcessorClass($argsExporter['processor_class'])
-            ->setProcessorConfig($argsExporter['processor_config']);
+            ->setWriterConfig($argsExporter['writer_config']);
         $this->entityManager->persist($exporter);
 
         $export = new \BulkExport\Entity\Export;
         $export
             ->setExporter($exporter)
-            ->setWriterParams($argsExport['writer_params'])
-            ->setProcessorParams($argsExport['processor_params']);
+            ->setWriterParams($argsExport['writer_params']);
         $this->entityManager->persist($export);
         $this->entityManager->flush();
 
@@ -400,15 +397,6 @@ SQL;
                 'escape' => '\\',
                 'separator' => ','
             ],
-            'processor_class' => \BulkExport\Processor\ResourceProcessor::class,
-            'processor_config' => [
-                'o:resource_template' => '1',
-                'o:resource_class' => '',
-                'o:is_public' => 'true',
-                'resource_type' => 'items',
-                'o:item_set' => [],
-                'o:item' => '',
-            ],
         ];
     }
 
@@ -428,16 +416,6 @@ SQL;
                 'enclosure' => chr(0),
                 'escape' => chr(0)
             ],
-            'processor_params' => [
-                'o:resource_template' => '1',
-                'o:resource_class' => '',
-                'o:is_public' => 'true',
-                'resource_type' => 'items',
-                'o:item_set' => [],
-                'o:item' => '',
-                'mapping' => [
-                ]
-            ]
         ];
     }
 }

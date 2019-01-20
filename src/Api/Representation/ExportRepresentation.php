@@ -12,7 +12,6 @@ class ExportRepresentation extends AbstractEntityRepresentation
             'o:id' => $this->id(),
             'o-module-bulk:exporter' => $this->exporter()->getReference(),
             'o-module-bulk:writer_params' => $this->writerParams(),
-            'o-module-bulk:processor_params' => $this->processorParams(),
             'o:job' => $this->job(),
             'o:status' => $this->status(),
             'o:started' => $this->started(),
@@ -47,14 +46,6 @@ class ExportRepresentation extends AbstractEntityRepresentation
     public function writerParams()
     {
         return $this->resource->getWriterParams();
-    }
-
-    /**
-     * @return array
-     */
-    public function processorParams()
-    {
-        return $this->resource->getProcessorParams();
     }
 
     /**

@@ -26,7 +26,6 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
         <tr>
             <th><?php echo $escape($translate('Name')); ?></th>
             <th><?php echo $escape($translate('Writer')); ?></th>
-            <th><?php echo $escape($translate('Processor')); ?></th>
         </tr>
     </thead>
     <tbody>
@@ -66,13 +65,6 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
                 <?php echo $writer ? $writer->getLabel() : null; ?>
                 <?php if ($writer instanceof ConfigurableExport): ?>
                     (<?php echo $hyperlink('Configure', $this->url('admin/bulk/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])); ?>)
-                <?php endif; ?>
-            </td>
-            <td>
-                <?php $processor = $exporter->processor(); ?>
-                <?php echo $processor ? $processor->getLabel() : null; ?>
-                <?php if ($processor instanceof ConfigurableExport): ?>
-                    (<?php echo $hyperlink('Configure', $this->url('admin/bulk/id', ['controller' => 'exporter', 'action' => 'configure-processor', 'id' => $exporter->id()])); ?>)
                 <?php endif; ?>
             </td>
         </tr>

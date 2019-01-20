@@ -3,7 +3,6 @@ namespace BulkExport\Job;
 
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Processor\Manager as ProcessorManager;
 use BulkExport\Writer\Manager as WriterManager;
 use Log\Stdlib\PsrMessage;
 use Omeka\Job\AbstractJob;
@@ -31,13 +30,10 @@ class Export extends AbstractJob
         $export = $this->getExport();
         $this->api()->update('bulk_exports', $export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
         $writer = $this->getWriter();
-        $processor = $this->getProcessor();
-        $processor->setWriter($writer);
-        $processor->setLogger($logger);
 
         $logger->log(Logger::NOTICE, 'Export started'); // @translate
 
-        $processor->process();
+        $writer->process();
 
         $logger->log(Logger::NOTICE, 'Export completed'); // @translate
     }
@@ -53,9 +49,9 @@ class Export extends AbstractJob
             return $this->logger;
         }
         $this->logger = $this->getServiceLocator()->get('Omeka\Logger');
-        $referenceIdProcessor = new \Zend\Log\Processor\ReferenceId();
-        $referenceIdProcessor->setReferenceId('bulk/export/' . $this->getExport()->id());
-        $this->logger->addProcessor($referenceIdProcessor);
+        $referenceId = new \Zend\Log\Processor\ReferenceId();
+        $referenceId->setReferenceId('bulk/export/' . $this->getExport()->id());
+        $this->logger->addProcessor($referenceId);
         return $this->logger;
     }
 
@@ -115,29 +111,5 @@ class Export extends AbstractJob
             $writer->setParams($export->writerParams());
         }
         return $writer;
-    }
-
-    protected function getProcessor()
-    {
-        $services = $this->getServiceLocator();
-        $export = $this->getExport();
-        $exporter = $export->exporter();
-        $processorClass = $exporter->processorClass();
-        $processorManager = $services->get(ProcessorManager::class);
-        if (!$processorManager->has($processorClass)) {
-            throw new \Omeka\Job\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'Processor "{processor}" is not available.', // @translate
-                    ['processor' => $processorClass]
-                )
-            );
-        }
-        $processor = $processorManager->get($processorClass);
-        $processor->setServiceLocator($services);
-        if ($processor instanceof Configurable && $processor instanceof Parametrizable) {
-            $processor->setConfig($exporter->processorConfig());
-            $processor->setParams($export->processorParams());
-        }
-        return $processor;
     }
 }

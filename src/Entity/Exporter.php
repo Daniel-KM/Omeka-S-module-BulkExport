@@ -49,25 +49,6 @@ class Exporter extends AbstractEntity
     protected $writerConfig;
 
     /**
-     * @var string
-     * @Column(
-     *     type="string",
-     *     nullable=true,
-     *     length=190
-     * )
-     */
-    protected $processorClass;
-
-    /**
-     * @var array
-     * @Column(
-     *      type="json_array",
-     *      nullable=true
-     * )
-     */
-    protected $processorConfig;
-
-    /**
      * @var User
      * @ManyToOne(
      *     targetEntity=\Omeka\Entity\User::class
@@ -136,42 +117,6 @@ class Exporter extends AbstractEntity
     public function getWriterConfig()
     {
         return $this->writerConfig;
-    }
-
-    /**
-     * @param string $processorClass
-     * @return self
-     */
-    public function setProcessorClass($processorClass)
-    {
-        $this->processorClass = $processorClass;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProcessorClass()
-    {
-        return $this->processorClass;
-    }
-
-    /**
-     * @param array $processorConfig
-     * @return self
-     */
-    public function setProcessorConfig($processorConfig)
-    {
-        $this->processorConfig = $processorConfig;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getProcessorConfig()
-    {
-        return $this->processorConfig;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace BulkExport;
 return [
     'service_manager' => [
         'factories' => [
-            Processor\Manager::class => Service\Plugin\PluginManagerFactory::class,
             Writer\Manager::class => Service\Plugin\PluginManagerFactory::class,
         ],
     ],
@@ -42,14 +41,6 @@ return [
             Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,
             Form\ExporterForm::class => Service\Form\FormFactory::class,
             Form\ExporterStartForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ItemProcessorConfigForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ItemProcessorParamsForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ItemSetProcessorConfigForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ItemSetProcessorParamsForm::class => Service\Form\FormFactory::class,
-            Form\Processor\MediaProcessorConfigForm::class => Service\Form\FormFactory::class,
-            Form\Processor\MediaProcessorParamsForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ResourceProcessorConfigForm::class => Service\Form\FormFactory::class,
-            Form\Processor\ResourceProcessorParamsForm::class => Service\Form\FormFactory::class,
             Form\Writer\CsvWriterConfigForm::class => Service\Form\FormFactory::class,
             Form\Writer\CsvWriterParamsForm::class => Service\Form\FormFactory::class,
             Form\Writer\OpenDocumentSpreadsheetWriterParamsForm::class => Service\Form\FormFactory::class,
@@ -152,12 +143,6 @@ return [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
             Writer\TsvWriter::class => Writer\TsvWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
-        ],
-        'processors' => [
-            Processor\ResourceProcessor::class => Processor\ResourceProcessor::class,
-            Processor\ItemProcessor::class => Processor\ItemProcessor::class,
-            Processor\ItemSetProcessor::class => Processor\ItemSetProcessor::class,
-            Processor\MediaProcessor::class => Processor\MediaProcessor::class,
         ],
     ],
 ];

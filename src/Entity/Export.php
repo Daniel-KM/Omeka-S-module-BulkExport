@@ -121,25 +121,7 @@ class Export extends AbstractEntity
     }
 
     /**
-     * @param array|\Traversable $processorParams
-     * @return self
-     */
-    public function setProcessorParams($processorParams)
-    {
-        $this->processorParams = $processorParams;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getProcessorParams()
-    {
-        return $this->processorParams;
-    }
-
-    /**
-     * @param string $status
+     * @param string $filename
      * @return self
      */
     public function setStatus($status)

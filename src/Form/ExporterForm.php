@@ -3,7 +3,6 @@ namespace BulkExport\Form;
 
 use BulkExport\Entity\Exporter;
 use BulkExport\Writer\Manager as WriterManager;
-use BulkExport\Processor\Manager as ProcessorManager;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
@@ -46,18 +45,6 @@ class ExporterForm extends Form
         ]);
 
         $this->add([
-            'name' => 'o-module-bulk:processor_class',
-            'type'  => Element\Select::class,
-            'options' => [
-                'label' => 'Processor', // @translate
-                'value_options' => $this->getProcessorOptions(),
-            ],
-            'attributes' => [
-                'id' => 'o-module-bulk-processor-class',
-            ],
-        ]);
-
-        $this->add([
             'name' => 'exporter_submit',
             'type' => Fieldset::class,
         ]);
@@ -86,17 +73,6 @@ class ExporterForm extends Form
         $writers = $writerManager->getPlugins();
         foreach ($writers as $key => $writer) {
             $options[$key] = $writer->getLabel();
-        }
-        return $options;
-    }
-
-    protected function getProcessorOptions()
-    {
-        $options = [];
-        $processorManager = $this->getServiceLocator()->get(ProcessorManager::class);
-        $processors = $processorManager->getPlugins();
-        foreach ($processors as $key => $processor) {
-            $options[$key] = $processor->getLabel();
         }
         return $options;
     }
