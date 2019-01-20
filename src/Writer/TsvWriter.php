@@ -28,8 +28,14 @@ class TsvWriter extends CsvWriter
         parent::handleParamsForm($form);
         $params = $this->getParams();
         $params['delimiter'] = "\t";
-        $params['enclosure'] = chr(0);
-        $params['escape'] = chr(0);
+        // Unlike import, chr(0) cannot be used, because it's output.
+        // Anyway, enclosure and escape are used only when there is a tabulation
+        // inside the value, but this is forbidden by the format and normally
+        // never exist.
+        // TODO Check if the value contains a tabulation before export.
+        // TODO Do not use an enclosure for tsv export.
+        $params['enclosure'] = self::DEFAULT_ENCLOSURE;
+        $params['escape'] = self::DEFAULT_ESCAPE;
         $this->setParams($params);
     }
 }
