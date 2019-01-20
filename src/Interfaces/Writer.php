@@ -1,15 +1,16 @@
 <?php
 namespace BulkExport\Interfaces;
 
+use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * A writer returns metadata and files data.
+ * A writer outputs metadata.
  *
  * It can have a config (implements Configurable) and parameters (implements
  * Parametrizable).
  */
-interface Writer extends \Iterator, \Countable
+interface Writer
 {
     /**
      * Writer constructor.
@@ -19,49 +20,22 @@ interface Writer extends \Iterator, \Countable
     public function __construct(ServiceLocatorInterface $services);
 
     /**
-     * @var string
+     * @return string
      */
     public function getLabel();
 
     /**
-     * Check if the params of the writer are valid, for example the filepath.
-     *
-     * @return bool
-     */
-    public function isValid();
-
-    /**
-     * Get the last error message, in particular to know why writer is invalid.
-     *
      * @return string
      */
-    public function getLastErrorMessage();
+    public function getExtension();
 
     /**
-     * List of fields used in the input, for example the first spreadsheet row.
-     *
-     * It allows to do the mapping in the user interface.
-     *
-     * Note that these available fields should not be the first output when
-     * `rewind()` is called.
-     *
-     * @return array
+     * @param Logger $logger
      */
-    public function getAvailableFields();
+    public function setLogger(Logger $logger);
 
     /**
-     * {@inheritDoc}
-     * @see \Iterator::current()
-     *
-     * @return Entry
+     * @param resource $fh
      */
-    public function current();
-
-    /**
-     * Get the number of entries that will be read to be converted in resources.
-     *
-     * {@inheritDoc}
-     * @see \Countable::count()
-     */
-    public function count();
+    public function write($fh);
 }
