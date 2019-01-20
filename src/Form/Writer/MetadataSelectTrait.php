@@ -34,9 +34,26 @@ trait MetadataSelectTrait
                     'o:id' => 'Internal id', // @translate
                     'o:resource_template' => 'Resource template', // @translate
                     'o:resource_class' => 'Resource class', // @translate
-                    'o:owner' => 'Owner', // @translate
+                    'o:owner' => 'Owner email', // @translate
+                    'o:owner[o:id]' => 'Owner id', // @translate
                     'o:is_public' => 'Visibility public/private', // @translate
                     'properties' => 'All used properties', // @translate
+                ],
+            ],
+            'o:item_set' => [
+                'label' => 'Item set (for item)', // @translate
+                'options' => [
+                    'o:item_set[o:id]' => 'Internal id', // @translate
+                    'o:item_set[dcterms:identifier]' => 'Identifier', // @translate
+                    'o:item_set[dcterms:title]' => 'Label (first title)', // @translate
+                ],
+            ],
+            'o:media' => [
+                'label' => 'Media (for item)', // @translate
+                'options' => [
+                    'o:media[file]' => 'Url / File', // @translate
+                    'o:media[dcterms:identifier]' => 'Identifier', // @translate
+                    'o:media[dcterms:title]' => 'Label (first title)', // @translate
                 ],
             ],
         ];

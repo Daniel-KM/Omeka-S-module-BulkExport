@@ -5,6 +5,7 @@ use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\WriterInterface;
 use Log\Stdlib\PsrMessage;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+use Omeka\Api\Representation\AbstractResourceRepresentation;
 
 abstract class AbstractSpreadsheetWriter extends AbstractWriter
 {
@@ -230,14 +231,15 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     /**
      * Get metadata for a header.
      *
-     * @param AbstractResourceEntityRepresentation $resource
+     * @param AbstractResourceRepresentation $resource
      * @param string $header
      * @param bool $hasSeparator
      * @return array Always an array, even for single metadata.
      */
-    protected function fillHeader($resource, $header, $hasSeparator = false)
+    protected function fillHeader(AbstractResourceRepresentation $resource, $header, $hasSeparator = false)
     {
         switch ($header) {
+            // All resources.
             case 'o:id':
                 return [$resource->id()];
             case 'o:resource_template':
@@ -246,16 +248,85 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             case 'o:resource_class':
                 $resourceClass = $resource->resourceClass();
                 return $resourceClass ? [$resourceClass->term()] : [''];
-            case 'o:owner':
-                $owner = $resource->owner();
-                return $owner ? [$owner->email()] : [''];
             case 'o:is_public':
                 return $resource->isPublic() ? ['true'] : ['false'];
+            case 'o:owner[o:id]':
+                $owner = $resource->owner();
+                return $owner ? [$owner->id()] : [''];
+            case 'o:owner':
+            case 'o:owner[o:email]':
+                $owner = $resource->owner();
+                return $owner ? [$owner->email()] : [''];
+
+            // Item set for item.
+            case 'o:item_set[o:id]':
+                return $resource->resourceName() === 'items'
+                    ? $this->extractResourceIds($resource->itemSets())
+                    : [];
+            case 'o:item_set[dcterms:identifier]':
+            case 'o:item_set[dcterms:title]':
+                return $resource->resourceName() === 'items'
+                    ? $this->extractFirstValue($resource->itemSets(), $header)
+                    : [];
+
+            // Media for item.
+            case 'o:media[file]':
+            case 'o:media[url]':
+                $result = [];
+                if ($resource->resourceName() === 'items') {
+                    foreach ($resource->media() as $media) {
+                        $originalUrl = $media->originalUrl();
+                        if ($originalUrl) {
+                            $result[] = $originalUrl;
+                        }
+                    }
+                }
+                return $result;
+            case 'o:media[dcterms:identifier]':
+            case 'o:media[dcterms:title]':
+                return $resource->resourceName() === 'items'
+                    ? $this->extractFirstValue($resource->media(), $header)
+                    : [];
+
+            // All properties for all resources.
             default:
                 return $hasSeparator
                     ? $resource->value($header, ['all' => true])
                     : [$resource->value($header)];
         }
+    }
+
+    /**
+     * Return the id of all resources.
+     *
+     * @param AbstractResourceRepresentation[] $resources
+     * @return array
+     */
+    protected function extractResourceIds(array $resources)
+    {
+        return array_map(function ($v) {
+            return $v->id();
+        }, $resources);
+    }
+
+    /**
+     * Return the first value of the property all resources.
+     *
+     * @param AbstractResourceEntityRepresentation[] $resources
+     * @param string $header The full header, with a term.
+     * @return array
+     */
+    protected function extractFirstValue(array $resources, $header)
+    {
+        $result = [];
+        $term = trim(substr($header, strpos($header, '[') + 1), '[] ');
+        foreach ($resources as $resource) {
+            $value = $resource->value($term);
+            if ($value) {
+                $result[] = (string) $value;
+            }
+        }
+        return $result;
     }
 
     protected function listUsedProperties()
