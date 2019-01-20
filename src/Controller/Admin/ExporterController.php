@@ -212,7 +212,7 @@ class ExporterController extends AbstractActionController
             $currentForm = $this->getRequest()->getPost('current_form');
             $form = call_user_func($formsCallbacks[$currentForm]);
 
-            // Make certain to merge the files info!
+            // Make certain to merge the files info if any!
             $request = $this->getRequest();
             $data = array_merge_recursive(
                 $request->getPost()->toArray(),

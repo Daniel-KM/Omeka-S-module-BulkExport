@@ -41,6 +41,13 @@ Finally, process the export.
 To create a new writer, take your inspiration on the existing `SpreadsheetWriter`.
 
 
+TODO
+----
+
+- Select the type of resource to export
+- Select resources like in the module ebook.
+
+
 Warning
 -------
 

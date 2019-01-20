@@ -74,7 +74,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
     public function status()
     {
         $job = $this->job();
-        return $job ? $job->status() : 'Ready'; // @translate
+        return $job ? $job->status() : 'ready'; // @translate
     }
 
     /**
