@@ -126,7 +126,6 @@ return [
     ],
     'bulk_export' => [
         'writers' => [
-            Writer\SpreadsheetWriter::class => Writer\SpreadsheetWriter::class,
             Writer\CsvWriter::class => Writer\CsvWriter::class,
             Writer\TsvWriter::class => Writer\TsvWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
