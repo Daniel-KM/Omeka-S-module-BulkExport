@@ -1,25 +1,16 @@
 Bulk Export (module for Omeka S)
 ================================
 
-[Bulk Export] is yet another import module for [Omeka S]. This one intends to be
-easily extensible by other modules. It allows to manage importers and to process
-bulk import of resources.
+[Bulk Export] is a generic export module for [Omeka S] that intends to be easily
+extensible by other modules.
 
-The two main concepts are readers and processors. Readers read data from a
-source (file, url…) and make it accessible for processors which turn these data
-into Omeka objects (items, item sets, media, annotations…) via a mapping.
+It allows to manage writers, that are responsible for exporting metadata into a
+file.
 
-Because multiple importers can be prepared with the same readers and processors,
-it is possible to import multiple times the same type of files without needing
-to do the mapping each time.
+As an example, this module defines a sample writer that exports all resources as
+a spreadsheet (that can be imported automatically by [Bulk Import])
 
-As an example, this module defines a sample reader for spreadsheet files and a
-processor that creates resources based on a user-defined mapping. Note: if your
-only need is to import a CSV file into Omeka, you should probably use [CSV Import module],
-which does a perfect job for that.
-
-This module was initially based on a port of the [Omeka Classic] [Import plugin],
-built by [Biblibre].
+This module is inspired by the [Omeka Classic] [Export plugin], built by [Biblibre].
 
 
 Installation
@@ -43,28 +34,11 @@ the module to `BulkExport`.
 Quick start
 -----------
 
-First, define an importer, that is a reader and a processor. By default, they
-are only one.
+First, choose a writer and config it.
 
-Then, config the reader and the processor.
+Finally, process the export.
 
-Finally, process the import.
-
-
-Internal differences with Csv Import
-------------------------------------
-
-- Two columns with the same headers should be mapped the same.
-- Empty values for boolean metadata (is_public…) in spreadsheet reader are
-  skipped and they don't mean "false" or "true".
-- In case of insensitive duplicate, the first one is always returned.
-
-
-TODO
-----
-
-- Full dry-run.
-- Fix numeric data type (doctrine issue).
+To create a new writer, take your inspiration on the existing `SpreadsheetWriter`.
 
 
 Warning
@@ -116,13 +90,12 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Roy Rosenzweig Center for History and New Media, 2015-2018
-* Copyright Daniel Berthereau, 2017-2019 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2019 (see [Daniel-KM] on GitHub)
 
 
 [Bulk Export]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport
 [Omeka S]: https://omeka.org/s
-[CSV Import module]: https://omeka.org/s/modules/CSVImport
+[Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka Classic]: https://omeka.org/classic
 [Import plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [Log]: https://github.com/Daniel-KM/Omeka-S-module-Log
