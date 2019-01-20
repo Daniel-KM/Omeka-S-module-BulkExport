@@ -302,6 +302,17 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 array_unshift($headers, 'resource_type');
             }
 
+            // TODO Remove empty headers for Annotation.
+            if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
+                $usedProperties = $this->listUsedProperties();
+                foreach ($usedProperties as $property) {
+                    $headers[] = 'oa:hasBody[' . $property . ']';
+                }
+                foreach ($usedProperties as $property) {
+                    $headers[] = 'oa:hasTarget[' . $property . ']';
+                }
+            }
+
             $this->headers = $headers;
         }
 
@@ -387,6 +398,16 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                     ? $this->extractFirstValue([$resource->item()], $header)
                     : [];
 
+            // Bodies and targets of annotations.
+            case strpos($header, 'oa:hasBody[') === 0:
+                return $resource->resourceName() === 'annotations'
+                    ? $this->extractFirstValue($resource->bodies(), $header)
+                    : [];
+            case strpos($header, 'oa:hasTarget[') === 0:
+                return $resource->resourceName() === 'annotations'
+                    ? $this->extractFirstValue($resource->targets(), $header)
+                    : [];
+
             // All properties for all resources.
             default:
                 return $hasSeparator
@@ -470,6 +491,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $resourceTypes = $this->getResourceTypes();
         $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
         if ($resourceClasses) {
+            // Manage exception for annotations.
+            if (in_array(\Annotate\Entity\Annotation::class, $resourceClasses)) {
+                $resourceClasses[] = \Annotate\Entity\AnnotationPart::class;
+                $resourceClasses[] = \Annotate\Entity\AnnotationBody::class;
+                $resourceClasses[] = \Annotate\Entity\AnnotationTarget::class;
+            }
+
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
                 ->andWhere($qb->expr()->in(

@@ -223,6 +223,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected function mapResourceTypeToClass($jsonResourceType)
     {
         $mapping = [
+            // Core.
             'o:User' => \Omeka\Entity\User::class,
             'o:Vocabulary' => \Omeka\Entity\Vocabulary::class,
             'o:ResourceClass' => \Omeka\Entity\ResourceClass::class,
@@ -238,6 +239,8 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
             'o:Resource' => \Omeka\Entity\Resource::class,
             'o:Asset' => \Omeka\Entity\Asset::class,
             'o:ApiResource' => null,
+            // Modules.
+            'oa:Annotation' => \Annotate\Entity\Annotation::class,
         ];
         return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
     }
@@ -245,6 +248,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected function mapResourceTypeToApiResource($jsonResourceType)
     {
         $mapping = [
+            // Core.
             'o:User' => 'users',
             'o:Vocabulary' => 'vocabularies',
             'o:ResourceClass' => 'resource_classes',
@@ -260,6 +264,8 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
             'o:Resource' => 'resources',
             'o:Asset' => 'assets',
             'o:ApiResource' => 'api_resources',
+            // Modules.
+            'oa:Annotation' => 'annotations',
         ];
         return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
     }
@@ -272,6 +278,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected function mapResourceTypeToTable($jsonResourceType)
     {
         $mapping = [
+            // Core.
             'o:User' => 'user',
             'o:Vocabulary' => 'vocabulary',
             'o:ResourceClass' => 'resource_class',
@@ -287,6 +294,8 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
             'o:Resource' => 'resource',
             'o:Asset' => 'asset',
             'o:ApiResource' => 'api_resource',
+            // Modules.
+            'oa:Annotation' => 'annotation',
         ];
         return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
     }
@@ -295,6 +304,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     {
         $class = get_class($representation);
         $mapping = [
+            // Core.
             \Omeka\Api\Representation\UserRepresentation::class => 'User',
             \Omeka\Api\Representation\VocabularyRepresentation::class => 'Vocabulary',
             \Omeka\Api\Representation\ResourceClassRepresentation::class => 'Resource class',
@@ -310,6 +320,8 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
             \Omeka\Api\Representation\ResourceReference::class => 'Resource',
             \Omeka\Api\Representation\AssetRepresentation::class => 'Asset',
             \Omeka\Api\Representation\ApiResourceRepresentation::class => 'Api resource',
+            // Modules.
+            \Annotate\Api\Representation\AnnotationRepresentation::class => 'Annotation',
         ];
         return isset($mapping[$class]) ? $mapping[$class] : null;
     }

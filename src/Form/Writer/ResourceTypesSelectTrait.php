@@ -43,6 +43,7 @@ trait ResourceTypesSelectTrait
     protected function listResourceTypes()
     {
         $resourceTypes = [
+            // Core.
             // 'o:User' => 'Users', // @translate
             // 'o:Vocabulary' => 'Vocabularies', // @translate
             // 'o:ResourceClass' => 'Resource classes', // @translate
@@ -58,7 +59,13 @@ trait ResourceTypesSelectTrait
             // 'o:Resource' => 'Resources', // @translate
             // 'o:Asset' => 'Assets', // @translate
             // 'o:ApiResource' => 'Api resources', // @translate
+            // Modules.
+            'oa:Annotation' => 'Annotations', // @translate
         ];
+
+        if (!class_exists(\Annotate\Entity\Annotation::class)) {
+            unset($resourceTypes['oa:Annotation']);
+        }
 
         return $resourceTypes;
     }
