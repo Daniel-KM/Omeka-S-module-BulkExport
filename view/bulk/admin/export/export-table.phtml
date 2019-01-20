@@ -23,6 +23,8 @@ $urlBase = $url('top') . 'files/bulk_export/';
     <tbody>
         <?php foreach ($exports as $export): ?>
             <?php $status = $export->status(); ?>
+            <?php $filename = $export->filename(); ?>
+            <?php $fileUrl = $export->isCompleted() && $filename ? $urlBase . $filename : ''; ?>
             <tr>
                 <td>
                     <?php echo $export->exporter()->label(); ?>
@@ -33,16 +35,16 @@ $urlBase = $url('top') . 'files/bulk_export/';
                             'title' => $translate('Stop'), // @translate
                         ]); ?></li>
                         <?php endif; ?>
+                        <?php if ($fileUrl): ?>
+                        <li><?php
+                        echo $hyperlink('', $fileUrl, [
+                            'class' => 'fas fa-cloud-upload-alt',
+                            'title' => $translate('Get file'), // @translate
+                        ]); ?></li>
+                        <?php endif; ?>
                     </ul>
                 </td>
-                <td><?php
-                    $filename = $export->filename();
-                    if ($export->isCompleted() && $filename):
-                        echo $hyperlink($status, $urlBase . $filename);
-                    else:
-                        echo $status;
-                    endif;
-                ?></td>
+                <td><?php echo $fileUrl ? $hyperlink($status, $fileUrl) : $status; ?></td>
                 <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
                 <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
                 <td>
