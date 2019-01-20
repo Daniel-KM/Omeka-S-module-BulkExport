@@ -1,15 +1,14 @@
 <?php
 namespace BulkExport\Writer;
 
-use BulkExport\Entry\Entry;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Interfaces\Writer;
 use BulkExport\Traits\ConfigurableTrait;
 use BulkExport\Traits\ParametrizableTrait;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
-use Iterator;
 use Log\Stdlib\PsrMessage;
+use Omeka\Job\AbstractJob as Job;
 use Zend\Form\Form;
 use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -26,7 +25,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     /**
      * @var string
      */
-    protected $filename;
+    protected $extension;
 
     /**
      * @var Logger
@@ -34,14 +33,9 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected $logger;
 
     /**
-     * @var array
+     * @var Job
      */
-    protected $availableFields = [];
-
-    /**
-     * @var string|null
-     */
-    protected $lastErrorMessage;
+    protected $job;
 
     /**
      * @var string
@@ -59,34 +53,14 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected $paramsFormClass;
 
     /**
-     * var array
+     * @var string|null
      */
-    protected $configKeys = [];
-
-    /**
-     * var array
-     */
-    protected $paramsKeys = [];
-
-    /**
-     * @var \Iterator
-     */
-    protected $iterator;
+    protected $lastErrorMessage;
 
     /**
      * @var int
      */
     protected $totalEntries;
-
-    /**
-     * @var array
-     */
-    protected $currentData = [];
-
-    /**
-     * @var bool
-     */
-    protected $isReady;
 
     /**
      * Writer constructor.
@@ -105,7 +79,18 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
 
     public function getExtension()
     {
-        return pathinfo($this->filename, PATHINFO_EXTENSION);
+        return $this->extension;
+    }
+
+    public function isValid()
+    {
+        $this->lastErrorMessage = null;
+        return true;
+    }
+
+    public function getLastErrorMessage()
+    {
+        return $this->lastErrorMessage;
     }
 
     public function setLogger(Logger $logger)
@@ -114,26 +99,10 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         return $this;
     }
 
-    public function isValid()
+    public function setJob(Job $job)
     {
-        $this->lastErrorMessage = null;
-        if (array_search('filename', $this->paramsKeys) === false) {
-            return true;
-        }
-        $file = $this->getParam('file');
-        $filepath = $this->getParam('filename');
-        return $this->isValidFilepath($filepath, $file);
-    }
-
-    public function getLastErrorMessage()
-    {
-        return $this->lastErrorMessage;
-    }
-
-    public function getAvailableFields()
-    {
-        $this->isReady();
-        return $this->availableFields;
+        $this->job = $job;
+        return $this;
     }
 
     public function getConfigFormClass()
@@ -146,7 +115,6 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $values = $form->getData();
         $config = array_intersect_key($values, array_flip($this->configKeys));
         $this->setConfig($config);
-        $this->reset();
     }
 
     public function getParamsFormClass()
@@ -159,234 +127,95 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $this->lastErrorMessage = null;
         $values = $form->getData();
         $params = array_intersect_key($values, array_flip($this->paramsKeys));
-        if (array_search('filename', $this->paramsKeys) !== false) {
-            $file = $this->getUploadedFile($form);
-            $params['filename'] = $file['filename'];
-            // Remove temp names for security purpose.
-            unset($file['filename']);
-            unset($file['tmp_name']);
-            $params['file'] = $file;
-        }
         $this->setParams($params);
-        $this->reset();
-    }
-
-    public function current()
-    {
-        $this->isReady();
-        $this->currentData = $this->iterator->current();
-        if (!is_array($this->currentData)) {
-            return null;
-        }
-        return $this->currentEntry();
     }
 
     /**
-     * Helper to manage the current entry.
+     * Check or create the destination folder.
      *
-     * May be overridden with a different entry sub-class.
-     *
-     * @return \BulkExport\Entry\Entry
+     * @param string $dirPath Absolute path.
+     * @return string|null
      */
-    protected function currentEntry()
+    protected function checkDestinationDir($dirPath)
     {
-        return new Entry($this->availableFields, $this->currentData, $this->getParams());
-    }
-
-    public function key()
-    {
-        $this->isReady();
-        return $this->iterator->key();
-    }
-
-    public function next()
-    {
-        $this->isReady();
-        $this->iterator->next();
-    }
-
-    public function rewind()
-    {
-        $this->isReady();
-        $this->iterator->rewind();
-    }
-
-    public function valid()
-    {
-        $this->isReady();
-        return $this->iterator->valid();
-    }
-
-    public function count()
-    {
-        $this->isReady();
-        return $this->totalEntries;
-    }
-
-    /**
-     * Check if the writer is ready, or prepare it.
-     *
-     * @return boolean
-     */
-    protected function isReady()
-    {
-        if ($this->isReady) {
-            return true;
-        }
-
-        $this->prepareIterator();
-        return $this->isReady;
-    }
-
-    /**
-     * Reset the iterator to allow to use it with different params.
-     */
-    protected function reset()
-    {
-        $this->availableFields = [];
-        $this->iterator = null;
-        $this->totalEntries = null;
-        $this->currentData = [];
-        $this->iisReady = false;
-    }
-
-    /**
-     * @throws \Omeka\Service\Exception\RuntimeException
-     */
-    protected function prepareIterator()
-    {
-        $this->reset();
-        if (!$this->isValid()) {
-            throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
-        }
-
-        $this->initializeWriter();
-
-        $this->finalizePrepareIterator();
-        $this->prepareAvailableFields();
-
-        $this->isReady = true;
-    }
-
-    /**
-     * Initialize the writer iterator.
-     */
-    abstract protected function initializeWriter();
-
-    /**
-     * Called only by prepareIterator() after opening writer.
-     */
-    protected function finalizePrepareIterator()
-    {
-        $this->totalEntries = iterator_count($this->iterator);
-    }
-
-    /**
-     * The fields are an array.
-     */
-    protected function prepareAvailableFields()
-    {
-    }
-
-    /**
-     * @todo Use the upload mechanism / temp file of Omeka.
-     *
-     * @param Form $form
-     * @throws \Omeka\Service\Exception\RuntimeException
-     * @return array The file array with the temp filename.
-     */
-    protected function getUploadedFile(Form $form)
-    {
-        $file = $form->get('file')->getValue();
-        if (empty($file)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                'Unable to upload file.' // @translate
-            );
-        }
-
-        $systemConfig = $this->getServiceLocator()->get('Config');
-        $tempDir = isset($systemConfig['temp_dir'])
-            ? $systemConfig['temp_dir']
-            : null;
-        if (!$tempDir) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                'The "temp_dir" is not configured' // @translate
-            );
-        }
-
-        $filename = tempnam($tempDir, 'omk_');
-        if (!move_uploaded_file($file['tmp_name'], $filename)) {
-            throw new \Omeka\Service\Exception\RuntimeException(
-                new PsrMessage(
-                    'Unable to move uploaded file to {filename}', // @translate
-                    ['filename' => $filename]
-                )
-            );
-        }
-        $file['filename'] = $filename;
-        return $file;
-    }
-
-    /**
-     * @param string $filepath
-     * @param array $file
-     * @return boolean
-     */
-    protected function isValidFilepath($filepath, $file)
-    {
-        if (empty($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" doesn’t exist.', // @translate
-                ['filename' => $file['name']]
-            );
-            return false;
-        }
-        if (!filesize($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" is empty.', // @translate
-                ['filename' => $file['name']]
-            );
-            return false;
-        }
-        if (!is_readable($filepath)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" is not readable.', // @translate
-                ['filename' => $file['name']]
-            );
-            return false;
-        }
-        $mediaType = $this->getParam('file')['type'];
-        if (is_array($this->mediaType)) {
-            if (!in_array($mediaType, $this->mediaType)) {
-                $this->lastErrorMessage = new PsrMessage(
-                    'File "{filename}" has media type "{file_media_type}" and is not managed.', // @translate
-                    ['filename' => $file['name'], 'file_media_type' => $mediaType]
+        if (!file_exists($dirPath)) {
+            $config = $this->getServiceLocator()->get('Config');
+            $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+            if (!is_writeable($basePath)) {
+                $this->logger->err(
+                    'The destination folder "{folder}" is not writeable.', // @translate
+                    ['folder' => $basePath]
                 );
-                return false;
+                return;
             }
-        } elseif ($mediaType !== $this->mediaType) {
-            $this->lastErrorMessage = new PsrMessage(
-                'File "{filename}" has media type "{file_media_type}", not "{media_type}".', // @translate
-                ['filename' => $file['name'], 'file_media_type' => $mediaType, 'media_type' => $this->mediaType]
+            @mkdir($dirPath, 0755, true);
+        } elseif (!is_dir($dirPath) || !is_writeable($dirPath)) {
+            $this->logger->err(
+                'The destination folder "{folder}" is not writeable.', // @translate
+                ['folder' => $basePath . '/' . $dirPath]
             );
-            return false;
+            return;
         }
-        return true;
+        return $dirPath;
     }
 
-    protected function cleanData(array $data)
+    protected function prepareTempFile()
     {
-        return array_map([$this, 'trimUnicode'], $data);
+        // TODO Use Omeka factory for temp files.
+        $config = $this->getServiceLocator()->get('Config');
+        $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
+        $tempfilepath = tempnam($tempDir, 'omk_export_');
+        return $tempfilepath;
     }
 
-    /**
-     * Trim all whitespace, included the unicode ones.
-     *
-     * @param string $string
-     * @return string
-     */
-    protected function trimUnicode($string)
+    protected function saveFile($tempfilepath)
     {
-        return preg_replace('/^[\h\v\s[:blank:][:space:]]+|[\h\v\s[:blank:][:space:]]+$/u', '', $string);
+        $config = $this->getServiceLocator()->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $destinationDir = $basePath . '/bulk_export';
+
+        $exporterLabel = $this->getParam('exporter_label', '');
+        $base = preg_replace('/[^A-Za-z0-9 ]/', '_', $exporterLabel);
+        $base = $base ? preg_replace('/_+/', '_', $base) . '-' : '';
+        $date = $this->getParam('export_started', new \DateTime())->format('Ymd-His');
+        $extension = $this->getExtension();
+
+        // Avoid issue on very big base.
+        $i = 0;
+        do {
+            $filename = sprintf(
+                '%s%s%s.%s',
+                $base,
+                $date,
+                $i ? '-' . $i : '',
+                $extension
+            );
+
+            $filepath = $destinationDir . '/' . $filename;
+            if (!file_exists($filepath)) {
+                try {
+                    $result = copy($tempfilepath, $filepath);
+                    @unlink($tempfilepath);
+                } catch (\Exception $e) {
+                    throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+                        'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
+                        ['filename' => $filename, 'tempfile' => $tempfilepath, 'exception' => $e]
+                    ));
+                }
+
+                if (!$result) {
+                    throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+                        'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
+                        ['filename' => $filename, 'tempfile' => $tempfilepath]
+                    ));
+                }
+
+                break;
+            }
+        } while (++$i);
+
+        $params = $this->getParams();
+        $params['filename'] = $filename;
+        $this->setParams($params);
     }
 }

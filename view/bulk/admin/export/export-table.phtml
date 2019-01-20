@@ -6,6 +6,9 @@
 
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
+$hyperlink = $this->plugin('hyperlink');
+$url = $this->plugin('url');
+$urlBase = $url('top') . 'files/bulk_export/';
 ?>
 <table class="tablesaw" data-tablesaw-mode="stack">
     <thead>
@@ -21,7 +24,15 @@ $escape = $this->plugin('escapeHtml');
         <?php foreach ($exports as $export): ?>
             <tr>
                 <td><?php echo $export->exporter()->label(); ?></td>
-                <td><?php echo $export->status(); ?></td>
+                <td><?php
+                    $status = $export->status();
+                    $filename = $export->filename();
+                    if ($status === \Omeka\Entity\Job::STATUS_COMPLETED && $filename):
+                        echo $hyperlink($status, $urlBase . $filename);
+                    else:
+                        echo $export->status();
+                    endif;
+                ?></td>
                 <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
                 <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
                 <td>
