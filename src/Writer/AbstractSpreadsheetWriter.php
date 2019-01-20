@@ -437,7 +437,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         foreach ($resources as $resource) {
             $value = $resource->value($term);
             if ($value) {
-                $result[] = (string) $value;
+                // The value should be a string.
+                $v = $value->uri();
+                if (!is_string($v)) {
+                    $v = $value->valueResource();
+                    $v = $v ? $v->id() : $value->value();
+                }
+                $result[] = $v;
             }
         }
         return $result;
