@@ -5,10 +5,10 @@
     header nav .bulk-exporters::before,
     .bulk-exports .subhead::before,
     .bulk-exporters .subhead::before {
-        content:"";
+        content:"";
     }
     .bulk-exports .no-resources:before,
     .bulk-exporters .no-resources:before {
-        content:"";
+        content:"";
     }
 }

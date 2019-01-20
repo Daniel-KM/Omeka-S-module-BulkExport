@@ -25,7 +25,7 @@ $escape = $this->plugin('escapeHtml');
                 <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
                 <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
                 <td>
-                    <?php echo $this->hyperlink($translate('See logs'), $this->url('admin/bulk/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])); ?>
+                    <?php echo $this->hyperlink($translate('See logs'), $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])); ?>
                 </td>
             </tr>
         <?php endforeach; ?>

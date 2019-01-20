@@ -53,13 +53,14 @@ return [
             'BulkExport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
         ],
     ],
+    // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
     'navigation' => [
         'AdminModule' => [
-            'bulk' => [
+            [
                 'label' => 'Bulk Export', // @translate
-                'route' => 'admin/bulk',
+                'route' => 'admin/bulk-export',
                 'resource' => 'BulkExport\Controller\Admin\Index',
-                'class' => 'o-icon-install',
+                'class' => 'o-icon-uninstall',
             ],
         ],
     ],
@@ -67,15 +68,15 @@ return [
         'routes' => [
             'admin' => [
                 'child_routes' => [
-                    'bulk' => [
+                    'bulk-export' => [
                         'type' => \Zend\Router\Http\Literal::class,
                         'options' => [
-                            'route'    => '/bulk',
+                            'route' => '/bulk-export',
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller\Admin',
                                 '__ADMIN__' => true,
                                 'controller' => 'Index',
-                                'action'     => 'index',
+                                'action' => 'export-board',
                             ],
                         ],
                         'may_terminate' => true,

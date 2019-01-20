@@ -18,7 +18,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
 <?php echo $this->pageTitle($translate('Bulk export'), 1, $translate('Bulk export')); ?>
 
 <h2><?php echo $escape($translate('Available exporters')); ?></h2>
-<?php echo $hyperlink('Add an exporter', $this->url('admin/bulk/default', ['controller' => 'exporter', 'action' => 'add'])); ?>
+<?php echo $hyperlink('Add an exporter', $this->url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'])); ?>
 
 <?php if (count($exporters)): ?>
 <table class="tablesaw batch-edit" data-tablesaw-mode="stack">
@@ -34,10 +34,10 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
         <?php $userIsAllowedDelete = $exporter->userIsAllowed('delete'); ?>
         <tr>
             <td>
-                <?php echo $hyperlink($exporter->label(), $this->url('admin/bulk/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])); ?>
+                <?php echo $hyperlink($exporter->label(), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])); ?>
                 <ul class="actions">
                     <li><?php echo $exporter->link('', 'start', [
-                        'class' => 'fas fa-cloud-download-alt',
+                        'class' => 'fas fa-cloud-upload-alt',
                         'title' => $translate('Export'),
                     ]); ?></li>
                     <?php if ($userIsAllowedUpdate): ?>
@@ -64,7 +64,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
                 <?php $writer = $exporter->writer(); ?>
                 <?php echo $writer ? $writer->getLabel() : null; ?>
                 <?php if ($writer instanceof ConfigurableExport): ?>
-                    (<?php echo $hyperlink('Configure', $this->url('admin/bulk/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])); ?>)
+                    (<?php echo $hyperlink('Configure', $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])); ?>)
                 <?php endif; ?>
             </td>
         </tr>
@@ -76,6 +76,6 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
 
 <?php if (!empty($exports)): ?>
     <h2><?php echo $escape($translate('Last exports')); ?></h2>
-    <?php echo $hyperlink('See all exports', $this->url('admin/bulk/default', ['controller' => 'export', 'action' => 'index'])); ?>
+    <?php echo $hyperlink('See all exports', $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'])); ?>
     <?php echo $this->partial('bulk/admin/export/export-table', ['exports' => $exports]); ?>
 <?php endif; ?>

@@ -120,7 +120,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     {
         $url = $this->getViewHelper('Url');
         return $url(
-            'admin/bulk/id',
+            'admin/bulk-export/id',
             [
                 'controller' => $this->getControllerName(),
                 'action' => $action,
