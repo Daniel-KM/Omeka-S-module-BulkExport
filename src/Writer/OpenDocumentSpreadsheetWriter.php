@@ -17,10 +17,12 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $configKeys = [
         'separator',
+        'metadata',
     ];
 
     protected $paramsKeys = [
         'separator',
+        'metadata',
     ];
 
     protected $spreadsheetType = Type::ODS;

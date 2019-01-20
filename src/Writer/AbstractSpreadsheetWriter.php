@@ -4,6 +4,7 @@ namespace BulkExport\Writer;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\WriterInterface;
 use Log\Stdlib\PsrMessage;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 abstract class AbstractSpreadsheetWriter extends AbstractWriter
 {
@@ -25,6 +26,11 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
      * @var array
      */
     protected $usedProperties;
+
+    /**
+     * @var array
+     */
+    protected $headers;
 
     public function isValid()
     {
@@ -50,7 +56,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $writer
             ->openToFile($filepath);
 
-        $headers = $this->listUsedProperties();
+        $headers = $this->getHeaders();
         if (!count($headers)) {
             $this->logger->warn('No headers are used in any resources.'); // @translate
             $writer->close();
@@ -110,7 +116,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             );
         }
 
-        $headers = $this->listUsedProperties();
+        $headers = $this->getHeaders();
 
         $criteria = [];
 
@@ -142,13 +148,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
-                        $values = $resource->value($header, ['all' => true]);
+                        $values = $this->fillHeader($resource, $header, $hasSeparator);
                         $dataRow[] = implode($separator, $values);
                     }
                 } else {
                     foreach ($headers as $header) {
-                        $value = $resource->value($header);
-                        $dataRow[] = (string) $value;
+                        $values = $this->fillHeader($resource, $header, $hasSeparator);
+                        $dataRow[] = (string) reset($values);
                     }
                 }
 
@@ -187,6 +193,57 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             '{processed}/{total} resources processed, {succeed} succeed, {skipped} skipped.', // @translate
             ['processed' => $totalProcessed, 'total' => $totalToProcess, 'succeed' => $totalSucceed, 'skipped' => $totalSkipped]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHeaders()
+    {
+        if (is_null($this->headers)) {
+            $headers = $this->getParam('metadata', []);
+            if ($headers) {
+                if (in_array('properties', $headers)) {
+                    unset($headers['properties']);
+                    $headers = array_merge($headers, $this->listUsedProperties());
+                }
+            } else {
+                $headers = $this->listUsedProperties();
+            }
+            $this->headers = $headers;
+        }
+        return $this->headers;
+    }
+
+    /**
+     * Get metadata for a header.
+     *
+     * @param AbstractResourceEntityRepresentation $resource
+     * @param string $header
+     * @param bool $hasSeparator
+     * @return array Always an array, even for single metadata.
+     */
+    protected function fillHeader($resource, $header, $hasSeparator = false)
+    {
+        switch ($header) {
+            case 'o:id':
+                return [$resource->id()];
+            case 'o:resource_template':
+                $resourceTemplate = $resource->resourceTemplate();
+                return $resourceTemplate ? [$resourceTemplate->label()] : [''];
+            case 'o:resource_class':
+                $resourceClass = $resource->resourceClass();
+                return $resourceClass ? [$resourceClass->term()] : [''];
+            case 'o:owner':
+                $owner = $resource->owner();
+                return $owner ? [$owner->email()] : [''];
+            case 'o:is_public':
+                return $resource->isPublic() ? ['true'] : ['false'];
+            default:
+                return $hasSeparator
+                    ? $resource->value($header, ['all' => true])
+                    : [$resource->value($header)];
+        }
     }
 
     protected function listUsedProperties()

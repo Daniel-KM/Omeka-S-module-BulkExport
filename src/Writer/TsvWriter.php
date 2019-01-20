@@ -17,10 +17,12 @@ class TsvWriter extends CsvWriter
 
     protected $configKeys = [
         'separator',
+        'metadata',
     ];
 
     protected $paramsKeys = [
         'separator',
+        'metadata',
     ];
 
     public function handleParamsForm(Form $form)

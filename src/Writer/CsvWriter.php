@@ -28,6 +28,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'enclosure',
         'escape',
         'separator',
+        'metadata',
     ];
 
     protected $paramsKeys = [
@@ -35,6 +36,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'enclosure',
         'escape',
         'separator',
+        'metadata',
     ];
 
     protected $spreadsheetType = Type::CSV;
