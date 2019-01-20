@@ -23,7 +23,7 @@ class Export extends AbstractEntity
      * @var Exporter
      * @ManyToOne(
      *     targetEntity=Exporter::class,
-     *     inversedBy="export",
+     *     inversedBy="exports",
      *     fetch="EXTRA_LAZY"
      * )
      * @JoinColumn(
@@ -53,13 +53,14 @@ class Export extends AbstractEntity
     protected $writerParams;
 
     /**
-     * @var array
+     * @var string
      * @Column(
-     *     type="json_array",
+     *     type="string",
+     *     length=255,
      *     nullable=true
      * )
      */
-    protected $processorParams;
+    protected $filename;
 
     public function getId()
     {
@@ -124,17 +125,17 @@ class Export extends AbstractEntity
      * @param string $filename
      * @return self
      */
-    public function setStatus($status)
+    public function setFilename($filename)
     {
-        $this->status = $status;
+        $this->filename = $filename;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getStatus()
+    public function getFilename()
     {
-        return $this->status;
+        return $this->filename;
     }
 }

@@ -64,10 +64,10 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'processorClass', 'processorConfig', 'owner'];
+            return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'owner', 'exports'];
         }
 
-        return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'processorClass', 'processorConfig', 'owner'];
+        return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'owner', 'exports'];
     }
 
     /**
@@ -257,50 +257,6 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setProcessorClass($processorClass)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorClass', [$processorClass]);
-
-        return parent::setProcessorClass($processorClass);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getProcessorClass()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorClass', []);
-
-        return parent::getProcessorClass();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setProcessorConfig($processorConfig)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorConfig', [$processorConfig]);
-
-        return parent::setProcessorConfig($processorConfig);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getProcessorConfig()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorConfig', []);
-
-        return parent::getProcessorConfig();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setOwner(\Omeka\Entity\User $owner = NULL)
     {
 
@@ -318,6 +274,17 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getOwner', []);
 
         return parent::getOwner();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExports()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getExports', []);
+
+        return parent::getExports();
     }
 
     /**

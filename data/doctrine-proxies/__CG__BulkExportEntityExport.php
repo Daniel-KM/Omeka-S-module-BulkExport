@@ -58,20 +58,20 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
 
 
     /**
-     *
+     * 
      * @return array
      */
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'processorParams'];
+            return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'filename'];
         }
 
-        return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'processorParams'];
+        return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'filename'];
     }
 
     /**
-     *
+     * 
      */
     public function __wakeup()
     {
@@ -93,7 +93,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     }
 
     /**
-     *
+     * 
      */
     public function __clone()
     {
@@ -172,7 +172,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
         return self::$lazyPropertiesDefaults;
     }
 
-
+    
     /**
      * {@inheritDoc}
      */
@@ -257,45 +257,23 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setProcessorParams($processorParams)
+    public function setFilename($filename)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setProcessorParams', [$processorParams]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFilename', [$filename]);
 
-        return parent::setProcessorParams($processorParams);
+        return parent::setFilename($filename);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getProcessorParams()
+    public function getFilename()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getProcessorParams', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFilename', []);
 
-        return parent::getProcessorParams();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setStatus($status)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', [$status]);
-
-        return parent::setStatus($status);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getStatus()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStatus', []);
-
-        return parent::getStatus();
+        return parent::getFilename();
     }
 
     /**

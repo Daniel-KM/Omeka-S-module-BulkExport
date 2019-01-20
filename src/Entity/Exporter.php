@@ -1,6 +1,7 @@
 <?php
 namespace BulkExport\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Omeka\Entity\AbstractEntity;
 use Omeka\Entity\User;
 
@@ -59,6 +60,22 @@ class Exporter extends AbstractEntity
      * )
      */
     protected $owner;
+
+    /**
+     * @OneToMany(
+     *     targetEntity=Export::class,
+     *     mappedBy="exporter",
+     *     orphanRemoval=true,
+     *     cascade={"persist", "remove"},
+     *     indexBy="id"
+     * )
+     */
+    protected $exports;
+
+    public function __construct()
+    {
+        $this->imports = new ArrayCollection;
+    }
 
     public function getId()
     {
@@ -129,8 +146,19 @@ class Exporter extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @return \Omeka\Entity\User
+     */
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    /**
+     * @return Export[]
+     */
+    public function getExports()
+    {
+        return $this->exports();
     }
 }
