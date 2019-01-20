@@ -11,6 +11,7 @@ use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Iterator;
 use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
+use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractWriter implements Writer, Configurable, Parametrizable
@@ -21,6 +22,16 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
      * @var string
      */
     protected $label;
+
+    /**
+     * @var string
+     */
+    protected $filename;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     /**
      * @var array
@@ -90,6 +101,17 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     public function getLabel()
     {
         return $this->label;
+    }
+
+    public function getExtension()
+    {
+        return pathinfo($this->filename, PATHINFO_EXTENSION);
+    }
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+        return $this;
     }
 
     public function isValid()

@@ -35,4 +35,8 @@ class SpreadsheetWriter extends AbstractGenericWriter
         'text/csv' => CsvWriter::class,
         'text/tab-separated-values' => TsvWriter::class,
     ];
+
+    public function write($fh)
+    {
+    }
 }
