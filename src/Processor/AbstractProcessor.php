@@ -3,7 +3,7 @@ namespace BulkExport\Processor;
 
 use ArrayObject;
 use BulkExport\Interfaces\Processor;
-use BulkExport\Interfaces\Reader;
+use BulkExport\Interfaces\Writer;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -43,9 +43,9 @@ abstract class AbstractProcessor implements Processor
     /**#@-*/
 
     /**
-     * @var Reader
+     * @var Writer
      */
-    protected $reader;
+    protected $writer;
 
     /**
      * @var Logger
@@ -97,18 +97,18 @@ abstract class AbstractProcessor implements Processor
         $this->setServiceLocator($serviceLocator);
     }
 
-    public function setReader(Reader $reader)
+    public function setWriter(Writer $writer)
     {
-        $this->reader = $reader;
+        $this->writer = $writer;
         return $this;
     }
 
     /**
-     * @return \BulkExport\Interfaces\Reader
+     * @return \BulkExport\Interfaces\Writer
      */
-    public function getReader()
+    public function getWriter()
     {
-        return $this->reader;
+        return $this->writer;
     }
 
     public function setLogger(Logger $logger)

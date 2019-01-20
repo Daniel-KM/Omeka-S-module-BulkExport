@@ -11,9 +11,9 @@ interface Processor
     public function getLabel();
 
     /**
-     * @param Reader $reader
+     * @param Writer $writer
      */
-    public function setReader(Reader $reader);
+    public function setWriter(Writer $writer);
 
     /**
      * @param Logger $logger

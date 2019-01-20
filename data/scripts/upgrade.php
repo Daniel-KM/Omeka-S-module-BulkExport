@@ -48,15 +48,15 @@ ALTER TABLE bulk_export
     DROP started,
     DROP ended,
     CHANGE exporter_id exporter_id INT DEFAULT NULL,
-    CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE writer_params writer_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
 ALTER TABLE bulk_export
     ADD CONSTRAINT FK_BD98E874BE04EA9 FOREIGN KEY (job_id) REFERENCES job (id);
 CREATE UNIQUE INDEX UNIQ_BD98E874BE04EA9 ON bulk_export (job_id);
 ALTER TABLE bulk_exporter
     CHANGE name name VARCHAR(190) DEFAULT NULL,
-    CHANGE reader_name reader_name VARCHAR(190) DEFAULT NULL,
-    CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE writer_name writer_name VARCHAR(190) DEFAULT NULL,
+    CHANGE writer_config writer_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_name processor_name VARCHAR(190) DEFAULT NULL,
     CHANGE processor_config processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
 SQL;
@@ -68,14 +68,14 @@ if (version_compare($oldVersion, '3.0.3', '<')) {
 ALTER TABLE bulk_export
     CHANGE exporter_id exporter_id INT DEFAULT NULL,
     CHANGE job_id job_id INT DEFAULT NULL,
-    CHANGE reader_params reader_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE writer_params writer_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_params processor_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
 ALTER TABLE bulk_exporter
     ADD owner_id INT DEFAULT NULL AFTER id,
     CHANGE name `label` VARCHAR(190) DEFAULT NULL,
-    CHANGE reader_name reader_class VARCHAR(190) DEFAULT NULL,
+    CHANGE writer_name writer_class VARCHAR(190) DEFAULT NULL,
     CHANGE processor_name processor_class VARCHAR(190) DEFAULT NULL,
-    CHANGE reader_config reader_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    CHANGE writer_config writer_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     CHANGE processor_config processor_config LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
 ALTER TABLE bulk_exporter
     ADD CONSTRAINT FK_2DAF62D7E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id) ON DELETE SET NULL;

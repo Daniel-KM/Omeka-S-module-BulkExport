@@ -64,10 +64,10 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'exporter', 'job', 'readerParams', 'processorParams'];
+            return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'processorParams'];
         }
 
-        return ['__isInitialized__', 'id', 'exporter', 'job', 'readerParams', 'processorParams'];
+        return ['__isInitialized__', 'id', 'exporter', 'job', 'writerParams', 'processorParams'];
     }
 
     /**
@@ -235,23 +235,23 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setReaderParams($readerParams)
+    public function setWriterParams($writerParams)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderParams', [$readerParams]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterParams', [$writerParams]);
 
-        return parent::setReaderParams($readerParams);
+        return parent::setWriterParams($writerParams);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getReaderParams()
+    public function getWriterParams()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getReaderParams', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterParams', []);
 
-        return parent::getReaderParams();
+        return parent::getWriterParams();
     }
 
     /**

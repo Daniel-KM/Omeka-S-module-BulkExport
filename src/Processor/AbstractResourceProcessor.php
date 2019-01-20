@@ -173,7 +173,7 @@ abstract class AbstractResourceProcessor extends AbstractProcessor implements Co
         $this->base = $this->baseEntity();
 
         $dataToProcess = [];
-        foreach ($this->reader as $index => $entry) {
+        foreach ($this->writer as $index => $entry) {
             ++$this->totalIndexResources;
             // The first entry is #1, but the iterator (array) numbered it 0.
             $this->indexResource = $index + 1;

@@ -2,7 +2,7 @@
 namespace BulkExport\Form;
 
 use BulkExport\Entity\Exporter;
-use BulkExport\Reader\Manager as ReaderManager;
+use BulkExport\Writer\Manager as WriterManager;
 use BulkExport\Processor\Manager as ProcessorManager;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
@@ -34,14 +34,14 @@ class ExporterForm extends Form
         ]);
 
         $this->add([
-            'name' => 'o-module-bulk:reader_class',
+            'name' => 'o-module-bulk:writer_class',
             'type'  => Element\Select::class,
             'options' => [
-                'label' => 'Reader', // @translate
-                'value_options' => $this->getReaderOptions(),
+                'label' => 'Writer', // @translate
+                'value_options' => $this->getWriterOptions(),
             ],
             'attributes' => [
-                'id' => 'o-module-bulk-reader-class',
+                'id' => 'o-module-bulk-writer-class',
             ],
         ]);
 
@@ -79,13 +79,13 @@ class ExporterForm extends Form
         $this->exporter = $exporter;
     }
 
-    protected function getReaderOptions()
+    protected function getWriterOptions()
     {
         $options = [];
-        $readerManager = $this->getServiceLocator()->get(ReaderManager::class);
-        $readers = $readerManager->getPlugins();
-        foreach ($readers as $key => $reader) {
-            $options[$key] = $reader->getLabel();
+        $writerManager = $this->getServiceLocator()->get(WriterManager::class);
+        $writers = $writerManager->getPlugins();
+        foreach ($writers as $key => $writer) {
+            $options[$key] = $writer->getLabel();
         }
         return $options;
     }

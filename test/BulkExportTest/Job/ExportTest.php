@@ -291,14 +291,14 @@ SQL;
         $argsExporter = empty($args['exporter']) ? $this->exporterArgs() : $args['exporter'];
         $argsExport = empty($args['export']) ? $this->exportArgs() : $args['export'];
 
-        $argsExport['reader_params']['filename'] = $this->tempfile;
+        $argsExport['writer_params']['filename'] = $this->tempfile;
 
         $exporter = new \BulkExport\Entity\Exporter;
         $exporter
             ->setOwner($this->auth->getIdentity())
             ->setLabel($argsExporter['label'])
-            ->setReaderClass($argsExporter['reader_class'])
-            ->setReaderConfig($argsExporter['reader_config'])
+            ->setWriterClass($argsExporter['writer_class'])
+            ->setWriterConfig($argsExporter['writer_config'])
             ->setProcessorClass($argsExporter['processor_class'])
             ->setProcessorConfig($argsExporter['processor_config']);
         $this->entityManager->persist($exporter);
@@ -306,7 +306,7 @@ SQL;
         $export = new \BulkExport\Entity\Export;
         $export
             ->setExporter($exporter)
-            ->setReaderParams($argsExport['reader_params'])
+            ->setWriterParams($argsExport['writer_params'])
             ->setProcessorParams($argsExport['processor_params']);
         $this->entityManager->persist($export);
         $this->entityManager->flush();
@@ -393,8 +393,8 @@ SQL;
     {
         return [
             'label'=> 'Spreadsheet mixed',
-            'reader_class' => \BulkExport\Reader\SpreadsheetReader::class,
-            'reader_config' => [
+            'writer_class' => \BulkExport\Writer\SpreadsheetWriter::class,
+            'writer_config' => [
                 'delimiter' => ',',
                 'enclosure' => '"',
                 'escape' => '\\',
@@ -415,7 +415,7 @@ SQL;
     protected function exportArgs()
     {
         return [
-            'reader_params' => [
+            'writer_params' => [
                 'separator' => '|',
                 'filename' => '/tmp/omk_a',
                 'file' => [

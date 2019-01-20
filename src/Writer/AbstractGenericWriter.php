@@ -1,22 +1,22 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 
-abstract class AbstractGenericReader extends AbstractReader
+abstract class AbstractGenericWriter extends AbstractWriter
 {
-    protected $mediaTypeReaders = [];
+    protected $mediaTypeWriters = [];
 
     /**
-     * @var \BulkExport\Interfaces\Reader
+     * @var \BulkExport\Interfaces\Writer
      */
-    protected $reader;
+    protected $writer;
 
     public function isValid()
     {
         $this->lastErrorMessage = null;
-        // TODO Currently, the generic reader requires an uploaded file to get the specific reader.
+        // TODO Currently, the generic writer requires an uploaded file to get the specific writer.
         $file = $this->getParam('file');
         if (!$file) {
             return false;
@@ -24,14 +24,14 @@ abstract class AbstractGenericReader extends AbstractReader
         if (!parent::isValid()) {
             return false;
         }
-        $this->initializeReader();
+        $this->initializeWriter();
         $this->isReady = true;
-        return $this->reader->isValid();
+        return $this->writer->isValid();
     }
 
     public function getLastErrorMessage()
     {
-        if ($this->reader && $message = $this->reader->getLastErrorMessage()) {
+        if ($this->writer && $message = $this->writer->getLastErrorMessage()) {
             return $message;
         }
         return parent::getLastErrorMessage();
@@ -40,43 +40,43 @@ abstract class AbstractGenericReader extends AbstractReader
     public function getAvailableFields()
     {
         $this->isReady();
-        return $this->reader->getAvailableFields();
+        return $this->writer->getAvailableFields();
     }
 
     public function current()
     {
         $this->isReady();
-        return $this->reader->current();
+        return $this->writer->current();
     }
 
     public function key()
     {
         $this->isReady();
-        return $this->reader->key();
+        return $this->writer->key();
     }
 
     public function next()
     {
         $this->isReady();
-        $this->reader->next();
+        $this->writer->next();
     }
 
     public function rewind()
     {
         $this->isReady();
-        $this->reader->rewind();
+        $this->writer->rewind();
     }
 
     public function valid()
     {
         $this->isReady();
-        return $this->reader->valid();
+        return $this->writer->valid();
     }
 
     public function count()
     {
         $this->isReady();
-        return $this->reader->count();
+        return $this->writer->count();
     }
 
     protected function isReady()
@@ -95,20 +95,20 @@ abstract class AbstractGenericReader extends AbstractReader
         if (!$this->isValid()) {
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
-        $this->initializeReader();
+        $this->initializeWriter();
         $this->isReady = true;
     }
 
-    protected function initializeReader()
+    protected function initializeWriter()
     {
         $file = $this->getParam('file');
-        $readerClass = $this->mediaTypeReaders[$file['type']];
-        $this->reader = new $readerClass($this->getServiceLocator());
-        if ($this->reader instanceof Configurable) {
-            $this->reader->setConfig($this->getConfig());
+        $writerClass = $this->mediaTypeWriters[$file['type']];
+        $this->writer = new $writerClass($this->getServiceLocator());
+        if ($this->writer instanceof Configurable) {
+            $this->writer->setConfig($this->getConfig());
         }
-        if ($this->reader instanceof Parametrizable) {
-            $this->reader->setParams($this->getParams());
+        if ($this->writer instanceof Parametrizable) {
+            $this->writer->setParams($this->getParams());
         }
     }
 }

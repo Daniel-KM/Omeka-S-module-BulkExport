@@ -1,8 +1,8 @@
 {
   "exporter": {
     "label": "Tsv mixed",
-    "reader_class": "BulkExport\\Reader\\TsvReader",
-    "reader_config": {
+    "writer_class": "BulkExport\\Writer\\TsvWriter",
+    "writer_config": {
       "separator": "|"
     },
     "processor_class": "BulkExport\\Processor\\ResourceProcessor",
@@ -23,7 +23,7 @@
     }
   },
   "export": {
-    "reader_params": {
+    "writer_params": {
       "filename": "/tmp/omk_a",
       "file": {
         "name": "test_update_f_replace.tsv",

@@ -1,18 +1,18 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use BulkExport\AbstractPluginManager;
-use BulkExport\Interfaces\Reader;
+use BulkExport\Interfaces\Writer;
 
 class Manager extends AbstractPluginManager
 {
     protected function getName()
     {
-        return 'readers';
+        return 'writers';
     }
 
     protected function getInterface()
     {
-        return Reader::class;
+        return Writer::class;
     }
 }

@@ -1,9 +1,9 @@
 <?php
-namespace BulkExportTest\Reader;
+namespace BulkExportTest\Writer;
 
 use OmekaTestHelper\Controller\OmekaControllerTestCase;
 
-abstract class AbstractReader extends OmekaControllerTestCase
+abstract class AbstractWriter extends OmekaControllerTestCase
 {
     protected $sourceClass;
 

@@ -64,10 +64,10 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'label', 'readerClass', 'readerConfig', 'processorClass', 'processorConfig', 'owner'];
+            return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'processorClass', 'processorConfig', 'owner'];
         }
 
-        return ['__isInitialized__', 'id', 'label', 'readerClass', 'readerConfig', 'processorClass', 'processorConfig', 'owner'];
+        return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'processorClass', 'processorConfig', 'owner'];
     }
 
     /**
@@ -213,45 +213,45 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setReaderClass($readerClass)
+    public function setWriterClass($writerClass)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderClass', [$readerClass]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterClass', [$writerClass]);
 
-        return parent::setReaderClass($readerClass);
+        return parent::setWriterClass($writerClass);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getReaderClass()
+    public function getWriterClass()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getReaderClass', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterClass', []);
 
-        return parent::getReaderClass();
+        return parent::getWriterClass();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setReaderConfig($readerConfig)
+    public function setWriterConfig($writerConfig)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setReaderConfig', [$readerConfig]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterConfig', [$writerConfig]);
 
-        return parent::setReaderConfig($readerConfig);
+        return parent::setWriterConfig($writerConfig);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getReaderConfig()
+    public function getWriterConfig()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getReaderConfig', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterConfig', []);
 
-        return parent::getReaderConfig();
+        return parent::getWriterConfig();
     }
 
     /**

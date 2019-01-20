@@ -1,10 +1,10 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use BulkExport\Entry\Entry;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Interfaces\Reader;
+use BulkExport\Interfaces\Writer;
 use BulkExport\Traits\ConfigurableTrait;
 use BulkExport\Traits\ParametrizableTrait;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
@@ -13,7 +13,7 @@ use Log\Stdlib\PsrMessage;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-abstract class AbstractReader implements Reader, Configurable, Parametrizable
+abstract class AbstractWriter implements Writer, Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait, ServiceLocatorAwareTrait;
 
@@ -78,7 +78,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     protected $isReady;
 
     /**
-     * Reader constructor.
+     * Writer constructor.
      *
      * @param ServiceLocatorInterface $serviceLocator
      */
@@ -202,7 +202,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     }
 
     /**
-     * Check if the reader is ready, or prepare it.
+     * Check if the writer is ready, or prepare it.
      *
      * @return boolean
      */
@@ -238,7 +238,7 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
             throw new \Omeka\Service\Exception\RuntimeException($this->getLastErrorMessage());
         }
 
-        $this->initializeReader();
+        $this->initializeWriter();
 
         $this->finalizePrepareIterator();
         $this->prepareAvailableFields();
@@ -247,12 +247,12 @@ abstract class AbstractReader implements Reader, Configurable, Parametrizable
     }
 
     /**
-     * Initialize the reader iterator.
+     * Initialize the writer iterator.
      */
-    abstract protected function initializeReader();
+    abstract protected function initializeWriter();
 
     /**
-     * Called only by prepareIterator() after opening reader.
+     * Called only by prepareIterator() after opening writer.
      */
     protected function finalizePrepareIterator()
     {

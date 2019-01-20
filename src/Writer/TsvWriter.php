@@ -1,19 +1,19 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use BulkExport\Form\Reader\SpreadsheetReaderConfigForm;
-use BulkExport\Form\Reader\TsvReaderParamsForm;
+use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
+use BulkExport\Form\Writer\TsvWriterParamsForm;
 use Zend\Form\Form;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class TsvReader extends CsvReader
+class TsvWriter extends CsvWriter
 {
     protected $label = 'TSV (tab-separated values)'; // @translate
     protected $mediaType = 'text/tab-separated-values';
     protected $spreadsheetType = Type::CSV;
-    protected $configFormClass = SpreadsheetReaderConfigForm::class;
-    protected $paramsFormClass = TsvReaderParamsForm::class;
+    protected $configFormClass = SpreadsheetWriterConfigForm::class;
+    protected $paramsFormClass = TsvWriterParamsForm::class;
 
     protected $configKeys = [
         'separator',

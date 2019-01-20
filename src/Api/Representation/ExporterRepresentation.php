@@ -3,15 +3,15 @@ namespace BulkExport\Api\Representation;
 
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Processor\Manager as ProcessorManager;
-use BulkExport\Reader\Manager as ReaderManager;
+use BulkExport\Writer\Manager as WriterManager;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 
 class ExporterRepresentation extends AbstractEntityRepresentation
 {
     /**
-     * @var ReaderManager
+     * @var WriterManager
      */
-    protected $readerManager;
+    protected $writerManager;
 
     /**
      * @var ProcessorManager
@@ -19,9 +19,9 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     protected $processorManager;
 
     /**
-     * @var \BulkExport\Interfaces\Reader
+     * @var \BulkExport\Interfaces\Writer
      */
-    protected $reader;
+    protected $writer;
 
     /**
      * @var \BulkExport\Interfaces\Processor
@@ -40,8 +40,8 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return [
             'o:id' => $this->id(),
             'o:label' => $this->label(),
-            'o-module-bulk:reader_class' => $this->readerClass(),
-            'o-module-bulk:reader_config' => $this->readerConfig(),
+            'o-module-bulk:writer_class' => $this->writerClass(),
+            'o-module-bulk:writer_config' => $this->writerConfig(),
             'o-module-bulk:processor_class' => $this->processorClass(),
             'o-module-bulk:processor_config' => $this->processorConfig(),
             'o:owner' => $owner ? $owner->getReference() : null,
@@ -72,17 +72,17 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     /**
      * @return string
      */
-    public function readerClass()
+    public function writerClass()
     {
-        return $this->resource->getReaderClass();
+        return $this->resource->getWriterClass();
     }
 
     /**
      * @return array
      */
-    public function readerConfig()
+    public function writerConfig()
     {
-        return $this->resource->getReaderConfig() ?: [];
+        return $this->resource->getWriterConfig() ?: [];
     }
 
     /**
@@ -113,25 +113,25 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * @return \BulkExport\Interfaces\Reader|null
+     * @return \BulkExport\Interfaces\Writer|null
      */
-    public function reader()
+    public function writer()
     {
-        if ($this->reader) {
-            return $this->reader;
+        if ($this->writer) {
+            return $this->writer;
         }
 
-        $readerClass = $this->readerClass();
-        $readerManager = $this->getReaderManager();
-        if ($readerManager->has($readerClass)) {
-            $this->reader = $readerManager->get($readerClass);
-            if ($this->reader instanceof Configurable) {
-                $config = $this->readerConfig();
-                $this->reader->setConfig($config);
+        $writerClass = $this->writerClass();
+        $writerManager = $this->getWriterManager();
+        if ($writerManager->has($writerClass)) {
+            $this->writer = $writerManager->get($writerClass);
+            if ($this->writer instanceof Configurable) {
+                $config = $this->writerConfig();
+                $this->writer->setConfig($config);
             }
         }
 
-        return $this->reader;
+        return $this->writer;
     }
 
     /**
@@ -157,14 +157,14 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * @return ReaderManager
+     * @return WriterManager
      */
-    protected function getReaderManager()
+    protected function getWriterManager()
     {
-        if (!$this->readerManager) {
-            $this->readerManager = $this->getServiceLocator()->get(ReaderManager::class);
+        if (!$this->writerManager) {
+            $this->writerManager = $this->getServiceLocator()->get(WriterManager::class);
         }
-        return $this->readerManager;
+        return $this->writerManager;
     }
 
     /**

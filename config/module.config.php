@@ -5,7 +5,7 @@ return [
     'service_manager' => [
         'factories' => [
             Processor\Manager::class => Service\Plugin\PluginManagerFactory::class,
-            Reader\Manager::class => Service\Plugin\PluginManagerFactory::class,
+            Writer\Manager::class => Service\Plugin\PluginManagerFactory::class,
         ],
     ],
     'entity_manager' => [
@@ -50,12 +50,12 @@ return [
             Form\Processor\MediaProcessorParamsForm::class => Service\Form\FormFactory::class,
             Form\Processor\ResourceProcessorConfigForm::class => Service\Form\FormFactory::class,
             Form\Processor\ResourceProcessorParamsForm::class => Service\Form\FormFactory::class,
-            Form\Reader\CsvReaderConfigForm::class => Service\Form\FormFactory::class,
-            Form\Reader\CsvReaderParamsForm::class => Service\Form\FormFactory::class,
-            Form\Reader\OpenDocumentSpreadsheetReaderParamsForm::class => Service\Form\FormFactory::class,
-            Form\Reader\SpreadsheetReaderConfigForm::class => Service\Form\FormFactory::class,
-            Form\Reader\SpreadsheetReaderParamsForm::class => Service\Form\FormFactory::class,
-            Form\Reader\TsvReaderParamsForm::class => Service\Form\FormFactory::class,
+            Form\Writer\CsvWriterConfigForm::class => Service\Form\FormFactory::class,
+            Form\Writer\CsvWriterParamsForm::class => Service\Form\FormFactory::class,
+            Form\Writer\OpenDocumentSpreadsheetWriterParamsForm::class => Service\Form\FormFactory::class,
+            Form\Writer\SpreadsheetWriterConfigForm::class => Service\Form\FormFactory::class,
+            Form\Writer\SpreadsheetWriterParamsForm::class => Service\Form\FormFactory::class,
+            Form\Writer\TsvWriterParamsForm::class => Service\Form\FormFactory::class,
         ],
     ],
     'controllers' => [
@@ -147,11 +147,11 @@ return [
         ],
     ],
     'bulk_export' => [
-        'readers' => [
-            Reader\SpreadsheetReader::class => Reader\SpreadsheetReader::class,
-            Reader\CsvReader::class => Reader\CsvReader::class,
-            Reader\TsvReader::class => Reader\TsvReader::class,
-            Reader\OpenDocumentSpreadsheetReader::class => Reader\OpenDocumentSpreadsheetReader::class,
+        'writers' => [
+            Writer\SpreadsheetWriter::class => Writer\SpreadsheetWriter::class,
+            Writer\CsvWriter::class => Writer\CsvWriter::class,
+            Writer\TsvWriter::class => Writer\TsvWriter::class,
+            Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
         ],
         'processors' => [
             Processor\ResourceProcessor::class => Processor\ResourceProcessor::class,

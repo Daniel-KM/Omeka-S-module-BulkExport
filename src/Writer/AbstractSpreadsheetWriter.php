@@ -1,9 +1,9 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use BulkExport\Entry\SpreadsheetEntry;
 
-abstract class AbstractSpreadsheetReader extends AbstractReader
+abstract class AbstractSpreadsheetWriter extends AbstractWriter
 {
     protected function currentEntry()
     {

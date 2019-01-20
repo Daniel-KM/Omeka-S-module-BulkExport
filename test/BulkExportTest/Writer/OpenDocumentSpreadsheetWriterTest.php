@@ -1,17 +1,17 @@
 <?php
-namespace BulkExportTest\Reader;
+namespace BulkExportTest\Writer;
 
-use BulkExport\Reader\OpenDocumentSpreadsheetReader;
+use BulkExport\Writer\OpenDocumentSpreadsheetWriter;
 
-if (!class_exists('BulkExportTest\Reader\AbstractReader')) {
-    require __DIR__ . '/AbstractReader.php';
+if (!class_exists('BulkExportTest\Writer\AbstractWriter')) {
+    require __DIR__ . '/AbstractWriter.php';
 }
 
-class OpenDocumentSpreadsheetReaderTest extends AbstractReader
+class OpenDocumentSpreadsheetWriterTest extends AbstractWriter
 {
-    protected $ReaderClass = OpenDocumentSpreadsheetReader::class;
+    protected $WriterClass = OpenDocumentSpreadsheetWriter::class;
 
-    public function ReaderProvider()
+    public function WriterProvider()
     {
         return [
             // filepath, options, expected for each test.
@@ -27,7 +27,7 @@ class OpenDocumentSpreadsheetReaderTest extends AbstractReader
     }
 
     /**
-     * @dataProvider ReaderProvider
+     * @dataProvider WriterProvider
      */
     public function testCountRows($filepath, $options, $expected)
     {

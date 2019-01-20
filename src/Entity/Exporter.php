@@ -37,7 +37,7 @@ class Exporter extends AbstractEntity
      *     length=190
      * )
      */
-    protected $readerClass;
+    protected $writerClass;
 
     /**
      * @var array
@@ -46,7 +46,7 @@ class Exporter extends AbstractEntity
      *     nullable=true
      * )
      */
-    protected $readerConfig;
+    protected $writerConfig;
 
     /**
      * @var string
@@ -103,39 +103,39 @@ class Exporter extends AbstractEntity
     }
 
     /**
-     * @param string $readerClass
+     * @param string $writerClass
      * @return self
      */
-    public function setReaderClass($readerClass)
+    public function setWriterClass($writerClass)
     {
-        $this->readerClass = $readerClass;
+        $this->writerClass = $writerClass;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getReaderClass()
+    public function getWriterClass()
     {
-        return $this->readerClass;
+        return $this->writerClass;
     }
 
     /**
-     * @param array $readerConfig
+     * @param array $writerConfig
      * @return self
      */
-    public function setReaderConfig($readerConfig)
+    public function setWriterConfig($writerConfig)
     {
-        $this->readerConfig = $readerConfig;
+        $this->writerConfig = $writerConfig;
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getReaderConfig()
+    public function getWriterConfig()
     {
-        return $this->readerConfig;
+        return $this->writerConfig;
     }
 
     /**

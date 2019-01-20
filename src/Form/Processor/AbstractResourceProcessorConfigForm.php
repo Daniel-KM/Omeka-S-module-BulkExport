@@ -199,8 +199,8 @@ abstract class AbstractResourceProcessorConfigForm extends Form
     {
         /** @var \BulkExport\Interfaces\Processor $processor */
         $processor = $this->getOption('processor');
-        /** @var \BulkExport\Interfaces\Reader $reader */
-        $reader = $processor->getReader();
+        /** @var \BulkExport\Interfaces\Writer $writer */
+        $writer = $processor->getWriter();
 
         $services = $this->getServiceLocator();
         $automapFields = $services->get('ViewHelperManager')->get('automapFields');
@@ -216,7 +216,7 @@ abstract class AbstractResourceProcessorConfigForm extends Form
         $fieldset = $this->get('mapping');
 
         // Add all columns from file as inputs.
-        $availableFields = $reader->getAvailableFields();
+        $availableFields = $writer->getAvailableFields();
         $fields = $automapFields($availableFields);
         foreach ($availableFields as $index => $name) {
             $fieldset->add([

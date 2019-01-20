@@ -1,11 +1,11 @@
 <?php
-namespace BulkExport\Form\Reader;
+namespace BulkExport\Form\Writer;
 
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Form;
 
-class SpreadsheetReaderConfigForm extends Form
+class SpreadsheetWriterConfigForm extends Form
 {
     use ServiceLocatorAwareTrait;
 

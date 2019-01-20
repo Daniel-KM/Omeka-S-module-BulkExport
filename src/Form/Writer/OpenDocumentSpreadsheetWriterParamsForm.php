@@ -1,11 +1,11 @@
 <?php
-namespace BulkExport\Form\Reader;
+namespace BulkExport\Form\Writer;
 
 use Zend\Form\Element;
 
-class TsvReaderParamsForm extends SpreadsheetReaderConfigForm
+class OpenDocumentSpreadsheetWriterParamsForm extends SpreadsheetWriterConfigForm
 {
-    protected $reader;
+    protected $writer;
 
     public function init()
     {
@@ -16,7 +16,7 @@ class TsvReaderParamsForm extends SpreadsheetReaderConfigForm
             'name' => 'file',
             'type' => Element\File::class,
             'options' => [
-                'label' => 'File (tsv)', // @translate
+                'label' => 'OpenDocument Spreadsheet (ods)', // @translate
             ],
             'attributes' => [
                 'id' => 'file',

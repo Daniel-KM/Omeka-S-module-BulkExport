@@ -1,8 +1,8 @@
 {
   "exporter": {
     "label": "Spreadsheet mixed",
-    "reader_class": "BulkExport\\Reader\\SpreadsheetReader",
-    "reader_config": {
+    "writer_class": "BulkExport\\Writer\\SpreadsheetWriter",
+    "writer_config": {
       "delimiter": ",",
       "enclosure": "\"",
       "escape": "\\",
@@ -23,7 +23,7 @@
     }
   },
   "export": {
-    "reader_params": {
+    "writer_params": {
       "filename": "/tmp/omk_a",
       "file": {
         "name": "test_media_order_add_no_item.tsv",

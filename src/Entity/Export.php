@@ -50,7 +50,7 @@ class Export extends AbstractEntity
      *     nullable=true
      * )
      */
-    protected $readerParams;
+    protected $writerParams;
 
     /**
      * @var array
@@ -103,21 +103,21 @@ class Export extends AbstractEntity
     }
 
     /**
-     * @param array|\Traversable $readerParams
+     * @param array|\Traversable $writerParams
      * @return self
      */
-    public function setReaderParams($readerParams)
+    public function setWriterParams($writerParams)
     {
-        $this->readerParams = $readerParams;
+        $this->writerParams = $writerParams;
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getReaderParams()
+    public function getWriterParams()
     {
-        return $this->readerParams;
+        return $this->writerParams;
     }
 
     /**

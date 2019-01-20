@@ -1,17 +1,17 @@
 <?php
-namespace BulkExportTest\Reader;
+namespace BulkExportTest\Writer;
 
-use BulkExport\Reader\TsvReader;
+use BulkExport\Writer\TsvWriter;
 
-if (!class_exists('BulkExportTest\Reader\AbstractReader')) {
-    require __DIR__ . '/AbstractReader.php';
+if (!class_exists('BulkExportTest\Writer\AbstractWriter')) {
+    require __DIR__ . '/AbstractWriter.php';
 }
 
-class TsvReaderTest extends AbstractReader
+class TsvWriterTest extends AbstractWriter
 {
-    protected $ReaderClass = TsvReader::class;
+    protected $WriterClass = TsvWriter::class;
 
-    public function ReaderProvider()
+    public function WriterProvider()
     {
         return [
             // filepath, options, expected for each test.

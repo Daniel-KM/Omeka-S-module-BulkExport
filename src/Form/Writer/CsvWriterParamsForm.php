@@ -1,11 +1,11 @@
 <?php
-namespace BulkExport\Form\Reader;
+namespace BulkExport\Form\Writer;
 
 use Zend\Form\Element;
 
-class CsvReaderParamsForm extends CsvReaderConfigForm
+class CsvWriterParamsForm extends CsvWriterConfigForm
 {
-    protected $reader;
+    protected $writer;
 
     public function init()
     {

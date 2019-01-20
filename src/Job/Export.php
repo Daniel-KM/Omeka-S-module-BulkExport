@@ -4,7 +4,7 @@ namespace BulkExport\Job;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Processor\Manager as ProcessorManager;
-use BulkExport\Reader\Manager as ReaderManager;
+use BulkExport\Writer\Manager as WriterManager;
 use Log\Stdlib\PsrMessage;
 use Omeka\Job\AbstractJob;
 use Zend\Log\Logger;
@@ -30,9 +30,9 @@ class Export extends AbstractJob
         $logger = $this->getLogger();
         $export = $this->getExport();
         $this->api()->update('bulk_exports', $export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
-        $reader = $this->getReader();
+        $writer = $this->getWriter();
         $processor = $this->getProcessor();
-        $processor->setReader($reader);
+        $processor->setWriter($writer);
         $processor->setLogger($logger);
 
         $logger->log(Logger::NOTICE, 'Export started'); // @translate
@@ -93,28 +93,28 @@ class Export extends AbstractJob
         return $this->export;
     }
 
-    protected function getReader()
+    protected function getWriter()
     {
         $services = $this->getServiceLocator();
         $export = $this->getExport();
         $exporter = $export->exporter();
-        $readerClass = $exporter->readerClass();
-        $readerManager = $services->get(ReaderManager::class);
-        if (!$readerManager->has($readerClass)) {
+        $writerClass = $exporter->writerClass();
+        $writerManager = $services->get(WriterManager::class);
+        if (!$writerManager->has($writerClass)) {
             throw new \Omeka\Job\Exception\InvalidArgumentException(
                 new PsrMessage(
-                    'Reader "{reader}" is not available.', // @translate
-                    ['reader' => $readerClass]
+                    'Writer "{writer}" is not available.', // @translate
+                    ['writer' => $writerClass]
                 )
             );
         }
-        $reader = $readerManager->get($readerClass);
-        $reader->setServiceLocator($services);
-        if ($reader instanceof Configurable && $reader instanceof Parametrizable) {
-            $reader->setConfig($exporter->readerConfig());
-            $reader->setParams($export->readerParams());
+        $writer = $writerManager->get($writerClass);
+        $writer->setServiceLocator($services);
+        if ($writer instanceof Configurable && $writer instanceof Parametrizable) {
+            $writer->setConfig($exporter->writerConfig());
+            $writer->setParams($export->writerParams());
         }
-        return $reader;
+        return $writer;
     }
 
     protected function getProcessor()

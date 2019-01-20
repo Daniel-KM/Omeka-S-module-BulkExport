@@ -1,18 +1,18 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use BulkExport\Form\Reader\CsvReaderConfigForm;
-use BulkExport\Form\Reader\CsvReaderParamsForm;
+use BulkExport\Form\Writer\CsvWriterConfigForm;
+use BulkExport\Form\Writer\CsvWriterParamsForm;
 use Log\Stdlib\PsrMessage;
 use SplFileObject;
 
 /**
- * Box Spout Spreadshet reader doesn't support escape for csv (even if it
+ * Box Spout Spreadshet writer doesn't support escape for csv (even if it
  * manages end of line and encoding). So the basic file handler is used for csv.
- * The format tsv uses the Spout reader, because there is no escape.
+ * The format tsv uses the Spout writer, because there is no escape.
  */
-class CsvReader extends AbstractSpreadsheetReader
+class CsvWriter extends AbstractSpreadsheetWriter
 {
     const DEFAULT_DELIMITER = ',';
     const DEFAULT_ENCLOSURE = '"';
@@ -20,8 +20,8 @@ class CsvReader extends AbstractSpreadsheetReader
 
     protected $label = 'CSV'; // @translate
     protected $mediaType = 'text/csv';
-    protected $configFormClass = CsvReaderConfigForm::class;
-    protected $paramsFormClass = CsvReaderParamsForm::class;
+    protected $configFormClass = CsvWriterConfigForm::class;
+    protected $paramsFormClass = CsvWriterParamsForm::class;
 
     protected $configKeys = [
         'delimiter',
@@ -72,7 +72,7 @@ class CsvReader extends AbstractSpreadsheetReader
     }
 
     /**
-     * Reader use a foreach loop to get data. So the first output should not be
+     * Writer use a foreach loop to get data. So the first output should not be
      * the available fields, but the data (numbered as 0-based).
      *
      * {@inheritDoc}
@@ -99,7 +99,7 @@ class CsvReader extends AbstractSpreadsheetReader
         $this->next();
     }
 
-    protected function initializeReader()
+    protected function initializeWriter()
     {
         $filepath = $this->getParam('filename');
         $this->iterator = new SplFileObject($filepath);

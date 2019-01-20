@@ -1,19 +1,19 @@
 <?php
-namespace BulkExport\Reader;
+namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Reader\ReaderInterface;
-use BulkExport\Form\Reader\OpenDocumentSpreadsheetReaderParamsForm;
-use BulkExport\Form\Reader\SpreadsheetReaderConfigForm;
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\WriterInterface;
+use BulkExport\Form\Writer\OpenDocumentSpreadsheetWriterParamsForm;
+use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Log\Stdlib\PsrMessage;
 
-class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
+class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 {
     protected $label = 'OpenDocument Spreadsheet'; // @translate
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
-    protected $configFormClass = SpreadsheetReaderConfigForm::class;
-    protected $paramsFormClass = OpenDocumentSpreadsheetReaderParamsForm::class;
+    protected $configFormClass = SpreadsheetWriterConfigForm::class;
+    protected $paramsFormClass = OpenDocumentSpreadsheetWriterParamsForm::class;
 
     protected $configKeys = [
         'separator',
@@ -25,7 +25,7 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
     ];
 
     /**
-     * @var \Box\Spout\Reader\ODS\Reader
+     * @var \Box\Spout\Writer\ODS\Writer
      */
     protected $iterator;
 
@@ -37,9 +37,9 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
     protected $spreadsheetType = Type::ODS;
 
     /**
-     * @var ReaderInterface
+     * @var WriterInterface
      */
-    protected $spreadsheetReader;
+    protected $spreadsheetWriter;
 
     public function isValid()
     {
@@ -61,27 +61,27 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
     }
 
     /**
-     * Spout Reader doesn't support rewind for xml (doesSupportStreamWrapper()),
+     * Spout Writer doesn't support rewind for xml (doesSupportStreamWrapper()),
      * so the iterator should be reinitialized.
      *
-     * Reader use a foreach loop to get data. So the first output should not be
+     * Writer use a foreach loop to get data. So the first output should not be
      * the available fields, but the data (numbered as 0-based).
      *
      * {@inheritDoc}
-     * @see \BulkExport\Reader\AbstractReader::rewind()
+     * @see \BulkExport\Writer\AbstractWriter::rewind()
      */
     public function rewind()
     {
         $this->isReady;
-        $this->initializeReader();
+        $this->initializeWriter();
         $this->next();
     }
 
     protected function reset()
     {
         parent::reset();
-        if ($this->spreadsheetReader) {
-            $this->spreadsheetReader->close();
+        if ($this->spreadsheetWriter) {
+            $this->spreadsheetWriter->close();
         }
     }
 
@@ -91,17 +91,17 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
         $this->next();
     }
 
-    protected function initializeReader()
+    protected function initializeWriter()
     {
-        if ($this->spreadsheetReader) {
-            $this->spreadsheetReader->close();
+        if ($this->spreadsheetWriter) {
+            $this->spreadsheetWriter->close();
         }
 
-        $this->spreadsheetReader = ReaderFactory::create($this->spreadsheetType);
+        $this->spreadsheetWriter = WriterFactory::create($this->spreadsheetType);
 
         $filepath = $this->getParam('filename');
         try {
-            $this->spreadsheetReader->open($filepath);
+            $this->spreadsheetWriter->open($filepath);
         } catch (\Box\Spout\Common\Exception\IOException $e) {
             throw new \Omeka\Service\Exception\RuntimeException(
                 new PsrMessage(
@@ -111,13 +111,13 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
             );
         }
 
-        $this->spreadsheetReader
+        $this->spreadsheetWriter
             // ->setTempFolder($this->config['temp_dir'])
             ->setShouldFormatDates(false);
 
         // Process first sheet only.
         $this->iterator = null;
-        foreach ($this->spreadsheetReader->getSheetIterator() as $sheet) {
+        foreach ($this->spreadsheetWriter->getSheetIterator() as $sheet) {
             $this->iterator = $sheet->getRowIterator();
             break;
         }
@@ -126,7 +126,7 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
     protected function finalizePrepareIterator()
     {
         $this->totalEntries = iterator_count($this->iterator) - 1;
-        $this->initializeReader();
+        $this->initializeWriter();
     }
 
     protected function prepareAvailableFields()
@@ -140,6 +140,6 @@ class OpenDocumentSpreadsheetReader extends AbstractSpreadsheetReader
         }
         // The data should be cleaned, since it's not an entry.
         $this->availableFields = $this->cleanData($fields);
-        $this->initializeReader();
+        $this->initializeWriter();
     }
 }

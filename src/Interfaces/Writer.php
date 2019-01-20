@@ -4,15 +4,15 @@ namespace BulkExport\Interfaces;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * A reader returns metadata and files data.
+ * A writer returns metadata and files data.
  *
  * It can have a config (implements Configurable) and parameters (implements
  * Parametrizable).
  */
-interface Reader extends \Iterator, \Countable
+interface Writer extends \Iterator, \Countable
 {
     /**
-     * Reader constructor.
+     * Writer constructor.
      *
      * @param ServiceLocatorInterface $serviceLocator
      */
@@ -24,14 +24,14 @@ interface Reader extends \Iterator, \Countable
     public function getLabel();
 
     /**
-     * Check if the params of the reader are valid, for example the filepath.
+     * Check if the params of the writer are valid, for example the filepath.
      *
      * @return bool
      */
     public function isValid();
 
     /**
-     * Get the last error message, in particular to know why reader is invalid.
+     * Get the last error message, in particular to know why writer is invalid.
      *
      * @return string
      */

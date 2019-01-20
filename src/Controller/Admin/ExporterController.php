@@ -123,7 +123,7 @@ class ExporterController extends AbstractActionController
         return $view;
     }
 
-    public function configureReaderAction()
+    public function configureWriterAction()
     {
         $id = (int) $this->params()->fromRoute('id');
         $entity = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
@@ -134,10 +134,10 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk');
         }
 
-        $reader = $entity->reader();
-        $form = $this->getForm($reader->getConfigFormClass());
-        $readerConfig = ($reader->getConfig()) ? $reader->getConfig() : [];
-        $form->setData($readerConfig);
+        $writer = $entity->writer();
+        $form = $this->getForm($writer->getConfigFormClass());
+        $writerConfig = ($writer->getConfig()) ? $writer->getConfig() : [];
+        $form->setData($writerConfig);
 
         $form->add([
             'name' => 'exporter_submit',
@@ -156,15 +156,15 @@ class ExporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $reader->handleConfigForm($form);
-                $data['reader_config'] = $reader->getConfig();
+                $writer->handleConfigForm($form);
+                $data['writer_config'] = $writer->getConfig();
                 $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
 
                 if ($response) {
-                    $this->messenger()->addSuccess('Reader configuration saved'); // @translate
+                    $this->messenger()->addSuccess('Writer configuration saved'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 } else {
-                    $this->messenger()->addError('Save of reader configuration failed'); // @translate
+                    $this->messenger()->addError('Save of writer configuration failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk');
                 }
             } else {
@@ -173,7 +173,7 @@ class ExporterController extends AbstractActionController
         }
 
         $view = new ViewModel;
-        $view->setVariable('reader', $reader);
+        $view->setVariable('writer', $writer);
         $view->setVariable('form', $form);
         return $view;
     }
@@ -247,9 +247,9 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk');
         }
 
-        $reader = $exporter->reader();
+        $writer = $exporter->writer();
         $processor = $exporter->processor();
-        $processor->setReader($reader);
+        $processor->setWriter($writer);
 
         /** @var \Zend\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
@@ -258,8 +258,8 @@ class ExporterController extends AbstractActionController
         if (!$this->getRequest()->isPost()) {
             $session->exchangeArray([]);
         }
-        if (isset($session->reader)) {
-            $reader->setParams($session->reader);
+        if (isset($session->writer)) {
+            $writer->setParams($session->writer);
         }
         if (isset($session->processor)) {
             $processor->setParams($session->processor);
@@ -289,12 +289,12 @@ class ExporterController extends AbstractActionController
                 $session->{$currentForm} = $data;
                 switch ($currentForm) {
                     default:
-                    case 'reader':
-                        $reader->handleParamsForm($form);
-                        $session->reader = $reader->getParams();
-                        if (!$reader->isValid()) {
-                            $this->messenger()->addError($reader->getLastErrorMessage());
-                            $next = 'reader';
+                    case 'writer':
+                        $writer->handleParamsForm($form);
+                        $session->writer = $writer->getParams();
+                        if (!$writer->isValid()) {
+                            $this->messenger()->addError($writer->getLastErrorMessage());
+                            $next = 'writer';
                         } else {
                             $next = isset($formsCallbacks['processor']) ? 'processor' : 'start';
                         }
@@ -311,8 +311,8 @@ class ExporterController extends AbstractActionController
                     case 'start':
                         $exportData = [];
                         $exportData['o-module-bulk:exporter'] = $exporter->getResource();
-                        if ($reader instanceof Parametrizable) {
-                            $exportData['o-module-bulk:reader_params'] = $reader->getParams();
+                        if ($writer instanceof Parametrizable) {
+                            $exportData['o-module-bulk:writer_params'] = $writer->getParams();
                         }
                         if ($processor instanceof Parametrizable) {
                             $exportData['o-module-bulk:processor_params'] = $processor->getParams();
@@ -370,10 +370,10 @@ class ExporterController extends AbstractActionController
         $view->setVariable('form', $form);
         if ($next === 'start') {
             $exportArgs = [];
-            $exportArgs['reader'] = $session['reader'];
-            $exportArgs['processor'] = $currentForm === 'reader' ? [] : $session['processor'];
+            $exportArgs['writer'] = $session['writer'];
+            $exportArgs['processor'] = $currentForm === 'writer' ? [] : $session['processor'];
             // For security purpose.
-            unset($exportArgs['reader']['filename']);
+            unset($exportArgs['writer']['filename']);
             $view->setVariable('exportArgs', $exportArgs);
         }
         return $view;
@@ -384,26 +384,26 @@ class ExporterController extends AbstractActionController
         $controller = $this;
         $formsCallbacks = [];
 
-        $reader = $exporter->reader();
-        if ($reader instanceof Parametrizable) {
+        $writer = $exporter->writer();
+        if ($writer instanceof Parametrizable) {
             /** @return \Zend\Form\Form */
-            $formsCallbacks['reader'] = function () use ($reader, $controller) {
-                $readerForm = $controller->getForm($reader->getParamsFormClass());
-                $readerConfig = $reader->getConfig() ?: [];
-                $readerForm->setData($readerConfig);
+            $formsCallbacks['writer'] = function () use ($writer, $controller) {
+                $writerForm = $controller->getForm($writer->getParamsFormClass());
+                $writerConfig = $writer->getConfig() ?: [];
+                $writerForm->setData($writerConfig);
 
-                $readerForm->add([
+                $writerForm->add([
                     'name' => 'current_form',
                     'type'  => Element\Hidden::class,
                     'attributes' => [
-                        'value' => 'reader',
+                        'value' => 'writer',
                     ],
                 ]);
-                $readerForm->add([
-                    'name' => 'reader_submit',
+                $writerForm->add([
+                    'name' => 'writer_submit',
                     'type'  => Fieldset::class,
                 ]);
-                $readerForm->get('reader_submit')->add([
+                $writerForm->get('writer_submit')->add([
                     'name' => 'submit',
                     'type'  => Element\Submit::class,
                     'attributes' => [
@@ -411,12 +411,12 @@ class ExporterController extends AbstractActionController
                     ],
                 ]);
 
-                return $readerForm;
+                return $writerForm;
             };
         }
 
         $processor = $exporter->processor();
-        $processor->setReader($reader);
+        $processor->setWriter($writer);
         if ($processor instanceof Parametrizable) {
             /** @return \Zend\Form\Form */
             $formsCallbacks['processor'] = function () use ($processor, $controller) {
@@ -434,10 +434,10 @@ class ExporterController extends AbstractActionController
                     ],
                 ]);
                 $processorForm->add([
-                    'name' => 'reader_submit',
+                    'name' => 'writer_submit',
                     'type'  => Fieldset::class,
                 ]);
-                $processorForm->get('reader_submit')->add([
+                $processorForm->get('writer_submit')->add([
                     'name' => 'submit',
                     'type'  => Element\Submit::class,
                     'attributes' => [
