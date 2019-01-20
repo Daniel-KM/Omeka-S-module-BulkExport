@@ -272,7 +272,31 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
 
     protected function mapResourceTypeToText($jsonResourceType)
     {
-        return str_replace('_', ' ', $this->mapResourceTypeToApiResource($jsonResourceType));
+        static $mapping;
+        if (empty($mapping)) {
+            $translate = $this->getServiceLocator()->get('ViewHelperManager')->get('translate');
+            $mapping = [
+                // Core.
+                'o:User' => $translate('users'),
+                'o:Vocabulary' => $translate('vocabularies'),
+                'o:ResourceClass' => $translate('resource classes'),
+                'o:ResourceTemplate' => $translate('resource templates'),
+                'o:Property' => $translate('properties'),
+                'o:Item' => $translate('items'),
+                'o:Media' => $translate('media'),
+                'o:ItemSet' => $translate('item sets'),
+                'o:Module' => $translate('modules'),
+                'o:Site' => $translate('sites'),
+                'o:SitePage' => $translate('site pages'),
+                'o:Job' => $translate('jobs'),
+                'o:Resource' => $translate('resources'),
+                'o:Asset' => $translate('assets'),
+                'o:ApiResource' => $translate('api resources'),
+                // Modules.
+                'oa:Annotation' => $translate('annotations'),
+            ];
+        }
+        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
     }
 
     protected function mapResourceTypeToTable($jsonResourceType)
