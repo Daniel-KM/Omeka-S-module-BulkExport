@@ -149,6 +149,18 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
                         $values = $this->fillHeader($resource, $header, $hasSeparator);
+                        // Check if one of the values has the separator.
+                        $check = array_filter($values, function ($v) use ($separator) {
+                            return strpos($v, $separator) !== false;
+                        });
+                        if ($check) {
+                            $this->logger->warn(
+                                'Skipped resource #{resource_id}: it contains the separator.', // @translate
+                                ['resource_id' => $resource->id()]
+                            );
+                            $dataRow = [];
+                            break;
+                        }
                         $dataRow[] = implode($separator, $values);
                     }
                 } else {
