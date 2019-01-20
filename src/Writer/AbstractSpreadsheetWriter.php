@@ -33,6 +33,21 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
      */
     protected $headers;
 
+    /**
+     * @var array
+     */
+    protected $resourceTypes;
+
+    /**
+     * @var array
+     */
+    protected $stats;
+
+    /**
+     * @bool
+     */
+    protected $jobIsStopped = false;
+
     public function isValid()
     {
         $config = $this->getServiceLocator()->get('Config');
@@ -65,6 +80,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             return;
         }
 
+        $this->stats = [];
+
         $this->logger->info(
             '{number} different headers are used in all resources.', // @translate
             ['number' => count($headers)]
@@ -87,27 +104,19 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected function addRows(WriterInterface $writer)
     {
-        /**
-         * @var array $config
-         * @var \Omeka\Api\Adapter\ItemAdapter $adapter
-         * @var \Doctrine\ORM\EntityManager $entityManager
-         * @var \Doctrine\DBAL\Connection $connection
-         * @var \Doctrine\ORM\EntityRepository $repository
-         */
-        $services = $this->getServiceLocator();
-        $config = $services->get('Config');
-        $adapter = $services->get('Omeka\ApiAdapterManager')->get('items');
-        $entityManager = $services->get('Omeka\EntityManager');
-        $connection = $entityManager->getConnection();
-        $repository = $entityManager->getRepository(\Omeka\Entity\Item::class);
+        $this->stats['process'] = [];
+        $this->stats['totals'] = $this->countResources();
+        $this->stats['totalToProcess'] = array_sum($this->stats['totals']);
 
-        $sql = 'SELECT COUNT(id) FROM item WHERE 1 = 1';
-        $stmt = $connection->query($sql);
-        $totalToProcess = $stmt->fetchColumn();
-        $this->logger->info(
-            'Processing export of {number} resources.', // @translate
-            ['number' => $totalToProcess]
-        );
+        if (!$this->stats['totals']) {
+            $this->logger->warn('No resource type selected.'); // @translate
+            return;
+        }
+
+        if (!$this->stats['totalToProcess']) {
+            $this->logger->warn('No resource to export.'); // @translate
+            return;
+        }
 
         $separator = $this->getParam('separator', '');
         $hasSeparator = strlen($separator) > 0;
@@ -117,19 +126,62 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             );
         }
 
+        $resourceTypes = $this->getResourceTypes();
+        foreach ($resourceTypes as $resourceType) {
+            if ($this->jobIsStopped) {
+                break;
+            }
+            $this->addRowsForResource($writer, $resourceType);
+        }
+
+        $this->logger->notice(
+            'All resources of all resource types ({total}) exported.', // @translate
+            ['total' => count($this->stats['process'])]
+        );
+    }
+
+    protected function addRowsForResource(WriterInterface $writer, $resourceType)
+    {
+        /**
+         * @var \Doctrine\ORM\EntityManager $entityManager
+         * @var \Doctrine\DBAL\Connection $connection
+         * @var \Doctrine\ORM\EntityRepository $repository
+         * @var \Omeka\Api\Adapter\ItemAdapter $adapter
+         */
+        $resourceClass = $this->mapResourceTypeToClass($resourceType);
+        $apiResource = $this->mapResourceTypeToApiResource($resourceType);
+        $resourceText = $this->mapResourceTypeToText($resourceType);
+        $services = $this->getServiceLocator();
+        $entityManager = $services->get('Omeka\EntityManager');
+        $connection = $entityManager->getConnection();
+        $repository = $entityManager->getRepository($resourceClass);
+        $adapter = $services->get('Omeka\ApiAdapterManager')->get($apiResource);
+
         $headers = $this->getHeaders();
+        $separator = $this->getParam('separator', '');
+        $hasSeparator = strlen($separator) > 0;
 
         $criteria = [];
 
+        $this->stats['process'][$resourceType] = [];
+        $this->stats['process'][$resourceType]['total'] = $this->stats['totals'][$resourceType];
+        $this->stats['process'][$resourceType]['processed'] = 0;
+        $this->stats['process'][$resourceType]['succeed'] = 0;
+        $this->stats['process'][$resourceType]['skipped'] = 0;
+        $stats = &$this->stats['process'][$resourceType];
+
+        $this->logger->notice(
+            'Starting export of {total} {resource_type}.', // @translate
+            ['total' => $stats['total'], 'resource_type' => $resourceText]
+        );
+
         $offset = 0;
-        $totalProcessed = 0;
-        $totalSucceed = 0;
-        $totalSkipped = 0;
         do {
             if ($this->job->shouldStop()) {
+                $this->jobIsStopped = true;
                 $this->logger->warn(
                     'The job "Export" was stopped: {processed}/{total} resources processed.', // @translate
-                    ['processed' => $totalProcessed, 'total' => $totalToProcess]
+                    ['processed' => $stats['processed'], 'total' => $stats['total']]
                 );
                 break;
             }
@@ -152,12 +204,12 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                         $values = $this->fillHeader($resource, $header, $hasSeparator);
                         // Check if one of the values has the separator.
                         $check = array_filter($values, function ($v) use ($separator) {
-                            return strpos($v, $separator) !== false;
+                            return strpos((string) $v, $separator) !== false;
                         });
                         if ($check) {
                             $this->logger->warn(
-                                'Skipped resource #{resource_id}: it contains the separator.', // @translate
-                                ['resource_id' => $resource->id()]
+                                'Skipped {resource_type} #{resource_id}: it contains the separator "{separator}".', // @translate
+                                ['resource_type' => $resourceText, 'resource_id' => $resource->id(), 'separator' => $separator]
                             );
                             $dataRow = [];
                             break;
@@ -178,21 +230,21 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 if (count($check)) {
                     $writer
                         ->addRow($dataRow);
-                    ++$totalSucceed;
+                    ++$stats['succeed'];
                 } else {
-                    ++$totalSkipped;
+                    ++$stats['skipped'];
                 }
 
                 // Avoid memory issue.
                 unset($resource);
 
                 // Processed = $offset + $key.
-                ++$totalProcessed;
+                ++$stats['processed'];
             }
 
             $this->logger->info(
-                '{processed}/{total} resources processed, {succeed} succeed, {skipped} skipped.', // @translate
-                ['processed' => $totalProcessed, 'total' => $totalToProcess, 'succeed' => $totalSucceed, 'skipped' => $totalSkipped]
+                '{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} skipped.', // @translate
+                ['resource_type' => $resourceText, 'processed' => $stats['processed'], 'total' => $stats['total'], 'succeed' => $stats['succeed'], 'skipped' => $stats['skipped']]
             );
 
             // Avoid memory issue.
@@ -203,9 +255,25 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         } while (true);
 
         $this->logger->notice(
-            '{processed}/{total} resources processed, {succeed} succeed, {skipped} skipped.', // @translate
-            ['processed' => $totalProcessed, 'total' => $totalToProcess, 'succeed' => $totalSucceed, 'skipped' => $totalSkipped]
+            '{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} skipped.', // @translate
+            ['resource_type' => $resourceText, 'processed' => $stats['processed'], 'total' => $stats['total'], 'succeed' => $stats['succeed'], 'skipped' => $stats['skipped']]
         );
+
+        $this->logger->notice(
+            'End export of {total} {resource_type}.', // @translate
+            ['total' => $stats['total'], 'resource_type' => $resourceText]
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getResourceTypes()
+    {
+        if (is_null($this->resourceTypes)) {
+            $this->resourceTypes = $this->getParam('resource_types', []);
+        }
+        return $this->resourceTypes;
     }
 
     /**
@@ -216,15 +284,27 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         if (is_null($this->headers)) {
             $headers = $this->getParam('metadata', []);
             if ($headers) {
-                if (in_array('properties', $headers)) {
-                    unset($headers['properties']);
+                $index = array_search('properties', $headers);
+                $hasProperties = $index !== false;
+                if ($hasProperties) {
+                    unset($headers[$index]);
                     $headers = array_merge($headers, $this->listUsedProperties());
                 }
-            } else {
+            }
+            // Currently, default output is all used properties only.
+            else {
+                $hasProperties = true;
                 $headers = $this->listUsedProperties();
             }
+
+            $resourceTypes = $this->getResourceTypes();
+            if (count($resourceTypes) > 1 && !in_array('resource_type', $headers)) {
+                array_unshift($headers, 'resource_type');
+            }
+
             $this->headers = $headers;
         }
+
         return $this->headers;
     }
 
@@ -242,6 +322,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             // All resources.
             case 'o:id':
                 return [$resource->id()];
+            case 'resource_type':
+                return [$this->mapRepresentationToResourceType($resource)];
             case 'o:resource_template':
                 $resourceTemplate = $resource->resourceTemplate();
                 return $resourceTemplate ? [$resourceTemplate->label()] : [''];
@@ -249,7 +331,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $resourceClass = $resource->resourceClass();
                 return $resourceClass ? [$resourceClass->term()] : [''];
             case 'o:is_public':
-                return $resource->isPublic() ? ['true'] : ['false'];
+                return method_exists($resource, 'isPublic')
+                    ? $resource->isPublic() ? ['true'] : ['false']
+                    : [];
+            case 'o:is_open':
+                return method_exists($resource, 'isOpen')
+                    ? $resource->isOpen() ? ['true'] : ['false']
+                    : [];
             case 'o:owner[o:id]':
                 $owner = $resource->owner();
                 return $owner ? [$owner->id()] : [''];
@@ -286,6 +374,17 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             case 'o:media[dcterms:title]':
                 return $resource->resourceName() === 'items'
                     ? $this->extractFirstValue($resource->media(), $header)
+                    : [];
+
+            // Item for media.
+            case 'o:item[o:id]':
+                return $resource->resourceName() === 'media'
+                    ? [$resource->item()->id()]
+                    : [];
+            case 'o:item[dcterms:identifier]':
+            case 'o:item[dcterms:title]':
+                return $resource->resourceName() === 'media'
+                    ? $this->extractFirstValue([$resource->item()], $header)
                     : [];
 
             // All properties for all resources.
@@ -329,6 +428,23 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         return $result;
     }
 
+    protected function countResources()
+    {
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $resourceTypes = $this->getResourceTypes();
+        $result = array_flip($resourceTypes);
+        foreach ($resourceTypes as $resourceType) {
+            $table = $this->mapResourceTypeToTable($resourceType);
+            if ($table) {
+                $sql = sprintf('SELECT COUNT(id) FROM %s', $table);
+                $stmt = $connection->query($sql);
+                $result[$resourceType] = $stmt->fetchColumn();
+            }
+        }
+        return $result;
+    }
+
     protected function listUsedProperties()
     {
         if ($this->usedProperties) {
@@ -345,9 +461,23 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             ->from('value', 'value')
             ->innerJoin('value', 'property', 'property', 'property.id = value.property_id')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
-            // Order by id, because Omeka orders them with Dublin Core first.
-            ->orderBy('property.id')
+            // Order by vocabulary and by property id, because Omeka orders them
+            // with Dublin Core first.
+            ->orderBy('vocabulary.id')
+            ->addOrderBy('property.id')
         ;
+
+        $resourceTypes = $this->getResourceTypes();
+        $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
+        if ($resourceClasses) {
+            $qb
+                ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
+                ->andWhere($qb->expr()->in(
+                    'resource.resource_type',
+                    array_map([$connection, 'quote'], $resourceClasses)
+            ));
+        }
+
         $stmt = $connection->executeQuery($qb, $qb->getParameters());
         $this->usedProperties = $stmt->fetchAll(\PDO::FETCH_COLUMN);
         return $this->usedProperties;

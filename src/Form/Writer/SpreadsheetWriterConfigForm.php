@@ -8,6 +8,7 @@ use Zend\Form\Form;
 class SpreadsheetWriterConfigForm extends Form
 {
     use MetadataSelectTrait;
+    use ResourceTypesSelectTrait;
     use ServiceLocatorAwareTrait;
 
     public function init()
@@ -28,6 +29,10 @@ it is recommended to use a character that is never used, like "|", or a random s
             ],
         ]);
 
+        $this->appendResourceTypesSelect();
         $this->appendMetadataSelect();
+
+        $this->addInputFilterResourceTypes();
+        $this->addInputFilterMetadata();
     }
 }

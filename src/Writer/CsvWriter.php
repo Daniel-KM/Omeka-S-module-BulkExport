@@ -28,6 +28,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'enclosure',
         'escape',
         'separator',
+        'resource_types',
         'metadata',
     ];
 
@@ -36,6 +37,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'enclosure',
         'escape',
         'separator',
+        'resource_types',
         'metadata',
     ];
 

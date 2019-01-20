@@ -25,6 +25,15 @@ trait MetadataSelectTrait
         ]);
     }
 
+    protected function addInputFilterMetadata()
+    {
+        $inputFilter = $this->getInputFilter();
+        $inputFilter->add([
+            'name' => 'metadata',
+            'required' => false,
+        ]);
+    }
+
     protected function prependMappingOptions()
     {
         return [
@@ -32,11 +41,16 @@ trait MetadataSelectTrait
                 'label' => 'Resource metadata', // @translate
                 'options' => [
                     'o:id' => 'Internal id', // @translate
+                    // The resource type is the @type, but it may be the api
+                    // resource id (the name).
+                    'resource_type' => 'Resource type', // @translate
                     'o:resource_template' => 'Resource template', // @translate
                     'o:resource_class' => 'Resource class', // @translate
                     'o:owner' => 'Owner email', // @translate
                     'o:owner[o:id]' => 'Owner id', // @translate
                     'o:is_public' => 'Visibility public/private', // @translate
+                    // For item set.
+                    'o:is_open' => 'Openness', // @translate
                     'properties' => 'All used properties', // @translate
                 ],
             ],
@@ -54,6 +68,14 @@ trait MetadataSelectTrait
                     'o:media[file]' => 'Url / File', // @translate
                     'o:media[dcterms:identifier]' => 'Identifier', // @translate
                     'o:media[dcterms:title]' => 'Label (first title)', // @translate
+                ],
+            ],
+            'o:item' => [
+                'label' => 'Item (for media)', // @translate
+                'options' => [
+                    'o:item[o:id]' => 'Internal id', // @translate
+                    'o:item[dcterms:identifier]' => 'Identifier', // @translate
+                    'o:item[dcterms:title]' => 'Label (first title)', // @translate
                 ],
             ],
         ];

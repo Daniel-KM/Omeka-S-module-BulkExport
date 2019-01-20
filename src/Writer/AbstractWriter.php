@@ -8,6 +8,7 @@ use BulkExport\Traits\ConfigurableTrait;
 use BulkExport\Traits\ParametrizableTrait;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Log\Stdlib\PsrMessage;
+use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Job\AbstractJob as Job;
 use Zend\Form\Form;
 use Zend\Log\Logger;
@@ -217,5 +218,99 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $params = $this->getParams();
         $params['filename'] = $filename;
         $this->setParams($params);
+    }
+
+    protected function mapResourceTypeToClass($jsonResourceType)
+    {
+        $mapping = [
+            'o:User' => \Omeka\Entity\User::class,
+            'o:Vocabulary' => \Omeka\Entity\Vocabulary::class,
+            'o:ResourceClass' => \Omeka\Entity\ResourceClass::class,
+            'o:ResourceTemplate' => \Omeka\Entity\ResourceTemplate::class,
+            'o:Property' => \Omeka\Entity\Property::class,
+            'o:Item' => \Omeka\Entity\Item::class,
+            'o:Media' => \Omeka\Entity\Media::class,
+            'o:ItemSet' => \Omeka\Entity\ItemSet::class,
+            'o:Module' => \Omeka\Entity\Module::class,
+            'o:Site' => \Omeka\Entity\Site::class,
+            'o:SitePage' => \Omeka\Entity\SitePage::class,
+            'o:Job' => \Omeka\Entity\Job::class,
+            'o:Resource' => \Omeka\Entity\Resource::class,
+            'o:Asset' => \Omeka\Entity\Asset::class,
+            'o:ApiResource' => null,
+        ];
+        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+    }
+
+    protected function mapResourceTypeToApiResource($jsonResourceType)
+    {
+        $mapping = [
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource_classes',
+            'o:ResourceTemplate' => 'resource_templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item_sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site_pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api_resources',
+        ];
+        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+    }
+
+    protected function mapResourceTypeToText($jsonResourceType)
+    {
+        return str_replace('_', ' ', $this->mapResourceTypeToApiResource($jsonResourceType));
+    }
+
+    protected function mapResourceTypeToTable($jsonResourceType)
+    {
+        $mapping = [
+            'o:User' => 'user',
+            'o:Vocabulary' => 'vocabulary',
+            'o:ResourceClass' => 'resource_class',
+            'o:ResourceTemplate' => 'resource_template',
+            'o:Property' => 'property',
+            'o:Item' => 'item',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item_set',
+            'o:Module' => 'module',
+            'o:Site' => 'site',
+            'o:SitePage' => 'site_page',
+            'o:Job' => 'job',
+            'o:Resource' => 'resource',
+            'o:Asset' => 'asset',
+            'o:ApiResource' => 'api_resource',
+        ];
+        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+    }
+
+    protected function mapRepresentationToResourceType(AbstractRepresentation $representation)
+    {
+        $class = get_class($representation);
+        $mapping = [
+            \Omeka\Api\Representation\UserRepresentation::class => 'User',
+            \Omeka\Api\Representation\VocabularyRepresentation::class => 'Vocabulary',
+            \Omeka\Api\Representation\ResourceClassRepresentation::class => 'Resource class',
+            \Omeka\Api\Representation\ResourceTemplateRepresentation::class => 'Resource template',
+            \Omeka\Api\Representation\PropertyRepresentation::class => 'Property',
+            \Omeka\Api\Representation\ItemRepresentation::class => 'Item',
+            \Omeka\Api\Representation\MediaRepresentation::class => 'Media',
+            \Omeka\Api\Representation\ItemSetRepresentation::class => 'Item set',
+            \Omeka\Api\Representation\ModuleRepresentation::class => 'Module',
+            \Omeka\Api\Representation\SiteRepresentation::class => 'Site',
+            \Omeka\Api\Representation\SitePageRepresentation::class => 'Site page',
+            \Omeka\Api\Representation\JobRepresentation::class => 'Job',
+            \Omeka\Api\Representation\ResourceReference::class => 'Resource',
+            \Omeka\Api\Representation\AssetRepresentation::class => 'Asset',
+            \Omeka\Api\Representation\ApiResourceRepresentation::class => 'Api resource',
+        ];
+        return isset($mapping[$class]) ? $mapping[$class] : null;
     }
 }

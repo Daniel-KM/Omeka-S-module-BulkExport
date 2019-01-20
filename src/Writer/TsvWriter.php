@@ -17,11 +17,13 @@ class TsvWriter extends CsvWriter
 
     protected $configKeys = [
         'separator',
+        'resource_types',
         'metadata',
     ];
 
     protected $paramsKeys = [
         'separator',
+        'resource_types',
         'metadata',
     ];
 
