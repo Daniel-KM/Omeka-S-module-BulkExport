@@ -26,11 +26,6 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     /**
      * @var array
      */
-    protected $usedProperties;
-
-    /**
-     * @var array
-     */
     protected $headers;
 
     /**
@@ -282,35 +277,34 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     protected function getHeaders()
     {
         if (is_null($this->headers)) {
+            $resourceTypes = $this->getResourceTypes();
+            $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
             $headers = $this->getParam('metadata', []);
             if ($headers) {
                 $index = array_search('properties', $headers);
                 $hasProperties = $index !== false;
                 if ($hasProperties) {
                     unset($headers[$index]);
-                    $headers = array_merge($headers, $this->listUsedProperties());
+                    $headers = array_merge($headers, $this->listUsedProperties($resourceClasses));
                 }
             }
             // Currently, default output is all used properties only.
             else {
                 $hasProperties = true;
-                $headers = $this->listUsedProperties();
+                $headers = $this->listUsedProperties($resourceClasses);
             }
 
-            $resourceTypes = $this->getResourceTypes();
-            if (count($resourceTypes) > 1 && !in_array('resource_type', $headers)) {
-                array_unshift($headers, 'resource_type');
-            }
-
-            // TODO Remove empty headers for Annotation.
             if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
-                $usedProperties = $this->listUsedProperties();
-                foreach ($usedProperties as $property) {
+                foreach ($this->listUsedProperties([\Annotate\Entity\AnnotationBody::class]) as $property) {
                     $headers[] = 'oa:hasBody[' . $property . ']';
                 }
-                foreach ($usedProperties as $property) {
+                foreach ($this->listUsedProperties([\Annotate\Entity\AnnotationTarget::class]) as $property) {
                     $headers[] = 'oa:hasTarget[' . $property . ']';
                 }
+            }
+
+            if (count($resourceTypes) > 1 && !in_array('resource_type', $headers)) {
+                array_unshift($headers, 'resource_type');
             }
 
             $this->headers = $headers;
@@ -466,12 +460,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         return $result;
     }
 
-    protected function listUsedProperties()
+    protected function listUsedProperties(array $resourceClasses = [])
     {
-        if ($this->usedProperties) {
-            return $this->usedProperties;
-        }
-
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
 
@@ -488,16 +478,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             ->addOrderBy('property.id')
         ;
 
-        $resourceTypes = $this->getResourceTypes();
-        $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
         if ($resourceClasses) {
-            // Manage exception for annotations.
-            if (in_array(\Annotate\Entity\Annotation::class, $resourceClasses)) {
-                $resourceClasses[] = \Annotate\Entity\AnnotationPart::class;
-                $resourceClasses[] = \Annotate\Entity\AnnotationBody::class;
-                $resourceClasses[] = \Annotate\Entity\AnnotationTarget::class;
-            }
-
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
                 ->andWhere($qb->expr()->in(
@@ -507,7 +488,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         }
 
         $stmt = $connection->executeQuery($qb, $qb->getParameters());
-        $this->usedProperties = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-        return $this->usedProperties;
+        $resullt = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        return $resullt;
     }
 }
