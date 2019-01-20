@@ -31,11 +31,6 @@ return [
             Controller\Admin\ExporterController::class => 'bulk/admin/exporter',
         ],
     ],
-    'view_helpers' => [
-        'factories' => [
-            'automapFields' => Service\ViewHelper\AutomapFieldsFactory::class,
-        ],
-    ],
     'form_elements' => [
         'factories' => [
             Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,
@@ -56,15 +51,6 @@ return [
             'BulkExport\Controller\Admin\Export' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
-        ],
-    ],
-    'controller_plugins' => [
-        'factories' => [
-            Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class => Service\ControllerPlugin\FindResourcesFromIdentifiersFactory::class,
-        ],
-        'aliases' => [
-            'findResourcesFromIdentifiers' => Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class,
-            'findResourceFromIdentifier' => Mvc\Controller\Plugin\FindResourcesFromIdentifiers::class,
         ],
     ],
     'navigation' => [
