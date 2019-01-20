@@ -22,10 +22,20 @@ $urlBase = $url('top') . 'files/bulk_export/';
     </thead>
     <tbody>
         <?php foreach ($exports as $export): ?>
+            <?php $status = $export->status(); ?>
             <tr>
-                <td><?php echo $export->exporter()->label(); ?></td>
+                <td>
+                    <?php echo $export->exporter()->label(); ?>
+                    <ul class="actions">
+                        <?php if ($status === \Omeka\Entity\Job::STATUS_IN_PROGRESS): ?>
+                        <li><?php echo $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
+                            'class' => 'fas fa-stop-circle',
+                            'title' => $translate('Stop'), // @translate
+                        ]); ?></li>
+                        <?php endif; ?>
+                    </ul>
+                </td>
                 <td><?php
-                    $status = $export->status();
                     $filename = $export->filename();
                     if ($status === \Omeka\Entity\Job::STATUS_COMPLETED && $filename):
                         echo $hyperlink($status, $urlBase . $filename);
