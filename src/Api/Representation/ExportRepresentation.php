@@ -12,6 +12,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
             'o:id' => $this->id(),
             'o-module-bulk:exporter' => $this->exporter()->getReference(),
             'o-module-bulk:writer_params' => $this->writerParams(),
+            'o-module-bulk:filename' => $this->filename(),
             'o:job' => $this->job(),
             'o:status' => $this->status(),
             'o:started' => $this->started(),
@@ -49,14 +50,22 @@ class ExportRepresentation extends AbstractEntityRepresentation
     }
 
     /**
+     * @return string
+     */
+    public function filename()
+    {
+        return $this->resource->getFilename();
+    }
+
+    /**
      * @return JobRepresentation|null
      */
     public function job()
     {
         $job = $this->resource->getJob();
         return $job
-        ? $this->getAdapter('jobs')->getRepresentation($job)
-        : null;
+            ? $this->getAdapter('jobs')->getRepresentation($job)
+            : null;
     }
 
     /**
