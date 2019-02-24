@@ -104,7 +104,7 @@ Copyright
 [Omeka S]: https://omeka.org/s
 [Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka Classic]: https://omeka.org/classic
-[Import plugin]: https://github.com/BibLibre/Omeka-plugin-Import
+[Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [`Generic`]: https://github.com/Daniel-KM/Omeka-S-module-Generic
 [`Log`]: https://github.com/Daniel-KM/Omeka-S-module-Log
 [`BulkExport.zip`]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/releases
