@@ -35,10 +35,9 @@ class Export extends AbstractJob
         $writer = $this->getWriter();
 
         if (!$writer->isValid()) {
-            throw new \Omeka\Job\Exception\RuntimeException(
-                new PsrMessage(
-                    'Export error: {error}', // @translate
-                    ['error' => $writer->getLastErrorMessage()]
+            throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+                'Export error: {error}', // @translate
+                ['error' => $writer->getLastErrorMessage()]
             ));
         }
 
@@ -59,7 +58,7 @@ class Export extends AbstractJob
 
         $this->saveFilename($export, $writer);
 
-        $logger->log(Logger::NOTICE, 'Export completed'); // @translate
+        $logger->notice('Export completed'); // @translate
     }
 
     /**
@@ -84,7 +83,7 @@ class Export extends AbstractJob
         ];
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 
-        $this->getLogger()->log(Logger::NOTICE,
+        $this->getLogger()->notice(
             'The export is available as "{filename}".', // @translate
             ['filename' => $params['filename']]
         );
@@ -153,12 +152,10 @@ class Export extends AbstractJob
         $writerClass = $exporter->writerClass();
         $writerManager = $services->get(WriterManager::class);
         if (!$writerManager->has($writerClass)) {
-            throw new \Omeka\Job\Exception\InvalidArgumentException(
-                new PsrMessage(
-                    'Writer "{writer}" is not available.', // @translate
-                    ['writer' => $writerClass]
-                )
-            );
+            throw new \Omeka\Job\Exception\InvalidArgumentException(new PsrMessage(
+                'Writer "{writer}" is not available.', // @translate
+                ['writer' => $writerClass]
+            ));
         }
         $writer = $writerManager->get($writerClass);
         $writer->setServiceLocator($services);

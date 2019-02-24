@@ -219,7 +219,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 }
 
                 // Check if data is empty.
-                $check = array_filter($dataRow, function($v) {
+                $check = array_filter($dataRow, function ($v) {
                     return (bool) strlen($v);
                 });
                 if (count($check)) {
