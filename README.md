@@ -16,7 +16,7 @@ This module is inspired by the [Omeka Classic] [Export plugin], built by [Biblib
 Installation
 ------------
 
-This module requires the module [Log].
+This module requires the modules [`Generic`] and [`Log`].
 
 See general end user documentation for [installing a module].
 
@@ -105,7 +105,8 @@ Copyright
 [Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka Classic]: https://omeka.org/classic
 [Import plugin]: https://github.com/BibLibre/Omeka-plugin-Import
-[Log]: https://github.com/Daniel-KM/Omeka-S-module-Log
+[`Generic`]: https://github.com/Daniel-KM/Omeka-S-module-Generic
+[`Log`]: https://github.com/Daniel-KM/Omeka-S-module-Log
 [`BulkExport.zip`]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/issues

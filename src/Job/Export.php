@@ -84,10 +84,10 @@ class Export extends AbstractJob
         ];
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 
-        $this->getLogger()->log(Logger::NOTICE, new PsrMessage(
+        $this->getLogger()->log(Logger::NOTICE,
             'The export is available as "{filename}".', // @translate
             ['filename' => $params['filename']]
-        ));
+        );
     }
 
     /**

@@ -1,17 +1,19 @@
 <?php
 namespace BulkExport;
 
-require_once __DIR__ . '/src/Module/AbstractGenericModule.php';
+require_once dirname(__DIR__) . '/Generic/AbstractModule.php';
 
-use BulkExport\Module\AbstractGenericModule;
-use Omeka\Stdlib\Message;
+use Generic\AbstractModule;
+use Log\Stdlib\PsrMessage;
 use Omeka\Module\Exception\ModuleCannotInstallException;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Module extends AbstractGenericModule
+class Module extends AbstractModule
 {
+    const NAMESPACE = __NAMESPACE__;
+
     protected $dependency = 'Log';
 
     public function install(ServiceLocatorInterface $serviceLocator)
@@ -20,10 +22,9 @@ class Module extends AbstractGenericModule
         $config = $this->getServiceLocator()->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
-            $translator = $serviceLocator->get('MvcTranslator');
-            $message = new Message(
-                $translator->translate('The directory "%s" is not writeable.'), // @translate
-                $basePath
+            $message = new PsrMessage(
+                'The directory "{path}" is not writeable.', // @translate
+                ['path' => $basePath]
             );
             throw new ModuleCannotInstallException($message);
         }
@@ -100,20 +101,20 @@ class Module extends AbstractGenericModule
             $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
             if (!is_writeable($basePath)) {
                 $logger = $services->get('Omeka\Logger');
-                $logger->err(new Message(
-                    'The destination folder "%s" is not writeable.', // @translate
-                    $basePath . '/' . $dirPath
-                ));
+                $logger->err(
+                    'The destination folder "{path}" is not writeable.', // @translate
+                    ['path' => $basePath . '/' . $dirPath]
+                );
                 return;
             }
-            @mkdir($dirPath, 0755, true);
+            @mkdir($dirPath, 0775, true);
         } elseif (!is_dir($dirPath) || !is_writeable($dirPath)) {
             $services = $this->getServiceLocator();
             $logger = $services->get('Omeka\Logger');
             $logger->err(
-                new Message('The destination folder "%s" is not writeable.', // @translate
-                $dirPath
-            ));
+                'The destination folder "{path}" is not writeable.', // @translate
+                ['path' => $dirPath]
+            );
             return;
         }
         return $dirPath;
@@ -130,7 +131,7 @@ class Module extends AbstractGenericModule
         if (!file_exists($dirPath)) {
             return true;
         }
-        $files = array_diff(scandir($dirPath), array('.', '..'));
+        $files = array_diff(scandir($dirPath), ['.', '..']);
         foreach ($files as $file) {
             $path = $dirPath . '/' . $file;
             if (is_dir($path)) {
