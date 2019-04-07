@@ -54,6 +54,16 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected $paramsFormClass;
 
     /**
+     * var array
+     */
+    protected $configKeys = [];
+
+    /**
+     * var array
+     */
+    protected $paramsKeys = [];
+
+    /**
      * @var string|null
      */
     protected $lastErrorMessage;

@@ -9,6 +9,7 @@ class SpreadsheetWriterConfigForm extends Form
 {
     use MetadataSelectTrait;
     use ResourceTypesSelectTrait;
+    use ResourceQueryTrait;
     use ServiceLocatorAwareTrait;
 
     public function init()
@@ -31,6 +32,8 @@ it is recommended to use a character that is never used, like "|", or a random s
 
         $this->appendResourceTypesSelect();
         $this->appendMetadataSelect();
+
+        $this->appendResourceQuery();
 
         $this->addInputFilterResourceTypes();
         $this->addInputFilterMetadata();

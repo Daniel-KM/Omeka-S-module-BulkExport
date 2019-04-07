@@ -21,7 +21,7 @@
                 "shasum": ""
             },
             "require": {
-                "ext-xmlwriter": "*",
+                "ext-xmlreader": "*",
                 "ext-zip": "*",
                 "php": ">=5.4.0"
             },

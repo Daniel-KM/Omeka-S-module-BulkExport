@@ -19,12 +19,14 @@ class TsvWriter extends CsvWriter
         'separator',
         'resource_types',
         'metadata',
+        'query',
     ];
 
     protected $paramsKeys = [
         'separator',
         'resource_types',
         'metadata',
+        'query',
     ];
 
     public function handleParamsForm(Form $form)

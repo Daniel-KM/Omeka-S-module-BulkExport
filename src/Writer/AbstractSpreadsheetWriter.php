@@ -16,6 +16,21 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
      */
     const SQL_LIMIT = 100;
 
+    protected $configKeys = [
+        'separator',
+        'resource_types',
+        'metadata',
+        // TODO Remove query from the config?
+        'query',
+    ];
+
+    protected $paramsKeys = [
+        'separator',
+        'resource_types',
+        'metadata',
+        'query',
+    ];
+
     /**
      * Type of spreadsheet (default to csv).
      *
@@ -151,12 +166,18 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $connection = $entityManager->getConnection();
         $repository = $entityManager->getRepository($resourceClass);
         $adapter = $services->get('Omeka\ApiAdapterManager')->get($apiResource);
+        $api = $services->get('Omeka\ApiManager');
 
         $headers = $this->getHeaders();
         $separator = $this->getParam('separator', '');
         $hasSeparator = strlen($separator) > 0;
 
-        $criteria = [];
+        $query = $this->getParam('query', []);
+        if ($query) {
+            $queryArray = [];
+            parse_str($query, $queryArray);
+            $query = $queryArray;
+        }
 
         $this->stats['process'][$resourceType] = [];
         $this->stats['process'][$resourceType]['total'] = $this->stats['totals'][$resourceType];
@@ -181,8 +202,12 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 break;
             }
 
-            /** @var \Omeka\Entity\AbstractEntity[] $resources */
-            $resources = $repository->findBy($criteria, ['id' => 'ASC'], self::SQL_LIMIT, $offset);
+            $response = $api
+                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $query);
+
+            // TODO Check other resources (user…).
+            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
+            $resources = $response->getContent();
             if (!count($resources)) {
                 break;
             }
@@ -190,9 +215,6 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             // TODO Use SpreadsheetEntry.
 
             foreach ($resources as $resource) {
-                /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
-                $resource = $adapter->getRepresentation($resource);
-
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
@@ -451,18 +473,29 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected function countResources()
     {
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        // TODO Use connection?
+        /**
+         * @var \Doctrine\ORM\EntityManager $entityManager
+         * @var \Doctrine\DBAL\Connection $connection
+         * @var \Doctrine\ORM\EntityRepository $repository
+         */
+        $services = $this->getServiceLocator();
+        $api = $services->get('Omeka\ApiManager');
         $resourceTypes = $this->getResourceTypes();
         $result = array_flip($resourceTypes);
         foreach ($resourceTypes as $resourceType) {
-            $table = $this->mapResourceTypeToTable($resourceType);
-            if ($table) {
-                $sql = sprintf('SELECT COUNT(id) FROM %s', $table);
-                $stmt = $connection->query($sql);
-                $result[$resourceType] = $stmt->fetchColumn();
+            $resource = $this->mapResourceTypeToApiResource($resourceType);
+            if ($resource) {
+                $query = $this->getParam('query', []);
+                if (!is_array($query)) {
+                    $queryArray = [];
+                    parse_str($query, $queryArray);
+                    $query = $queryArray;
+                }
+                $result[$resourceType] = $api->search($resource, ['limit' => 1] + $query)->getTotalResults();
             }
         }
+
         return $result;
     }
 
@@ -472,6 +505,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
 
         // List only properties that are used.
+        // TODO Limit with the query (via adapter).
         $qb = $connection->createQueryBuilder();
         $qb
             ->select('DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term')

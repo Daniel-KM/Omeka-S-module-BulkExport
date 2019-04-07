@@ -25,6 +25,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'separator',
         'resource_types',
         'metadata',
+        'query',
     ];
 
     protected $spreadsheetType = Type::ODS;
