@@ -68,15 +68,15 @@ return [
         'routes' => [
             'admin' => [
                 'child_routes' => [
-                    'bulk-export' => [
+                    'bulk' => [
                         'type' => \Zend\Router\Http\Literal::class,
                         'options' => [
-                            'route' => '/bulk-export',
+                            'route' => '/bulk',
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller\Admin',
                                 '__ADMIN__' => true,
                                 'controller' => 'Index',
-                                'action' => 'export-board',
+                                'action' => 'index',
                             ],
                         ],
                         'may_terminate' => true,

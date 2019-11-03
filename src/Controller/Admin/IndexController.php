@@ -21,11 +21,6 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
-        $this->forward('export-board');
-    }
-
-    public function exportBoardAction()
-    {
         // Exporters.
         $response = $this->api()->search('bulk_exporters', ['sort_by' => 'label', 'sort_order' => 'asc']);
         $exporters = $response->getContent();
