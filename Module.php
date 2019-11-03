@@ -2,7 +2,7 @@
 namespace BulkExport;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
-    require_once file_exists(dirname(__DIR__) . '/Generic/AbstractModule.php')
+    require file_exists(dirname(__DIR__) . '/Generic/AbstractModule.php')
         ? dirname(__DIR__) . '/Generic/AbstractModule.php'
         : __DIR__ . '/src/Generic/AbstractModule.php';
 }
