@@ -16,14 +16,14 @@ class ExporterDeleteForm extends Form
 
         $this->add([
             'name' => 'exporter_submit',
-            'type' =>  Fieldset::class,
+            'type' => Fieldset::class,
         ]);
 
         $fieldset = $this->get('exporter_submit');
 
         $fieldset->add([
             'name' => 'submit',
-            'type'  => Element\Submit::class,
+            'type' => Element\Submit::class,
             'attributes' => [
                 'id' => 'submitbutton',
                 'value' => 'Delete exporter', // @translate

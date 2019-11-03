@@ -12,7 +12,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     /**
      * Limit for the loop to avoid heavy sql requests.
      *
-     * @var integer
+     * @var int
      */
     const SQL_LIMIT = 100;
 

@@ -21,7 +21,7 @@ class ExporterStartForm extends Form
 
         $fieldset->add([
             'name' => 'submit',
-            'type'  => Element\Submit::class,
+            'type' => Element\Submit::class,
             'attributes' => [
                 'value' => 'Start export', // @translate
                 'required' => true,

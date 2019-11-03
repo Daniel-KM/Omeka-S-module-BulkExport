@@ -34,7 +34,7 @@ class ExporterForm extends Form
 
         $this->add([
             'name' => 'o-module-bulk:writer_class',
-            'type'  => Element\Select::class,
+            'type' => Element\Select::class,
             'options' => [
                 'label' => 'Writer', // @translate
                 'value_options' => $this->getWriterOptions(),
@@ -53,7 +53,7 @@ class ExporterForm extends Form
 
         $fieldset->add([
             'name' => 'submit',
-            'type'  => Element\Submit::class,
+            'type' => Element\Submit::class,
             'attributes' => [
                 'id' => 'submitbutton',
                 'value' => 'Save', // @translate

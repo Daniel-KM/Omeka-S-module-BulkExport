@@ -142,11 +142,11 @@ class ExporterController extends AbstractActionController
 
         $form->add([
             'name' => 'exporter_submit',
-            'type'  => Fieldset::class,
+            'type' => Fieldset::class,
         ]);
         $form->get('exporter_submit')->add([
             'name' => 'submit',
-            'type'  => Element\Submit::class,
+            'type' => Element\Submit::class,
             'attributes' => [
                 'value' => 'Save', // @translate
                 'id' => 'submitbutton',
@@ -314,7 +314,7 @@ class ExporterController extends AbstractActionController
 
         $writer = $exporter->writer();
         if ($writer instanceof Parametrizable) {
-            /** @return \Zend\Form\Form */
+            /* @return \Zend\Form\Form */
             $formsCallbacks['writer'] = function () use ($writer, $controller) {
                 $writerForm = $controller->getForm($writer->getParamsFormClass());
                 $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
@@ -322,18 +322,18 @@ class ExporterController extends AbstractActionController
 
                 $writerForm->add([
                     'name' => 'current_form',
-                    'type'  => Element\Hidden::class,
+                    'type' => Element\Hidden::class,
                     'attributes' => [
                         'value' => 'writer',
                     ],
                 ]);
                 $writerForm->add([
                     'name' => 'writer_submit',
-                    'type'  => Fieldset::class,
+                    'type' => Fieldset::class,
                 ]);
                 $writerForm->get('writer_submit')->add([
                     'name' => 'submit',
-                    'type'  => Element\Submit::class,
+                    'type' => Element\Submit::class,
                     'attributes' => [
                         'value' => 'Continue', // @translate
                     ],
@@ -343,12 +343,12 @@ class ExporterController extends AbstractActionController
             };
         }
 
-        /** @return \Zend\Form\Form */
+        /* @return \Zend\Form\Form */
         $formsCallbacks['start'] = function () use ($controller) {
             $startForm = $controller->getForm(ExporterStartForm::class);
             $startForm->add([
                 'name' => 'current_form',
-                'type'  => Element\Hidden::class,
+                'type' => Element\Hidden::class,
                 'attributes' => [
                     'value' => 'start',
                 ],

@@ -389,13 +389,13 @@ SQL;
     protected function exporterArgs()
     {
         return [
-            'label'=> 'Spreadsheet mixed',
+            'label' => 'Spreadsheet mixed',
             'writer_class' => \BulkExport\Writer\SpreadsheetWriter::class,
             'writer_config' => [
                 'delimiter' => ',',
                 'enclosure' => '"',
                 'escape' => '\\',
-                'separator' => ','
+                'separator' => ',',
             ],
         ];
     }
@@ -410,11 +410,11 @@ SQL;
                     'name' => 'filename.tsv',
                     'type' => 'text/tab-separated-values',
                     'error' => 0,
-                    'size' => 27482
+                    'size' => 27482,
                 ],
                 'delimiter' => "\t",
                 'enclosure' => chr(0),
-                'escape' => chr(0)
+                'escape' => chr(0),
             ],
         ];
     }
