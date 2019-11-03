@@ -5,6 +5,7 @@ use BulkExport\Api\Representation\ExporterRepresentation;
 use BulkExport\Form\ExporterDeleteForm;
 use BulkExport\Form\ExporterForm;
 use BulkExport\Form\ExporterStartForm;
+use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Job\Export as JobExport;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
@@ -136,7 +137,7 @@ class ExporterController extends AbstractActionController
 
         $writer = $entity->writer();
         $form = $this->getForm($writer->getConfigFormClass());
-        $writerConfig = ($writer->getConfig()) ? $writer->getConfig() : [];
+        $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
         $form->setData($writerConfig);
 
         $form->add([
@@ -316,7 +317,7 @@ class ExporterController extends AbstractActionController
             /** @return \Zend\Form\Form */
             $formsCallbacks['writer'] = function () use ($writer, $controller) {
                 $writerForm = $controller->getForm($writer->getParamsFormClass());
-                $writerConfig = $writer->getConfig() ?: [];
+                $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
                 $writerForm->setData($writerConfig);
 
                 $writerForm->add([
