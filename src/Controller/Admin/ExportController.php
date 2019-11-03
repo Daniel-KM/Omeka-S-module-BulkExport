@@ -37,6 +37,17 @@ class ExportController extends AbstractActionController
         return $view;
     }
 
+    public function showAction()
+    {
+        $id = $this->params()->fromRoute('id');
+        $export = $this->api()->read('bulk_exports', $id)->getContent();
+
+        $view = new ViewModel;
+        $view->setVariable('export', $export);
+        $view->setVariable('resource', $export);
+        return $view;
+    }
+
     public function logsAction()
     {
         $id = $this->params()->fromRoute('id');

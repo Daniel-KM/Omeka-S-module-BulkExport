@@ -17,7 +17,6 @@ $urlBase = $url('top') . 'files/bulk_export/';
             <th><?php echo $escape($translate('Status')); ?></th>
             <th><?php echo $escape($translate('Started')); ?></th>
             <th><?php echo $escape($translate('Completed')); ?></th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +34,14 @@ $urlBase = $url('top') . 'files/bulk_export/';
                             'title' => $translate('Stop'), // @translate
                         ]); ?></li>
                         <?php endif; ?>
+                        <li><?php echo $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'show', 'id' => $export->id()]), [
+                            'class' => 'fas fa-cogs',
+                            'title' => $translate('See params'),
+                        ]); ?></li>
+                        <li><?php echo $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]), [
+                            'class' => 'fas fa-list',
+                            'title' => $translate('See logs'),
+                        ]); ?></li>
                         <?php if ($fileUrl): ?>
                         <li><?php
                         echo $hyperlink('', $fileUrl, [
@@ -47,9 +54,6 @@ $urlBase = $url('top') . 'files/bulk_export/';
                 <td><?php echo $fileUrl ? $hyperlink($status, $fileUrl) : $status; ?></td>
                 <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
                 <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
-                <td>
-                    <?php echo $this->hyperlink($translate('See logs'), $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])); ?>
-                </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
