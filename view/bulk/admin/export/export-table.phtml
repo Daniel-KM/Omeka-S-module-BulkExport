@@ -21,7 +21,7 @@ $urlBase = $url('top') . 'files/bulk_export/';
     </thead>
     <tbody>
         <?php foreach ($exports as $export): ?>
-            <?php $status = $export->status(); ?>
+            <?php $status = $translate($export->status()); ?>
             <?php $filename = $export->filename(); ?>
             <?php $fileUrl = $export->isCompleted() && $filename ? $urlBase . $filename : ''; ?>
             <tr>
