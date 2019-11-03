@@ -43,7 +43,7 @@ class ExporterController extends AbstractActionController
         if ($id && !$entity) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
-            return $this->redirect()->toRoute('admin/bulk-export');
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
         }
 
         $form = $this->getForm(ExporterForm::class);
@@ -65,10 +65,10 @@ class ExporterController extends AbstractActionController
 
                 if ($response) {
                     $this->messenger()->addSuccess('Exporter successfully saved'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 } else {
                     $this->messenger()->addError('Save of exporter failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -88,14 +88,14 @@ class ExporterController extends AbstractActionController
         if (!$entity) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
-            return $this->redirect()->toRoute('admin/bulk-export');
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
         }
 
         // Check if the exporter has exports.
         $total = $this->api()->search('bulk_exports', ['exporter_id' => $id])->getTotalResults();
         if ($total) {
             $this->messenger()->addWarning('This exporterd cannot be deleted: exports that use it exist.'); // @translate
-            return $this->redirect()->toRoute('admin/bulk-export');
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
         }
 
         $form = $this->getForm(ExporterDeleteForm::class);
@@ -108,10 +108,10 @@ class ExporterController extends AbstractActionController
                 $response = $this->api($form)->delete('bulk_exporters', $id);
                 if ($response) {
                     $this->messenger()->addSuccess('Exporter successfully deleted'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 } else {
                     $this->messenger()->addError('Delete of exporter failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -132,7 +132,7 @@ class ExporterController extends AbstractActionController
         if (!$entity) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
-            return $this->redirect()->toRoute('admin/bulk-export');
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
         }
 
         $writer = $entity->writer();
@@ -163,10 +163,10 @@ class ExporterController extends AbstractActionController
 
                 if ($response) {
                     $this->messenger()->addSuccess('Writer configuration saved'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 } else {
                     $this->messenger()->addError('Save of writer configuration failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export');
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -188,7 +188,7 @@ class ExporterController extends AbstractActionController
         if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
-            return $this->redirect()->toRoute('admin/bulk-export');
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
         }
 
         $writer = $exporter->writer();
@@ -278,7 +278,7 @@ class ExporterController extends AbstractActionController
                             $this->messenger()->addError('Export start failed'); // @translate
                         }
 
-                        return $this->redirect()->toRoute('admin/bulk-export');
+                        return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'exporter']);
                         break;
                 }
 

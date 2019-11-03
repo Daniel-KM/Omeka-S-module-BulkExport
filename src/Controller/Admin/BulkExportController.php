@@ -6,7 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+class BulkExportController extends AbstractActionController
 {
     use ServiceLocatorAwareTrait;
 

@@ -26,7 +26,7 @@ return [
             dirname(__DIR__) . '/view',
         ],
         'controller_map' => [
-            Controller\Admin\IndexController::class => 'bulk/admin/index',
+            Controller\Admin\BulkExportController::class => 'bulk/admin/bulk-export',
             Controller\Admin\ExportController::class => 'bulk/admin/export',
             Controller\Admin\ExporterController::class => 'bulk/admin/exporter',
         ],
@@ -48,19 +48,48 @@ return [
         'factories' => [
             // Class is not used as key, since it's set dynamically by sub-route
             // and it should be available in acl (so alias is mapped later).
+            'BulkExport\Controller\Admin\BulkExport' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Export' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
-            'BulkExport\Controller\Admin\Index' => Service\Controller\ControllerFactory::class,
         ],
     ],
     // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
     'navigation' => [
         'AdminModule' => [
-            [
+            'bulk-export' => [
                 'label' => 'Bulk Export', // @translate
-                'route' => 'admin/bulk-export',
-                'resource' => 'BulkExport\Controller\Admin\Index',
+                'route' => 'admin/bulk-export/default',
+                'controller' => 'bulk-export',
+                'resource' => 'BulkExport\Controller\Admin\BulkExport',
                 'class' => 'o-icon-uninstall',
+                'pages' => [
+                    [
+                        'label' => 'Dashboard', // @translate
+                        'route' => 'admin/bulk-export/default',
+                        'controller' => 'bulk-export',
+                        'resource' => 'BulkExport\Controller\Admin\BulkExport',
+                        'pages' => [
+                            [
+                                'route' => 'admin/bulk-export/id',
+                                'controller' => 'exporter',
+                                'visible' => false,
+                            ],
+                        ],
+                    ],
+                    [
+                        'label' => 'Past Exports', // @translate
+                        'route' => 'admin/bulk-export/default',
+                        'controller' => 'export',
+                        'action' => 'index',
+                        'pages' => [
+                            [
+                                'route' => 'admin/bulk-export/id',
+                                'controller' => 'export',
+                                'visible' => false,
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
@@ -68,14 +97,14 @@ return [
         'routes' => [
             'admin' => [
                 'child_routes' => [
-                    'bulk' => [
+                    'bulk-export' => [
                         'type' => \Zend\Router\Http\Literal::class,
                         'options' => [
-                            'route' => '/bulk',
+                            'route' => '/bulk-export',
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller\Admin',
                                 '__ADMIN__' => true,
-                                'controller' => 'Index',
+                                'controller' => 'BulkExport',
                                 'action' => 'index',
                             ],
                         ],
