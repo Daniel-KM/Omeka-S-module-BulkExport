@@ -12,41 +12,12 @@ use Log\Stdlib\PsrMessage;
 use Omeka\Module\Exception\ModuleCannotInstallException;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class Module extends AbstractModule
 {
     const NAMESPACE = __NAMESPACE__;
 
     protected $dependency = 'Log';
-
-    public function install(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->setServiceLocator($serviceLocator);
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
-            $message = new PsrMessage(
-                'The directory "{path}" is not writeable.', // @translate
-                ['path' => $basePath]
-            );
-            throw new ModuleCannotInstallException($message);
-        }
-
-        parent::install($serviceLocator);
-    }
-
-    public function uninstall(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->setServiceLocator($serviceLocator);
-        if (!empty($_POST['remove-bulk-exports'])) {
-            $config = $this->getServiceLocator()->get('Config');
-            $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-            $this->rmDir($basePath . '/bulk_export');
-        }
-
-        parent::uninstall($serviceLocator);
-    }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
@@ -89,6 +60,44 @@ class Module extends AbstractModule
         $html .= '</label>';
 
         echo $html;
+    }
+
+    protected function preInstall()
+    {
+        $config = $this->getServiceLocator()->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
+            $message = new PsrMessage(
+                'The directory "{path}" is not writeable.', // @translate
+                ['path' => $basePath]
+            );
+            throw new ModuleCannotInstallException($message);
+        }
+    }
+
+    protected function postInstall()
+    {
+        $services = $this->getServiceLocator();
+        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
+        /** @var \Omeka\Api\Manager $api */
+        $api = $services->get('Omeka\ApiManager');
+
+        $directory = new \RecursiveDirectoryIterator(__DIR__ . '/data/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        foreach ($iterator as $filepath => $file) {
+            $data = include $filepath;
+            $data['owner'] = $user;
+            $api->create('bulk_exporters', $data);
+        }
+    }
+
+    protected function preUninstall()
+    {
+        if (!empty($_POST['remove-bulk-exports'])) {
+            $config = $this->getServiceLocator()->get('Config');
+            $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+            $this->rmDir($basePath . '/bulk_export');
+        }
     }
 
     /**
