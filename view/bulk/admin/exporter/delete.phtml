@@ -13,11 +13,11 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
 $form->prepare();
 ?>
 
-<?php echo $this->pageTitle($translate('Delete exporter'), 1, $translate('Bulk export')); ?>
+<?= $this->pageTitle($translate('Delete exporter'), 1, $translate('Bulk export')) ?>
 
 <div id="content">
-    <h2><?php echo $escape(sprintf($translate('Delete exporter (%s)'), $entity->label())); ?></h2>
-    <p><?php echo $escape($translate('Are you sure you want to delete this exporter ?')); ?></p>
+    <h2><?= $escape(sprintf($translate('Delete exporter (%s)'), $entity->label())) ?></h2>
+    <p><?= $escape($translate('Are you sure you want to delete this exporter ?')) ?></p>
     <?php
     echo $this->form()->openTag($form);
     echo $this->formCollection($form);
