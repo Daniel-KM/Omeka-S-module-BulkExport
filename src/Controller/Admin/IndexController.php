@@ -27,18 +27,18 @@ class IndexController extends AbstractActionController
     public function exportBoardAction()
     {
         // Exporters.
-        $response = $this->api()->search('bulk_exporters');
+        $response = $this->api()->search('bulk_exporters', ['sort_by' => 'label', 'sort_order' => 'asc']);
         $exporters = $response->getContent();
 
-        $this->setBrowseDefaults('id');
+        $this->setBrowseDefaults('label', 'asc');
 
         // Exports.
         $perPage = 25;
         $query = [
             'page' => 1,
             'per_page' => $perPage,
-            'sort_by' => $this->params()->fromQuery('sort_by', 'id'),
-            'sort_order' => $this->params()->fromQuery('sort_order', 'desc'),
+            'sort_by' => 'id',
+            'sort_order' => 'desc',
         ];
         $response = $this->api()->search('bulk_exports', $query);
         $this->paginator($response->getTotalResults(), 1);

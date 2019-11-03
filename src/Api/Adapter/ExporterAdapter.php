@@ -12,6 +12,12 @@ use Omeka\Stdlib\ErrorStore;
 
 class ExporterAdapter extends AbstractEntityAdapter
 {
+    protected $sortFields = [
+        'id' => 'id',
+        'label' => 'label',
+        'writer_class' => 'writerClass',
+    ];
+
     public function getResourceName()
     {
         return 'bulk_exporters';
