@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 00:00+0100\n"
+"POT-Creation-Date: 2019-11-04 00:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,64 +17,81 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:72
+#: Module.php:47
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:78
+#: Module.php:53
 #, php-format
 msgid "All bulk exports will be removed (folder \"%s\"."
 msgstr ""
 
-#: Module.php:84
+#: Module.php:59
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:280
-msgid "users"
+#: src/Generic/AbstractModule.php:518
+#, php-format
+msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:281
-msgid "vocabularies"
+#: src/Generic/AbstractModule.php:538
+#, php-format
+msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:282
-msgid "resource classes"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:283
-msgid "resource templates"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:284
-msgid "properties"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:288
-msgid "modules"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:289
-msgid "sites"
+#: src/Generic/AbstractModule.php:606
+#, php-format
+msgid ""
+"The module \"%s\" was automatically deactivated because the dependencies are "
+"unavailable."
 msgstr ""
 
 #: src/Writer/AbstractWriter.php:290
-msgid "site pages"
+msgid "users"
 msgstr ""
 
 #: src/Writer/AbstractWriter.php:291
-msgid "jobs"
+msgid "vocabularies"
 msgstr ""
 
 #: src/Writer/AbstractWriter.php:292
-msgid "resources"
+msgid "resource classes"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:293
+msgid "resource templates"
 msgstr ""
 
 #: src/Writer/AbstractWriter.php:294
+msgid "properties"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:298
+msgid "modules"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:299
+msgid "sites"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:300
+msgid "site pages"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:301
+msgid "jobs"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:302
+msgid "resources"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:304
 msgid "api resources"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:296
+#: src/Writer/AbstractWriter.php:306
 msgid "annotations"
 msgstr ""
 
@@ -241,19 +258,39 @@ msgstr ""
 msgid "Last exports"
 msgstr ""
 
-#: Module.php:26
+#: data/exporters/ods.php:4
+msgid "OpenDocument spreadsheet (ods)"
+msgstr ""
+
+#: data/exporters/tsv.php:4 src/Writer/TsvWriter.php:11
+msgid "TSV (tab-separated values)"
+msgstr ""
+
+#: data/exporters/csv.php:4 src/Writer/CsvWriter.php:20
+msgid "CSV"
+msgstr ""
+
+#: Module.php:71
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:105 Module.php:115
+#: Module.php:118 Module.php:128
 msgid "The destination folder \"{path}\" is not writeable."
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:22
-msgid "Multi-value separator"
+#: src/Form/Writer/ResourceQueryTrait.php:14
+msgid "Resource query"
+msgstr ""
+
+#: src/Form/Writer/ResourceQueryTrait.php:15
+msgid "Limit the resources output. Should be used with one resource type only."
 msgstr ""
 
 #: src/Form/Writer/SpreadsheetWriterConfigForm.php:23
+msgid "Multi-value separator"
+msgstr ""
+
+#: src/Form/Writer/SpreadsheetWriterConfigForm.php:24
 msgid ""
 "To output all values of each property, cells can be multivalued with this "
 "separator.\n"
@@ -440,77 +477,73 @@ msgstr ""
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:53
+#: src/Writer/AbstractSpreadsheetWriter.php:68
 msgid "Output directory \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:72
+#: src/Writer/AbstractSpreadsheetWriter.php:87
 msgid "No headers are used in any resources."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:81
+#: src/Writer/AbstractSpreadsheetWriter.php:96
 msgid "{number} different headers are used in all resources."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:107
+#: src/Writer/AbstractSpreadsheetWriter.php:122
 msgid "No resource type selected."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:112
+#: src/Writer/AbstractSpreadsheetWriter.php:127
 msgid "No resource to export."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:120
+#: src/Writer/AbstractSpreadsheetWriter.php:135
 msgid ""
 "No separator selected: only the first value of each property of each "
 "resource will be output."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:133
+#: src/Writer/AbstractSpreadsheetWriter.php:148
 msgid "All resources of all resource types ({total}) exported."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:169
+#: src/Writer/AbstractSpreadsheetWriter.php:190
 msgid "Starting export of {total} {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:178
+#: src/Writer/AbstractSpreadsheetWriter.php:199
 msgid ""
 "The job \"Export\" was stopped: {processed}/{total} resources processed."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:206
+#: src/Writer/AbstractSpreadsheetWriter.php:228
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:241
-#: src/Writer/AbstractSpreadsheetWriter.php:253
+#: src/Writer/AbstractSpreadsheetWriter.php:263
+#: src/Writer/AbstractSpreadsheetWriter.php:275
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:258
+#: src/Writer/AbstractSpreadsheetWriter.php:280
 msgid "End export of {total} {resource_type}."
 msgstr ""
 
-#: src/Writer/CsvWriter.php:20
-msgid "CSV"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:147 src/Writer/AbstractWriter.php:155
+#: src/Writer/AbstractWriter.php:157 src/Writer/AbstractWriter.php:165
 msgid "The destination folder \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:202
+#: src/Writer/AbstractWriter.php:212
 msgid ""
 "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
 "{exception}"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:209
+#: src/Writer/AbstractWriter.php:219
 msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
 msgstr ""
 
@@ -518,14 +551,10 @@ msgstr ""
 msgid "OpenDocument Spreadsheet"
 msgstr ""
 
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:36
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:37
 msgid ""
 "To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
 "required."
-msgstr ""
-
-#: src/Writer/TsvWriter.php:11
-msgid "TSV (tab-separated values)"
 msgstr ""
 
 #: test/BulkExportTest/Job/ExportTest.php:287
