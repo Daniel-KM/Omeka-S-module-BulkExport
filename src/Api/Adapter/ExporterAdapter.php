@@ -35,10 +35,14 @@ class ExporterAdapter extends AbstractEntityAdapter
 
     public function buildQuery(QueryBuilder $qb, array $query)
     {
+        $isOldOmeka = \Omeka\Module::VERSION < 2;
+        $alias = $isOldOmeka ? $this->getEntityClass() : 'omeka_root';
+        $expr = $qb->expr();
+
         if (isset($query['id'])) {
             $qb->andWhere(
-                $qb->expr()->eq(
-                    $this->getEntityClass() . '.id',
+                $expr->eq(
+                    $alias . '.id',
                     $this->createNamedParameter($qb, $query['id'])
                 )
             );
@@ -47,11 +51,11 @@ class ExporterAdapter extends AbstractEntityAdapter
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
             $userAlias = $this->createAlias();
             $qb->innerJoin(
-                $this->getEntityClass() . '.owner',
+                $alias . '.owner',
                 $userAlias
             );
             $qb->andWhere(
-                $qb->expr()->eq(
+                $qb->eq(
                     $userAlias . '.id',
                     $this->createNamedParameter($qb, $query['owner_id'])
                 )
