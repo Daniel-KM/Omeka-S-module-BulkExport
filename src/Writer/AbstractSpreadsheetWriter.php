@@ -172,7 +172,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $separator = $this->getParam('separator', '');
         $hasSeparator = strlen($separator) > 0;
 
-        $query = $this->getParam('query', []);
+        $query = $this->getParam('query') ?: [];
         if ($query) {
             $queryArray = [];
             parse_str($query, $queryArray);
