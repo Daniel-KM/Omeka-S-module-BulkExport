@@ -37,7 +37,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
                 <?= $hyperlink($exporter->label(), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])) ?>
                 <ul class="actions">
                     <li><?= $exporter->link('', 'start', [
-                        'class' => 'fas fa-cloud-upload-alt',
+                        'class' => 'fas fa-cloud-download-alt',
                         'title' => $translate('Export'),
                     ]) ?></li>
                     <?php if ($userIsAllowedUpdate): ?>
