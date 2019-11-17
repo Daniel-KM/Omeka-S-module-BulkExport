@@ -288,7 +288,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     protected function getResourceTypes()
     {
         if (is_null($this->resourceTypes)) {
-            $this->resourceTypes = $this->getParam('resource_types', []);
+            $this->resourceTypes = $this->getParam('resource_types') ?: [];
         }
         return $this->resourceTypes;
     }
@@ -301,7 +301,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         if (is_null($this->headers)) {
             $resourceTypes = $this->getResourceTypes();
             $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
-            $headers = $this->getParam('metadata', []);
+            $headers = $this->getParam('metadata') ?: [];
             if ($headers) {
                 $index = array_search('properties', $headers);
                 $hasProperties = $index !== false;
@@ -499,7 +499,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         return $result;
     }
 
-    protected function listUsedProperties(array $resourceClasses = [])
+    protected function listUsedProperties(array $resourceClasses = null)
     {
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
