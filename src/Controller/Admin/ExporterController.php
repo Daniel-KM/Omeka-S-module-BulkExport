@@ -264,12 +264,20 @@ class ExporterController extends AbstractActionController
                             // Synchronous dispatcher for testing purpose.
                             // $job = $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
                             $job = $dispatcher->dispatch(JobExport::class, $args);
-
+                            $urlHelper = $this->url();
                             $message = new PsrMessage(
-                                'Export started in background (<a href="{job_url}">job #{job_id}</a>). This may take a while.', // @translate
+                                'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.', // @translate
                                 [
-                                    'job_url' => htmlspecialchars($this->url()->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()])),
-                                    'job_id' => $job->getId(),
+                                    'link_open_job' => sprintf(
+                                        '<a href="%s">',
+                                        htmlspecialchars($urlHelper->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()]))
+                                    ),
+                                    'jobId' => $job->getId(),
+                                    'link_close' => '</a>',
+                                    'link_open_log' => sprintf(
+                                        '<a href="%s">',
+                                        htmlspecialchars($urlHelper->fromRoute('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]))
+                                    ),
                                 ]
                             );
                             $message->setEscapeHtml(false);
