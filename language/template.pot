@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-04 00:00+0100\n"
+"POT-Creation-Date: 2020-01-27 00:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -95,33 +95,48 @@ msgstr ""
 msgid "annotations"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:16
-msgid "Exporter"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:35
-msgid "Stop"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:42
-msgid "Get file"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:51
-msgid "See logs"
-msgstr ""
-
-#: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/index.phtml:17
-msgid "Exports"
-msgstr ""
-
+#: view/bulk/admin/bulk-export/index.phtml:18
 #: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/logs.phtml:32
+#: view/bulk/admin/export/show.phtml:15
 #: view/bulk/admin/exporter/configure-writer.phtml:16
 #: view/bulk/admin/exporter/delete.phtml:16
 #: view/bulk/admin/exporter/edit.phtml:16
 #: view/bulk/admin/exporter/start.phtml:17
-#: view/bulk/admin/index/export-board.phtml:18
 msgid "Bulk export"
+msgstr ""
+
+#: view/bulk/admin/bulk-export/index.phtml:20
+msgid "Available exporters"
+msgstr ""
+
+#: view/bulk/admin/bulk-export/index.phtml:28
+#: view/bulk/admin/export/show.phtml:31 view/bulk/admin/exporter/start.phtml:27
+msgid "Writer"
+msgstr ""
+
+#: view/bulk/admin/bulk-export/index.phtml:78
+msgid "Last exports"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:41
+msgid "Stop"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:46
+msgid "See params"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:50
+#: view/bulk/admin/export/show.phtml:38
+msgid "See logs"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:56
+msgid "Get file"
+msgstr ""
+
+#: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/index.phtml:17
+msgid "Exports"
 msgstr ""
 
 #: view/bulk/admin/export/index.phtml:23
@@ -180,16 +195,49 @@ msgstr ""
 msgid "Full log"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:93
+#: view/bulk/admin/export/logs.phtml:95
 msgid "Manage logs"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:98
+#: view/bulk/admin/export/logs.phtml:100
 msgid "No logs yet."
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:98
+#: view/bulk/admin/export/logs.phtml:100
 msgid "Refresh page"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:18
+#, php-format
+msgid "Export #%d"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:20
+#, php-format
+msgid "exporter: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:21 view/bulk/admin/exporter/start.phtml:25
+#, php-format
+msgid "Comment: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:24
+#, php-format
+msgid "Started: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:27
+#, php-format
+msgid "Ended: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:30 view/bulk/admin/exporter/start.phtml:26
+msgid "Parameters"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:37
+msgid "Logs"
 msgstr ""
 
 #: view/bulk/admin/exporter/add.phtml:15 view/bulk/admin/exporter/add.phtml:18
@@ -242,22 +290,6 @@ msgstr ""
 msgid "Exporter: %s"
 msgstr ""
 
-#: view/bulk/admin/exporter/start.phtml:23
-msgid "Parameters"
-msgstr ""
-
-#: view/bulk/admin/index/export-board.phtml:20
-msgid "Available exporters"
-msgstr ""
-
-#: view/bulk/admin/index/export-board.phtml:28
-msgid "Writer"
-msgstr ""
-
-#: view/bulk/admin/index/export-board.phtml:78
-msgid "Last exports"
-msgstr ""
-
 #: data/exporters/ods.php:4
 msgid "OpenDocument spreadsheet (ods)"
 msgstr ""
@@ -274,7 +306,7 @@ msgstr ""
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:118 Module.php:128
+#: Module.php:128 Module.php:138
 msgid "The destination folder \"{path}\" is not writeable."
 msgstr ""
 
@@ -286,11 +318,11 @@ msgstr ""
 msgid "Limit the resources output. Should be used with one resource type only."
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:23
+#: src/Form/Writer/SpreadsheetWriterConfigForm.php:22
 msgid "Multi-value separator"
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:24
+#: src/Form/Writer/SpreadsheetWriterConfigForm.php:23
 msgid ""
 "To output all values of each property, cells can be multivalued with this "
 "separator.\n"
@@ -374,6 +406,14 @@ msgstr ""
 msgid "Escape"
 msgstr ""
 
+#: src/Form/Writer/AbstractWriterConfigForm.php:22
+msgid "This optional comment will help admins for future reference."
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:27
+msgid "Optional comment for future reference."
+msgstr ""
+
 #: src/Form/Writer/ResourceTypesSelectTrait.php:14
 msgid "Resource types"
 msgstr ""
@@ -396,61 +436,65 @@ msgstr ""
 msgid "Annotations"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:43
-#: src/Controller/Admin/ExporterController.php:88
-#: src/Controller/Admin/ExporterController.php:132
-#: src/Controller/Admin/ExporterController.php:188
+#: src/Controller/Admin/ExporterController.php:44
+#: src/Controller/Admin/ExporterController.php:89
+#: src/Controller/Admin/ExporterController.php:133
+#: src/Controller/Admin/ExporterController.php:193
 msgid "exporter_id"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:66
+#: src/Controller/Admin/ExporterController.php:67
 msgid "Exporter successfully saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:69
+#: src/Controller/Admin/ExporterController.php:70
 msgid "Save of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:96
+#: src/Controller/Admin/ExporterController.php:97
 msgid "This exporterd cannot be deleted: exports that use it exist."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:109
+#: src/Controller/Admin/ExporterController.php:110
 msgid "Exporter successfully deleted"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:112
+#: src/Controller/Admin/ExporterController.php:113
 msgid "Delete of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:164
+#: src/Controller/Admin/ExporterController.php:165
 msgid "Writer configuration saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:167
+#: src/Controller/Admin/ExporterController.php:168
 msgid "Save of writer configuration failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:251
+#: src/Controller/Admin/ExporterController.php:258
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:268
+#: src/Controller/Admin/ExporterController.php:275
 msgid ""
-"Export started in background (<a href=\"{job_url}\">job #{job_id}</a>). This "
-"may take a while."
+"Export started in background (job {link_open_job}#{jobId}{link_close}, "
+"{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:277
+#: src/Controller/Admin/ExporterController.php:292
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:337
+#: src/Controller/Admin/ExporterController.php:352
 msgid "Continue"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:77
+#: src/Api/Representation/ExportRepresentation.php:86
 msgid "ready"
+msgstr ""
+
+#: src/Api/Representation/ExportRepresentation.php:95
+msgid "Ready"
 msgstr ""
 
 #: src/Job/Export.php:39
@@ -555,6 +599,14 @@ msgstr ""
 msgid ""
 "To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
 "required."
+msgstr ""
+
+#: config/module.config.php:67
+msgid "Dashboard"
+msgstr ""
+
+#: config/module.config.php:80
+msgid "Past Exports"
 msgstr ""
 
 #: test/BulkExportTest/Job/ExportTest.php:287
