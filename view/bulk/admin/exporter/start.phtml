@@ -20,10 +20,14 @@ $form->prepare();
     <h2><?= $escape($translate('Start export')) ?></h2>
     <h3><?= $escape(sprintf($translate('Exporter: %s'), $exporter->label())) ?></h3>
     <?php if (isset($exportArgs)): ?>
+    <?php $comment = $exportArgs['comment']; ?>
+    <?php unset($exportArgs['comment']); ?>
+    <p><?= $escape(sprintf($translate('Comment: %s'), $comment)) ?></p>
     <h3><?= $escape($translate('Parameters')) ?></h3>
+    <h4><?= $escape($translate('Writer')) ?></h4>
     <div class="value">
         <pre><?php
-            echo $escape(json_encode($exportArgs, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            echo $escape(json_encode($exportArgs['writer'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         ?></pre>
     </div>
     <?php endif; ?>

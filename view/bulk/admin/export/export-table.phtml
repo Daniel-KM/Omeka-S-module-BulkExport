@@ -14,7 +14,7 @@ $urlBase = $url('top') . 'files/bulk_export/';
 <table class="tablesaw" data-tablesaw-mode="stack">
     <thead>
         <tr>
-            <th><?= $escape($translate('Exporter')) ?></th>
+            <th><?= $escape($translate('Comment')) ?></th>
             <th><?= $escape($translate('Status')) ?></th>
             <th><?= $escape($translate('Started')) ?></th>
             <th><?= $escape($translate('Completed')) ?></th>
@@ -27,7 +27,13 @@ $urlBase = $url('top') . 'files/bulk_export/';
             <?php $fileUrl = $export->isCompleted() && $filename ? $urlBase . $filename : ''; ?>
             <tr>
                 <td>
+                    <?php $comment = $export->comment() ?>
+                    <?php if ($comment): ?>
+                    <?= $comment ?>
+                    <span class="bulk-label-sub"><?= $export->exporter()->label() ?></span>
+                    <?php else: ?>
                     <?= $export->exporter()->label() ?>
+                    <?php endif; ?>
                     <ul class="actions">
                         <?php if ($export->isInProgress()): ?>
                         <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [

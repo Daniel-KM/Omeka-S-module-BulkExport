@@ -179,6 +179,10 @@ class ExporterController extends AbstractActionController
         return $view;
     }
 
+    /**
+     * @todo Simplify code of this three steps process.
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     */
     public function startAction()
     {
         $id = (int) $this->params()->fromRoute('id');
@@ -230,6 +234,7 @@ class ExporterController extends AbstractActionController
                     default:
                     case 'writer':
                         $writer->handleParamsForm($form);
+                        $session->comment = trim($data['comment']);
                         $session->writer = $writer->getParams();
                         if (!$writer->isValid()) {
                             $this->messenger()->addError($writer->getLastErrorMessage());
@@ -242,6 +247,7 @@ class ExporterController extends AbstractActionController
 
                     case 'start':
                         $exportData = [];
+                        $exportData['o-module-bulk:comment'] = trim($session['comment']) ?: null;
                         $exportData['o-module-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {
                             $exportData['o-module-bulk:writer_params'] = $writer->getParams();
@@ -306,6 +312,7 @@ class ExporterController extends AbstractActionController
         $view->setVariable('form', $form);
         if ($next === 'start') {
             $exportArgs = [];
+            $exportArgs['comment'] = $session['comment'];
             $exportArgs['writer'] = $session['writer'];
             // For security purpose.
             unset($exportArgs['writer']['filename']);

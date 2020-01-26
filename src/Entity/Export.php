@@ -33,6 +33,16 @@ class Export extends AbstractEntity
     protected $exporter;
 
     /**
+     * @var string
+     * @Column(
+     *     type="string",
+     *     nullable=true,
+     *     length=190
+     * )
+     */
+    protected $comment;
+
+    /**
      * @var Job
      * @OneToOne(
      *     targetEntity=\Omeka\Entity\Job::class
@@ -83,6 +93,24 @@ class Export extends AbstractEntity
     public function getExporter()
     {
         return $this->exporter;
+    }
+
+    /**
+     * @param string $comment
+     * @return self
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**

@@ -18,6 +18,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
     <h2><?= $escape(sprintf($translate('Export #%d'), $export->id())) ?></h2>
     <ul>
         <li><?= sprintf($translate('exporter: %s'), $export->exporter()->label()) ?></li>
+        <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
         <li><?= sprintf($translate('Status: %s'), $export->statusLabel()) ?></li>
         <?php if ($v = $export->started()): ?>
         <li><?= sprintf($translate('Started: %s'), $v->format('Y-m-d H:i:s')) ?></li>
@@ -27,7 +28,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
         <?php endif; ?>
     </ul>
     <h3><?= $escape($translate('Parameters')) ?></h3>
-    <h4><?= $escape($translate('Reader')) ?></h4>
+    <h4><?= $escape($translate('Writer')) ?></h4>
     <div class="value">
         <pre><?php
             echo $escape(json_encode($export->writerParams(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));

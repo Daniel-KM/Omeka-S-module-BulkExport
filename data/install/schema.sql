@@ -2,6 +2,7 @@ CREATE TABLE bulk_export (
     id INT AUTO_INCREMENT NOT NULL,
     exporter_id INT DEFAULT NULL,
     job_id INT DEFAULT NULL,
+    `comment` VARCHAR(190) DEFAULT NULL,
     writer_params LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
     filename VARCHAR(255) DEFAULT NULL,
     INDEX IDX_625A30FDB4523DE5 (exporter_id),

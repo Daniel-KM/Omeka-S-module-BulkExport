@@ -3,9 +3,8 @@ namespace BulkExport\Form\Writer;
 
 use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
-use Zend\Form\Form;
 
-class SpreadsheetWriterConfigForm extends Form
+class SpreadsheetWriterConfigForm extends AbstractWriterConfigForm
 {
     use MetadataSelectTrait;
     use ResourceTypesSelectTrait;

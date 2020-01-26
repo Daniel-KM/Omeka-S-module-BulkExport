@@ -41,3 +41,11 @@ if (version_compare($oldVersion, '3.0.7', '<')) {
     }
     $entityManager->flush();
 }
+
+if (version_compare($oldVersion, '3.0.8', '<')) {
+    $sql = <<<'SQL'
+ALTER TABLE `bulk_export`
+    ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
+SQL;
+    $connection->exec($sql);
+}
