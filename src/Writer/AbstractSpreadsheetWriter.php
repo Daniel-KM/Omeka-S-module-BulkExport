@@ -218,7 +218,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
-                        $values = $this->fillHeader($resource, $header, $hasSeparator);
+                        $values = $this->fillHeader($resource, $header, $hasSeparator) ?: [];
                         // Check if one of the values has the separator.
                         $check = array_filter($values, function ($v) use ($separator) {
                             return strpos((string) $v, $separator) !== false;
