@@ -12,12 +12,18 @@ use Log\Stdlib\PsrMessage;
 use Omeka\Module\Exception\ModuleCannotInstallException;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
+use Zend\ModuleManager\ModuleManager;
 
 class Module extends AbstractModule
 {
     const NAMESPACE = __NAMESPACE__;
 
     protected $dependency = 'Log';
+
+    public function init(ModuleManager $moduleManager)
+    {
+        require_once __DIR__ . '/vendor/autoload.php';
+    }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
     {
