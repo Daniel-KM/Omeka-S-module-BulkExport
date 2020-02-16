@@ -129,7 +129,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         }
 
         $separator = $this->getParam('separator', '');
-        $hasSeparator = strlen($separator) > 0;
+        $hasSeparator = mb_strlen($separator) > 0;
         if (!$hasSeparator) {
             $this->logger->warn(
                 'No separator selected: only the first value of each property of each resource will be output.' // @translate
@@ -170,7 +170,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
         $headers = $this->getHeaders();
         $separator = $this->getParam('separator', '');
-        $hasSeparator = strlen($separator) > 0;
+        $hasSeparator = mb_strlen($separator) > 0;
 
         $query = $this->getParam('query') ?: [];
         if ($query) {
