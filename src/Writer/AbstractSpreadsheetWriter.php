@@ -309,11 +309,36 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                     unset($headers[$index]);
                     $headers = array_merge($headers, $this->listUsedProperties($resourceClasses));
                 }
-            }
-            // Currently, default output is all used properties only.
-            else {
+            } else {
                 $hasProperties = true;
-                $headers = $this->listUsedProperties($resourceClasses);
+                $headers = [
+                    'o:id',
+                    'o:resource_template',
+                    'o:resource_class',
+                    'o:owner',
+                    'o:is_public',
+                ];
+                if (count($resourceTypes) === 1) {
+                    switch (reset($resourceTypes)) {
+                        case 'o:item_set':
+                            $headers[] = 'o:is_open';
+                            break;
+                        case 'o:item':
+                            $headers[] = 'o:item_set[o:id]';
+                            $headers[] = 'o:item_set[dcterms:title]';
+                            $headers[] = 'o:media[o:id]';
+                            $headers[] = 'o:media[file]';
+                            break;
+                        case 'o:media':
+                            $headers[] = 'o:item[o:id]';
+                            $headers[] = 'o:item[dcterms:identifier]';
+                            $headers[] = 'o:item[dcterms:title]';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                $headers += $this->listUsedProperties($resourceClasses);
             }
 
             if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
@@ -381,10 +406,14 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             case 'o:item_set[dcterms:identifier]':
             case 'o:item_set[dcterms:title]':
                 return $resource->resourceName() === 'items'
-                    ? $this->extractFirstValue($resource->itemSets(), $header)
+                    ? $this->extractFirstValueOfResources($resource->itemSets(), $header)
                     : [];
 
             // Media for item.
+            case 'o:media[o:id]':
+                return $resource->resourceName() === 'items'
+                    ? $this->extractResourceIds($resource->media())
+                    : [];
             case 'o:media[file]':
             case 'o:media[url]':
                 $result = [];
@@ -400,7 +429,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             case 'o:media[dcterms:identifier]':
             case 'o:media[dcterms:title]':
                 return $resource->resourceName() === 'items'
-                    ? $this->extractFirstValue($resource->media(), $header)
+                    ? $this->extractFirstValueOfResources($resource->media(), $header)
                     : [];
 
             // Item for media.
@@ -411,17 +440,17 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             case 'o:item[dcterms:identifier]':
             case 'o:item[dcterms:title]':
                 return $resource->resourceName() === 'media'
-                    ? $this->extractFirstValue([$resource->item()], $header)
+                    ? $this->extractFirstValueOfResources([$resource->item()], $header)
                     : [];
 
             // Bodies and targets of annotations.
             case strpos($header, 'oa:hasBody[') === 0:
                 return $resource->resourceName() === 'annotations'
-                    ? $this->extractFirstValue($resource->bodies(), $header)
+                    ? $this->extractFirstValueOfResources($resource->bodies(), $header)
                     : [];
             case strpos($header, 'oa:hasTarget[') === 0:
                 return $resource->resourceName() === 'annotations'
-                    ? $this->extractFirstValue($resource->targets(), $header)
+                    ? $this->extractFirstValueOfResources($resource->targets(), $header)
                     : [];
 
             // All properties for all resources.
@@ -446,13 +475,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     }
 
     /**
-     * Return the first value of the property all resources.
+     * Return the first value of the property of all resources.
      *
      * @param AbstractResourceEntityRepresentation[] $resources
      * @param string $header The full header, with a term.
      * @return array
      */
-    protected function extractFirstValue(array $resources, $header)
+    protected function extractFirstValueOfResources(array $resources, $header)
     {
         $result = [];
         $term = trim(substr($header, strpos($header, '[') + 1), '[] ');
