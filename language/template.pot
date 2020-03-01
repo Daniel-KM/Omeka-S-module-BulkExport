@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-27 00:00+0100\n"
+"POT-Creation-Date: 2020-03-02 00:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:47
+#: Module.php:53
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:53
+#: Module.php:59
 #, php-format
 msgid "All bulk exports will be removed (folder \"%s\"."
 msgstr ""
 
-#: Module.php:59
+#: Module.php:65
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Generic/AbstractModule.php:518
+#: src/Generic/AbstractModule.php:542
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:538
+#: src/Generic/AbstractModule.php:562
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:606
+#: src/Generic/AbstractModule.php:630
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -302,11 +302,11 @@ msgstr ""
 msgid "CSV"
 msgstr ""
 
-#: Module.php:71
+#: Module.php:77
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:128 Module.php:138
+#: Module.php:134 Module.php:144
 msgid "The destination folder \"{path}\" is not writeable."
 msgstr ""
 
@@ -344,7 +344,9 @@ msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:43
 #: src/Form/Writer/MetadataSelectTrait.php:60
-#: src/Form/Writer/MetadataSelectTrait.php:76
+#: src/Form/Writer/MetadataSelectTrait.php:68
+#: src/Form/Writer/MetadataSelectTrait.php:77
+#: src/Form/Writer/MetadataSelectTrait.php:85
 msgid "Internal id"
 msgstr ""
 
@@ -377,8 +379,9 @@ msgid "Item set (for item)"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:62
-#: src/Form/Writer/MetadataSelectTrait.php:70
-#: src/Form/Writer/MetadataSelectTrait.php:78
+#: src/Form/Writer/MetadataSelectTrait.php:71
+#: src/Form/Writer/MetadataSelectTrait.php:79
+#: src/Form/Writer/MetadataSelectTrait.php:87
 msgid "Label (first title)"
 msgstr ""
 
@@ -386,12 +389,16 @@ msgstr ""
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:68
+#: src/Form/Writer/MetadataSelectTrait.php:69
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:74
+#: src/Form/Writer/MetadataSelectTrait.php:75
 msgid "Item (for media)"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:83
+msgid "Resource (for annotation)"
 msgstr ""
 
 #: src/Form/Writer/CsvWriterConfigForm.php:14
@@ -412,6 +419,16 @@ msgstr ""
 
 #: src/Form/Writer/AbstractWriterConfigForm.php:27
 msgid "Optional comment for future reference."
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:34
+msgid "Use a background job"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:35
+msgid ""
+" For complex formats, the process may require more than 30 seconds, that is "
+"the default duration of web server before error."
 msgstr ""
 
 #: src/Form/Writer/ResourceTypesSelectTrait.php:14
@@ -471,21 +488,27 @@ msgstr ""
 msgid "Save of writer configuration failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:258
+#: src/Controller/Admin/ExporterController.php:259
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:275
+#: src/Controller/Admin/ExporterController.php:280
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:292
+#: src/Controller/Admin/ExporterController.php:281
+msgid ""
+"Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
+"logs{link_close})."
+msgstr ""
+
+#: src/Controller/Admin/ExporterController.php:300
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:352
+#: src/Controller/Admin/ExporterController.php:360
 msgid "Continue"
 msgstr ""
 
