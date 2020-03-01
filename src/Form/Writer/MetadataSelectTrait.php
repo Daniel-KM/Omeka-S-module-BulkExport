@@ -36,7 +36,7 @@ trait MetadataSelectTrait
 
     protected function prependMappingOptions()
     {
-        return [
+        $mapping = [
             'metadata' => [
                 'label' => 'Resource metadata', // @translate
                 'options' => [
@@ -79,6 +79,20 @@ trait MetadataSelectTrait
                     'o:item[dcterms:title]' => 'Label (first title)', // @translate
                 ],
             ],
+            'o:annotation' => [
+                'label' => 'Resource (for annotation)', // @translate
+                'options' => [
+                    'o:resource[o:id]' => 'Internal id', // @translate
+                    'o:resource[dcterms:identifier]' => 'Identifier', // @translate
+                    'o:resource[dcterms:title]' => 'Label (first title)', // @translate
+                ],
+            ],
         ];
+
+        if (!class_exists(\Annotate\Entity\Annotation::class)) {
+            unset($mapping['o:annotation']);
+        }
+
+        return $mapping;
     }
 }

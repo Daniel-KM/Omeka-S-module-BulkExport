@@ -334,6 +334,11 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                             $headers[] = 'o:item[dcterms:identifier]';
                             $headers[] = 'o:item[dcterms:title]';
                             break;
+                        case 'o:annotation':
+                            $headers[] = 'o:resource[o:id]';
+                            $headers[] = 'o:resource[dcterms:identifier]';
+                            $headers[] = 'o:resource[dcterms:title]';
+                            break;
                         default:
                             break;
                     }
@@ -442,6 +447,25 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 return $resource->resourceName() === 'media'
                     ? $this->extractFirstValueOfResources([$resource->item()], $header)
                     : [];
+
+            // Resources for annotation (target).
+            case 'o:resource[o:id]':
+                /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource*/
+                $resourceIds = [];
+                foreach ($resource->targets() as $target) {
+                    foreach ($target->sources() as $targetSource) {
+                        $resourceIds[$targetSource->id()] = $targetSource->id();
+                    }
+                }
+                return array_values(array_unique($resourceIds));
+            case 'o:resource[dcterms:identifier]':
+            case 'o:resource[dcterms:title]':
+                /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource*/
+                $resourceValues = [];
+                foreach ($resource->targets() as $target) {
+                    $resourceValues[] = $this->extractFirstValueOfResources($target->sources(), $header);
+                }
+                return array_values(array_unique($resourceValues));
 
             // Bodies and targets of annotations.
             case strpos($header, 'oa:hasBody[') === 0:
