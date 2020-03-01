@@ -235,6 +235,7 @@ class ExporterController extends AbstractActionController
                     case 'writer':
                         $writer->handleParamsForm($form);
                         $session->comment = trim($data['comment']);
+                        $session->useBackground = (bool) ($data['use_background']);
                         $session->writer = $writer->getParams();
                         if (!$writer->isValid()) {
                             $this->messenger()->addError($writer->getLastErrorMessage());
@@ -260,19 +261,26 @@ class ExporterController extends AbstractActionController
                         }
                         $export = $response->getContent();
 
+                        $useBackground = $session->useBackground;
+
                         // Clear export session.
                         $session->exchangeArray([]);
 
                         $args = ['export_id' => $export->id()];
 
+                        /** @var \Omeka\Job\Dispatcher $dispatcher */
                         $dispatcher = $this->jobDispatcher();
                         try {
-                            // Synchronous dispatcher for testing purpose.
-                            // $job = $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
-                            $job = $dispatcher->dispatch(JobExport::class, $args);
+                            $job = $useBackground
+                                ? $dispatcher->dispatch(JobExport::class, $args)
+                                : $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
+
                             $urlHelper = $this->url();
+                            $message = $useBackground
+                                ? 'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.' // @translate
+                                : 'Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}).'; // @translate
                             $message = new PsrMessage(
-                                'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.', // @translate
+                                $message,
                                 [
                                     'link_open_job' => sprintf(
                                         '<a href="%s">',
