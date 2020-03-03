@@ -241,9 +241,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 }
 
                 // Check if data is empty.
-                $check = array_filter($dataRow, function ($v) {
-                    return (bool) strlen($v);
-                });
+                $check = array_filter($dataRow, 'strlen');
                 if (count($check)) {
                     $writer
                         ->addRow($dataRow);
@@ -561,7 +559,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         // TODO Limit with the query (via adapter).
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select('DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term')
+            ->select([
+                // Only the first select is needed, but some databases require
+                // "order by" value to be in select.
+                'DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term',
+                'vocabulary.id',
+                'property.id',
+            ])
             ->from('value', 'value')
             ->innerJoin('value', 'property', 'property', 'property.id = value.property_id')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
