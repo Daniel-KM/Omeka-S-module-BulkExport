@@ -343,8 +343,9 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                             break;
                     }
                 }
-                $headers += $this->listUsedProperties($resourceClasses);
-            }
+                $headers = array_merge($headers, $this->listUsedProperties($resourceClasses));
+
+          }
 
             if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
                 foreach ($this->listUsedProperties([\Annotate\Entity\AnnotationBody::class]) as $property) {
@@ -567,8 +568,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
             // Order by vocabulary and by property id, because Omeka orders them
             // with Dublin Core first.
-            ->orderBy('vocabulary.id')
-            ->addOrderBy('property.id')
+           // ->orderBy('vocabulary.id')
+            //->orderBy('property.id')
         ;
 
         if ($resourceClasses) {
