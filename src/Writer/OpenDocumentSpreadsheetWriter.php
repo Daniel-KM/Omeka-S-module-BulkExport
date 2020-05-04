@@ -17,12 +17,20 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $configKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
     ];
 
     protected $paramsKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
         'query',

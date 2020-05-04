@@ -18,6 +18,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected $configKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
         // TODO Remove query from the config?
@@ -26,6 +30,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected $paramsKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
         'query',
@@ -172,6 +180,23 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $separator = $this->getParam('separator', '');
         $hasSeparator = mb_strlen($separator) > 0;
 
+        $formatGeneric = $this->getParam('format_generic', 'string');
+        $formatResource = $this->getParam('format_resource', 'id');
+        $formatResourceProperty = in_array($formatResource, ['identifier', 'identifier_id'])
+            ? $this->getParam('format_resource_property', 'dcterms:identifier')
+            : null;
+        $formatUri = $this->getParam('format_uri', 'uri_label');
+
+        // It's useless, there are params…
+        $params = [
+            'separator' => $separator,
+            'hasSeparator' => $hasSeparator,
+            'formatGeneric' => $formatGeneric,
+            'formatResource' => $formatResource,
+            'formatResourceProperty' => $formatResourceProperty,
+            'formatUri' => $formatUri,
+        ];
+
         $query = $this->getParam('query') ?: [];
         if ($query) {
             $queryArray = [];
@@ -218,7 +243,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
-                        $values = $this->fillHeader($resource, $header, $hasSeparator) ?: [];
+                        $values = $this->fillHeader($resource, $header, $params) ?: [];
                         // Check if one of the values has the separator.
                         $check = array_filter($values, function ($v) use ($separator) {
                             return strpos((string) $v, $separator) !== false;
@@ -235,7 +260,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                     }
                 } else {
                     foreach ($headers as $header) {
-                        $values = $this->fillHeader($resource, $header, $hasSeparator);
+                        $values = $this->fillHeader($resource, $header, $params);
                         $dataRow[] = (string) reset($values);
                     }
                 }
@@ -368,10 +393,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
      *
      * @param AbstractResourceRepresentation $resource
      * @param string $header
-     * @param bool $hasSeparator
+     * @param array $params
      * @return array Always an array, even for single metadata.
      */
-    protected function fillHeader(AbstractResourceRepresentation $resource, $header, $hasSeparator = false)
+    protected function fillHeader(AbstractResourceRepresentation $resource, $header, $params)
     {
         switch ($header) {
             // All resources.
@@ -477,9 +502,77 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
             // All properties for all resources.
             default:
-                return $hasSeparator
+                /** @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
+                $vv = $params['hasSeparator']
                     ? $resource->value($header, ['all' => true])
                     : [$resource->value($header)];
+                foreach ($vv as &$v) {
+                    $type = $v->type();
+                    switch ($type) {
+                        case 'resource':
+                        case 'resource:item':
+                        case 'resource:media':
+                        case 'resource:itemset':
+                            $v = $v->valueResource();
+                            if ($params['formatResource'] === 'identifier') {
+                                $v = $v->value($params['formatResourceProperty']);
+                            } elseif ($params['formatResource'] === 'identifier_id') {
+                                $v = $v->value($params['formatResourceProperty']) ?: $v->id();
+                            } else {
+                                $v = $v->id();
+                            }
+                            break;
+                        case 'uri':
+                            switch ($params['formatUri']) {
+                                case 'uri':
+                                    $v = $v->uri();
+                                    break;
+                                case 'html':
+                                    $v = $v->asHtml();
+                                    break;
+                                case 'uri_label':
+                                default:
+                                    $v = trim($v->uri() . ' ' . $v->value());
+                                    break;
+                            }
+                            break;
+                        case strpos($type, 'valuesuggest:') === 0 || strpos($type, 'valuesuggestall:') === 0:
+                            $v = $v->uri();
+                            break;
+                        // Module RdfDatatype.
+                        case 'rdf:XMLLiteral':
+                        case 'xsd:date':
+                        case 'xsd:dateTime':
+                        case 'xsd:decimal':
+                        case 'xsd:gDay':
+                        case 'xsd:gMonth':
+                        case 'xsd:gMonthDay':
+                        case 'xsd:gYear':
+                        case 'xsd:gYearMonth':
+                        case 'xsd:time':
+                            $v = (string) $v;
+                            break;
+                        case 'xsd:integer':
+                            $v = (int) $v->value();
+                            break;
+                        case 'xsd:boolean':
+                            $v = $v->value() ? 'true' : 'false';
+                            break;
+                        case 'rdf:HTML':
+                            $v = $v->asHtml();
+                            break;
+                        case 'literal':
+                        default:
+                            if ($params['formatGeneric'] === 'html') {
+                                $v = $v->asHtml();
+                            } else {
+                                $v = (string) $v;
+                            }
+                            break;
+                    }
+                }
+                unset($v);
+                return $vv;
         }
     }
 

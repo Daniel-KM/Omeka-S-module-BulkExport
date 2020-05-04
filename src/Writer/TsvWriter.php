@@ -17,6 +17,10 @@ class TsvWriter extends CsvWriter
 
     protected $configKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
         'query',
@@ -24,6 +28,10 @@ class TsvWriter extends CsvWriter
 
     protected $paramsKeys = [
         'separator',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
         'resource_types',
         'metadata',
         'query',
