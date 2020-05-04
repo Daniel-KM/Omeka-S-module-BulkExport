@@ -29,5 +29,6 @@ class ExporterDeleteForm extends Form
                 'value' => 'Delete exporter', // @translate
             ],
         ]);
+        return $this;
     }
 }

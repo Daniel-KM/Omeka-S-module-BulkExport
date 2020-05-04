@@ -59,11 +59,13 @@ class ExporterForm extends Form
                 'value' => 'Save', // @translate
             ],
         ]);
+        return $this;
     }
 
     public function setExporter(Exporter $exporter)
     {
         $this->exporter = $exporter;
+        return $this;
     }
 
     protected function getWriterOptions()

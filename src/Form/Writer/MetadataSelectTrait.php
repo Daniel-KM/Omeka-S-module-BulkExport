@@ -23,6 +23,7 @@ trait MetadataSelectTrait
                 'data-placeholder' => 'Select one or more metadata…', // @translate
             ],
         ]);
+        return $this;
     }
 
     protected function addInputFilterMetadata()
@@ -32,6 +33,7 @@ trait MetadataSelectTrait
             'name' => 'metadata',
             'required' => false,
         ]);
+        return $this;
     }
 
     protected function prependMappingOptions()

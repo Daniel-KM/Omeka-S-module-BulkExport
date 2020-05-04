@@ -42,5 +42,6 @@ class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
         ]);
 
         parent::init();
+        return $this;
     }
 }

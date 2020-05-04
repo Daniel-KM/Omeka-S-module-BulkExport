@@ -40,5 +40,6 @@ class AbstractWriterConfigForm extends Form
                 ],
             ])
         ;
+        return $this;
     }
 }

@@ -36,5 +36,6 @@ it is recommended to use a character that is never used, like "|", or a random s
 
         $this->addInputFilterResourceTypes();
         $this->addInputFilterMetadata();
+        return $this;
     }
 }

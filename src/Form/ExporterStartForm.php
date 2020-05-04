@@ -27,5 +27,6 @@ class ExporterStartForm extends Form
                 'required' => true,
             ],
         ]);
+        return $this;
     }
 }

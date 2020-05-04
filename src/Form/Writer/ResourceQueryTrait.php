@@ -19,5 +19,6 @@ trait ResourceQueryTrait
                 'id' => 'query',
             ],
         ]);
+        return $this;
     }
 }

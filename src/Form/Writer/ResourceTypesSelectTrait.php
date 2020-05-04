@@ -24,6 +24,7 @@ trait ResourceTypesSelectTrait
                 'data-placeholder' => 'Select one or more resource type…', // @translate
             ],
         ]);
+        return $this;
     }
 
     protected function addInputFilterResourceTypes()
@@ -33,6 +34,7 @@ trait ResourceTypesSelectTrait
             'name' => 'resource_types',
             'required' => false,
         ]);
+        return $this;
     }
 
     /**
