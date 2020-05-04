@@ -12,11 +12,14 @@ $escape = $this->plugin('escapeHtml');
 $hyperlink = $this->plugin('hyperlink');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exports logs browse');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
-$this->headLink()->appendStylesheet($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.css', 'Log'));
-$this->headLink()->appendStylesheet($this->assetUrl('css/log.css', 'Log'));
-$this->headScript()->appendFile($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.js', 'Log'));
-$this->headScript()->appendFile($this->assetUrl('js/log.js', 'Log'));
+$this->headLink()
+    ->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'))
+    ->appendStylesheet($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.css', 'Log'))
+    ->appendStylesheet($this->assetUrl('css/log.css', 'Log'));
+$this->headScript()
+    ->appendFile($this->assetUrl('vendor/webui-popover/jquery.webui-popover.min.js', 'Log'), 'text/javascript', ['defer' => 'defer'])
+    ->appendFile($this->assetUrl('js/log.js', 'Log'), 'text/javascript', ['defer' => 'defer']);
+
 $severityNames = [
     \Zend\Log\Logger::EMERG => $escape($translate('Emergency')),
     \Zend\Log\Logger::ALERT => $escape($translate('Alert')),
