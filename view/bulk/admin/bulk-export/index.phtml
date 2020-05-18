@@ -12,13 +12,13 @@ $escape = $this->plugin('escapeHtml');
 $hyperlink = $this->plugin('hyperlink');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters bulk-exports browse');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'BulkExport'));
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
 ?>
 
 <?= $this->pageTitle($translate('Bulk export'), 1, $translate('Bulk export')) ?>
 
 <h2><?= $escape($translate('Available exporters')) ?></h2>
-<?= $hyperlink('Add an exporter', $this->url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'])) ?>
+<?= $hyperlink($translate('Add an exporter'), $this->url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'])) ?>
 
 <?php if (count($exporters)): ?>
 <table class="tablesaw batch-edit" data-tablesaw-mode="stack">
@@ -64,7 +64,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
                 <?php $writer = $exporter->writer(); ?>
                 <?= $writer ? $writer->getLabel() : null ?>
                 <?php if ($writer instanceof ConfigurableExport): ?>
-                    (<?= $hyperlink('Configure', $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
+                    (<?= $hyperlink($translate('Configure'), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
                 <?php endif; ?>
             </td>
         </tr>
@@ -75,7 +75,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export.css', 'Bulk
 <?php endif; ?>
 
 <?php if (!empty($exports)): ?>
-    <h2><?= $escape($translate('Last exports')) ?></h2>
-    <?= $hyperlink('See all exports', $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'])) ?>
+    <h2><?= $escape($translate('Last exports')) // @translate?></h2>
+    <?= $hyperlink($translate('See all exports') , $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'])) ?>
     <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
 <?php endif; ?>
