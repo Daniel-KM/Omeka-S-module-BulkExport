@@ -52,6 +52,7 @@ return [
             'BulkExport\Controller\Admin\BulkExport' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Export' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
+            'BulkExport\Controller\Output' => Service\Controller\OutputControllerFactory::class,
         ],
     ],
     // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
@@ -96,6 +97,47 @@ return [
     ],
     'router' => [
         'routes' => [
+            'site' => [
+                'child_routes' => [
+                    'resource-output' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/:resource-type:.:format',
+                            'constraints' => [
+                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'BulkExport\Controller',
+                                'controller' => 'Output',
+                                'action' => 'output',
+                                'resource-type' => 'resource',
+                                'format' => 'json',
+                            ],
+                        ],
+                    ],
+                    'resource-id' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Zend\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'controller' => 'Output',
+                                        'action' => 'output',
+                                        'format' => 'json',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'admin' => [
                 'child_routes' => [
                     'bulk-export' => [
@@ -135,6 +177,43 @@ return [
                                     ],
                                     'defaults' => [
                                         'action' => 'show',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'resource-output' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/:resource-type:.:format',
+                            'constraints' => [
+                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'BulkExport\Controller',
+                                'controller' => 'Output',
+                                'action' => 'output',
+                                'resource-type' => 'resource',
+                                'format' => 'json',
+                            ],
+                        ],
+                    ],
+                    'id' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Zend\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'controller' => 'Output',
+                                        'action' => 'output',
+                                        'format' => 'json',
                                     ],
                                 ],
                             ],

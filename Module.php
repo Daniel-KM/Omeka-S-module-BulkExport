@@ -13,6 +13,7 @@ use Omeka\Module\Exception\ModuleCannotInstallException;
 use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ModuleManager\ModuleManager;
+use Zend\Mvc\MvcEvent;
 
 class Module extends AbstractModule
 {
@@ -23,6 +24,19 @@ class Module extends AbstractModule
     public function init(ModuleManager $moduleManager)
     {
         require_once __DIR__ . '/vendor/autoload.php';
+    }
+
+    public function onBootstrap(MvcEvent $event)
+    {
+        parent::onBootstrap($event);
+
+        $this->getServiceLocator()->get('Omeka\Acl')
+            ->allow(
+                null,
+                ['BulkExport\Controller\Output'],
+                ['output']
+            )
+        ;
     }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager)
