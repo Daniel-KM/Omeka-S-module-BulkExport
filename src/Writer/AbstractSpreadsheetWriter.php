@@ -40,6 +40,15 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         'query',
     ];
 
+    protected $options = [
+        'separator' => ' | ',
+        'has_separator' => true,
+        'format_resource' => 'identifier_id',
+        'format_resource_property' => 'dcterms:identifier',
+        'format_uri' => 'uri_label',
+        'format_generic' => 'raw',
+    ];
+
     /**
      * Type of spreadsheet (default to csv).
      *
@@ -189,13 +198,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $formatUri = $this->getParam('format_uri', 'uri_label');
 
         // It's useless, there are params…
-        $params = [
+        $this->options = [
             'separator' => $separator,
-            'hasSeparator' => $hasSeparator,
-            'formatGeneric' => $formatGeneric,
-            'formatResource' => $formatResource,
-            'formatResourceProperty' => $formatResourceProperty,
-            'formatUri' => $formatUri,
+            'has_separator' => $hasSeparator,
+            'format_generic' => $formatGeneric,
+            'format_resource' => $formatResource,
+            'format_resource_property' => $formatResourceProperty,
+            'format_uri' => $formatUri,
         ];
 
         $query = $this->getParam('query') ?: [];
@@ -244,7 +253,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
-                        $values = $this->fillHeader($resource, $header, $params) ?: [];
+                        $values = $this->stringMetadata($resource, $header) ?: [];
                         // Check if one of the values has the separator.
                         $check = array_filter($values, function ($v) use ($separator) {
                             return strpos((string) $v, $separator) !== false;
@@ -261,7 +270,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                     }
                 } else {
                     foreach ($headers as $header) {
-                        $values = $this->fillHeader($resource, $header, $params);
+                        $values = $this->stringMetadata($resource, $header);
                         $dataRow[] = (string) reset($values);
                     }
                 }
@@ -331,7 +340,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 $hasProperties = $index !== false;
                 if ($hasProperties) {
                     unset($headers[$index]);
-                    $headers = array_merge($headers, $this->listUsedProperties($resourceClasses));
+                    $headers = array_merge($headers, array_keys($this->getUsedPropertiesByTerm($resourceClasses)));
                 }
             } else {
                 $hasProperties = true;
@@ -367,14 +376,14 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                             break;
                     }
                 }
-                $headers += $this->listUsedProperties($resourceClasses);
+                $headers += array_keys($this->getUsedPropertiesByTerm($resourceClasses));
             }
 
             if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
-                foreach ($this->listUsedProperties([\Annotate\Entity\AnnotationBody::class]) as $property) {
+                foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationBody::class])) as $property) {
                     $headers[] = 'oa:hasBody[' . $property . ']';
                 }
-                foreach ($this->listUsedProperties([\Annotate\Entity\AnnotationTarget::class]) as $property) {
+                foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationTarget::class])) as $property) {
                     $headers[] = 'oa:hasTarget[' . $property . ']';
                 }
             }
@@ -415,44 +424,5 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         }
 
         return $result;
-    }
-
-    protected function listUsedProperties(array $resourceClasses = null)
-    {
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
-
-        // List only properties that are used.
-        // TODO Limit with the query (via adapter).
-        $qb = $connection->createQueryBuilder();
-        $qb
-            ->select([
-                // Only the first select is needed, but some databases require
-                // "order by" value to be in select.
-                'DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term',
-                'vocabulary.id',
-                'property.id',
-            ])
-            ->from('value', 'value')
-            ->innerJoin('value', 'property', 'property', 'property.id = value.property_id')
-            ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
-            // Order by vocabulary and by property id, because Omeka orders them
-            // with Dublin Core first.
-            ->orderBy('vocabulary.id')
-            ->addOrderBy('property.id')
-        ;
-
-        if ($resourceClasses) {
-            $qb
-                ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
-                ->andWhere($qb->expr()->in(
-                    'resource.resource_type',
-                    array_map([$connection, 'quote'], $resourceClasses)
-            ));
-        }
-
-        $stmt = $connection->executeQuery($qb, $qb->getParameters());
-        $resullt = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-        return $resullt;
     }
 }

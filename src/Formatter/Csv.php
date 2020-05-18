@@ -85,9 +85,22 @@ class Csv extends AbstractFormatter
             'o:media[media_type]' => false,
             'o:media[size]' => false,
             'o:media[original_url]' => false,
+            'o:resource[o:id]' => false,
+            'o:resource[dcterms:identifier]' => false,
+            'o:resource[dcterms:title]' => false,
         ];
         // TODO Get only the used properties of the resources.
         $rowHeaders += array_fill_keys(array_keys($this->getPropertiesByTerm()), false);
+
+        // TODO Manage mixed resource types.
+        if ($this->resourceType == 'annotations') {
+            foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationBody::class])) as $property) {
+                $rowHeaders['oa:hasBody[' . $property . ']'] = false;
+            }
+            foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationTarget::class])) as $property) {
+                $rowHeaders['oa:hasTarget[' . $property . ']'] = false;
+            }
+        }
 
         $resourceTypes = [];
 
@@ -104,11 +117,27 @@ class Csv extends AbstractFormatter
                 }
                 $resourceTypes[$resource->resourceName()] = true;
                 $rowHeaders = array_replace($rowHeaders, array_fill_keys(array_keys($resource->values()), true));
+                if ($this->resourceType == 'annotations') {
+                    foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationBody::class])) as $property) {
+                        $rowHeaders['oa:hasBody[' . $property . ']'] = true;
+                    }
+                    foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationTarget::class])) as $property) {
+                        $rowHeaders['oa:hasTarget[' . $property . ']'] = true;
+                    }
+                }
             }
         } else {
             foreach ($this->resources as $resource) {
                 $resourceTypes[$resource->resourceName()] = true;
                 $rowHeaders = array_replace($rowHeaders, array_fill_keys(array_keys($resource->values()), true));
+                if ($this->resourceType == 'annotations') {
+                    foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationBody::class])) as $property) {
+                        $rowHeaders['oa:hasBody[' . $property . ']'] = true;
+                    }
+                    foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationTarget::class])) as $property) {
+                        $rowHeaders['oa:hasTarget[' . $property . ']'] = true;
+                    }
+                }
             }
         }
 
@@ -133,6 +162,12 @@ class Csv extends AbstractFormatter
                         'o:media[original_url]' => true,
                     ]);
                     break;
+                case 'annotations':
+                    $rowHeaders = array_replace($rowHeaders, [
+                        'o:resource[o:id]' => true,
+                        'o:resource[dcterms:identifier]' => true,
+                        'o:resource[dcterms:title]' => true,
+                    ]);
                 default:
                     break;
             }
@@ -178,6 +213,16 @@ class Csv extends AbstractFormatter
                 // Nothing to do.
                 break;
 
+            case 'annotations':
+                /** @var \Annotate\Api\Representation\AnnotationRepresentation @resource */
+                $values = $this->stringMetadata($resource, 'o:resource[o:id]');
+                $row['o:resource[o:id]'] = implode($this->options['separator'], $values);
+                $values = $this->stringMetadata($resource, 'o:resource[dcterms:identifier]');
+                $row['o:resource[dcterms:identifier]'] = implode($this->options['separator'], $values);
+                $values = $this->stringMetadata($resource, 'o:resource[dcterms:title]');
+                $row['o:resource[dcterms:title]'] = implode($this->options['separator'], $values);
+                break;
+
             default:
                 break;
         }
@@ -185,6 +230,15 @@ class Csv extends AbstractFormatter
         foreach (array_keys($resource->values()) as $term) {
             $values = $this->stringMetadata($resource, $term);
             $row[$term] = implode($this->options['separator'], $values);
+        }
+
+        if ($this->resourceType == 'annotations') {
+            foreach (array_keys($rowHeaders) as $metadata) {
+                if (in_array(strtok($metadata, '['), ['oa:hasBody', 'oa:hasTarget'])) {
+                    $values = $this->stringMetadata($resource, $metadata);
+                    $row[$metadata] = implode($this->options['separator'], $values);
+                }
+            }
         }
 
         return $row;
