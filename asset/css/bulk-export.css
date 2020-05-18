@@ -6,14 +6,19 @@
         display: inline-block;
         padding-left: 6px;
     }
-    .browse .bulk-export .formatters li {
+
+    .browse .sidebar .bulk-export .formatters,
+    .show .bulk-export .formatters {
+        padding-left: 0;
+    }
+    .bulk-export .formatters li {
         list-style: none;
         display: inline-block;
         border-right: 1px solid;
         padding-right: 4px;
         display: inline-block;
     }
-    .browse .bulk-export .formatters li:last-of-type {
+    .bulk-export .formatters li:last-of-type {
         border-right: 0;
     }
 }
