@@ -214,6 +214,8 @@ abstract class AbstractFormatter implements FormatterInterface
             } else {
                 $this->hasError = true;
             }
+        } elseif ($resources === false) {
+            $this->hasError = true;
         }
 
         if (!$this->resourceType && !$this->hasError) {
@@ -264,7 +266,6 @@ abstract class AbstractFormatter implements FormatterInterface
                 'Unable to open output: {error}.', // @translate
                 ['error' => error_get_last()['message']]
             ));
-            return false;
         }
     }
 

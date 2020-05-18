@@ -81,6 +81,12 @@ trait ListTermsTrait
         return $this->resourceClassesByTerm;
     }
 
+    /**
+     * @todo Replace by a option to getPropertiesByTerm.
+     *
+     * @param array $resourceClasses
+     * @return array
+     */
     protected function getUsedPropertiesByTerm(array $resourceClasses = null)
     {
         /** @var \Doctrine\DBAL\Connection $connection */
