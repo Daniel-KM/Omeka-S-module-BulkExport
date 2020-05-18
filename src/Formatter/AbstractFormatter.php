@@ -32,9 +32,24 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $defaultOptions = [];
 
     /**
-     * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]|\Omeka\Api\Representation\AbstractResourceEntityRepresentation
+     * @var \Omeka\Mvc\Controller\Plugin\Api
+     */
+    protected $api;
+
+    /**
+     * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]
      */
     protected $resources = [];
+
+    /**
+     * @var int|]
+     */
+    protected $resourceIds = [];
+
+    /**
+     * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation
+     */
+    protected $resource = null;
 
     /**
      * @var array
@@ -44,7 +59,7 @@ abstract class AbstractFormatter implements FormatterInterface
     /**
      * @var string|null
      */
-    protected $output;
+    protected $output = null;
 
     /**
      * @var array
@@ -52,9 +67,16 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $options = [];
 
     /**
+     * Note: The type "resources" can only be read by the api, not searched.
+     *
+     * @var string
+     */
+    protected $resourceType = null;
+
+    /**
      * @var bool
      */
-    protected $isOutput;
+    protected $isOutput = false;
 
     /**
      * @var bool
@@ -72,13 +94,6 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $isQuery = false;
 
     /**
-     * Note: The type "resources" can only be read by the api, not searched.
-     *
-     * @var string
-     */
-    protected $resourceType;
-
-    /**
      * @var bool
      */
     protected $hasError = false;
@@ -86,7 +101,7 @@ abstract class AbstractFormatter implements FormatterInterface
     /**
      * @var string|null
      */
-    protected $content;
+    protected $content = null;
 
     public function setServiceLocator(ServiceLocatorInterface $services)
     {
@@ -128,38 +143,10 @@ abstract class AbstractFormatter implements FormatterInterface
 
     public function format($resources, $output = null, array $options = [])
     {
-        // Some quick checks to prepare params in all cases.
-        if (empty($resources)) {
-            $this->resources = [];
-        } else {
-            $this->isId = is_numeric($resources);
-            $isResource = is_object($resources)
-                && $resources instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
-            // Some formats manage a single or a list of resources differently.
-            $this->isSingle = $this->isId || $isResource;
-            if ($this->isSingle) {
-                $this->resources = [$this->isId ? (int) $resources : $resources];
-            } elseif (is_array($resources)) {
-                $resource = reset($resources);
-                $isResource = is_object($resource)
-                    && $resource instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
-                if ($isResource) {
-                    $this->resources = $resources;
-                    $this->resourceType = $resource->resourceName();
-                } else {
-                    // This is a list of id if all keys are numeric.
-                    $this->isId = count($resources) === count(array_filter($resources, 'is_numeric', ARRAY_FILTER_USE_KEY));
-                    if ($this->isId) {
-                        $this->resources = array_values(array_unique(array_filter(array_map('intval', $resources))));
-                    } else {
-                        $this->isQuery = true;
-                        $this->query = $resources;
-                    }
-                }
-            } else {
-                $this->hasError = true;
-            }
-        }
+        $this->reset();
+
+        // The api is almost always required.
+        $this->api = $this->services->get('ControllerPluginManager')->get('api');
 
         $resourceTypes = [
             'items',
@@ -168,22 +155,62 @@ abstract class AbstractFormatter implements FormatterInterface
             'resources',
             'annotations',
         ];
-        if (empty($this->resourceType)) {
-            if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceTypes)) {
-                $this->resourceType = $options['resource_type'];
-            } elseif ($this->isQuery) {
-                $this->hasError = true;
+        if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceTypes)) {
+            $this->resourceType = $options['resource_type'];
+        }
+
+        // Some quick checks to prepare params in all cases.
+        if (!empty($resources)) {
+            $this->isId = is_numeric($resources);
+            $isResource = is_object($resources)
+                && $resources instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+            // Some formats manage a single or a list of resources differently.
+            $this->isSingle = $this->isId || $isResource;
+            if ($this->isSingle) {
+                if ($this->isId) {
+                    // With single id, fetch resource early for easier process.
+                    try {
+                        $this->resource = $this->api->read($this->resourceType ?: 'resources', ['id' => $resources])->getContent();
+                        $this->isId = false;
+                    } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                        $this->hasError = true;
+                    }
+                } else {
+                    $this->resource = $resources;
+                }
+                if (!$this->hasError) {
+                    $this->resourceType = $this->resource->resourceName();
+                    // Simplify for formats that manage single/list the same.
+                    $this->resources = [$this->resource];
+                }
+            } elseif (is_array($resources)) {
+                $first = reset($resources);
+                $isResource = is_object($first)
+                    && $first instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+                if ($isResource) {
+                    $this->resources = $resources;
+                } else {
+                    // This is a list of id if all keys are numeric.
+                    $this->isId = count($resources) === count(array_filter($resources, 'is_numeric', ARRAY_FILTER_USE_KEY));
+                    if ($this->isId) {
+                        $this->resourceIds = array_values(array_unique(array_filter(array_map('intval', $resources))));
+                    } else {
+                        $this->isQuery = true;
+                        $this->query = $resources;
+                        $this->hasError = empty($this->resourceType) || $this->resourceType === 'resources';
+                    }
+                }
             } else {
-                $this->resourceType = 'resources';
+                $this->hasError = true;
             }
         }
 
-        $this->hasError = $this->hasError
-            || ($this->isQuery && (empty($this->resourceType) || $this->resourceType === 'resources'));
+        if (!$this->resourceType && !$this->hasError) {
+            $this->resourceType = 'resources';
+        }
 
         $this->output = $output;
         $this->isOutput = !empty($this->output);
-
         $this->options = $options + $this->defaultOptions;
 
         if ($this->hasError) {
@@ -195,26 +222,24 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
+    protected function reset()
+    {
+        $this->resources = [];
+        $this->resourceIds = [];
+        $this->resource = null;
+        $this->query = [];
+        $this->output = null;
+        $this->options = [];
+        $this->resourceType = null;
+        $this->isOutput = false;
+        $this->isSingle = false;
+        $this->isId = false;
+        $this->isQuery = false;
+        $this->hasError = false;
+        $this->content = null;
+    }
+
     abstract protected function process();
-
-    protected function processSingle()
-    {
-        $resource = reset($this->resources);
-        if ($this->isId) {
-            try {
-                $resource = $this->api->read($this->resourceType, ['id' => $resource])->getContent();
-            } catch (\Omeka\Api\Exception\NotFoundException $e) {
-                $resource = null;
-            }
-        }
-
-        $this->formatSingle($resource);
-    }
-
-    protected function formatSingle($resource)
-    {
-        // To be used by formatters if needed.
-    }
 
     /**
      * Write the content into output when it is not filled with the formatter.

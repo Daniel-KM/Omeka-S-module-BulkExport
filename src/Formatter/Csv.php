@@ -29,7 +29,10 @@ class Csv extends AbstractFormatter
             return false;
         }
 
-        $this->api = $this->services->get('ControllerPluginManager')->get('api');
+        if ($this->isQuery) {
+            $this->resourceIds = $this->api->search($this->resourceType, $this->query, ['returnScalar' => 'id'])->getContent();
+            $this->isId = true;
+        }
 
         // TODO Add a check for the separator in the values.
 
@@ -38,23 +41,30 @@ class Csv extends AbstractFormatter
 
         fputcsv($handle, array_keys($rowHeaders), $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
 
-        // Second loop to fill each row.
-        foreach ($this->resources as $resource) {
-            if ($this->isId) {
-                try {
-                    $resource = $this->api->read($this->resourceType, ['id' => $resource])->getContent();
-                } catch (\Omeka\Api\Exception\NotFoundException $e) {
-                    continue;
-                }
-            }
+        $outputRowForResource = function (AbstractResourceEntityRepresentation $resource) use ($rowHeaders, $handle) {
             $row = $this->prepareRow($resource, $rowHeaders);
             // Do a diff to avoid issue if a resource was update during process.
             // Order the row according to headers, keeping empty values.
             $row = array_values(array_replace($rowHeaders, array_intersect_key($row, $rowHeaders)));
             fputcsv($handle, $row, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
+        };
+
+        // Second loop to fill each row.
+        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+        if ($this->isId) {
+            foreach ($this->resourceIds as $resourceId) {
+                try {
+                    $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
+                } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                    continue;
+                }
+                $outputRowForResource($resource);
+            }
+        } else {
+            array_walk($this->resources, $outputRowForResource);
         }
 
-        if ($this->isOuptut) {
+        if ($this->isOutput) {
             fclose($handle);
             return null;
         }
@@ -86,28 +96,36 @@ class Csv extends AbstractFormatter
         // TODO Get only the used properties of the resources.
         $rowHeaders += array_fill_keys(array_keys($this->getPropertiesByTerm()), false);
 
-        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
-        // TODO Get all data from one or two sql requests (and rights checks) (see AbstractSpreadsheet).
         $resourceTypes = [];
-        foreach ($this->resources as $resource) {
-            if ($this->isId) {
+
+        // TODO Get all data from one or two sql requests (and rights checks) (see AbstractSpreadsheet).
+
+        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+        if ($this->isId) {
+            foreach ($this->resourceIds as $key => $resourceId) {
                 try {
-                    $resource = $this->api->read($this->resourceType, ['id' => $resource])->getContent();
+                    $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                    unset($this->resourceIds[$key]);
                     continue;
                 }
+                $resourceTypes[$resource->resourceName()] = true;
+                $rowHeaders = array_replace($rowHeaders, array_fill_keys(array_keys($resource->values()), true));
             }
-            $resourceTypes[$resource->getControllerName()] = true;
-            $rowHeaders = array_replace($rowHeaders, array_fill_keys(array_keys($resource->values()), true));
+        } else {
+            foreach ($this->resources as $resource) {
+                $resourceTypes[$resource->resourceName()] = true;
+                $rowHeaders = array_replace($rowHeaders, array_fill_keys(array_keys($resource->values()), true));
+            }
         }
 
         $resourceTypes = array_filter($resourceTypes);
         if (count($resourceTypes) > 1) {
             $rowHeaders['Resource type'] = true;
         }
-        foreach (array_keys(array_filter($resourceTypes)) as $resourceType) {
+        foreach (array_keys($resourceTypes) as $resourceType) {
             switch ($resourceType) {
-                case 'item':
+                case 'items':
                     $rowHeaders = array_replace($rowHeaders, [
                         'Item sets' => true,
                         'Media' => true,
@@ -133,7 +151,7 @@ class Csv extends AbstractFormatter
     {
         $row = [];
         $row['id'] = $resource->id();
-        $row['url'] = $resource->siteUrl(null, true);
+        $row['url'] = $resource->url(null, true);
         // Manage an exception.
         if (array_key_exists('Resource type', $rowHeaders)) {
             $row['Resource type'] = basename(get_class($resource));
@@ -162,7 +180,7 @@ class Csv extends AbstractFormatter
 
             case 'media':
                 /* @var \Omeka\Api\Representation\MediaRepresentation @resource */
-                $row['Item'] = $resource->item()->siteUrl();
+                $row['Item'] = $resource->item()->url();
                 $row['Media type'] = $resource->mediaType();
                 $row['Size'] = $resource->size();
                 $row['Url'] = $resource->originalUrl();

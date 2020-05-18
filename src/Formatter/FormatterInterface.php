@@ -44,10 +44,11 @@ interface FormatterInterface
      * Prepare output for one or multiple resources or ids or via a query.
      *
      * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]|\Omeka\Api\Representation\AbstractResourceEntityRepresentation|int[]|int|array $resources
-     * When it is a query, the option "resource_type" must be set and it cannot
-     * be the generic "resources".
+     * The types of the resources must not be mixed (int/object). When it is a
+     * query, the option "resource_type" must be set and it cannot be the
+     * generic type "resources".
      * @param string|null $output May be a filepath. When set, the formatting is
-     * directly processed.
+     * directly written into it.
      * @param array $options
      * @return self
      */
