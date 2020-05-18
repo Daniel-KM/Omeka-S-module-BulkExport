@@ -3,6 +3,8 @@ namespace BulkExport\Formatter;
 
 class Json extends AbstractFormatter
 {
+    protected $maxDirectJsonEncode = 1000;
+
     protected $label = 'json';
     protected $extension = 'json';
     protected $responseHeaders = [
@@ -15,26 +17,28 @@ class Json extends AbstractFormatter
     protected function process()
     {
         if ($this->isSingle) {
-            return $this->processSingle();
+            $this->processSingle();
+            return;
         }
 
-        // TODO Manage big json output (simply add "[" before and "]" after).
+        if ($this->isId && count($this->resourceIds) > $this->maxDirectJsonEncode) {
+            $this->processByOne();
+            return;
+        }
+
         if ($this->isId) {
-            $list = [];
-            // TODO Use the entityManager and expresion in()?
+            $this->resources = [];
+            // TODO Use the entityManager and expression in()?
             foreach ($this->resourceIds as $resourceId) {
                 try {
-                    $list[] = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
+                    $this->resources[] = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                    continue;
                 }
             }
-        } elseif ($this->isQuery) {
-            $list = $this->api->search($this->resourceType, $this->query)->getContent();
-        } else {
-            $list = &$this->resources;
         }
 
-        $this->content = json_encode($list, $this->options['flags']);
+        $this->content = json_encode($this->resources, $this->options['flags']);
         $this->toOutput();
     }
 
@@ -42,5 +46,32 @@ class Json extends AbstractFormatter
     {
         $this->content = json_encode($this->resource, $this->options['flags']);
         $this->toOutput();
+    }
+
+    protected function processByOne()
+    {
+        $this->initializeOutput();
+        if ($this->hasError) {
+            return;
+        }
+
+        fwrite($this->handle, "[\n");
+
+        $revertedIndex = count($this->resourceIds);
+        foreach ($this->resourceIds as $resourceId) {
+            --$revertedIndex;
+            try {
+                $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                continue;
+            }
+            // TODO In the case the user asks something forbidden, there will be one trailing comma.
+            $append = $revertedIndex ? ',' : '';
+            fwrite($this->handle, json_encode($resource, $this->options['flags']) . $append . "\n");
+        }
+
+        fwrite($this->handle, ']');
+
+        $this->finalizeOutput();
     }
 }
