@@ -1,22 +1,23 @@
 Bulk Export (module for Omeka S)
 ================================
 
-[Bulk Export] is a generic export module for [Omeka S] that intends to be easily
-extensible by other modules.
+[Bulk Export] is a generic export module for [Omeka S] that provides common
+output formats (json, xml, spreadsheet), both for admin and public sides. It is
+easily extensible by other modules.
 
-It allows to manage writers, that are responsible for exporting metadata into a
-file.
+Other known modules that provides output: [Bibliography].
+
+Internally, it allows to manage output formats, that are responsible for
+exporting metadata into a file, a stream or as a string.
 
 As an example, this module defines a sample writer that exports all resources as
-a spreadsheet (that can be imported automatically by [Bulk Import])
-
-This module is inspired by the [Omeka Classic] [Export plugin], built by [Biblibre].
+a spreadsheet, that can be imported automatically by [Bulk Import].
 
 
 Installation
 ------------
 
-This module requires the modules [`Generic`] and [`Log`].
+This module requires the module [`Log`] and the optional module [`Generic`].
 
 See general end user documentation for [installing a module].
 
@@ -28,7 +29,11 @@ uncompress it in the `modules` directory.
 * From the source and for development
 
 If the module was installed from the source, rename the name of the folder of
-the module to `BulkExport`.
+the module to `BulkExport`, go to the root of the module, and run:
+
+```
+    composer install
+```
 
 
 Quick start
@@ -97,7 +102,10 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2019-2020 (see [Daniel-KM] on GitHub)
+
+This module was initially inspired by the [Omeka Classic] [Export plugin], built
+by [Biblibre].
 
 
 [Bulk Export]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport
