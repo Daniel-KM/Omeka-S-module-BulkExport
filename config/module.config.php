@@ -244,12 +244,16 @@ return [
     ],
     'formatters' => [
         'factories' => [
+            Formatter\Csv::class => Service\Formatter\FormatterFactory::class,
             Formatter\Json::class => Service\Formatter\FormatterFactory::class,
             Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
+            Formatter\Tsv::class => Service\Formatter\FormatterFactory::class,
         ],
         'aliases' => [
+            'csv' => Formatter\Csv::class,
             'json' => Formatter\Json::class,
             'json-ld' => Formatter\JsonLd::class,
+            'tsv' => Formatter\Tsv::class,
         ],
     ],
 ];
