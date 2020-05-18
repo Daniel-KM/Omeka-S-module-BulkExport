@@ -122,6 +122,7 @@ class OutputController extends AbstractActionController
         $headers = $response
             ->getHeaders()
             ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
+            // This is the strlen as bytes, not as character.
             ->addHeaderLine('Content-length: ' . strlen($content))
             ->addHeaderLine('Expires: 0')
             ->addHeaderLine('Pragma: public');

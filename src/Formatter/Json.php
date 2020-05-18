@@ -38,18 +38,12 @@ class Json extends AbstractFormatter
         }
 
         $this->content = json_encode($list, $this->options['flags']);
+        $this->toOutput();
     }
 
-    protected function processSingle()
+    protected function formatSingle($resource)
     {
-        $resource = reset($this->resources);
-        if ($this->isId) {
-            try {
-                $resource = $this->api->read($this->resourceType, ['id' => $resource])->getContent();
-            } catch (\Omeka\Api\Exception\NotFoundException $e) {
-                $resource = null;
-            }
-        }
         $this->content = json_encode($resource, $this->options['flags']);
+        $this->toOutput();
     }
 }

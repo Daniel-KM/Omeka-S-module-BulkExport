@@ -1,6 +1,7 @@
 <?php
 namespace BulkExport\Formatter;
 
+use Log\Stdlib\PsrMessage;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractFormatter implements FormatterInterface
@@ -195,4 +196,44 @@ abstract class AbstractFormatter implements FormatterInterface
     }
 
     abstract protected function process();
+
+    protected function processSingle()
+    {
+        $resource = reset($this->resources);
+        if ($this->isId) {
+            try {
+                $resource = $this->api->read($this->resourceType, ['id' => $resource])->getContent();
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                $resource = null;
+            }
+        }
+
+        $this->formatSingle($resource);
+    }
+
+    protected function formatSingle($resource)
+    {
+        // To be used by formatters if needed.
+    }
+
+    /**
+     * Write the content into output when it is not filled with the formatter.
+     * The content is removed.
+     */
+    protected function toOutput()
+    {
+        if (!$this->isOutput || $this->hasError) {
+            return;
+        }
+
+        $this->size = file_put_contents($this->output, $this->content);
+        if ($this->size === false) {
+            $this->hasError = true;
+            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+                'Unable to save output to file: {error}.', // @translate
+                ['error' => error_get_last()['message']]
+            ));
+        }
+        $this->content = null;
+    }
 }
