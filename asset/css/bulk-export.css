@@ -1,0 +1,19 @@
+@media screen {
+    .browse .bulk-export h4 {
+        display: inline-block;
+    }
+    .browse .bulk-export .formatters {
+        display: inline-block;
+        padding-left: 6px;
+    }
+    .browse .bulk-export .formatters li {
+        list-style: none;
+        display: inline-block;
+        border-right: 1px solid;
+        padding-right: 4px;
+        display: inline-block;
+    }
+    .browse .bulk-export .formatters li:last-of-type {
+        border-right: 0;
+    }
+}

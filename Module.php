@@ -14,6 +14,7 @@ use Zend\EventManager\Event;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\ModuleManager\ModuleManager;
 use Zend\Mvc\MvcEvent;
+use Zend\View\Renderer\PhpRenderer;
 
 class Module extends AbstractModule
 {
@@ -37,49 +38,6 @@ class Module extends AbstractModule
                 ['output']
             )
         ;
-    }
-
-    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
-    {
-        // Display a warn before uninstalling.
-        $sharedEventManager->attach(
-            'Omeka\Controller\Admin\Module',
-            'view.details',
-            [$this, 'warnUninstall']
-        );
-    }
-
-    public function warnUninstall(Event $event)
-    {
-        $view = $event->getTarget();
-        $module = $view->vars()->module;
-        if ($module->getId() != __NAMESPACE__) {
-            return;
-        }
-
-        $serviceLocator = $this->getServiceLocator();
-        $t = $serviceLocator->get('MvcTranslator');
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-
-        $html = '<p>';
-        $html .= '<strong>';
-        $html .= $t->translate('WARNING:'); // @translate
-        $html .= '</strong>';
-        $html .= '</p>';
-
-        $html .= '<p>';
-        $html .= sprintf(
-            $t->translate('All bulk exports will be removed (folder "%s".'), // @translate
-            $basePath . '/bulk_export'
-        );
-        $html .= '</p>';
-
-        $html .= '<label><input name="remove-bulk-exports" type="checkbox" form="confirmform">';
-        $html .= $t->translate('Remove bulk export directory'); // @translate
-        $html .= '</label>';
-
-        echo $html;
     }
 
     protected function preInstall()
@@ -128,6 +86,143 @@ class Module extends AbstractModule
             $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
             $this->rmDir($basePath . '/bulk_export');
         }
+    }
+
+    public function warnUninstall(Event $event)
+    {
+        $view = $event->getTarget();
+        $module = $view->vars()->module;
+        if ($module->getId() != __NAMESPACE__) {
+            return;
+        }
+
+        $serviceLocator = $this->getServiceLocator();
+        $t = $serviceLocator->get('MvcTranslator');
+        $config = $this->getServiceLocator()->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+
+        $html = '<p>';
+        $html .= '<strong>';
+        $html .= $t->translate('WARNING:'); // @translate
+        $html .= '</strong>';
+        $html .= '</p>';
+
+        $html .= '<p>';
+        $html .= sprintf(
+            $t->translate('All bulk exports will be removed (folder "%s".'), // @translate
+            $basePath . '/bulk_export'
+        );
+        $html .= '</p>';
+
+        $html .= '<label><input name="remove-bulk-exports" type="checkbox" form="confirmform">';
+        $html .= $t->translate('Remove bulk export directory'); // @translate
+        $html .= '</label>';
+
+        echo $html;
+    }
+
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
+    {
+        // Append the links to output formats.
+        $controllers = [
+            'Omeka\Controller\Site\Item',
+            'Omeka\Controller\Site\ItemSet',
+            'Omeka\Controller\Site\Media',
+        ];
+        foreach ($controllers as $controller) {
+            $sharedEventManager->attach(
+                $controller,
+                'view.browse.after',
+                [$this, 'handleViewBrowseAfterSite']
+            );
+        }
+        $controllers = [
+            'Omeka\Controller\Admin\Item',
+            'Omeka\Controller\Admin\ItemSet',
+            'Omeka\Controller\Admin\Media',
+        ];
+        foreach ($controllers as $controller) {
+            $sharedEventManager->attach(
+                $controller,
+                'view.browse.after',
+                [$this, 'handleViewBrowseAfterAdmin']
+            );
+        }
+
+        $sharedEventManager->attach(
+            \Omeka\Form\SettingForm::class,
+            'form.add_elements',
+            [$this, 'handleMainSettings']
+        );
+        $sharedEventManager->attach(
+            \Omeka\Form\SettingForm::class,
+            'form.add_input_filters',
+            [$this, 'handleMainSettingsFilters']
+        );
+        $sharedEventManager->attach(
+            \Omeka\Form\SiteSettingsForm::class,
+            'form.add_elements',
+            [$this, 'handleSiteSettings']
+        );
+        $sharedEventManager->attach(
+            \Omeka\Form\SiteSettingsForm::class,
+            'form.add_input_filters',
+            [$this, 'handleSiteSettingsFilters']
+        );
+
+        // Display a warn before uninstalling.
+        $sharedEventManager->attach(
+            'Omeka\Controller\Admin\Module',
+            'view.details',
+            [$this, 'warnUninstall']
+        );
+    }
+
+    public function handleMainSettingsFilters(Event $event)
+    {
+        $event->getParam('inputFilter')->get('bulkexport')
+            ->add([
+                'name' => 'bulkexport_formatters',
+                'required' => false,
+            ]);
+    }
+
+    public function handleSiteSettingsFilters(Event $event)
+    {
+        $event->getParam('inputFilter')->get('bulkexport')
+            ->add([
+                'name' => 'bulkexport_formatters',
+                'required' => false,
+            ]);
+    }
+
+    public function handleViewBrowseAfterSite(Event $event)
+    {
+        $view = $event->getTarget();
+        $formatters = $view->siteSetting('bulkexport_formatters', []);
+        $this->handleViewBrowseAfter($view, $formatters);
+    }
+
+    public function handleViewBrowseAfterAdmin(Event $event)
+    {
+        $view = $event->getTarget();
+        $formatters = $view->setting('bulkexport_formatters', []);
+        $this->handleViewBrowseAfter($view, $formatters);
+    }
+
+    protected function handleViewBrowseAfter(PhpRenderer $view, array $formatters)
+    {
+        if (empty($formatters)) {
+            return;
+        }
+        $services = $this->getServiceLocator();
+        $formatterManager = $services->get('BulkExport\Formatter\Manager');
+        $list = [];
+        foreach ($formatters as $formatter) {
+            $list[$formatter] = $formatterManager->get($formatter)->getLabel();
+        }
+        $view->vars()->offsetSet('formatters', $list);
+        echo $view->partial('common/bulk-export-formatters');
     }
 
     /**

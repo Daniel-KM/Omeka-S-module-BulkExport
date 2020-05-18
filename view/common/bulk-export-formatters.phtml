@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var array $formatters
+ */
+
+if (!count($formatters) || !count($resources)):
+    return;
+endif;
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$url = $plugins->get('url');
+$assetUrl = $plugins->get('assetUrl');
+
+$resource = reset($resources);
+$resourceType = $resource->getControllerName();
+
+$route = $this->status()->isAdminRequest() ? 'admin/resource-output' : 'site/resource-output';
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
+?>
+
+<div class="bulk-export">
+    <h4><?= $translate('Export') ?></h4>
+    <ul class="formatters">
+    <?php foreach ($formatters as $format => $label): ?>
+        <?php $urlFormat = $url($route, ['resource-type' => $resourceType, 'format' => $format], ['query' => $this->params()->fromQuery()], true); ?>
+        <li><a href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
+    <?php endforeach; ?>
+    </ul>
+</div>

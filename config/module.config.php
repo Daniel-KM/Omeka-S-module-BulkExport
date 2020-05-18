@@ -37,6 +37,8 @@ return [
             Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,
             Form\ExporterForm::class => Service\Form\FormFactory::class,
             Form\ExporterStartForm::class => Service\Form\FormFactory::class,
+            Form\SettingsFieldset::class => Service\Form\SettingsFieldsetFactory::class,
+            Form\SiteSettingsFieldset::class => Service\Form\SiteSettingsFieldsetFactory::class,
             Form\Writer\CsvWriterConfigForm::class => Service\Form\FormFactory::class,
             Form\Writer\CsvWriterParamsForm::class => Service\Form\FormFactory::class,
             Form\Writer\OpenDocumentSpreadsheetWriterParamsForm::class => Service\Form\FormFactory::class,
@@ -256,6 +258,26 @@ return [
             'json-ld' => Formatter\JsonLd::class,
             'ods' => Formatter\Ods::class,
             'tsv' => Formatter\Tsv::class,
+        ],
+    ],
+    'bulkexport' => [
+        'settings' => [
+            'bulkexport_formatters' => [
+                'csv',
+                // 'json',
+                'json-ld',
+                'ods',
+                'tsv',
+            ],
+        ],
+        'site_settings' => [
+            'bulkexport_formatters' => [
+                'csv',
+                // 'json',
+                'json-ld',
+                'ods',
+                'tsv',
+            ],
         ],
     ],
 ];
