@@ -164,5 +164,13 @@ return [
         ],
     ],
     'formatters' => [
+        'factories' => [
+            Formatter\Json::class => Service\Formatter\FormatterFactory::class,
+            Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
+        ],
+        'aliases' => [
+            'json' => Formatter\Json::class,
+            'json-ld' => Formatter\JsonLd::class,
+        ],
     ],
 ];
