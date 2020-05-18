@@ -4,6 +4,7 @@ namespace BulkExport;
 return [
     'service_manager' => [
         'factories' => [
+            Formatter\Manager::class => Service\Plugin\FormatterManagerFactory::class,
             Writer\Manager::class => Service\Plugin\PluginManagerFactory::class,
         ],
     ],
@@ -153,11 +154,15 @@ return [
             ],
         ],
     ],
+    // Writers are designed for job processing and formatters for instant process.
     'bulk_export' => [
+        // TODO Normalize writers as manageable or deprecate them.
         'writers' => [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
             Writer\TsvWriter::class => Writer\TsvWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
         ],
+    ],
+    'formatters' => [
     ],
 ];

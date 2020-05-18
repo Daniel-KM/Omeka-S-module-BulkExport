@@ -1,13 +1,15 @@
 <?php
-namespace BulkExport\Service\Plugin;
+namespace BulkExport\Service\Formatter;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-class PluginManagerFactory implements FactoryInterface
+class FormatterFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $services, $requestedName, array $options = null)
     {
-        return new $requestedName($services);
+        $formatter = new $requestedName;
+        return $formatter
+            ->setServiceLocator($services);
     }
 }
