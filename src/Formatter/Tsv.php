@@ -5,7 +5,7 @@ class Tsv extends Csv
 {
     protected $label = 'tsv';
     protected $extension = 'tsv';
-    protected $headers = [
+    protected $responseHeaders = [
         'Content-type' => 'text/tab-separated-values',
     ];
 

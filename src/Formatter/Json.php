@@ -5,7 +5,7 @@ class Json extends AbstractFormatter
 {
     protected $label = 'json';
     protected $extension = 'json';
-    protected $headers = [
+    protected $responseHeaders = [
         'Content-type' => 'application/json; charset=utf-8',
     ];
     protected $defaultOptions = [

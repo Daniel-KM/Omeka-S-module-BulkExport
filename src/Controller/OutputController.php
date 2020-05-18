@@ -126,7 +126,7 @@ class OutputController extends AbstractActionController
             ->addHeaderLine('Content-length: ' . strlen($content))
             ->addHeaderLine('Expires: 0')
             ->addHeaderLine('Pragma: public');
-        foreach ($formatter->getHeaders() as $key => $value) {
+        foreach ($formatter->getResponseHeaders() as $key => $value) {
             $headers
                 ->addHeaderLine($key, $value);
         }

@@ -10,7 +10,7 @@ class Csv extends AbstractFormatter
 
     protected $label = 'csv';
     protected $extension = 'csv';
-    protected $headers = [
+    protected $responseHeaders = [
         'Content-type' => 'text/csv',
     ];
     protected $defaultOptions = [

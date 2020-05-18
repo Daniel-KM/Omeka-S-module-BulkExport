@@ -24,7 +24,7 @@ abstract class AbstractFormatter implements FormatterInterface
     /**
      * @var array
      */
-    protected $headers = [];
+    protected $responseHeaders = [];
 
     /**
      * @var array
@@ -109,9 +109,9 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this->extension;
     }
 
-    public function getHeaders()
+    public function getResponseHeaders()
     {
-        return $this->headers;
+        return $this->responseHeaders;
     }
 
     public function getContent()

@@ -26,11 +26,11 @@ interface FormatterInterface
     public function getExtension();
 
     /**
-     * Specific headers for the response, generally included `Content-Type`.
+     * Specific headers for the response, generally including `Content-Type`.
      *
      * @return array
      */
-    public function getHeaders();
+    public function getResponseHeaders();
 
     /**
      * Get the formatted resources.
