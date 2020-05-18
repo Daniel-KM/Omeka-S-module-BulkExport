@@ -13,7 +13,13 @@ class Tsv extends Csv
         'delimiter' => "\t",
         'enclosure' => 0,
         'escape' => 0,
+        // Same as csv.
         'separator' => ' | ',
+        'has_separator' => true,
+        'format_resource' => 'identifier_id',
+        'format_resource_property' => 'dcterms:identifier',
+        'format_uri' => 'uri_label',
+        'format_generic' => 'raw',
     ];
 
     public function __construct()

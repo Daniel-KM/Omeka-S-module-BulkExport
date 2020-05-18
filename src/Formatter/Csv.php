@@ -2,11 +2,13 @@
 namespace BulkExport\Formatter;
 
 use BulkExport\Traits\ListTermsTrait;
+use BulkExport\Traits\MetadataToStringTrait;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 class Csv extends AbstractFormatter
 {
     use ListTermsTrait;
+    use MetadataToStringTrait;
 
     protected $label = 'csv';
     protected $extension = 'csv';
@@ -18,6 +20,11 @@ class Csv extends AbstractFormatter
         'enclosure' => '"',
         'escape' => '\\',
         'separator' => ' | ',
+        'has_separator' => true,
+        'format_generic' => 'raw',
+        'format_resource' => 'identifier_id',
+        'format_resource_property' => 'dcterms:identifier',
+        'format_uri' => 'uri_label',
     ];
 
     protected function process()
@@ -68,16 +75,16 @@ class Csv extends AbstractFormatter
     protected function prepareHeaders()
     {
         $rowHeaders = [
-            'id' => true,
+            'o:id' => true,
             'url' => true,
-            'Resource type' => false,
-            'Resource class' => true,
-            'Item sets' => false,
-            'Item' => false,
-            'Media' => false,
-            'Media type' => false,
-            'Size' => false,
-            'Url' => false,
+            'resource_type' => false,
+            'o:resource_class' => true,
+            'o:item_set[dcterms:title]' => false,
+            'o:item[dcterms:title]' => false,
+            'o:media[o:id]' => false,
+            'o:media[media_type]' => false,
+            'o:media[size]' => false,
+            'o:media[original_url]' => false,
         ];
         // TODO Get only the used properties of the resources.
         $rowHeaders += array_fill_keys(array_keys($this->getPropertiesByTerm()), false);
@@ -107,22 +114,23 @@ class Csv extends AbstractFormatter
 
         $resourceTypes = array_filter($resourceTypes);
         if (count($resourceTypes) > 1) {
-            $rowHeaders['Resource type'] = true;
+            $rowHeaders['resource_type'] = true;
         }
         foreach (array_keys($resourceTypes) as $resourceType) {
             switch ($resourceType) {
                 case 'items':
                     $rowHeaders = array_replace($rowHeaders, [
-                        'Item sets' => true,
-                        'Media' => true,
+                        'o:item_set[dcterms:title]' => true,
+                        'o:media[o:id]' => true,
+                        'o:media[original_url]' => true,
                     ]);
                     break;
                 case 'media':
                     $rowHeaders = array_replace($rowHeaders, [
-                        'Item' => true,
-                        'Media type' => true,
-                        'Size' => true,
-                        'Url' => true,
+                        'o:item[dcterms:title]' => true,
+                        'o:media[media_type]' => true,
+                        'o:media[size]' => true,
+                        'o:media[original_url]' => true,
                     ]);
                     break;
                 default:
@@ -136,44 +144,37 @@ class Csv extends AbstractFormatter
     protected function prepareRow(AbstractResourceEntityRepresentation $resource, array $rowHeaders)
     {
         $row = [];
-        $row['id'] = $resource->id();
+        $row['o:id'] = $resource->id();
         $row['url'] = $resource->url(null, true);
         // Manage an exception.
-        if (array_key_exists('Resource type', $rowHeaders)) {
-            $row['Resource type'] = basename(get_class($resource));
+        if (array_key_exists('resource_type', $rowHeaders)) {
+            $row['resource_type'] = basename(get_class($resource));
         }
         $resourceClass = $resource->resourceClass();
-        $row['Resource class'] = $resourceClass ? $resourceClass->term() : '';
+        $row['o:resource_class'] = $resourceClass ? $resourceClass->term() : '';
 
         $resourceName = $resource->resourceName();
         switch ($resourceName) {
             case 'items':
                 /** @var \Omeka\Api\Representation\ItemRepresentation @resource */
-                $urls = [];
-                foreach ($resource->itemSets() as $itemSet) {
-                    $urls[] = $itemSet->displayTitle();
-                }
-                $row['Item sets'] = implode($this->options['separator'], array_filter($urls));
-
-                $urls = [];
-                /** @var \Omeka\Api\Representation\MediaRepresentation $media*/
-                foreach ($resource->media() as $media) {
-                    // TODO Manage all types of media.
-                    $urls[] = $media->originalUrl();
-                }
-                $row['Media'] = implode($this->options['separator'], array_filter($urls));
+                $values = $this->stringMetadata($resource, 'o:item_set[dcterms:title]');
+                $row['o:item_set[dcterms:title]'] = implode($this->options['separator'], $values);
+                $values = $this->stringMetadata($resource, 'o:media[o:id]');
+                $row['o:media[o:id]'] = implode($this->options['separator'], $values);
+                $values = $this->stringMetadata($resource, 'o:media[original_url]');
+                $row['o:media[original_url]'] = implode($this->options['separator'], $values);
                 break;
 
             case 'media':
-                /* @var \Omeka\Api\Representation\MediaRepresentation @resource */
-                $row['Item'] = $resource->item()->url();
-                $row['Media type'] = $resource->mediaType();
-                $row['Size'] = $resource->size();
-                $row['Url'] = $resource->originalUrl();
+                /** @var \Omeka\Api\Representation\MediaRepresentation @resource */
+                $row['o:item[dcterms:title]'] = $resource->item()->url();
+                $row['o:media[media_type]'] = $resource->mediaType();
+                $row['o:media[size]'] = $resource->size();
+                $row['o:media[original_url]'] = $resource->originalUrl();
                 break;
 
             case 'item_sets':
-                /* @var \Omeka\Api\Representation\ItemSetRepresentation @resource */
+                /** @var \Omeka\Api\Representation\ItemSetRepresentation @resource */
                 // Nothing to do.
                 break;
 
@@ -181,8 +182,9 @@ class Csv extends AbstractFormatter
                 break;
         }
 
-        foreach ($resource->values() as $term => $values) {
-            $row[$term] = implode($this->options['separator'], $values['values']);
+        foreach (array_keys($resource->values()) as $term) {
+            $values = $this->stringMetadata($resource, $term);
+            $row[$term] = implode($this->options['separator'], $values);
         }
 
         return $row;
