@@ -103,6 +103,11 @@ abstract class AbstractFormatter implements FormatterInterface
      */
     protected $content = null;
 
+    /**
+     * @var resource|null
+     */
+    protected $handle = null;
+
     public function setServiceLocator(ServiceLocatorInterface $services)
     {
         $this->services = $services;
@@ -198,6 +203,12 @@ abstract class AbstractFormatter implements FormatterInterface
                         $this->isQuery = true;
                         $this->query = $resources;
                         $this->hasError = empty($this->resourceType) || $this->resourceType === 'resources';
+                        if (!$this->hasError) {
+                            // Most of the time, the query is processed by id
+                            // for memory performance.
+                            $this->resourceIds = $this->api->search($this->resourceType, $this->query, ['returnScalar' => 'id'])->getContent();
+                            $this->isId = true;
+                        }
                     }
                 }
             } else {
@@ -211,6 +222,7 @@ abstract class AbstractFormatter implements FormatterInterface
 
         $this->output = $output;
         $this->isOutput = !empty($this->output);
+
         $this->options = $options + $this->defaultOptions;
 
         if ($this->hasError) {
@@ -240,6 +252,36 @@ abstract class AbstractFormatter implements FormatterInterface
     }
 
     abstract protected function process();
+
+    protected function initializeOutput()
+    {
+        $file = $this->isOutput ? $this->output : 'php://temp';
+
+        $this->handle = fopen($file, 'w+');
+        if (!$this->handle) {
+            $this->hasError = true;
+            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+                'Unable to open output: {error}.', // @translate
+                ['error' => error_get_last()['message']]
+            ));
+            return false;
+        }
+    }
+
+    protected function finalizeOutput()
+    {
+        if (!$this->handle) {
+            $this->hasError = true;
+            return;
+        }
+        if ($this->isOutput) {
+            fclose($this->handle);
+            return;
+        }
+        rewind($this->handle);
+        $this->content = stream_get_contents($this->handle);
+        fclose($this->handle);
+    }
 
     /**
      * Write the content into output when it is not filled with the formatter.

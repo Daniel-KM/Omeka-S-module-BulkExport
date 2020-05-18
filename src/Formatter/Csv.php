@@ -22,16 +22,9 @@ class Csv extends AbstractFormatter
 
     protected function process()
     {
-        $file = $this->isOutput ? $this->output : 'php://temp';
-        $handle = fopen($file, 'w+');
-        if (!$handle) {
-            $this->hasError = true;
-            return false;
-        }
-
-        if ($this->isQuery) {
-            $this->resourceIds = $this->api->search($this->resourceType, $this->query, ['returnScalar' => 'id'])->getContent();
-            $this->isId = true;
+        $this->initializeOutput();
+        if ($this->hasError) {
+            return;
         }
 
         // TODO Add a check for the separator in the values.
@@ -39,14 +32,14 @@ class Csv extends AbstractFormatter
         // First loop to get all headers.
         $rowHeaders = $this->prepareHeaders();
 
-        fputcsv($handle, array_keys($rowHeaders), $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
+        fputcsv($this->handle, array_keys($rowHeaders), $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
 
-        $outputRowForResource = function (AbstractResourceEntityRepresentation $resource) use ($rowHeaders, $handle) {
+        $outputRowForResource = function (AbstractResourceEntityRepresentation $resource) use ($rowHeaders) {
             $row = $this->prepareRow($resource, $rowHeaders);
             // Do a diff to avoid issue if a resource was update during process.
             // Order the row according to headers, keeping empty values.
             $row = array_values(array_replace($rowHeaders, array_intersect_key($row, $rowHeaders)));
-            fputcsv($handle, $row, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
+            fputcsv($this->handle, $row, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
         };
 
         // Second loop to fill each row.
@@ -64,14 +57,7 @@ class Csv extends AbstractFormatter
             array_walk($this->resources, $outputRowForResource);
         }
 
-        if ($this->isOutput) {
-            fclose($handle);
-            return null;
-        }
-
-        rewind($handle);
-        $this->content = stream_get_contents($handle);
-        fclose($handle);
+        $this->finalizeOutput();
     }
 
     /**
