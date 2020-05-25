@@ -250,6 +250,7 @@ return [
     ],
     'bulkexport' => [
         'settings' => [
+            'bulkexport_limit' => 1000,
             'bulkexport_formatters' => [
                 'csv',
                 // 'json',
@@ -259,6 +260,7 @@ return [
             ],
         ],
         'site_settings' => [
+            'bulkexport_limit' => 1000,
             'bulkexport_formatters' => [
                 'csv',
                 // 'json',

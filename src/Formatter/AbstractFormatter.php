@@ -160,6 +160,13 @@ abstract class AbstractFormatter implements FormatterInterface
             'resources',
             'annotations',
         ];
+
+        $options += [
+            'resource_type' => null,
+            'limit' => 0,
+        ];
+        $hasLimit = $options['limit'] > 0;
+
         if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceTypes)) {
             $this->resourceType = $options['resource_type'];
         }
@@ -193,12 +200,15 @@ abstract class AbstractFormatter implements FormatterInterface
                 $isResource = is_object($first)
                     && $first instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
                 if ($isResource) {
-                    $this->resources = $resources;
+                    $this->resources = $hasLimit ? array_slice($resources, 0, $options['limit']) : $resources;
                 } else {
                     // This is a list of id if all keys are numeric.
                     $this->isId = count($resources) === count(array_filter($resources, 'is_numeric', ARRAY_FILTER_USE_KEY));
                     if ($this->isId) {
                         $this->resourceIds = array_values(array_unique(array_filter(array_map('intval', $resources))));
+                        if ($hasLimit) {
+                            $this->resourceIds = array_slice($this->resourceIds, 0, $options['limit']);
+                        }
                     } else {
                         $this->isQuery = true;
                         $this->query = $resources;
@@ -206,6 +216,9 @@ abstract class AbstractFormatter implements FormatterInterface
                         if (!$this->hasError) {
                             // Most of the time, the query is processed by id
                             // for memory performance.
+                            if ($hasLimit) {
+                                $this->query['limit'] = (int) $options['limit'];
+                            }
                             $this->resourceIds = $this->api->search($this->resourceType, $this->query, ['returnScalar' => 'id'])->getContent();
                             $this->isId = true;
                         }

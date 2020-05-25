@@ -48,7 +48,9 @@ interface FormatterInterface
      * query, the option "resource_type" must be set and it cannot be the
      * generic type "resources".
      * @param string|null $output May be a filepath.
-     * @param array $options
+     * @param array $options Common options:
+     * - resource_type (string): the type of the resources (items, item_sets…),
+     * - limit (int): Maximum number of resources to output. No limit if empty.
      * @return self
      */
     public function format($resources, $output = null, array $options = []);

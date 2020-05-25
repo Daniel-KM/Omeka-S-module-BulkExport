@@ -17,6 +17,18 @@ class SettingsFieldset extends Fieldset
     {
         $this
             ->add([
+                'name' => 'bulkexport_limit',
+                'type' => Element\Number::class,
+                'options' => [
+                    'label' => 'Maximum number of resources to export', // @translate
+                    'info' => 'This setting is applied only for the direct output.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_limit',
+                    'min' => 0,
+                ],
+            ])
+            ->add([
                 'name' => 'bulkexport_formatters',
                 'type' => Element\MultiCheckbox::class,
                 'options' => [

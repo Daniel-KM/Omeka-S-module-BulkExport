@@ -70,6 +70,13 @@ class OutputController extends AbstractActionController
         $resourceType = $resourceTypes[$resourceType];
         $options = ['resource_type' => $resourceType];
 
+        $resourceLimit = $this->status()->isSiteRequest()
+            ? $this->siteSettings()->get('bulkexport_limit', 1000)
+            : $this->settings()->get('bulkexport_limit', 1000);
+        if ($resourceLimit > 0) {
+            $options['limit'] = $resourceLimit;
+        }
+
         /** @var \BulkExport\Formatter\FormatterInterface $formatter */
         $formatter = $this->formatterManager->get($format)
             ->format($resources, null, $options);
