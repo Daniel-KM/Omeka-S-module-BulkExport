@@ -113,28 +113,22 @@ return [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
                                 'controller' => 'Output',
                                 'action' => 'output',
-                                'resource-type' => 'resource',
-                                'format' => 'json',
                             ],
                         ],
                     ],
-                    'resource-id' => [
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'output' => [
-                                'type' => \Zend\Router\Http\Segment::class,
-                                'options' => [
-                                    'route' => '.:format',
-                                    'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
-                                    ],
-                                    'defaults' => [
-                                        '__NAMESPACE__' => 'BulkExport\Controller',
-                                        'controller' => 'Output',
-                                        'action' => 'output',
-                                        'format' => 'json',
-                                    ],
-                                ],
+                    'resource-output-id' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/:resource-type/:id:.:format',
+                            'constraints' => [
+                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'id' => '\d+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'BulkExport\Controller',
+                                'controller' => 'Output',
+                                'action' => 'output',
                             ],
                         ],
                     ],
@@ -196,28 +190,22 @@ return [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
                                 'controller' => 'Output',
                                 'action' => 'output',
-                                'resource-type' => 'resource',
-                                'format' => 'json',
                             ],
                         ],
                     ],
-                    'id' => [
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'output' => [
-                                'type' => \Zend\Router\Http\Segment::class,
-                                'options' => [
-                                    'route' => '.:format',
-                                    'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
-                                    ],
-                                    'defaults' => [
-                                        '__NAMESPACE__' => 'BulkExport\Controller',
-                                        'controller' => 'Output',
-                                        'action' => 'output',
-                                        'format' => 'json',
-                                    ],
-                                ],
+                    'resource-output-id' => [
+                        'type' => \Zend\Router\Http\Segment::class,
+                        'options' => [
+                            'route' => '/:resource-type/:id:.:format',
+                            'constraints' => [
+                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'id' => '\d+',
+                            ],
+                            'defaults' => [
+                                '__NAMESPACE__' => 'BulkExport\Controller',
+                                'controller' => 'Output',
+                                'action' => 'output',
                             ],
                         ],
                     ],

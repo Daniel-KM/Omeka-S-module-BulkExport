@@ -16,7 +16,7 @@ $escapeAttr = $plugins->get('escapeHtmlAttr');
 $url = $plugins->get('url');
 $assetUrl = $plugins->get('assetUrl');
 
-$route = $this->status()->isAdminRequest() ? 'admin/id/output' : 'site/resource-id/output';
+$route = $this->status()->isAdminRequest() ? 'admin/resource-output-id' : 'site/resource-output-id';
 $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
 ?>
 
@@ -24,7 +24,8 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport
     <h4><?= $translate('Export') ?></h4>
     <ul class="formatters value">
     <?php foreach ($formatters as $format => $label): ?>
-        <li><a href="<?= $escapeAttr($url($route, ['format' => $format], true)) ?>"><?= $label ?></a></li>
+        <?php $urlFormat = $url($route, ['resource-type' => $resource->getControllerName(), 'format' => $format, 'id' => $resource->id()], true); ?>
+        <li><a href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
     <?php endforeach; ?>
     </ul>
 </div>

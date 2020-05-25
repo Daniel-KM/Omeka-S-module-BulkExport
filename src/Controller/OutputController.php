@@ -32,6 +32,33 @@ class OutputController extends AbstractActionController
             ));
         }
 
+        // Check the id in the route first to manage the direct route.
+        $id = $params->fromRoute('id');
+        if ($id) {
+            $resources = (int) $id;
+        } else {
+            $id = $params->fromQuery('id');
+            if ($id) {
+                if (is_array($id)) {
+                    $resources = $id;
+                    $id = null;
+                } elseif (strpos($id, ',')) {
+                    $resources = explode(',', $id);
+                    $id = null;
+                } else {
+                    $resources = (int) $id;
+                }
+                if (is_array($resources)) {
+                    $resources = array_values(array_unique(array_filter(array_map('intval', $resources))));
+                    if (!$resources) {
+                        throw new \Omeka\Mvc\Exception\NotFoundException();
+                    }
+                }
+            } else {
+                $resources = $params->fromQuery();
+            }
+        }
+
         $resourceTypes = [
             'item' => 'items',
             'item-set' => 'item_sets',
@@ -39,67 +66,9 @@ class OutputController extends AbstractActionController
             'resource' => 'resources',
             'annotation' => 'annotations',
         ];
-
-        // Check the id in the route first to manage the direct route.
-        $id = $params->fromRoute('id');
-        if ($id) {
-            // The original controller is lost in routing, so it's simpler to
-            // check it directly here. The simplest way to get it is to prepare
-            // a route match and to get the controller. An other way is to add a
-            // specific controller may be build for each resource type.
-            // Currently, just a string check is done.
-            $path = $this->getRequest()->getUri()->getPath();
-            $resourceType = basename(dirname($path));
-            // Take the case where the last part are the id and the action.
-            if (!isset($resourceTypes[$resourceType])) {
-                $resourceType = basename(dirname(dirname($path)));
-            }
-            $isSingle = true;
-            $isId = true;
-            $resources = [$id];
-        } else {
-            $id = $params->fromQuery('id');
-            $resourceType = $params->fromRoute('resource-type');
-            if ($id) {
-                $isId = true;
-                if (is_array($id)) {
-                    $isSingle = false;
-                    $resources = $id;
-                } elseif (strpos($id, ',')) {
-                    $isSingle = false;
-                    $resources = explode(',', $id);
-                } else {
-                    $isSingle = true;
-                    $resources = [$id];
-                }
-            } else {
-                $isSingle = false;
-                $isId = false;
-                $resources = $params->fromQuery();
-            }
-        }
-
-        // Some quick checks.
-        if ($isId) {
-            $resources = array_values(array_unique(array_filter(array_map('intval', $resources))));
-            if (!$resources) {
-                throw new \Omeka\Mvc\Exception\NotFoundException();
-            }
-        }
-
-        if (!isset($resourceTypes[$resourceType])) {
-            throw new \Omeka\Mvc\Exception\NotFoundException(new PsrMessage(
-                $this->translate('Unsupported resource type "{type}".'), // @translate
-                ['type' => $resourceType]
-            ));
-        }
-
+        $resourceType = $params->fromRoute('resource-type');
         $resourceType = $resourceTypes[$resourceType];
         $options = ['resource_type' => $resourceType];
-
-        if ($isSingle) {
-            $resources = reset($resources);
-        }
 
         /** @var \BulkExport\Formatter\FormatterInterface $formatter */
         $formatter = $this->formatterManager->get($format)->format($resources, null, $options);
@@ -113,7 +82,7 @@ class OutputController extends AbstractActionController
             ));
         }
 
-        $filename = $this->getFilename($resourceType, $formatter->getExtension(), $isSingle ? $id : null);
+        $filename = $this->getFilename($resourceType, $formatter->getExtension(), $id);
         $response = $this->getResponse();
         $response
             ->setContent($content);
