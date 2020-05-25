@@ -335,14 +335,14 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     {
         if (is_null($this->headers)) {
             $resourceTypes = $this->getResourceTypes();
-            $resourceClasses = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
+            $classes = array_map([$this, 'mapResourceTypeToClass'], $resourceTypes);
             $headers = $this->getParam('metadata') ?: [];
             if ($headers) {
                 $index = array_search('properties', $headers);
                 $hasProperties = $index !== false;
                 if ($hasProperties) {
                     unset($headers[$index]);
-                    $headers = array_merge($headers, array_keys($this->getUsedPropertiesByTerm($resourceClasses)));
+                    $headers = array_merge($headers, array_keys($this->getUsedPropertiesByTerm($classes)));
                 }
             } else {
                 $hasProperties = true;
@@ -355,21 +355,21 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                 ];
                 if (count($resourceTypes) === 1) {
                     switch (reset($resourceTypes)) {
-                        case 'o:item_set':
+                        case 'o:ItemSet':
                             $headers[] = 'o:is_open';
                             break;
-                        case 'o:item':
+                        case 'o:Item':
                             $headers[] = 'o:item_set[o:id]';
                             $headers[] = 'o:item_set[dcterms:title]';
                             $headers[] = 'o:media[o:id]';
                             $headers[] = 'o:media[file]';
                             break;
-                        case 'o:media':
+                        case 'o:Media':
                             $headers[] = 'o:item[o:id]';
                             $headers[] = 'o:item[dcterms:identifier]';
                             $headers[] = 'o:item[dcterms:title]';
                             break;
-                        case 'o:annotation':
+                        case 'oa:Annotation':
                             $headers[] = 'o:resource[o:id]';
                             $headers[] = 'o:resource[dcterms:identifier]';
                             $headers[] = 'o:resource[dcterms:title]';
@@ -378,7 +378,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                             break;
                     }
                 }
-                $headers += array_keys($this->getUsedPropertiesByTerm($resourceClasses));
+                $headers = array_merge($headers, array_keys($this->getUsedPropertiesByTerm($classes)));
             }
 
             if ($hasProperties && in_array('oa:Annotation', $resourceTypes)) {
