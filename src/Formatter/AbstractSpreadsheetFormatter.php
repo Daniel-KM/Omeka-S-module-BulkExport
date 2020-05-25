@@ -125,6 +125,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
                         'o:resource[dcterms:identifier]' => true,
                         'o:resource[dcterms:title]' => true,
                     ]);
+                    break;
                 default:
                     break;
             }
@@ -148,7 +149,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
         $resourceName = $resource->resourceName();
         switch ($resourceName) {
             case 'items':
-                /** @var \Omeka\Api\Representation\ItemRepresentation @resource */
+                /** @var \Omeka\Api\Representation\ItemRepresentation $resource */
                 $values = $this->stringMetadata($resource, 'o:item_set[dcterms:title]');
                 $row['o:item_set[dcterms:title]'] = implode($this->options['separator'], $values);
                 $values = $this->stringMetadata($resource, 'o:media[o:id]');
@@ -158,7 +159,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
                 break;
 
             case 'media':
-                /** @var \Omeka\Api\Representation\MediaRepresentation @resource */
+                /** @var \Omeka\Api\Representation\MediaRepresentation $resource */
                 $row['o:item[dcterms:title]'] = $resource->item()->url();
                 $row['o:media[media_type]'] = $resource->mediaType();
                 $row['o:media[size]'] = $resource->size();
@@ -166,12 +167,12 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
                 break;
 
             case 'item_sets':
-                /** @var \Omeka\Api\Representation\ItemSetRepresentation @resource */
+                /** @var \Omeka\Api\Representation\ItemSetRepresentation $resource */
                 // Nothing to do.
                 break;
 
             case 'annotations':
-                /** @var \Annotate\Api\Representation\AnnotationRepresentation @resource */
+                /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource */
                 $values = $this->stringMetadata($resource, 'o:resource[o:id]');
                 $row['o:resource[o:id]'] = implode($this->options['separator'], $values);
                 $values = $this->stringMetadata($resource, 'o:resource[dcterms:identifier]');

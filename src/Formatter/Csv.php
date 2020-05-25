@@ -44,7 +44,7 @@ class Csv extends AbstractSpreadsheetFormatter
         };
 
         // Second loop to fill each row.
-        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+        /* @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
         if ($this->isId) {
             foreach ($this->resourceIds as $resourceId) {
                 try {
