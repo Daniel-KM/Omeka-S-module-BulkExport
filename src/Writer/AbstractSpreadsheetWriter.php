@@ -4,10 +4,12 @@ namespace BulkExport\Writer;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\WriterInterface;
 use BulkExport\Traits\MetadataToStringTrait;
+use BulkExport\Traits\ListTermsTrait;
 use Log\Stdlib\PsrMessage;
 
 abstract class AbstractSpreadsheetWriter extends AbstractWriter
 {
+    use ListTermsTrait;
     use MetadataToStringTrait;
 
     /**
