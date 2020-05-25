@@ -31,7 +31,7 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport
     <ul class="formatters">
     <?php foreach ($formatters as $format => $label): ?>
         <?php $urlFormat = $url($route, ['resource-type' => $resourceType, 'format' => $format], ['query' => $query], true); ?>
-        <li><a href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
+        <li><a class="download-<?= $format ?>" href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
     <?php endforeach; ?>
     </ul>
 </div>

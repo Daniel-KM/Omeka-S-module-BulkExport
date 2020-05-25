@@ -32,6 +32,11 @@ return [
             Controller\Admin\ExporterController::class => 'bulk/admin/exporter',
         ],
     ],
+    'view_helpers' => [
+        'factories' => [
+            'listFormatters' => Service\ViewHelper\ListFormattersFactory::class,
+        ],
+    ],
     'form_elements' => [
         'factories' => [
             Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,

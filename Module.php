@@ -132,12 +132,12 @@ class Module extends AbstractModule
             $sharedEventManager->attach(
                 $controller,
                 'view.show.after',
-                [$this, 'handleViewShowAfterSite']
+                [$this, 'handleViewShowAfter']
             );
             $sharedEventManager->attach(
                 $controller,
                 'view.browse.after',
-                [$this, 'handleViewBrowseAfterSite']
+                [$this, 'handleViewBrowseAfter']
             );
         }
         $controllers = [
@@ -149,17 +149,17 @@ class Module extends AbstractModule
             $sharedEventManager->attach(
                 $controller,
                 'view.show.sidebar',
-                [$this, 'handleViewShowAfterAdmin']
+                [$this, 'handleViewShowAfter']
             );
             $sharedEventManager->attach(
                 $controller,
                 'view.details',
-                [$this, 'handleViewShowAfterAdmin']
+                [$this, 'handleViewShowAfter']
             );
             $sharedEventManager->attach(
                 $controller,
                 'view.browse.after',
-                [$this, 'handleViewBrowseAfterAdmin']
+                [$this, 'handleViewBrowseAfter']
             );
         }
 
@@ -210,46 +210,18 @@ class Module extends AbstractModule
             ]);
     }
 
-    public function handleViewShowAfterSite(Event $event)
+    public function handleViewShowAfter(Event $event)
     {
         $view = $event->getTarget();
-        $formatters = $this->listFormatters($view->siteSetting('bulkexport_formatters') ?: []);
-        $view->vars()->offsetSet('formatters', $formatters);
+        $view->vars()->offsetSet('formatters', $view->listFormatters(true));
         echo $view->partial('common/bulk-export-formatters-resource');
     }
 
-    public function handleViewShowAfterAdmin(Event $event)
+    public function handleViewBrowseAfter(Event $event)
     {
         $view = $event->getTarget();
-        $formatters = $this->listFormatters($view->setting('bulkexport_formatters') ?: []);
-        $view->vars()->offsetSet('formatters', $formatters);
-        echo $view->partial('common/bulk-export-formatters-resource');
-    }
-
-    public function handleViewBrowseAfterSite(Event $event)
-    {
-        $view = $event->getTarget();
-        $formatters = $this->listFormatters($view->siteSetting('bulkexport_formatters') ?: []);
-        $view->vars()->offsetSet('formatters', $formatters);
+        $view->vars()->offsetSet('formatters', $view->listFormatters(true));
         echo $view->partial('common/bulk-export-formatters');
-    }
-
-    public function handleViewBrowseAfterAdmin(Event $event)
-    {
-        $view = $event->getTarget();
-        $formatters = $this->listFormatters($view->setting('bulkexport_formatters') ?: []);
-        $view->vars()->offsetSet('formatters', $formatters);
-        echo $view->partial('common/bulk-export-formatters');
-    }
-
-    protected function listFormatters(array $formatters)
-    {
-        $formatterManager = $this->getServiceLocator()->get('BulkExport\Formatter\Manager');
-        $list = [];
-        foreach ($formatters as $formatter) {
-            $list[$formatter] = $formatterManager->get($formatter)->getLabel();
-        }
-        return $list;
     }
 
     /**
