@@ -139,10 +139,10 @@ abstract class AbstractFormatter implements FormatterInterface
         if ($this->hasError) {
             return false;
         }
+        $this->process();
         if ($this->isOutput) {
             return null;
         }
-        $this->process();
         return $this->content;
     }
 
@@ -229,8 +229,6 @@ abstract class AbstractFormatter implements FormatterInterface
 
         if ($this->hasError) {
             $this->content = false;
-        } elseif ($this->isOutput) {
-            $this->process();
         }
 
         return $this;
@@ -251,6 +249,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->isQuery = false;
         $this->hasError = false;
         $this->content = null;
+        return $this;
     }
 
     abstract protected function process();
@@ -267,21 +266,23 @@ abstract class AbstractFormatter implements FormatterInterface
                 ['error' => error_get_last()['message']]
             ));
         }
+        return $this;
     }
 
     protected function finalizeOutput()
     {
         if (!$this->handle) {
             $this->hasError = true;
-            return;
+            return $this;
         }
         if ($this->isOutput) {
             fclose($this->handle);
-            return;
+            return $this;
         }
         rewind($this->handle);
         $this->content = stream_get_contents($this->handle);
         fclose($this->handle);
+        return $this;
     }
 
     /**
@@ -291,7 +292,7 @@ abstract class AbstractFormatter implements FormatterInterface
     protected function toOutput()
     {
         if (!$this->isOutput || $this->hasError) {
-            return;
+            return $this;
         }
 
         $this->size = file_put_contents($this->output, $this->content);
@@ -303,5 +304,6 @@ abstract class AbstractFormatter implements FormatterInterface
             ));
         }
         $this->content = null;
+        return $this;
     }
 }

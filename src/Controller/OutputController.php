@@ -71,7 +71,11 @@ class OutputController extends AbstractActionController
         $options = ['resource_type' => $resourceType];
 
         /** @var \BulkExport\Formatter\FormatterInterface $formatter */
-        $formatter = $this->formatterManager->get($format)->format($resources, null, $options);
+        $formatter = $this->formatterManager->get($format)
+            ->format($resources, null, $options);
+        $filename = $this->getFilename($resourceType, $formatter->getExtension(), $id);
+
+        // TODO Use direct output if available (ods and php://output).
 
         $content = $formatter->getContent();
         if ($content === false) {
@@ -82,7 +86,6 @@ class OutputController extends AbstractActionController
             ));
         }
 
-        $filename = $this->getFilename($resourceType, $formatter->getExtension(), $id);
         $response = $this->getResponse();
         $response
             ->setContent($content);
@@ -93,6 +96,10 @@ class OutputController extends AbstractActionController
             ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
             // This is the strlen as bytes, not as character.
             ->addHeaderLine('Content-length: ' . strlen($content))
+            // When forcing the download of a file over SSL,IE8 and lower
+            // browsers fail if the Cache-Control and Pragma headers are not set.
+            // @see http://support.microsoft.com/KB/323308
+            ->addHeaderLine('Cache-Control: max-age=0')
             ->addHeaderLine('Expires: 0')
             ->addHeaderLine('Pragma: public');
         foreach ($formatter->getResponseHeaders() as $key => $value) {

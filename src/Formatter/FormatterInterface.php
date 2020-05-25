@@ -35,8 +35,8 @@ interface FormatterInterface
     /**
      * Get the formatted resources.
      *
-     * @return string|null|false False when error, else the output itself. No
-     * content is returned when the output is set.
+     * @return string|null|false False when error, else the result. If an output is
+     * set, the content is directly written to it, so the content is null.
      */
     public function getContent();
 
@@ -47,8 +47,7 @@ interface FormatterInterface
      * The types of the resources must not be mixed (int/object). When it is a
      * query, the option "resource_type" must be set and it cannot be the
      * generic type "resources".
-     * @param string|null $output May be a filepath. When set, the formatting is
-     * directly written into it.
+     * @param string|null $output May be a filepath.
      * @param array $options
      * @return self
      */
