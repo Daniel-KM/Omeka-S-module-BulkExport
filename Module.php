@@ -108,7 +108,7 @@ class Module extends AbstractModule
 
         $html .= '<p>';
         $html .= sprintf(
-            $t->translate('All bulk exports will be removed (folder "%s".'), // @translate
+            $t->translate('All bulk exports will be removed (folder "{folder}").'), // @translate
             $basePath . '/bulk_export'
         );
         $html .= '</p>';

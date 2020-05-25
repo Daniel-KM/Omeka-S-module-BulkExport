@@ -32,7 +32,7 @@ class AbstractWriterConfigForm extends Form
                 'type' => Element\Checkbox::class,
                 'options' => [
                     'label' => 'Use a background job', // @translate
-                    'info' => ' For complex formats, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
+                    'info' => 'For complex formats, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
                 ],
                 'attributes' => [
                     'id' => 'use_background',
