@@ -3,6 +3,7 @@
  * @var \Zend\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var string $resourceType
  * @var array $formatters
  */
 
@@ -16,11 +17,13 @@ $escapeAttr = $plugins->get('escapeHtmlAttr');
 $url = $plugins->get('url');
 $assetUrl = $plugins->get('assetUrl');
 
-$resource = reset($resources);
-$resourceType = $resource->getControllerName();
-
 $query = $this->params()->fromQuery();
 unset($query['page'], $query['per_page']);
+
+if (empty($resourceType) || $resourceType === 'resource'):
+    $resourceType = 'resource';
+    $query = ['id' => implode(',', array_map(function($v) { return $v->id(); }, $resources))];
+endif;
 
 $route = $this->status()->isAdminRequest() ? 'admin/resource-output' : 'site/resource-output';
 $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));

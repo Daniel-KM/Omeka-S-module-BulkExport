@@ -164,6 +164,17 @@ class Module extends AbstractModule
         }
 
         $sharedEventManager->attach(
+            'Selection\Controller\Site\GuestBoard',
+            'view.browse.after',
+            [$this, 'handleViewBrowseAfter']
+        );
+        $sharedEventManager->attach(
+            'Basket\Controller\Site\GuestBoard',
+            'view.browse.after',
+            [$this, 'handleViewBrowseAfter']
+        );
+
+        $sharedEventManager->attach(
             \Omeka\Form\SettingForm::class,
             'form.add_elements',
             [$this, 'handleMainSettings']
@@ -219,9 +230,23 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event)
     {
+        $controller = strtolower($event->getTarget()->params()->fromRoute('__CONTROLLER__'));
+        $resourceTypes = [
+            'item',
+            'item-set',
+            'media',
+            'annotation',
+        ];
+        $resourceType = in_array($controller, $resourceTypes) ? $controller : 'resource';
+        $this->handleViewBrowseAfterResources($event, $resourceType);
+    }
+
+    public function handleViewBrowseAfterResources(Event $event, $resourceType = 'resource')
+    {
         $view = $event->getTarget();
         $view->vars()->offsetSet('formatters', $view->listFormatters(true));
-        echo $view->partial('common/bulk-export-formatters');
+        $view->vars()->offsetSet('resourceType', $resourceType);
+        echo $view->partial('common/bulk-export-formatters', $view->vars());
     }
 
     /**
