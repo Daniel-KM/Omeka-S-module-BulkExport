@@ -21,6 +21,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected $configKeys = [
         'separator',
+        'format_headers',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -33,6 +34,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     protected $paramsKeys = [
         'separator',
+        'format_headers',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -45,10 +47,11 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     protected $options = [
         'separator' => ' | ',
         'has_separator' => true,
+        'format_headers' => 'name',
+        'format_generic' => 'raw',
         'format_resource' => 'url_title',
         'format_resource_property' => 'dcterms:identifier',
         'format_uri' => 'uri_label',
-        'format_generic' => 'raw',
     ];
 
     /**
@@ -62,6 +65,11 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
      * @var array
      */
     protected $headers;
+
+    /**
+     * @var array
+     */
+    protected $headerLabels;
 
     /**
      * @var array
@@ -95,6 +103,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
 
     public function process()
     {
+        $this->translator = $this->getServiceLocator()->get('MvcTranslator');
+
         $writer = WriterFactory::create($this->spreadsheetType);
         $this->initializeWriter($writer);
 
@@ -117,6 +127,9 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             ['number' => count($headers)]
         );
 
+        if ($this->getParam('format_headers', 'name') === 'label') {
+            $headers = $this->getHeadersLabels();
+        }
         $writer
             ->addRow($headers);
 
@@ -400,6 +413,79 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         }
 
         return $this->headers;
+    }
+
+    protected function getHeadersLabels()
+    {
+        if (is_array($this->headerLabels)) {
+            return $this->headerLabels;
+        }
+
+        $this->headerLabels = [];
+        $mapping = [
+            'o:id' => $this->translator->translate('id'), // @translate,
+            'o:resource_template' => $this->translator->translate('Resource template'), // @translate
+            'o:resource_class' => $this->translator->translate('Resource template'), // @translate
+            'o:owner' => $this->translator->translate('Owner'), // @translate
+            'o:is_public' => $this->translator->translate('Is public'), // @translate
+            'o:is_open' => $this->translator->translate('Is open'), // @translate
+            'o:item_set[o:id]' => $this->translator->translate('Item set id'), // @translate
+            'o:item_set[dcterms:title]' => $this->translator->translate('Item set'), // @translate
+            'o:media[o:id]' => $this->translator->translate('Media id'), // @translate
+            'o:media[file]' => $this->translator->translate('Media file'), // @translate
+            'o:item[o:id]' => $this->translator->translate('Item id'), // @translate
+            'o:item[dcterms:identifier]' => $this->translator->translate('Item identifier'), // @translate
+            'o:item[dcterms:title]' => $this->translator->translate('Item title'), // @translate
+            'o:resource[o:id]' => $this->translator->translate('Resource id'), // @translate
+            'o:resource[dcterms:identifier]' => $this->translator->translate('Resource identifier'), // @translate
+            'o:resource[dcterms:title]' => $this->translator->translate('Resource title'), // @translate
+            'o:resource' => $this->translator->translate('Resource'), // @translate
+            'o:item' => $this->translator->translate('Item'), // @translate
+            'o:item_set' => $this->translator->translate('Item set'), // @translate
+            'o:media' => $this->translator->translate('Media'), // @translate
+            'o:annotation' => $this->translator->translate('Annotation'), // @translate
+            'o:asset' => $this->translator->translate('Asset'), // @translate
+        ];
+
+        foreach ($this->headers as $header) {
+            if (isset($mapping[$header])) {
+                $this->headerLabels[] = $mapping[$header];
+            } elseif (strpos($header, '[')) {
+                $base = strtok($header, '[');
+                $property = trim(strok('['), ' []');
+                $second = isset($mapping[$property])
+                    ? $mapping[$property]
+                    : $this->translateProperty($property);
+                switch ($base) {
+                    case 'oa:hasBody':
+                        $this->headerLabels[] = sprintf(
+                            $this->translator->translate('Annotation body: %s'),  // @translate;
+                            $second
+                        );
+                        break;
+                    case 'oa:hasTarget':
+                        $this->headerLabels[] = sprintf(
+                            $this->translator->translate('Annotation target: %s'),  // @translate;
+                            $second
+                        );
+                        break;
+                    default:
+                        $first = isset($mapping[$base])
+                            ? $mapping[$base]
+                            : $base;
+                        $this->headerLabels[] = sprintf(
+                            '%1$s: %2$s', // @translate
+                            $first,
+                            $second
+                        );
+                        break;
+                }
+            } else {
+                $this->headerLabels[] = $this->translateProperty($header);
+            }
+        }
+
+        return $this->headerLabels;
     }
 
     protected function countResources()

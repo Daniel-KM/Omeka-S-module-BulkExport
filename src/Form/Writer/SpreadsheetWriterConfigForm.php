@@ -31,6 +31,21 @@ It is recommended to use a character that is never used, like "|", or a random s
                 ],
             ])
             ->add([
+                'name' => 'format_headers',
+                'type' => Element\Radio::class,
+                'options' => [
+                    'label' => 'Metadata names or headers', // @translate
+                    'value_options' => [
+                        'name' => 'Rdf names', // @translate
+                        'label' => 'Labels', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'format_headers',
+                    'value' => 'name',
+                ],
+            ])
+            ->add([
                 'name' => 'format_generic',
                 'type' => Element\Radio::class,
                 'options' => [
@@ -111,6 +126,14 @@ It is recommended to use a character that is never used, like "|", or a random s
     protected function addInputFilter()
     {
         $this->getInputFilter()
+            ->add([
+                'name' => 'format_headers',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'format_generic',
+                'required' => false,
+            ])
             ->add([
                 'name' => 'format_resource',
                 'required' => false,

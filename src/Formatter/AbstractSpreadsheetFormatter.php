@@ -13,6 +13,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
     protected $defaultOptionsSpreadsheet = [
         'separator' => ' | ',
         'has_separator' => true,
+        'format_headers' => 'name',
         'format_generic' => 'raw',
         'format_resource' => 'url_title',
         'format_resource_property' => 'dcterms:identifier',

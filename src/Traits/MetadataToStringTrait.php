@@ -15,6 +15,7 @@ trait MetadataToStringTrait
      * @param array $params Managed params are:
      * - has_separator: if set, all values of a property will be fetched, else
      *   only the first one.
+     * - format_headers: "name" (default) or "label".
      * - format_generic: "html" or raw value.
      * - format_resource: may be "url_title", "url", "title", "id", "identifier"
      *   (with the property set below), "identifier_id", or id. Default is

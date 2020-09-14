@@ -40,6 +40,21 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'bulkexport_format_headers',
+                'type' => Element\Radio::class,
+                'options' => [
+                    'label' => 'Metadata names or headers', // @translate
+                    'value_options' => [
+                        'name' => 'Rdf names', // @translate
+                        'label' => 'Labels', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_format_headers',
+                    'value' => 'name',
+                ],
+            ])
+            ->add([
                 'name' => 'bulkexport_format_generic',
                 'type' => Element\Radio::class,
                 'options' => [
