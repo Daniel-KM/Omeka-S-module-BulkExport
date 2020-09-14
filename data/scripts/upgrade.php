@@ -21,10 +21,6 @@ $api = $plugins->get('api');
 $space = strtolower(__NAMESPACE__);
 
 if (version_compare($oldVersion, '3.0.7', '<')) {
-    // The resource "bulk_exporters" is not available during upgrade.
-    require_once dirname(dirname(__DIR__)) . '/src/Entity/Export.php';
-    require_once dirname(dirname(__DIR__)) . '/src/Entity/Exporter.php';
-
     $directory = new \RecursiveDirectoryIterator(dirname(__DIR__) . '/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
     $iterator = new \RecursiveIteratorIterator($directory);
     foreach ($iterator as $filepath => $file) {
@@ -38,4 +34,16 @@ ALTER TABLE `bulk_export`
     ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
 SQL;
     $connection->exec($sql);
+}
+
+if (version_compare($oldVersion, '3.0.7', '>')
+    && version_compare($oldVersion, '3.0.12', '<')
+) {
+    $filepaths = [
+        dirname(__DIR__) . '/exporters/txt.php',
+        dirname(__DIR__) . '/exporters/odt.php',
+    ];
+    foreach ($filepaths as $filepath) {
+        $this->installExporter($filepath);
+    }
 }

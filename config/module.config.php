@@ -284,7 +284,7 @@ return [
                 'tsv',
                 'txt',
             ],
-            'bulkexport_format_fields' => 'name',
+            'bulkexport_format_fields' => 'label',
             'bulkexport_format_generic' => 'string',
             'bulkexport_format_resource' => 'url_title',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
