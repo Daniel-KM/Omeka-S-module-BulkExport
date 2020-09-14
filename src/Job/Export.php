@@ -55,7 +55,13 @@ class Export extends AbstractJob
             $params['exporter_label'] = $export->exporter()->label();
             $params['export_started'] = $export->started();
             $writer->setParams($params);
+            $siteSlug = $writer->getParam('site_slug');
+        }  else {
+            $siteSlug = null;
         }
+
+        // Avoid a fatal error with background job when there is no route.
+        $this->prepareRouteMatch($siteSlug);
 
         $writer->process();
 
@@ -167,5 +173,48 @@ class Export extends AbstractJob
             $writer->setParams($export->writerParams());
         }
         return $writer;
+    }
+
+    /**
+     * Set the default route and the default slug.
+     *
+     *  This method avoids crash when output of value is html and that the site
+     *  slug is needed for resource->siteUrl() used in linked resources.
+     *
+     * @param string $siteSlug
+     */
+    protected function prepareRouteMatch($siteSlug)
+    {
+        if (empty($siteSlug)) {
+            $siteSlug = $this->getServiceLocator()->get('Omeka\Settings')->get('default_site');
+            try {
+                $response = $this->api()->read('sites', ['id' => $siteSlug]);
+                $siteSlug = $response->getContent()->slug();
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                $response = $this->api()->search('sites', ['limit' => 1]);
+                $siteSlug = $response ? $response->getContent()->slug() : '***';
+            }
+        }
+
+        /**
+         * @var \Zend\Mvc\MvcEvent $mvcEvent
+         */
+        $mvcEvent = $this->getServiceLocator()->get('Application')->getMvcEvent();
+        $routeMatch = $mvcEvent->getRouteMatch();
+        if ($routeMatch) {
+            $routeMatch->setParam('site-slug', $siteSlug);
+        } else {
+            $params = [
+                '__NAMESPACE__' => 'Omeka\Controller\Site',
+                '__SITE__' => true,
+                'controller' => 'Index',
+                'action' => 'index',
+                'site-slug' => $siteSlug,
+            ];
+            $routeMatch = new \Zend\Router\Http\RouteMatch($params);
+            $routeMatch->setMatchedRouteName('site');
+            $mvcEvent->setRouteMatch($routeMatch);
+        }
+        return $this;
     }
 }
