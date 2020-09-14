@@ -49,7 +49,7 @@ It is recommended to use a character that is never used, like "|", or a random s
                 'name' => 'format_resource',
                 'type' => Element\Radio::class,
                 'options' => [
-                    'label' => 'Format of resources', // @translate
+                    'label' => 'Format of linked resources', // @translate
                     'value_options' => [
                         'id' => 'Id', // @translate
                         'identifier' => 'Identifier (property below)', // @translate

@@ -59,6 +59,12 @@ class OutputController extends AbstractActionController
             }
         }
 
+        $options = [];
+        $settings = $this->status()->isSiteRequest() ? $this->siteSettings() : $this->settings();
+        $options['format_generic'] = $settings->get('bulkexport_format_generic', 'string');
+        $options['format_resource'] = $settings->get('bulkexport_format_resource', 'id');
+        $options['format_resource_property'] = $settings->get('bulkexport_format_resource_property', 'dcterms:identifier');
+        $options['format_uri'] = $settings->get('bulkexport_format_uri', 'uri_label');
         $resourceTypes = [
             'item' => 'items',
             'item-set' => 'item_sets',
@@ -68,11 +74,9 @@ class OutputController extends AbstractActionController
         ];
         $resourceType = $params->fromRoute('resource-type');
         $resourceType = $resourceTypes[$resourceType];
-        $options = ['resource_type' => $resourceType];
+        $options['resource_type'] = $resourceType;
 
-        $resourceLimit = $this->status()->isSiteRequest()
-            ? $this->siteSettings()->get('bulkexport_limit', 1000)
-            : $this->settings()->get('bulkexport_limit', 1000);
+        $resourceLimit = $settings->get('bulkexport_limit', 1000);
         if ($resourceLimit > 0) {
             $options['limit'] = $resourceLimit;
         }

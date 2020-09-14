@@ -263,6 +263,10 @@ return [
                 'ods',
                 'tsv',
             ],
+            'bulkexport_format_generic' => 'string',
+            'bulkexport_format_resource' => 'id',
+            'bulkexport_format_resource_property' => 'dcterms:identifier',
+            'bulkexport_format_uri' => 'uri_label',
         ],
         'site_settings' => [
             'bulkexport_limit' => 1000,
@@ -273,6 +277,10 @@ return [
                 'ods',
                 'tsv',
             ],
+            'bulkexport_format_generic' => 'string',
+            'bulkexport_format_resource' => 'id',
+            'bulkexport_format_resource_property' => 'dcterms:identifier',
+            'bulkexport_format_uri' => 'uri_label',
         ],
     ],
 ];
