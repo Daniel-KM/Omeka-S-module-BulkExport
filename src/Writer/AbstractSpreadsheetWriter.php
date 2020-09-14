@@ -177,6 +177,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
          * @var \Doctrine\DBAL\Connection $connection
          * @var \Doctrine\ORM\EntityRepository $repository
          * @var \Omeka\Api\Adapter\ItemAdapter $adapter
+         * @var \Omeka\Api\Manager $api
          */
         $resourceClass = $this->mapResourceTypeToClass($resourceType);
         $apiResource = $this->mapResourceTypeToApiResource($resourceType);
@@ -240,7 +241,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             }
 
             $response = $api
-                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $query);
+                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $query, ['initialize' => false, 'finalize' => false]);
 
             // TODO Check other resources (user…).
             /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
@@ -252,6 +253,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
             // TODO Use SpreadsheetEntry.
 
             foreach ($resources as $resource) {
+                $resource = $adapter->getRepresentation($resource);
                 $dataRow = [];
                 if ($hasSeparator) {
                     foreach ($headers as $header) {
@@ -407,6 +409,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
          * @var \Doctrine\ORM\EntityManager $entityManager
          * @var \Doctrine\DBAL\Connection $connection
          * @var \Doctrine\ORM\EntityRepository $repository
+         * @var \Omeka\Api\Manager $api
          */
         $services = $this->getServiceLocator();
         $api = $services->get('Omeka\ApiManager');
@@ -421,10 +424,9 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
                     parse_str($query, $queryArray);
                     $query = $queryArray;
                 }
-                $result[$resourceType] = $api->search($resource, ['limit' => 1] + $query)->getTotalResults();
+                $result[$resourceType] = $api->search($resource, ['limit' => 1] + $query, ['initialize' => false, 'finalize' => false])->getTotalResults();
             }
         }
-
         return $result;
     }
 }
