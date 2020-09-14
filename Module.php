@@ -54,27 +54,32 @@ class Module extends AbstractModule
 
     protected function postInstall()
     {
+        $directory = new \RecursiveDirectoryIterator(__DIR__ . '/data/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        foreach ($iterator as $filepath => $file) {
+            $this->installExporter($filepath);
+        }
+    }
+
+    protected function installExporter($filepath)
+    {
+        // The resource "bulk_exporters" is not available during upgrade.
+        require_once __DIR__ . '/src/Entity/Export.php';
+        require_once __DIR__ . '/src/Entity/Exporter.php';
+
         $services = $this->getServiceLocator();
         $entityManager = $services->get('Omeka\EntityManager');
 
         $user = $services->get('Omeka\AuthenticationService')->getIdentity();
 
-        // The resource "bulk_exporters" is not available during upgrade.
-        require_once __DIR__ . '/src/Entity/Export.php';
-        require_once __DIR__ . '/src/Entity/Exporter.php';
-
-        $directory = new \RecursiveDirectoryIterator(__DIR__ . '/data/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
-        $iterator = new \RecursiveIteratorIterator($directory);
-        foreach ($iterator as $filepath => $file) {
-            $data = include $filepath;
-            $data['owner'] = $user;
-            $entity = new \BulkExport\Entity\Exporter();
-            foreach ($data as $key => $value) {
-                $method = 'set' . ucfirst($key);
-                $entity->$method($value);
-            }
-            $entityManager->persist($entity);
+        $data = include $filepath;
+        $data['owner'] = $user;
+        $entity = new \BulkExport\Entity\Exporter();
+        foreach ($data as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            $entity->$method($value);
         }
+        $entityManager->persist($entity);
         $entityManager->flush();
     }
 

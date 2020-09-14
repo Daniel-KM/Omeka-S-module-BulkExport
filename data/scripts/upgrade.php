@@ -21,8 +21,6 @@ $api = $plugins->get('api');
 $space = strtolower(__NAMESPACE__);
 
 if (version_compare($oldVersion, '3.0.7', '<')) {
-    $user = $services->get('Omeka\AuthenticationService')->getIdentity();
-
     // The resource "bulk_exporters" is not available during upgrade.
     require_once dirname(dirname(__DIR__)) . '/src/Entity/Export.php';
     require_once dirname(dirname(__DIR__)) . '/src/Entity/Exporter.php';
@@ -30,16 +28,8 @@ if (version_compare($oldVersion, '3.0.7', '<')) {
     $directory = new \RecursiveDirectoryIterator(dirname(__DIR__) . '/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
     $iterator = new \RecursiveIteratorIterator($directory);
     foreach ($iterator as $filepath => $file) {
-        $data = include $filepath;
-        $data['owner'] = $user;
-        $entity = new \BulkExport\Entity\Exporter();
-        foreach ($data as $key => $value) {
-            $method = 'set' . ucfirst($key);
-            $entity->$method($value);
-        }
-        $entityManager->persist($entity);
+        $this->installExporter($filepath);
     }
-    $entityManager->flush();
 }
 
 if (version_compare($oldVersion, '3.0.8', '<')) {
