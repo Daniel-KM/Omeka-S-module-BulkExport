@@ -2,11 +2,14 @@
 
 namespace BulkExport\Formatter;
 
+use BulkExport\Traits\OpenDocumentTextTemplateTrait;
 use Log\Stdlib\PsrMessage;
 use PhpOffice\PhpWord;
 
 class Odt extends AbstractFieldsFormatter
 {
+    use OpenDocumentTextTemplateTrait;
+
     protected $label = 'odt';
     protected $extension = 'odt';
     protected $responseHeaders = [
@@ -17,16 +20,6 @@ class Odt extends AbstractFieldsFormatter
      * @var string
      */
     protected $filepath;
-
-    /**
-     * @var \PhpOffice\PhpWord\PhpWord
-     */
-    protected $document;
-
-    /**
-     * @var \PhpOffice\PhpWord\Element\Section
-     */
-    protected $documentSection;
 
     public function format($resources, $output = null, array $options = [])
     {
@@ -50,46 +43,13 @@ class Odt extends AbstractFieldsFormatter
             // TODO Use the method openToBrowser() too.
             // "php://temp" doesn't seem to work.
             : tempnam($tempDir, 'omk_export_');
-        $this->document = new PhpWord\PhpWord();
-        $this->document
-            ->addFontStyle(
-                'record_label',
-                ['name' => 'Tahoma', 'size' => 12, 'color' => '1B2232', 'bold' => true]
-            );
-        $this->document
-            ->addFontStyle(
-                'record_metadata',
-                ['name' => 'Tahoma', 'size' => 12]
-            );
-        $this->documentSection = $this->document->addSection();
-        return $this;
-    }
-
-    protected function writeFields(array $fields)
-    {
-        // $section = $this->document->addSection();
-        $section = $this->documentSection;
-        foreach ($fields as $fieldName => $fieldValues) {
-            if (!is_array($fieldValues)) {
-                $fieldValues = [$fieldValues];
-            }
-            if ($this->options['format_fields'] === 'label') {
-                $fieldName = $this->getFieldLabel($fieldName);
-            }
-            // $section->addText($fieldName, 'record_label');
-            $section->addText($fieldName);
-            foreach ($fieldValues as $fieldValue) {
-                // $section->addText($fieldValue, 'record_metadata');
-                $section->addText($fieldValue);
-            }
-        }
-        $section->addText('--');
+        $this->initializeOpenDocumentText();
         return $this;
     }
 
     protected function finalizeOutput()
     {
-        $objWriter = PhpWord\IOFactory::createWriter($this->document, 'ODText');
+        $objWriter = PhpWord\IOFactory::createWriter($this->openDocument, 'ODText');
         $objWriter->save($this->filepath);
         if (!$this->isOutput) {
             $this->content = file_get_contents($this->filepath);

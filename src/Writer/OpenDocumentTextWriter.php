@@ -3,26 +3,19 @@
 namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\TextWriterConfigForm;
+use BulkExport\Traits\OpenDocumentTextTemplateTrait;
 use Log\Stdlib\PsrMessage;
 use PhpOffice\PhpWord;
 
 class OpenDocumentTextWriter extends AbstractFieldsWriter
 {
+    use OpenDocumentTextTemplateTrait;
+
     protected $label = 'OpenDocument Text'; // @translate
     protected $extension = 'odt';
     protected $mediaType = 'application/vnd.oasis.opendocument.text';
     protected $configFormClass = TextWriterConfigForm::class;
     protected $paramsFormClass = TextWriterConfigForm::class;
-
-    /**
-     * @var \PhpOffice\PhpWord\PhpWord
-     */
-    protected $document;
-
-    /**
-     * @var \PhpOffice\PhpWord\Element\Section
-     */
-    protected $documentSection;
 
     public function isValid()
     {
@@ -38,55 +31,13 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
 
     protected function initializeOutput()
     {
-        $this->document = new PhpWord\PhpWord();
-        $this->document
-            ->addFontStyle(
-                'record_label',
-                ['name' => 'Tahoma', 'size' => 12, 'color' => '1B2232', 'bold' => true]
-            );
-            $this->document
-            ->addFontStyle(
-                'record_metadata',
-                ['name' => 'Tahoma', 'size' => 12]
-            );
-        $this->documentSection = $this->document->addSection();
-        return $this;
-    }
-
-    protected function writeFields(array $fields)
-    {
-        $section = $this->document->addSection();
-        // $section = $this->documentSection;
-        foreach ($fields as $fieldName => $fieldValues) {
-            if (!is_array($fieldValues)) {
-                $fieldValues = [$fieldValues];
-            }
-            if ($this->options['format_fields'] === 'label') {
-                $fieldName = $this->getFieldLabel($fieldName);
-            }
-            // $section->addText($fieldName, 'record_label');
-            $section->addText($fieldName);
-            foreach ($fieldValues as $fieldValue) {
-                $fieldValue = strip_tags($fieldValue);
-                // $section->addText($fieldValue, 'record_metadata');
-                if (mb_strlen($fieldValue) < 1000) {
-                    $section->addText($fieldValue);
-                } else {
-                    $this->logger->warn(
-                        'Skipped field "{fieldname}" of resource: it contains more than 1000 characters.', // @translate
-                        ['fieldname' => $fieldName]
-                    );
-                }
-            }
-        }
-        $section->addText('--');
-        $section->addTextBreak();
+        $this->initializeOpenDocumentText();
         return $this;
     }
 
     protected function finalizeOutput()
     {
-        $objWriter = PhpWord\IOFactory::createWriter($this->document, 'ODText');
+        $objWriter = PhpWord\IOFactory::createWriter($this->openDocument, 'ODText');
         $objWriter->save($this->filepath);
         return $this;
     }
