@@ -37,7 +37,7 @@ It is recommended to use a character that is never used, like "|", or a random s
                     'label' => 'Format of values', // @translate
                     'value_options' => [
                         'string' => 'String', // @translate
-                        'html' => 'Html', // @translate
+                        'html' => 'Html (may contain output of modules)', // @translate
                     ],
                 ],
                 'attributes' => [

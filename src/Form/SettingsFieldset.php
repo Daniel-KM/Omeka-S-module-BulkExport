@@ -47,7 +47,7 @@ class SettingsFieldset extends Fieldset
                     'label' => 'Format of values', // @translate
                     'value_options' => [
                         'string' => 'String', // @translate
-                        'html' => 'Html', // @translate
+                        'html' => 'Html (slow with some modules)', // @translate
                     ],
                 ],
                 'attributes' => [
