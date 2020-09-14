@@ -64,6 +64,7 @@ class OutputController extends AbstractActionController
         $options = [];
         $settings = $isSiteRequest ? $this->siteSettings() : $this->settings();
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;
+        $options['metadata'] = $settings->get('bulkexport_metadata', []);
         $options['format_fields'] = $settings->get('bulkexport_format_fields', 'name');
         $options['format_generic'] = $settings->get('bulkexport_format_generic', 'string');
         $options['format_resource'] = $settings->get('bulkexport_format_resource', 'url_title');

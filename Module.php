@@ -209,6 +209,10 @@ class Module extends AbstractModule
             ->add([
                 'name' => 'bulkexport_formatters',
                 'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata',
+                'required' => false,
             ]);
     }
 
@@ -217,6 +221,10 @@ class Module extends AbstractModule
         $event->getParam('inputFilter')->get('bulkexport')
             ->add([
                 'name' => 'bulkexport_formatters',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata',
                 'required' => false,
             ]);
     }

@@ -5,11 +5,11 @@ use Omeka\Form\Element\PropertySelect;
 
 trait MetadataSelectTrait
 {
-    public function appendMetadataSelect()
+    public function appendMetadataSelect($name = 'metadata')
     {
         $this
             ->add([
-                'name' => 'metadata',
+                'name' => $name,
                 'type' => PropertySelect::class,
                 'options' => [
                     'label' => 'Metadata', // @translate
@@ -27,11 +27,11 @@ trait MetadataSelectTrait
         return $this;
     }
 
-    protected function addInputFilterMetadata()
+    protected function addInputFilterMetadata($name = 'metadata')
     {
         $this->getInputFilter()
             ->add([
-                'name' => 'metadata',
+                'name' => $name,
                 'required' => false,
             ]);
         return $this;

@@ -1,12 +1,15 @@
 <?php
 namespace BulkExport\Form;
 
+use BulkExport\Form\Writer\MetadataSelectTrait;
 use Omeka\Form\Element\PropertySelect;
 use Zend\Form\Element;
 use Zend\Form\Fieldset;
 
 class SiteSettingsFieldset extends Fieldset
 {
+    use MetadataSelectTrait;
+
     /**
      * @var string
      */
@@ -120,6 +123,7 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
         ;
+        $this->appendMetadataSelect('bulkexport_metadata');
     }
 
     public function setFormatters(array $formatters)
