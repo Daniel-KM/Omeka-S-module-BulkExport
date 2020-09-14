@@ -14,11 +14,8 @@
     .bulk-export .formatters li {
         list-style: none;
         display: inline-block;
-        border-right: 1px solid;
-        padding-right: 4px;
-        display: inline-block;
     }
-    .bulk-export .formatters li:last-of-type {
-        border-right: 0;
+    .bulk-export .formatters li:not(:last-child):after {
+        content: ' · ';
     }
 }
