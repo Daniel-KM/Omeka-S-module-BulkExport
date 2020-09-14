@@ -41,7 +41,7 @@ class SettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_format_headers',
+                'name' => 'bulkexport_format_fields',
                 'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Metadata names or headers', // @translate
@@ -51,7 +51,7 @@ class SettingsFieldset extends Fieldset
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_headers',
+                    'id' => 'bulkexport_format_fields',
                     'value' => 'name',
                 ],
             ])

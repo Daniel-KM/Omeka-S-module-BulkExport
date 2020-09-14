@@ -1,9 +1,9 @@
 <?php
+
 namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
-use BulkExport\Form\Writer\TsvWriterParamsForm;
 use Zend\Form\Form;
 
 class TsvWriter extends CsvWriter
@@ -13,11 +13,11 @@ class TsvWriter extends CsvWriter
     protected $mediaType = 'text/tab-separated-values';
     protected $spreadsheetType = Type::CSV;
     protected $configFormClass = SpreadsheetWriterConfigForm::class;
-    protected $paramsFormClass = TsvWriterParamsForm::class;
+    protected $paramsFormClass = SpreadsheetWriterConfigForm::class;
 
     protected $configKeys = [
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -29,7 +29,7 @@ class TsvWriter extends CsvWriter
 
     protected $paramsKeys = [
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -53,5 +53,6 @@ class TsvWriter extends CsvWriter
         $params['enclosure'] = self::DEFAULT_ENCLOSURE;
         $params['escape'] = self::DEFAULT_ESCAPE;
         $this->setParams($params);
+        return $this;
     }
 }

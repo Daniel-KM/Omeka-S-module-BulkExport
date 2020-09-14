@@ -1,4 +1,5 @@
 <?php
+
 namespace BulkExport\Formatter;
 
 use Log\Stdlib\PsrMessage;
@@ -32,9 +33,19 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $defaultOptions = [];
 
     /**
+     * @var \Zend\Log\Logger
+     */
+    protected $logger;
+
+    /**
      * @var \Omeka\Mvc\Controller\Plugin\Api
      */
     protected $api;
+
+    /**
+     * @var \Zend\Mvc\I18n\Translator
+     */
+    protected $translator;
 
     /**
      * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]
@@ -72,6 +83,14 @@ abstract class AbstractFormatter implements FormatterInterface
      * @var string
      */
     protected $resourceType = null;
+
+    /**
+     * In formatter, it should be a single value, but for simplicity with
+     * writer and traits, an array is available too. This is the json type.
+     *
+     * @var array
+     */
+    protected $resourceTypes;
 
     /**
      * @var bool
@@ -151,7 +170,9 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->reset();
 
         // The api is almost always required.
+        $this->logger = $this->services->get('Omeka\Logger');
         $this->api = $this->services->get('ControllerPluginManager')->get('api');
+        $this->translator = $this->getServiceLocator()->get('MvcTranslator');
 
         $resourceTypes = [
             'items',
@@ -163,6 +184,7 @@ abstract class AbstractFormatter implements FormatterInterface
 
         $options += [
             'resource_type' => null,
+            'metadata' => [],
             'limit' => 0,
             'site_slug' => '',
         ];
@@ -171,6 +193,9 @@ abstract class AbstractFormatter implements FormatterInterface
         if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceTypes)) {
             $this->resourceType = $options['resource_type'];
         }
+        $options['resource_types'] = empty($this->resourceType)
+            ? []
+            : [$this->mapApiResourceToJsonResourceType($this->resourceType)];
 
         // Some quick checks to prepare params in all cases.
         if (!empty($resources)) {
@@ -319,5 +344,31 @@ abstract class AbstractFormatter implements FormatterInterface
         }
         $this->content = null;
         return $this;
+    }
+
+
+    protected function mapApiResourceToJsonResourceType($resourceType)
+    {
+        $mapping = [
+            // Core.
+            'users' => 'o:User',
+            'vocabularies' => 'o:Vocabulary',
+            'resource_classes' => 'o:ResourceClass',
+            'resource_templates' => 'o:ResourceTemplate',
+            'properties' => 'o:Property',
+            'items' => 'o:Item',
+            'media' => 'o:Media',
+            'item_sets' => 'o:ItemSet',
+            'modules' => 'o:Module',
+            'sites' => 'o:Site',
+            'site_pages' => 'o:SitePage',
+            'jobs' => 'o:Job',
+            'resources' => 'o:Resource',
+            'assets' => 'o:Asset',
+            'api_resources' => 'o:ApiResource',
+            // Modules.
+            'annotations' => 'oa:Annotation',
+        ];
+        return isset($mapping[$resourceType]) ? $mapping[$resourceType] : null;
     }
 }

@@ -13,7 +13,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     protected $writerManager;
 
     /**
-     * @var \BulkExport\Interfaces\Writer
+     * @var \BulkExport\Writer\WriterInterface
      */
     protected $writer;
 
@@ -84,7 +84,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * @return \BulkExport\Interfaces\Writer|null
+     * @return \BulkExport\Writer\WriterInterface|null
      */
     public function writer()
     {

@@ -1,5 +1,6 @@
 <?php
-namespace BulkExport\Interfaces;
+
+namespace BulkExport\Writer;
 
 use Omeka\Job\AbstractJob as Job;
 use Zend\Log\Logger;
@@ -11,7 +12,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * It can have a config (implements Configurable) and parameters (implements
  * Parametrizable).
  */
-interface Writer
+interface WriterInterface
 {
     /**
      * Writer constructor.
@@ -60,6 +61,7 @@ interface Writer
 
     /**
      * Process the export.
+     * @return self
      */
     public function process();
 }

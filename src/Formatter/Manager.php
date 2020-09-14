@@ -1,4 +1,5 @@
 <?php
+
 namespace BulkExport\Formatter;
 
 use Omeka\ServiceManager\AbstractPluginManager;

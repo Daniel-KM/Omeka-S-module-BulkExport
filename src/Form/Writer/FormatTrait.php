@@ -1,46 +1,16 @@
 <?php
-namespace BulkExport\Form;
+namespace BulkExport\Form\Writer;
 
 use Omeka\Form\Element\PropertySelect;
 use Zend\Form\Element;
-use Zend\Form\Fieldset;
 
-class SiteSettingsFieldset extends Fieldset
+trait FormatTrait
 {
-    /**
-     * @var string
-     */
-    protected $label = 'Bulk Export'; // @translate
-
-    protected $formatters = [];
-
-    public function init()
+    public function appendFormats()
     {
         $this
             ->add([
-                'name' => 'bulkexport_limit',
-                'type' => Element\Number::class,
-                'options' => [
-                    'label' => 'Maximum number of resources to export', // @translate
-                ],
-                'attributes' => [
-                    'id' => 'bulkexport_limit',
-                    'min' => 0,
-                ],
-            ])
-            ->add([
-                'name' => 'bulkexport_formatters',
-                'type' => Element\MultiCheckbox::class,
-                'options' => [
-                    'label' => 'Formatters to display in resource pages', // @translate
-                    'value_options' => $this->formatters,
-                ],
-                'attributes' => [
-                    'id' => 'bulkexport_formatters',
-                ],
-            ])
-            ->add([
-                'name' => 'bulkexport_format_fields',
+                'name' => 'format_fields',
                 'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Metadata names or headers', // @translate
@@ -50,27 +20,27 @@ class SiteSettingsFieldset extends Fieldset
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_fields',
+                    'id' => 'format_fields',
                     'value' => 'name',
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_format_generic',
+                'name' => 'format_generic',
                 'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Format of values', // @translate
                     'value_options' => [
                         'string' => 'String', // @translate
-                        'html' => 'Html (slow with some modules)', // @translate
+                        'html' => 'Html (may contain output of modules)', // @translate
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_generic',
+                    'id' => 'format_generic',
                     'value' => 'string',
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_format_resource',
+                'name' => 'format_resource',
                 'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Format of linked resources', // @translate
@@ -84,19 +54,19 @@ class SiteSettingsFieldset extends Fieldset
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_resource',
+                    'id' => 'format_resource',
                     'value' => 'url_title',
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_format_resource_property',
+                'name' => 'format_resource_property',
                 'type' => PropertySelect::class,
                 'options' => [
                     'label' => 'Property for linked resources', // @translate
                     'term_as_value' => true,
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_resource_property',
+                    'id' => 'format_resource_property',
                     'multiple' => false,
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select property…', // @translate
@@ -104,7 +74,7 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_format_uri',
+                'name' => 'format_uri',
                 'type' => Element\Radio::class,
                 'options' => [
                     'label' => 'Format of uri', // @translate
@@ -115,16 +85,38 @@ class SiteSettingsFieldset extends Fieldset
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_format_uri',
+                    'id' => 'format_uri',
                     'value' => 'uri_label',
                 ],
             ])
         ;
+        return $this;
     }
 
-    public function setFormatters(array $formatters)
+    protected function addInputFilterFormats()
     {
-        $this->formatters = $formatters;
+        $this->getInputFilter()
+            ->add([
+                'name' => 'format_fields',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'format_generic',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'format_resource',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'format_resource_property',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'format_uri',
+                'required' => false,
+            ])
+        ;
         return $this;
     }
 }

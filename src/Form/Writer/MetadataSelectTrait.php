@@ -7,32 +7,33 @@ trait MetadataSelectTrait
 {
     public function appendMetadataSelect()
     {
-        $this->add([
-            'name' => 'metadata',
-            'type' => PropertySelect::class,
-            'options' => [
-                'label' => 'Metadata', // @translate
-                'info' => 'If empty, all used properties will be returned.', // @translate
-                'term_as_value' => true,
-                'prepend_value_options' => $this->prependMappingOptions(),
-            ],
-            'attributes' => [
-                'required' => false,
-                'multiple' => true,
-                'class' => 'chosen-select',
-                'data-placeholder' => 'Select one or more metadata…', // @translate
-            ],
-        ]);
+        $this
+            ->add([
+                'name' => 'metadata',
+                'type' => PropertySelect::class,
+                'options' => [
+                    'label' => 'Metadata', // @translate
+                    'info' => 'If empty, all used properties will be returned.', // @translate
+                    'term_as_value' => true,
+                    'prepend_value_options' => $this->prependMappingOptions(),
+                ],
+                'attributes' => [
+                    'required' => false,
+                    'multiple' => true,
+                    'class' => 'chosen-select',
+                    'data-placeholder' => 'Select one or more metadata…', // @translate
+                ],
+            ]);
         return $this;
     }
 
     protected function addInputFilterMetadata()
     {
-        $inputFilter = $this->getInputFilter();
-        $inputFilter->add([
-            'name' => 'metadata',
-            'required' => false,
-        ]);
+        $this->getInputFilter()
+            ->add([
+                'name' => 'metadata',
+                'required' => false,
+            ]);
         return $this;
     }
 

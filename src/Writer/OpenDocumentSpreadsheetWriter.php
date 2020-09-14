@@ -1,9 +1,9 @@
 <?php
+
 namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\WriterInterface;
-use BulkExport\Form\Writer\OpenDocumentSpreadsheetWriterParamsForm;
+use Box\Spout\Writer\WriterFactory;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Log\Stdlib\PsrMessage;
 
@@ -13,11 +13,11 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
     protected $extension = 'ods';
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
     protected $configFormClass = SpreadsheetWriterConfigForm::class;
-    protected $paramsFormClass = OpenDocumentSpreadsheetWriterParamsForm::class;
+    protected $paramsFormClass = SpreadsheetWriterConfigForm::class;
 
     protected $configKeys = [
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -28,7 +28,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $paramsKeys = [
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -52,11 +52,15 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         return parent::isValid();
     }
 
-    protected function initializeWriter(WriterInterface $writer)
+    protected function initializeOutput()
     {
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
-        $writer
-            ->setTempFolder($tempDir);
+
+        $this->spreadsheetWriter = WriterFactory::create($this->spreadsheetType);
+        $this->spreadsheetWriter
+            ->setTempFolder($tempDir)
+            ->openToFile($this->filepath);
+        return $this;
     }
 }

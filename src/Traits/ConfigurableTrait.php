@@ -1,4 +1,5 @@
 <?php
+
 namespace BulkExport\Traits;
 
 trait ConfigurableTrait

@@ -4,7 +4,7 @@ namespace BulkExport\Job;
 use BulkExport\Api\Representation\ExportRepresentation;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Interfaces\Writer;
+use BulkExport\Writer\WriterInterface;
 use BulkExport\Writer\Manager as WriterManager;
 use Log\Stdlib\PsrMessage;
 use Omeka\Job\AbstractJob;
@@ -56,7 +56,7 @@ class Export extends AbstractJob
             $params['export_started'] = $export->started();
             $writer->setParams($params);
             $siteSlug = $writer->getParam('site_slug');
-        }  else {
+        } else {
             $siteSlug = null;
         }
 
@@ -75,9 +75,9 @@ class Export extends AbstractJob
      * Save the filename from the writer, if any.
      *
      * @param ExportRepresentation $export
-     * @param Writer $writer
+     * @param WriterInterface $writer
      */
-    protected function saveFilename(ExportRepresentation $export, Writer $writer)
+    protected function saveFilename(ExportRepresentation $export, WriterInterface $writer)
     {
         if (!($writer instanceof Parametrizable)) {
             return;
@@ -152,7 +152,7 @@ class Export extends AbstractJob
 
     /**
      * @throws \Omeka\Job\Exception\InvalidArgumentException
-     * @return \BulkExport\Interfaces\Writer
+     * @return \BulkExport\Writer\WriterInterface
      */
     protected function getWriter()
     {

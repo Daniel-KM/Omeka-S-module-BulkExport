@@ -1,8 +1,8 @@
 <?php
+
 namespace BulkExport\Writer;
 
 use BulkExport\AbstractPluginManager;
-use BulkExport\Interfaces\Writer;
 
 class Manager extends AbstractPluginManager
 {
@@ -13,6 +13,6 @@ class Manager extends AbstractPluginManager
 
     protected function getInterface()
     {
-        return Writer::class;
+        return WriterInterface::class;
     }
 }

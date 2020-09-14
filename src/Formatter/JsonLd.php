@@ -1,4 +1,5 @@
 <?php
+
 namespace BulkExport\Formatter;
 
 class JsonLd extends Json

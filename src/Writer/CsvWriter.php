@@ -1,10 +1,9 @@
 <?php
+
 namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\WriterInterface;
 use BulkExport\Form\Writer\CsvWriterConfigForm;
-use BulkExport\Form\Writer\CsvWriterParamsForm;
 
 /**
  * Box Spout Spreadshet writer doesn't support escape for csv (even if it
@@ -21,14 +20,14 @@ class CsvWriter extends AbstractSpreadsheetWriter
     protected $extension = 'csv';
     protected $mediaType = 'text/csv';
     protected $configFormClass = CsvWriterConfigForm::class;
-    protected $paramsFormClass = CsvWriterParamsForm::class;
+    protected $paramsFormClass = CsvWriterConfigForm::class;
 
     protected $configKeys = [
         'delimiter',
         'enclosure',
         'escape',
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -43,7 +42,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'enclosure',
         'escape',
         'separator',
-        'format_headers',
+        'format_fields',
         'format_generic',
         'format_resource',
         'format_resource_property',
@@ -55,9 +54,11 @@ class CsvWriter extends AbstractSpreadsheetWriter
 
     protected $spreadsheetType = Type::CSV;
 
-    protected function initializeWriter(WriterInterface $writer)
+    protected function initializeOutput()
     {
-        $writer
+        parent::initializeOutput();
+
+        $this->spreadsheetWriter
             ->setFieldDelimiter($this->getParam('delimiter', self::DEFAULT_DELIMITER))
             ->setFieldEnclosure($this->getParam('enclosure', self::DEFAULT_ENCLOSURE))
             // The escape character cannot be set with this writer.
@@ -65,5 +66,6 @@ class CsvWriter extends AbstractSpreadsheetWriter
             // The end of line cannot be set with csv writer (reader only).
             // ->setEndOfLineCharacter("\n")
             ->setShouldAddBOM(false);
+        return $this;
     }
 }

@@ -1,9 +1,9 @@
 <?php
+
 namespace BulkExport\Writer;
 
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Interfaces\Writer;
 use BulkExport\Traits\ConfigurableTrait;
 use BulkExport\Traits\ParametrizableTrait;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
@@ -14,7 +14,7 @@ use Zend\Form\Form;
 use Zend\Log\Logger;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-abstract class AbstractWriter implements Writer, Configurable, Parametrizable
+abstract class AbstractWriter implements WriterInterface, Configurable, Parametrizable
 {
     use ConfigurableTrait, ParametrizableTrait, ServiceLocatorAwareTrait;
 
@@ -74,6 +74,11 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
     protected $totalEntries;
 
     /**
+     * @var string
+     */
+    protected $filepath;
+
+    /**
      * Writer constructor.
      *
      * @param ServiceLocatorInterface $serviceLocator
@@ -126,6 +131,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $values = $form->getData();
         $config = array_intersect_key($values, array_flip($this->configKeys));
         $this->setConfig($config);
+        return $this;
     }
 
     public function getParamsFormClass()
@@ -139,7 +145,10 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $values = $form->getData();
         $params = array_intersect_key($values, array_flip($this->paramsKeys));
         $this->setParams($params);
+        return $this;
     }
+
+    abstract public function process();
 
     /**
      * Check or create the destination folder.
@@ -157,7 +166,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
                     'The destination folder "{folder}" is not writeable.', // @translate
                     ['folder' => $basePath]
                 );
-                return;
+                return null;
             }
             @mkdir($dirPath, 0755, true);
         } elseif (!is_dir($dirPath) || !is_writeable($dirPath)) {
@@ -165,7 +174,7 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
                 'The destination folder "{folder}" is not writeable.', // @translate
                 ['folder' => $basePath . '/' . $dirPath]
             );
-            return;
+            return null;
         }
         return $dirPath;
     }
@@ -175,11 +184,11 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         // TODO Use Omeka factory for temp files.
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
-        $tempfilepath = tempnam($tempDir, 'omk_export_');
-        return $tempfilepath;
+        $this->filepath = tempnam($tempDir, 'omk_export_');
+        return $this;
     }
 
-    protected function saveFile($tempfilepath)
+    protected function saveFile()
     {
         $config = $this->getServiceLocator()->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
@@ -205,19 +214,19 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
             $filepath = $destinationDir . '/' . $filename;
             if (!file_exists($filepath)) {
                 try {
-                    $result = copy($tempfilepath, $filepath);
-                    @unlink($tempfilepath);
+                    $result = copy($this->filepath, $filepath);
+                    @unlink($this->filepath);
                 } catch (\Exception $e) {
                     throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
                         'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
-                        ['filename' => $filename, 'tempfile' => $tempfilepath, 'exception' => $e]
+                        ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
                     ));
                 }
 
                 if (!$result) {
                     throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
                         'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
-                        ['filename' => $filename, 'tempfile' => $tempfilepath]
+                        ['filename' => $filename, 'tempfile' => $this->filepath]
                     ));
                 }
 
@@ -228,8 +237,14 @@ abstract class AbstractWriter implements Writer, Configurable, Parametrizable
         $params = $this->getParams();
         $params['filename'] = $filename;
         $this->setParams($params);
+        return $this;
     }
 
+    /**
+     * @todo Factorize with \BulkExport\Traits\ResourceFieldsTrait::mapResourceTypeToClass()
+     * @param string $jsonResourceType
+     * @return string|null
+     */
     protected function mapResourceTypeToClass($jsonResourceType)
     {
         $mapping = [

@@ -1,4 +1,5 @@
 <?php
+
 namespace BulkExport\Traits;
 
 use Omeka\Api\Representation\AbstractRepresentation;
@@ -12,10 +13,9 @@ trait MetadataToStringTrait
      * @param AbstractResourceRepresentation $resource
      * @param string $metadata It can be a key of the json-serialized resource,
      * or a specific key used by some formatters.
-     * @param array $params Managed params are:
-     * - has_separator: if set, all values of a property will be fetched, else
-     *   only the first one.
-     * - format_headers: "name" (default) or "label".
+     * @param array $params Params are merged with options. Managed params are:
+     * - only_first: if set, only the first value will be fetched for properties.
+     * - format_fields: "name" (default) or "label".
      * - format_generic: "html" or raw value.
      * - format_resource: may be "url_title", "url", "title", "id", "identifier"
      *   (with the property set below), "identifier_id", or id. Default is
@@ -153,9 +153,12 @@ trait MetadataToStringTrait
             // All properties for all resources.
             default:
                 /** @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
-                $vv = $params['has_separator']
-                    ? $resource->value($metadata, ['all' => true])
-                    : [$resource->value($metadata)];
+                if (empty($params['only_first'])) {
+                    $vv = $resource->value($metadata, ['all' => true, 'default' => []]);
+                } else {
+                    $vv = $resource->value($metadata, ['default' => false]);
+                    $vv = $vv ? [$vv] : [];
+                }
                 foreach ($vv as &$v) {
                     $type = $v->type();
                     switch ($type) {

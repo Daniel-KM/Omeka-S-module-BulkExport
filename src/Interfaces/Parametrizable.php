@@ -23,6 +23,7 @@ interface Parametrizable
 
     /**
      * @param Form $form
+     * @return self
      */
     public function handleParamsForm(Form $form);
 }

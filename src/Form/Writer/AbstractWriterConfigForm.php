@@ -5,7 +5,7 @@ use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Zend\Form\Element;
 use Zend\Form\Form;
 
-class AbstractWriterConfigForm extends Form
+abstract class AbstractWriterConfigForm extends Form
 {
     use ServiceLocatorAwareTrait;
 
