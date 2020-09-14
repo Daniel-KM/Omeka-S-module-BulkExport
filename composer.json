@@ -1,6 +1,10 @@
 {
     "require": {
-        "box/spout": "^2.7"
+        "box/spout": "^2.7",
+        "phpoffice/phpword": "^0.17.0"
+    },
+    "replace": {
+        "zendframework/zend-escaper": "*"
     },
     "require-dev": {
         "biblibre/omeka-s-test-helper": "dev-master"
