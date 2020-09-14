@@ -2,8 +2,8 @@ Bulk Export (module for Omeka S)
 ================================
 
 [Bulk Export] is a generic export module for [Omeka S] that provides common
-output formats (json, xml, spreadsheet), both for admin and public sides. It is
-easily extensible by other modules.
+output formats (json, xml, spreadsheet, text), both for admin and public sides.
+It is easily extensible by other modules.
 
 Other known modules that provides output: [Bibliography].
 
@@ -17,13 +17,13 @@ a spreadsheet, that can be imported automatically by [Bulk Import].
 Installation
 ------------
 
-This module requires the module [`Log`] and the optional module [`Generic`].
+This module requires the module [Log] and the optional module [Generic].
 
 See general end user documentation for [installing a module].
 
 * From the zip
 
-Download the last release [`BulkExport.zip`] from the list of releases, and
+Download the last release [BulkExport.zip] from the list of releases, and
 uncompress it in the `modules` directory.
 
 * From the source and for development
@@ -32,7 +32,7 @@ If the module was installed from the source, rename the name of the folder of
 the module to `BulkExport`, go to the root of the module, and run:
 
 ```
-    composer install
+composer install --no-dev
 ```
 
 
@@ -49,7 +49,6 @@ To create a new writer, take your inspiration on the existing `SpreadsheetWriter
 TODO
 ----
 
-- Select the type of resource to export
 - Select resources like in the module ebook.
 
 
@@ -113,9 +112,10 @@ by [Biblibre].
 [Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka Classic]: https://omeka.org/classic
 [Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
-[`Generic`]: https://github.com/Daniel-KM/Omeka-S-module-Generic
-[`Log`]: https://github.com/Daniel-KM/Omeka-S-module-Log
-[`BulkExport.zip`]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/releases
+[Bibliography]: https://github.com/Daniel-KM/Omeka-S-module-Bibliography
+[Generic]: https://github.com/Daniel-KM/Omeka-S-module-Generic
+[Log]: https://github.com/Daniel-KM/Omeka-S-module-Log
+[BulkExport.zip]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [module issues]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
