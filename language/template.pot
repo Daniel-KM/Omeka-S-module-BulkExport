@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 00:00+0000\n"
+"POT-Creation-Date: 2020-09-21 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:105
+#: Module.php:110
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:111
+#: Module.php:116
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:117
+#: Module.php:122
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -33,68 +33,165 @@ msgstr ""
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:598
+#: src/Generic/AbstractModule.php:601
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:618
+#: src/Generic/AbstractModule.php:621
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:686
+#: src/Generic/AbstractModule.php:689
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
 "unavailable."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:290
+#: src/Traits/OpenDocumentTextTemplateTrait.php:19
+msgid "Anonymous"
+msgstr ""
+
+#: src/Traits/OpenDocumentTextTemplateTrait.php:58
+#: src/Traits/OpenDocumentTextTemplateTrait.php:59
+#: src/Traits/OpenDocumentTextTemplateTrait.php:63
+#: src/Traits/OpenDocumentTextTemplateTrait.php:65
+msgid "Bibliography"
+msgstr ""
+
+#: src/Traits/OpenDocumentTextTemplateTrait.php:66
+msgid "Digital library)"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:111
+msgid "id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:115
+msgid "Is public"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:116
+msgid "Is open"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:118
+msgid "Resource id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:119
+msgid "Resource identifier"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:120
+msgid "Resource title"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:122
+msgid "Item set id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:125
+msgid "Item id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:126
+msgid "Item identifier"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:127
+msgid "Item title"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:129
+msgid "Media id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:130
+msgid "Media file"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:131
+msgid "File media type"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:132
+msgid "File size"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:133
+msgid "Original file url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:134
+msgid "Asset"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:135
+msgid "Annotation"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:136
+msgid "Url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:154
+#, php-format
+msgid "Annotation body: %s"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:159
+#, php-format
+msgid "Annotation target: %s"
+msgstr ""
+
+#: src/Writer/AbstractWriter.php:305
 msgid "users"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:291
+#: src/Writer/AbstractWriter.php:306
 msgid "vocabularies"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:292
+#: src/Writer/AbstractWriter.php:307
 msgid "resource classes"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:293
+#: src/Writer/AbstractWriter.php:308
 msgid "resource templates"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:294
+#: src/Writer/AbstractWriter.php:309
 msgid "properties"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:298
+#: src/Writer/AbstractWriter.php:313
 msgid "modules"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:299
+#: src/Writer/AbstractWriter.php:314
 msgid "sites"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:300
+#: src/Writer/AbstractWriter.php:315
 msgid "site pages"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:301
+#: src/Writer/AbstractWriter.php:316
 msgid "jobs"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:302
+#: src/Writer/AbstractWriter.php:317
 msgid "resources"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:304
+#: src/Writer/AbstractWriter.php:319
 msgid "api resources"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:306
+#: src/Writer/AbstractWriter.php:321
 msgid "annotations"
 msgstr ""
 
@@ -301,6 +398,10 @@ msgstr ""
 msgid "Exporter: %s"
 msgstr ""
 
+#: data/exporters/odt.php:4
+msgid "OpenDocument text (odt)"
+msgstr ""
+
 #: data/exporters/ods.php:4
 msgid "OpenDocument spreadsheet (ods)"
 msgstr ""
@@ -309,7 +410,7 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: data/exporters/csv.php:4 src/Writer/CsvWriter.php:20
+#: data/exporters/csv.php:4 src/Writer/CsvWriter.php:19
 msgid "CSV"
 msgstr ""
 
@@ -317,20 +418,104 @@ msgstr ""
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:267 Module.php:277
+#: Module.php:280 Module.php:290
 msgid "The destination folder \"{path}\" is not writeable."
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:23 src/Form/SiteSettingsFieldset.php:23
+#: src/Form/SettingsFieldset.php:27 src/Form/SiteSettingsFieldset.php:27
 msgid "Maximum number of resources to export"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:24
+#: src/Form/SettingsFieldset.php:28
 msgid "This setting is applied only for the direct output."
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:35 src/Form/SiteSettingsFieldset.php:34
+#: src/Form/SettingsFieldset.php:39 src/Form/SiteSettingsFieldset.php:38
 msgid "Formatters to display in resource pages"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:50 src/Form/SiteSettingsFieldset.php:49
+#: src/Form/Writer/FormatTrait.php:16
+msgid "Metadata names or headers"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:52 src/Form/SiteSettingsFieldset.php:51
+#: src/Form/Writer/FormatTrait.php:18
+msgid "Rdf names"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:53 src/Form/SiteSettingsFieldset.php:52
+#: src/Form/Writer/FormatTrait.php:19
+msgid "Labels"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:65 src/Form/SiteSettingsFieldset.php:64
+#: src/Form/Writer/FormatTrait.php:31
+msgid "Format of values"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:67 src/Form/SiteSettingsFieldset.php:66
+#: src/Form/Writer/FormatTrait.php:33
+msgid "String"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:68 src/Form/SiteSettingsFieldset.php:67
+msgid "Html (slow with some modules)"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:80 src/Form/SiteSettingsFieldset.php:79
+#: src/Form/Writer/FormatTrait.php:46
+msgid "Format of linked resources"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:82 src/Form/SiteSettingsFieldset.php:81
+#: src/Form/Writer/FormatTrait.php:48
+msgid "Omeka url and title"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:82
+#: src/Form/Writer/FormatTrait.php:49
+msgid "Omeka url"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:84
+#: src/Form/Writer/FormatTrait.php:51
+msgid "Id"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:86 src/Form/SiteSettingsFieldset.php:85
+#: src/Form/Writer/FormatTrait.php:52
+msgid "Identifier (property below)"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:86
+#: src/Form/Writer/FormatTrait.php:53
+msgid "Identifier or id"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:99 src/Form/SiteSettingsFieldset.php:98
+#: src/Form/Writer/FormatTrait.php:65
+msgid "Property for linked resources"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:114 src/Form/SiteSettingsFieldset.php:113
+#: src/Form/Writer/FormatTrait.php:80
+msgid "Format of uri"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:116 src/Form/SiteSettingsFieldset.php:115
+#: src/Form/Writer/FormatTrait.php:82
+msgid "Uri and label separated by a space"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:117 src/Form/SiteSettingsFieldset.php:116
+#: src/Form/Writer/FormatTrait.php:83
+msgid "Uri only"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:118 src/Form/SiteSettingsFieldset.php:117
+#: src/Form/Writer/FormatTrait.php:84
+msgid "Html"
 msgstr ""
 
 #: src/Form/Writer/ResourceQueryTrait.php:14
@@ -341,11 +526,11 @@ msgstr ""
 msgid "Limit the resources output. Should be used with one resource type only."
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:24
+#: src/Form/Writer/SpreadsheetWriterConfigForm.php:18
 msgid "Multi-value separator"
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:25
+#: src/Form/Writer/SpreadsheetWriterConfigForm.php:19
 msgid ""
 "To output all values of each property, cells can be multivalued with this "
 "separator.\n"
@@ -353,131 +538,90 @@ msgid ""
 "random string."
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:37
-msgid "Format of values"
+#: src/Form/Writer/FormatTrait.php:34
+msgid "Html (may contain output of modules)"
 msgstr ""
 
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:39
-msgid "String"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:40
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:87
-msgid "Html"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:52
-msgid "Format of resources"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:54
-msgid "Id"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:55
-msgid "Identifier (property below)"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:56
-msgid "Identifier or id"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:68
-msgid "Resource property for identifier"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:83
-msgid "Uri"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:85
-msgid "Uri and label separated by a space"
-msgstr ""
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:86
-msgid "Uri only"
-msgstr ""
-
-#: src/Form/Writer/MetadataSelectTrait.php:15
+#: src/Form/Writer/MetadataSelectTrait.php:16
 msgid "If empty, all used properties will be returned."
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:23
+#: src/Form/Writer/MetadataSelectTrait.php:24
 msgid "Select one or more metadata…"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:43
+#: src/Form/Writer/MetadataSelectTrait.php:44
 msgid "Resource metadata"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:45
-#: src/Form/Writer/MetadataSelectTrait.php:62
-#: src/Form/Writer/MetadataSelectTrait.php:70
-#: src/Form/Writer/MetadataSelectTrait.php:79
-#: src/Form/Writer/MetadataSelectTrait.php:87
+#: src/Form/Writer/MetadataSelectTrait.php:46
+#: src/Form/Writer/MetadataSelectTrait.php:63
+#: src/Form/Writer/MetadataSelectTrait.php:71
+#: src/Form/Writer/MetadataSelectTrait.php:80
+#: src/Form/Writer/MetadataSelectTrait.php:88
 msgid "Internal id"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:50
+#: src/Form/Writer/MetadataSelectTrait.php:51
 msgid "Resource class"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:51
+#: src/Form/Writer/MetadataSelectTrait.php:52
 msgid "Owner email"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:52
+#: src/Form/Writer/MetadataSelectTrait.php:53
 msgid "Owner id"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:53
+#: src/Form/Writer/MetadataSelectTrait.php:54
 msgid "Visibility public/private"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:55
+#: src/Form/Writer/MetadataSelectTrait.php:56
 msgid "Openness"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:56
+#: src/Form/Writer/MetadataSelectTrait.php:57
 msgid "All used properties"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:60
+#: src/Form/Writer/MetadataSelectTrait.php:61
 msgid "Item set (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:64
-#: src/Form/Writer/MetadataSelectTrait.php:73
-#: src/Form/Writer/MetadataSelectTrait.php:81
-#: src/Form/Writer/MetadataSelectTrait.php:89
+#: src/Form/Writer/MetadataSelectTrait.php:65
+#: src/Form/Writer/MetadataSelectTrait.php:74
+#: src/Form/Writer/MetadataSelectTrait.php:82
+#: src/Form/Writer/MetadataSelectTrait.php:90
 msgid "Label (first title)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:68
+#: src/Form/Writer/MetadataSelectTrait.php:69
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:71
+#: src/Form/Writer/MetadataSelectTrait.php:72
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:77
+#: src/Form/Writer/MetadataSelectTrait.php:78
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:85
+#: src/Form/Writer/MetadataSelectTrait.php:86
 msgid "Resource (for annotation)"
 msgstr ""
 
-#: src/Form/Writer/CsvWriterConfigForm.php:14
+#: src/Form/Writer/CsvWriterConfigForm.php:15
 msgid "Delimiter"
 msgstr ""
 
-#: src/Form/Writer/CsvWriterConfigForm.php:25
+#: src/Form/Writer/CsvWriterConfigForm.php:26
 msgid "Enclosure"
 msgstr ""
 
-#: src/Form/Writer/CsvWriterConfigForm.php:36
+#: src/Form/Writer/CsvWriterConfigForm.php:37
 msgid "Escape"
 msgstr ""
 
@@ -521,21 +665,26 @@ msgstr ""
 msgid "Annotations"
 msgstr ""
 
-#: src/Formatter/Ods.php:22
+#: src/Formatter/Ods.php:22 src/Formatter/Odt.php:28
 msgid ""
 "To process export to \"{format}\", the php extensions \"zip\" and \"xml\" "
 "are required."
 msgstr ""
 
-#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:278
+#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:298
+#: src/Writer/TextWriter.php:49
 msgid "Unable to open output: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:315
+#: src/Formatter/AbstractFormatter.php:335
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
-#: src/Controller/OutputController.php:91
+#: src/Formatter/AbstractFieldsFormatter.php:51
+msgid "No metadata are used in any resources."
+msgstr ""
+
+#: src/Controller/OutputController.php:100
 msgid "Unable to format resources as {format}."
 msgstr ""
 
@@ -578,23 +727,23 @@ msgstr ""
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:280
+#: src/Controller/Admin/ExporterController.php:286
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:281
+#: src/Controller/Admin/ExporterController.php:287
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:300
+#: src/Controller/Admin/ExporterController.php:306
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:360
+#: src/Controller/Admin/ExporterController.php:366
 msgid "Continue"
 msgstr ""
 
@@ -610,115 +759,136 @@ msgstr ""
 msgid "Missing output format configuration"
 msgstr ""
 
-#: src/Job/Export.php:39
+#: src/Job/Export.php:41
 msgid "Export error: {error}"
 msgstr ""
 
-#: src/Job/Export.php:47
+#: src/Job/Export.php:50
 msgid "Export started"
 msgstr ""
 
-#: src/Job/Export.php:61
+#: src/Job/Export.php:71
 msgid "Export completed"
 msgstr ""
 
-#: src/Job/Export.php:87
+#: src/Job/Export.php:97
 msgid "The export is available as \"{filename}\"."
 msgstr ""
 
-#: src/Job/Export.php:137
+#: src/Job/Export.php:147
 msgid "Export record does not exist"
 msgstr ""
 
-#: src/Job/Export.php:156
+#: src/Job/Export.php:166
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:88
-msgid "Output directory \"{folder}\" is not writeable."
+#: src/Traits/OpenDocumentTextTemplateTrait.php:55
+#, php-format
+msgid "Bibliography from %s"
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:107
-msgid "No headers are used in any resources."
+#: src/Traits/OpenDocumentTextTemplateTrait.php:92
+msgid ""
+"Skipped field \"{fieldname}\" of resource: it contains more than 1000 "
+"characters."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:116
-msgid "{number} different headers are used in all resources."
+#: src/Traits/ResourceFieldsTrait.php:167
+#, php-format
+msgid "%1$s: %2$s"
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:142
-msgid "No resource type selected."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:147
-msgid "No resource to export."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:155
+#: src/Writer/AbstractSpreadsheetWriter.php:47
 msgid ""
 "No separator selected: only the first value of each property of each "
 "resource will be output."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:168
-msgid "All resources of all resource types ({total}) exported."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:227
-msgid "Starting export of {total} {resource_type}."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:236
-msgid ""
-"The job \"Export\" was stopped: {processed}/{total} resources processed."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:265
+#: src/Writer/AbstractSpreadsheetWriter.php:95
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:298
-#: src/Writer/AbstractSpreadsheetWriter.php:310
-msgid ""
-"{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
-"skipped."
-msgstr ""
-
-#: src/Writer/AbstractSpreadsheetWriter.php:315
-msgid "End export of {total} {resource_type}."
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:157 src/Writer/AbstractWriter.php:165
+#: src/Writer/AbstractWriter.php:166 src/Writer/AbstractWriter.php:174
 msgid "The destination folder \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:212
+#: src/Writer/AbstractWriter.php:221
 msgid ""
 "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
 "{exception}"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:219
+#: src/Writer/AbstractWriter.php:228
 msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
+msgstr ""
+
+#: src/Writer/OpenDocumentTextWriter.php:14
+msgid "OpenDocument Text"
+msgstr ""
+
+#: src/Writer/OpenDocumentTextWriter.php:24
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:47
+msgid ""
+"To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
+"required."
 msgstr ""
 
 #: src/Writer/OpenDocumentSpreadsheetWriter.php:12
 msgid "OpenDocument Spreadsheet"
 msgstr ""
 
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:45
-msgid ""
-"To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
-"required."
+#: src/Writer/AbstractFieldsWriter.php:100
+msgid "Output directory \"{folder}\" is not writeable."
 msgstr ""
 
-#: config/module.config.php:76
+#: src/Writer/AbstractFieldsWriter.php:125
+msgid "No headers are used in any resources."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:143
+msgid "{number} different fields are used in all resources."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:199
+msgid "No resource type selected."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:204
+msgid "No resource to export."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:216
+msgid "All resources of all resource types ({total}) exported."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:247
+msgid "Starting export of {total} {resource_type}."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:256
+msgid ""
+"The job \"Export\" was stopped: {processed}/{total} resources processed."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:299
+#: src/Writer/AbstractFieldsWriter.php:311
+msgid ""
+"{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
+"skipped."
+msgstr ""
+
+#: src/Writer/AbstractFieldsWriter.php:316
+msgid "End export of {total} {resource_type}."
+msgstr ""
+
+#: config/module.config.php:72
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:89
+#: config/module.config.php:85
 msgid "Past Exports"
 msgstr ""
 
