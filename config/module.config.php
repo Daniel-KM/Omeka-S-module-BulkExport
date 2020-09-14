@@ -231,6 +231,7 @@ return [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
             Writer\TsvWriter::class => Writer\TsvWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
+            Writer\TextWriter::class => Writer\TextWriter::class,
         ],
     ],
     'formatters' => [
@@ -240,6 +241,7 @@ return [
             Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
             Formatter\Ods::class => Service\Formatter\FormatterFactory::class,
             Formatter\Tsv::class => Service\Formatter\FormatterFactory::class,
+            Formatter\Txt::class => Service\Formatter\FormatterFactory::class,
         ],
         'aliases' => [
             'csv' => Formatter\Csv::class,
@@ -247,6 +249,7 @@ return [
             'json-ld' => Formatter\JsonLd::class,
             'ods' => Formatter\Ods::class,
             'tsv' => Formatter\Tsv::class,
+            'txt' => Formatter\Txt::class,
         ],
     ],
     'bulkexport' => [
@@ -258,6 +261,7 @@ return [
                 'json-ld',
                 'ods',
                 'tsv',
+                'txt',
             ],
             'bulkexport_format_fields' => 'name',
             'bulkexport_format_generic' => 'string',
@@ -273,6 +277,7 @@ return [
                 'json-ld',
                 'ods',
                 'tsv',
+                'txt',
             ],
             'bulkexport_format_fields' => 'name',
             'bulkexport_format_generic' => 'string',
