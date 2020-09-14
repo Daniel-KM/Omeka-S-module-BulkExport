@@ -9,6 +9,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
     protected $defaultOptionsSpreadsheet = [
         'separator' => ' | ',
         'has_separator' => true,
+        'empty_fields' => true,
     ];
 
     protected $prependFieldNames = true;

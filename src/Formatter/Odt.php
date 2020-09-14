@@ -3,7 +3,6 @@
 namespace BulkExport\Formatter;
 
 use Log\Stdlib\PsrMessage;
-use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use PhpOffice\PhpWord;
 
 class Odt extends AbstractFieldsFormatter
@@ -40,22 +39,6 @@ class Odt extends AbstractFieldsFormatter
             $resources = false;
         }
         return parent::format($resources, $output, $options);
-    }
-
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
-    {
-        $dataResource = parent::getDataResource($resource);
-        // Remove empty metadata.
-        foreach ($dataResource as $key => &$fieldValues) {
-            if (!is_array($fieldValues)) {
-                $fieldValues = [$fieldValues];
-            }
-            $fieldValues = array_filter($fieldValues, 'strlen');
-            if (!count($fieldValues)) {
-                unset($dataResource[$key]);
-            }
-        }
-        return $dataResource;
     }
 
     protected function initializeOutput()

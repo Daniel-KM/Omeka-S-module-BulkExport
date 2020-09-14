@@ -20,6 +20,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         'format_resource_property' => 'dcterms:identifier',
         'format_uri' => 'uri_label',
         'only_first' => false,
+        'empty_fields' => false,
     ];
 
     protected $prependFieldNames = false;
@@ -87,12 +88,19 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
     protected function getDataResource(AbstractResourceEntityRepresentation $resource)
     {
         $dataResource = [];
+        $removeEmptyFields = !$this->options['empty_fields'];
         foreach ($this->fieldNames as $fieldName) {
             $values = $this->stringMetadata($resource, $fieldName);
+            if ($removeEmptyFields) {
+                $values = array_filter($values, 'strlen');
+                if (!count($values)) {
+                    continue;
+                }
+            }
             if (isset($dataResource[$fieldName])) {
                 $dataResource[$fieldName] = is_array($dataResource[$fieldName])
-                ? array_merge($dataResource[$fieldName], $values)
-                : array_merge([$dataResource[$fieldName]], $values);
+                    ? array_merge($dataResource[$fieldName], $values)
+                    : array_merge([$dataResource[$fieldName]], $values);
             } else {
                 $dataResource[$fieldName] = $values;
             }

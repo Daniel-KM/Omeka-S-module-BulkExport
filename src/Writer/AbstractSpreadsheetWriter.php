@@ -15,9 +15,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
         'separator',
     ];
 
-    protected $options = [
+    protected $spreadsheetOptions = [
         'separator' => ' | ',
         'has_separator' => true,
+        'empty_fields' => true,
     ];
 
     protected $prependFieldNames = true;
@@ -36,7 +37,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
     protected function initializeParams()
     {
-        parent::initializeParams();
+        $this->options = $this->spreadsheetOptions + $this->options;
         $separator = $this->getParam('separator', '');
         $this->options['separator'] = $separator;
         $this->options['has_separator'] = mb_strlen($separator) > 0;
@@ -46,7 +47,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
                 'No separator selected: only the first value of each property of each resource will be output.' // @translate
             );
         }
-        return $this;
+        return parent::initializeParams();
     }
 
     protected function initializeOutput()
@@ -84,7 +85,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
         $separator = $this->options['separator'];
         foreach ($this->fieldNames as $fieldName) {
-            $values = $this->stringMetadata($resource, $fieldName) ?: [];
+            $values = $this->stringMetadata($resource, $fieldName);
             // Check if one of the values has the separator.
             $check = array_filter($values, function ($v) use ($separator) {
                 return strpos((string) $v, $separator) !== false;

@@ -8,7 +8,7 @@ use Omeka\Api\Representation\AbstractResourceRepresentation;
 trait MetadataToStringTrait
 {
     /**
-     * Get the string representation of a value for any metadata.
+     * Get the list of string representations of any metadata.
      *
      * @param AbstractResourceRepresentation $resource
      * @param string $metadata It can be a key of the json-serialized resource,

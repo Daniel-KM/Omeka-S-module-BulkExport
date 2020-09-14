@@ -4,7 +4,6 @@ namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\TextWriterConfigForm;
 use Log\Stdlib\PsrMessage;
-use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use PhpOffice\PhpWord;
 
 class OpenDocumentTextWriter extends AbstractFieldsWriter
@@ -52,22 +51,6 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
             );
         $this->documentSection = $this->document->addSection();
         return $this;
-    }
-
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
-    {
-        $dataResource = parent::getDataResource($resource);
-        // Remove empty metadata.
-        foreach ($dataResource as $key => &$fieldValues) {
-            if (!is_array($fieldValues)) {
-                $fieldValues = [$fieldValues];
-            }
-            $fieldValues = array_filter($fieldValues, 'strlen');
-            if (!count($fieldValues)) {
-                unset($dataResource[$key]);
-            }
-        }
-        return $dataResource;
     }
 
     protected function writeFields(array $fields)

@@ -54,6 +54,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'format_resource_property' => 'dcterms:identifier',
         'format_uri' => 'uri_label',
         'only_first' => false,
+        'empty_fields' => false,
         'query' => [],
     ];
 
@@ -154,7 +155,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     protected function initializeParams()
     {
         // Merge params for simplicity.
-        $this->options = array_merge($this->getParams(), $this->options);
+        $this->options = $this->getParams() + $this->options;
 
         if (!in_array($this->options['format_resource'], ['identifier', 'identifier_id'])) {
             $this->options['format_resource_property'] = null;
@@ -322,8 +323,15 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     protected function getDataResource(AbstractResourceEntityRepresentation $resource)
     {
         $dataResource = [];
+        $removeEmptyFields = !$this->options['empty_fields'];
         foreach ($this->fieldNames as $fieldName) {
             $values = $this->stringMetadata($resource, $fieldName);
+            if ($removeEmptyFields) {
+                $values = array_filter($values, 'strlen');
+                if (!count($values)) {
+                    continue;
+                }
+            }
             if (isset($dataResource[$fieldName])) {
                 $dataResource[$fieldName] = is_array($dataResource[$fieldName])
                     ? array_merge($dataResource[$fieldName], $values)
