@@ -29,7 +29,9 @@ class Export extends AbstractJob
 
     public function perform()
     {
-        $logger = $this->getLogger();
+        // Init logger and export.
+        $this->getLogger();
+
         $export = $this->getExport();
         $this->api()->update('bulk_exports', $export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
         $writer = $this->getWriter();
@@ -41,10 +43,11 @@ class Export extends AbstractJob
             ));
         }
 
-        $writer->setLogger($logger);
-        $writer->setJob($this);
+        $writer
+            ->setLogger($this->logger)
+            ->setJob($this);
 
-        $logger->log(Logger::NOTICE, 'Export started'); // @translate
+        $this->logger->log(Logger::NOTICE, 'Export started'); // @translate
 
         // Save the label of the exporter, if needed (to create filename, etc.).
         if ($writer instanceof Parametrizable) {
@@ -58,7 +61,7 @@ class Export extends AbstractJob
 
         $this->saveFilename($export, $writer);
 
-        $logger->notice('Export completed'); // @translate
+        $this->logger->notice('Export completed'); // @translate
     }
 
     /**
