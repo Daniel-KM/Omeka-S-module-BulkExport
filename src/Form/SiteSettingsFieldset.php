@@ -58,24 +58,26 @@ class SiteSettingsFieldset extends Fieldset
                 'name' => 'bulkexport_format_resource',
                 'type' => Element\Radio::class,
                 'options' => [
-                    'label' => 'Format of resources', // @translate
+                    'label' => 'Format of linked resources', // @translate
                     'value_options' => [
+                        'url_title' => 'Omeka url and title', // @translate
+                        'url' => 'Omeka url', // @translate
+                        'title' => 'Title', // @translate
                         'id' => 'Id', // @translate
                         'identifier' => 'Identifier (property below)', // @translate
                         'identifier_id' => 'Identifier or id', // @translate
                     ],
-                    'info' => 'This setting is applied only for the direct output.', // @translate
                 ],
                 'attributes' => [
                     'id' => 'bulkexport_format_resource',
-                    'value' => 'id',
+                    'value' => 'url_title',
                 ],
             ])
             ->add([
                 'name' => 'bulkexport_format_resource_property',
                 'type' => PropertySelect::class,
                 'options' => [
-                    'label' => 'Resource property for identifier', // @translate
+                    'label' => 'Property for linked resources', // @translate
                     'term_as_value' => true,
                 ],
                 'attributes' => [
@@ -90,7 +92,7 @@ class SiteSettingsFieldset extends Fieldset
                 'name' => 'bulkexport_format_uri',
                 'type' => Element\Radio::class,
                 'options' => [
-                    'label' => 'Uri', // @translate
+                    'label' => 'Format of uri', // @translate
                     'value_options' => [
                         'uri_label' => 'Uri and label separated by a space', // @translate
                         'uri' => 'Uri only', // @translate

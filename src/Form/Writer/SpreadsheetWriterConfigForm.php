@@ -51,6 +51,9 @@ It is recommended to use a character that is never used, like "|", or a random s
                 'options' => [
                     'label' => 'Format of linked resources', // @translate
                     'value_options' => [
+                        'url_title' => 'Omeka url and title', // @translate
+                        'url' => 'Omeka url', // @translate
+                        'title' => 'Title', // @translate
                         'id' => 'Id', // @translate
                         'identifier' => 'Identifier (property below)', // @translate
                         'identifier_id' => 'Identifier or id', // @translate
@@ -58,14 +61,14 @@ It is recommended to use a character that is never used, like "|", or a random s
                 ],
                 'attributes' => [
                     'id' => 'format_resource',
-                    'value' => 'id',
+                    'value' => 'url_title',
                 ],
             ])
             ->add([
                 'name' => 'format_resource_property',
                 'type' => PropertySelect::class,
                 'options' => [
-                    'label' => 'Resource property for identifier', // @translate
+                    'label' => 'Property for linked resources', // @translate
                     'term_as_value' => true,
                 ],
                 'attributes' => [
@@ -80,7 +83,7 @@ It is recommended to use a character that is never used, like "|", or a random s
                 'name' => 'format_uri',
                 'type' => Element\Radio::class,
                 'options' => [
-                    'label' => 'Uri', // @translate
+                    'label' => 'Format of uri', // @translate
                     'value_options' => [
                         'uri_label' => 'Uri and label separated by a space', // @translate
                         'uri' => 'Uri only', // @translate

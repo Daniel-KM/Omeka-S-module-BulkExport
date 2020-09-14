@@ -164,6 +164,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $options += [
             'resource_type' => null,
             'limit' => 0,
+            'site_slug' => '',
         ];
         $hasLimit = $options['limit'] > 0;
 

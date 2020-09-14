@@ -14,7 +14,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFormatter
         'separator' => ' | ',
         'has_separator' => true,
         'format_generic' => 'raw',
-        'format_resource' => 'identifier_id',
+        'format_resource' => 'url_title',
         'format_resource_property' => 'dcterms:identifier',
         'format_uri' => 'uri_label',
     ];

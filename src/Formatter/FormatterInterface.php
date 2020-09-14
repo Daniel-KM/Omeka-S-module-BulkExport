@@ -50,7 +50,8 @@ interface FormatterInterface
      * @param string|null $output May be a filepath.
      * @param array $options Common options:
      * - resource_type (string): the type of the resources (items, item_sets…),
-     * - limit (int): Maximum number of resources to output. No limit if empty.
+     * - limit (int): maximum number of resources to output. No limit if empty.
+     * - site_slug (string): slug of a site for url of resources when needed.
      * @return self
      */
     public function format($resources, $output = null, array $options = []);

@@ -45,7 +45,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
     protected $options = [
         'separator' => ' | ',
         'has_separator' => true,
-        'format_resource' => 'identifier_id',
+        'format_resource' => 'url_title',
         'format_resource_property' => 'dcterms:identifier',
         'format_uri' => 'uri_label',
         'format_generic' => 'raw',
@@ -194,7 +194,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractWriter
         $hasSeparator = mb_strlen($separator) > 0;
 
         $formatGeneric = $this->getParam('format_generic', 'string');
-        $formatResource = $this->getParam('format_resource', 'id');
+        $formatResource = $this->getParam('format_resource', 'url_title');
         $formatResourceProperty = in_array($formatResource, ['identifier', 'identifier_id'])
             ? $this->getParam('format_resource_property', 'dcterms:identifier')
             : null;

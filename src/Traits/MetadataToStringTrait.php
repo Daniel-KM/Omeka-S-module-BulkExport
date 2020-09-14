@@ -16,7 +16,9 @@ trait MetadataToStringTrait
      * - has_separator: if set, all values of a property will be fetched, else
      *   only the first one.
      * - format_generic: "html" or raw value.
-     * - format_resource: may be "identifier" or "identifier_id" (with the
+     * - format_resource: may be "url_title", "url", "title", "id", "identifier"
+     *   (with the property set below), "identifier_id", or id. Default is
+     *   "url_title".
      *   property set below), else the id will be used.
      * - format_resource_property: if resource hasn't this term, the id is used.
      * - format_uri: May be "uri", "html" or "uri_label".
@@ -162,12 +164,28 @@ trait MetadataToStringTrait
                         case 'resource:itemset':
                         case 'resource:annotation':
                             $v = $v->valueResource();
-                            if ($params['format_resource'] === 'identifier') {
-                                $v = $v->value($params['format_resource_property']);
-                            } elseif ($params['format_resource'] === 'identifier_id') {
-                                $v = $v->value($params['format_resource_property']) ?: $v->id();
-                            } else {
-                                $v = $v->id();
+                            switch ($params['format_resource']) {
+                                case 'id':
+                                    $v = $v->id();
+                                    break;
+                                case 'identifier':
+                                    $v = $v->value($params['format_resource_property']);
+                                    break;
+                                case 'identifier_id':
+                                    $v = $v->value($params['format_resource_property'], ['default' => $v->id()]);
+                                    break;
+                                case 'title':
+                                    $v = $v->displayTitle('[#' . $v->id() . ']');
+                                    break;
+                                case 'url':
+                                    $v = empty($params['site_slug']) ? $v->apiUrl() : $v->siteUrl($params['site_slug']);
+                                    break;
+                                case 'url_title':
+                                default:
+                                    $vUrl = empty($params['site_slug']) ? $v->apiUrl() : $v->siteUrl($params['site_slug']);
+                                    $vTitle = $v->displayTitle('');
+                                    $v = $vUrl . (strlen($vTitle) ? ' ' . $vTitle : '');
+                                    break;
                             }
                             break;
                         case 'uri':
