@@ -266,7 +266,13 @@ class ExporterController extends AbstractActionController
                         // Clear export session.
                         $session->exchangeArray([]);
 
-                        $args = ['export_id' => $export->id()];
+                        $args = [
+                            'export_id' => $export->id(),
+                            // Save the base url in order to be able to set the
+                            // good url for the linked resources and other urls
+                            // in the background job.
+                            'host' => $this->viewHelpers()-> get('ServerUrl')->getHost(),
+                        ];
 
                         /** @var \Omeka\Job\Dispatcher $dispatcher */
                         $dispatcher = $this->jobDispatcher();

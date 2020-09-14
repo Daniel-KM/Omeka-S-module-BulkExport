@@ -62,6 +62,7 @@ class Export extends AbstractJob
 
         // Avoid a fatal error with background job when there is no route.
         $this->prepareRouteMatch($siteSlug);
+        $this->prepareServerUrl();
 
         $writer->process();
 
@@ -214,6 +215,17 @@ class Export extends AbstractJob
             $routeMatch = new \Zend\Router\Http\RouteMatch($params);
             $routeMatch->setMatchedRouteName('site');
             $mvcEvent->setRouteMatch($routeMatch);
+        }
+        return $this;
+    }
+
+    protected function prepareServerUrl()
+    {
+        /** @var \Zend\View\Helper\ServerUrl $serverUrl */
+        $serverUrl = $this->getServiceLocator()->get('ViewHelperManager')->get('ServerUrl');
+        if (!$serverUrl->getHost()) {
+            $host = $this->getArg('host', 'localhost');
+            $serverUrl->setHost($host);
         }
         return $this;
     }
