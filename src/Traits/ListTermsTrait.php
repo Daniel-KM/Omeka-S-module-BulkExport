@@ -131,6 +131,12 @@ trait ListTermsTrait
         ;
 
         if ($resourceClasses) {
+            if (in_array(\Omeka\Entity\Resource::class, $resourceClasses)) {
+                $resourceClasses[] = \Omeka\Entity\Item::class;
+                $resourceClasses[] = \Omeka\Entity\ItemSet::class;
+                $resourceClasses[] = \Omeka\Entity\Media::class;
+                $resourceClasses[] = \Annotate\Entity\Annotation::class;
+            }
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
                 ->andWhere($qb->expr()->in(
