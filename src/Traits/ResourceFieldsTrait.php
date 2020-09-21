@@ -38,13 +38,20 @@ trait ResourceFieldsTrait
             }
         } else {
             $hasProperties = true;
-            $this->fieldNames = [
-                'o:id',
-                'o:resource_template',
-                'o:resource_class',
-                'o:owner',
-                'o:is_public',
-            ];
+            if (!empty($this->options['is_admin_request'])) {
+                $this->fieldNames = [
+                    'o:id',
+                    'o:resource_template',
+                    'o:resource_class',
+                    'o:owner',
+                    'o:is_public',
+                ];
+            } else {
+                $this->fieldNames = [
+                    'o:id',
+                    'o:resource_class',
+                ];
+            }
             if (count($this->options['resource_types']) === 1) {
                 switch (reset($this->options['resource_types'])) {
                     case 'o:ItemSet':

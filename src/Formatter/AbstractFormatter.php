@@ -187,6 +187,7 @@ abstract class AbstractFormatter implements FormatterInterface
             'metadata' => [],
             'limit' => 0,
             'site_slug' => '',
+            'is_admin_request' => false,
         ];
         $hasLimit = $options['limit'] > 0;
 
