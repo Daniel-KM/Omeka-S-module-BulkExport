@@ -112,7 +112,7 @@ trait ResourceFieldsTrait
             $mapping = [
                 'o:id' => $this->translator->translate('id'), // @translate,
                 'o:resource_template' => $this->translator->translate('Resource template'), // @translate
-                'o:resource_class' => $this->translator->translate('Resource template'), // @translate
+                'o:resource_class' => $this->translator->translate('Resource class'), // @translate
                 'o:owner' => $this->translator->translate('Owner'), // @translate
                 'o:is_public' => $this->translator->translate('Is public'), // @translate
                 'o:is_open' => $this->translator->translate('Is open'), // @translate
