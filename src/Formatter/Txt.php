@@ -28,6 +28,16 @@ class Txt extends AbstractFieldsFormatter
         return $dataResource;
     }
 
+    protected function initializeOutput()
+    {
+        parent::initializeOutput();
+        // Prepend the utf-8 bom.
+        if (!$this->hasError) {
+            fwrite($this->handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        }
+        return $this;
+    }
+
     protected function writeFields(array $fields)
     {
         foreach ($fields as $fieldName => $fieldValues) {

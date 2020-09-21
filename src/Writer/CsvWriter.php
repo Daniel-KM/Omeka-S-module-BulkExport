@@ -65,7 +65,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
             // ->setFieldEscape($this->getParam('escape', self::DEFAULT_ESCAPE))
             // The end of line cannot be set with csv writer (reader only).
             // ->setEndOfLineCharacter("\n")
-            ->setShouldAddBOM(false);
+            ->setShouldAddBOM(true);
         return $this;
     }
 }

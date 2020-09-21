@@ -43,7 +43,10 @@ class TextWriter extends AbstractFieldsWriter
     protected function initializeOutput()
     {
         $this->handle = fopen($this->filepath, 'w+');
-        if (!$this->handle) {
+        if ($this->handle) {
+            // Prepend the utf-8 bom.
+            fwrite($this->handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        } else {
             $this->hasError = true;
             $this->getServiceLocator()->get('Omeka\Logger')->err(new PsrMessage(
                 'Unable to open output: {error}.', // @translate
