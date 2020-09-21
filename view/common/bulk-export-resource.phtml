@@ -1,0 +1,9 @@
+<?php
+/**
+ * @var \Zend\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var int $index
+ */
+
+echo new \Log\Stdlib\PsrMessage('{index}. {url}: {title}', ['index' => $index, 'url' => $resource->url('show', true), 'title' => $resource->displayTitle()]);
+echo "\n--\n\n";

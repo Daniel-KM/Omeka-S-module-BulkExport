@@ -229,10 +229,10 @@ return [
         // TODO Normalize writers as manageable or deprecate them.
         'writers' => [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
-            Writer\TsvWriter::class => Writer\TsvWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
             Writer\OpenDocumentTextWriter::class => Writer\OpenDocumentTextWriter::class,
             Writer\TextWriter::class => Writer\TextWriter::class,
+            Writer\TsvWriter::class => Writer\TsvWriter::class,
         ],
     ],
     'formatters' => [
@@ -242,6 +242,7 @@ return [
             Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
             Formatter\Ods::class => Service\Formatter\FormatterFactory::class,
             Formatter\Odt::class => Service\Formatter\FormatterFactory::class,
+            Formatter\TemplateTxt::class => Service\Formatter\FormatterFactory::class,
             Formatter\Tsv::class => Service\Formatter\FormatterFactory::class,
             Formatter\Txt::class => Service\Formatter\FormatterFactory::class,
         ],
@@ -249,6 +250,7 @@ return [
             'csv' => Formatter\Csv::class,
             'json' => Formatter\Json::class,
             'json-ld' => Formatter\JsonLd::class,
+            'list.txt' => Formatter\TemplateTxt::class,
             'ods' => Formatter\Ods::class,
             'odt' => Formatter\Odt::class,
             'tsv' => Formatter\Tsv::class,
@@ -262,6 +264,7 @@ return [
                 'csv',
                 // 'json',
                 'json-ld',
+                // 'list.txt',
                 'ods',
                 // 'odt',
                 'tsv',
@@ -272,6 +275,7 @@ return [
             'bulkexport_format_resource' => 'url_title',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
+            'bulkexport_template' => '',
         ],
         'site_settings' => [
             'bulkexport_limit' => 1000,
@@ -279,6 +283,7 @@ return [
                 'csv',
                 // 'json',
                 'json-ld',
+                // 'list.txt',
                 'ods',
                 // 'odt',
                 'tsv',
@@ -289,6 +294,7 @@ return [
             'bulkexport_format_resource' => 'url_title',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
+            'bulkexport_template' => '',
         ],
     ],
 ];

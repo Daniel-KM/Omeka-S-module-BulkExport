@@ -291,6 +291,9 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
+    /**
+     * Save the content to the handle.
+     */
     abstract protected function process();
 
     protected function initializeOutput()
