@@ -272,6 +272,9 @@ class ExporterController extends AbstractActionController
                             // good url for the linked resources and other urls
                             // in the background job.
                             'host' => $this->viewHelpers()-> get('ServerUrl')->getHost(),
+                            // Save the base url of files in order to be able to
+                            // set the good url for the result file.
+                            'base_files' => $this->viewHelpers()-> get('BasePath')->__invoke('/files'),
                         ];
 
                         /** @var \Omeka\Job\Dispatcher $dispatcher */

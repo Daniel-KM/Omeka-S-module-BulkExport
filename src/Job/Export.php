@@ -93,9 +93,10 @@ class Export extends AbstractJob
         ];
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 
-        $this->getLogger()->notice(
-            'The export is available as "{filename}".', // @translate
-            ['filename' => $params['filename']]
+        $baseUrl = $this->getServiceLocator()->get('Config')['file_store']['local']['base_uri'] ?: $this->getArg('base_files', '/files');
+        $this->logger->notice(
+            'The export is available at {url}.', // @translate
+            ['url' => $baseUrl . '/bulk_export/' . $params['filename']]
         );
     }
 

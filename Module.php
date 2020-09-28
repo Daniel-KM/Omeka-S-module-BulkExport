@@ -270,27 +270,24 @@ class Module extends AbstractModule
      */
     protected function checkDestinationDir($dirPath)
     {
-        if (!file_exists($dirPath)) {
-            $services = $this->getServiceLocator();
-            $config = $services->get('Config');
-            $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-            if (!is_writeable($basePath)) {
-                $logger = $services->get('Omeka\Logger');
-                $logger->err(
-                    'The destination folder "{path}" is not writeable.', // @translate
-                    ['path' => $basePath . '/' . $dirPath]
+        if (file_exists($dirPath)) {
+            if (!is_dir($dirPath) || !is_readable($dirPath) || !is_writable($dirPath)) {
+                $this->logger->err(
+                    'The directory "{path}" is not writeable.', // @translate
+                    ['path' => $dirPath]
                 );
-                return;
+                return null;
             }
-            @mkdir($dirPath, 0775, true);
-        } elseif (!is_dir($dirPath) || !is_writeable($dirPath)) {
-            $services = $this->getServiceLocator();
-            $logger = $services->get('Omeka\Logger');
-            $logger->err(
-                'The destination folder "{path}" is not writeable.', // @translate
-                ['path' => $dirPath]
+            return $dirPath;
+        }
+
+        $result = @mkdir($dirPath, 0775, true);
+        if (!$result) {
+            $this->logger->err(
+                'The directory "{path}" is not writeable: {error}.', // @translate
+                ['path' => $dirPath, 'error' => error_get_last()['message']]
             );
-            return;
+            return null;
         }
         return $dirPath;
     }
