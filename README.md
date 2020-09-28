@@ -1,6 +1,9 @@
 Bulk Export (module for Omeka S)
 ================================
 
+> __New versions of this module and support for Omeka S version 3.0 and above
+> are available on [GitLab], which seems to respect users and privacy better.__
+
 [Bulk Export] is a generic export module for [Omeka S] that provides common
 output formats (json, xml, spreadsheet, text), both for admin and public sides.
 It is easily extensible by other modules.
@@ -124,4 +127,5 @@ by [Biblibre].
 [OSI]: http://opensource.org
 [MIT]: https://github.com/sandywalker/webui-popover/blob/master/LICENSE.txt
 [BibLibre]: https://github.com/BibLibre
+[GitLab]: https://gitlab.com/Daniel-KM
 [Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
