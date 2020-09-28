@@ -28,5 +28,6 @@ class Csv extends AbstractSpreadsheetFormatter
     protected function writeFields(array $fields)
     {
         fputcsv($this->handle, $fields, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
+        return $this;
     }
 }
