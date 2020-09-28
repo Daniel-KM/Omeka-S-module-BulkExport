@@ -48,7 +48,7 @@ trait ResourceFieldsTrait
                 ];
             } else {
                 $this->fieldNames = [
-                    'o:id',
+                    'url',
                     'o:resource_class',
                 ];
             }

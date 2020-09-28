@@ -44,6 +44,7 @@ trait MetadataSelectTrait
                 'label' => 'Resource metadata', // @translate
                 'options' => [
                     'o:id' => 'Internal id', // @translate
+                    'url' => 'Resource url', // @translate
                     // The resource type is the @type, but it may be the api
                     // resource id (the name).
                     'resource_type' => 'Resource type', // @translate
