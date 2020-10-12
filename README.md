@@ -49,10 +49,19 @@ Finally, process the export.
 To create a new writer, take your inspiration on the existing `SpreadsheetWriter`.
 
 
+Notes
+-----
+
+- To convert an export with linked resource exported as url + label into linked
+  resources importable, you need to apply this formula in cald: `=REGEX($Export.B2; "(http:/api/items/)(\d+)([^|\n]*)"; "$2"; "g")`
+  (to be adapted to your output).
+
+
 TODO
 ----
 
-- Select resources like in the module ebook.
+- [ ] Select resources like in the module ebook.
+- [ ] For spreadsheet, add an option (by default in admin) to set headers with the datatype and the language (so multiple headers for the same property).
 
 
 Warning
@@ -73,7 +82,7 @@ See online issues on the [module issues] page on GitHub.
 License
 -------
 
-This module is published under the [CeCILL v2.1] licence, compatible with
+This module is published under the [CeCILL v2.1] license, compatible with
 [GNU/GPL] and approved by [FSF] and [OSI].
 
 This software is governed by the CeCILL license under French law and abiding by

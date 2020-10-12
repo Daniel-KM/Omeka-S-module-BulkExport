@@ -115,7 +115,7 @@ class OutputController extends AbstractActionController
             ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
             // This is the strlen as bytes, not as character.
             ->addHeaderLine('Content-length: ' . strlen($content))
-            // When forcing the download of a file over SSL,IE8 and lower
+            // When forcing the download of a file over SSL, IE8 and lower
             // browsers fail if the Cache-Control and Pragma headers are not set.
             // @see http://support.microsoft.com/KB/323308
             ->addHeaderLine('Cache-Control: max-age=0')
