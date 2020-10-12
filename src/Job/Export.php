@@ -61,7 +61,7 @@ class Export extends AbstractJob
         }
 
         // Avoid a fatal error with background job when there is no route.
-        $this->prepareRouteMatch($siteSlug);
+        $this->prepareRouteMatchAndSiteSettings($siteSlug);
         $this->prepareServerUrl();
 
         $writer->process();
@@ -185,23 +185,34 @@ class Export extends AbstractJob
      *
      * @param string $siteSlug
      */
-    protected function prepareRouteMatch($siteSlug)
+    protected function prepareRouteMatchAndSiteSettings($siteSlug)
     {
-        if (empty($siteSlug)) {
-            $siteSlug = $this->getServiceLocator()->get('Omeka\Settings')->get('default_site');
+        $services = $this->getServiceLocator();
+
+        if ($siteSlug) {
             try {
-                $response = $this->api()->read('sites', ['id' => $siteSlug]);
-                $siteSlug = $response->getContent()->slug();
+                $response = $this->api()->read('sites', ['slug' => $siteSlug]);
+                $site = $response->getContent();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
-                $response = $this->api()->search('sites', ['limit' => 1]);
-                $siteSlug = $response ? $response->getContent()->slug() : '***';
+            }
+        } else {
+            $defaultSiteId = $services->get('Omeka\Settings')->get('default_site');
+            try {
+                $response = $this->api()->read('sites', ['id' => $defaultSiteId]);
+                $site = $response->getContent();
+                $siteSlug = $site->slug();
+            } catch (\Omeka\Api\Exception\NotFoundException $e) {
             }
         }
 
-        /**
-         * @var \Zend\Mvc\MvcEvent $mvcEvent
-         */
-        $mvcEvent = $this->getServiceLocator()->get('Application')->getMvcEvent();
+        if (empty($site)) {
+            $response = $this->api()->search('sites', ['limit' => 1]);
+            $site = $response ? $response->getContent()[0] : null;
+            $siteSlug = $site ? $site->slug() : '***';
+        }
+
+        /** @var \Zend\Mvc\MvcEvent $mvcEvent */
+        $mvcEvent = $services->get('Application')->getMvcEvent();
         $routeMatch = $mvcEvent->getRouteMatch();
         if ($routeMatch) {
             $routeMatch->setParam('site-slug', $siteSlug);
@@ -217,6 +228,11 @@ class Export extends AbstractJob
             $routeMatch->setMatchedRouteName('site');
             $mvcEvent->setRouteMatch($routeMatch);
         }
+
+        /** @var \Omeka\Settings\SiteSettings $siteSettings */
+        $siteSettings = $services->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($site ? $site->id() : 1);
+
         return $this;
     }
 
