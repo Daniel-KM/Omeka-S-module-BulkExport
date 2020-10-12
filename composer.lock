@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a9df521477fdddfc0b3c1ef59058488",
+    "content-hash": "a05e650b792d166b4462268ddd68f807",
     "packages": [
         {
             "name": "box/spout",

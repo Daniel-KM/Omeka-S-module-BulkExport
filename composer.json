@@ -4,9 +4,6 @@
         "phpoffice/phpword": "^0.17.0",
         "laminas/laminas-dependency-plugin": "^1.0"
     },
-    "replace": {
-        "laminas/laminas-escaper": "*"
-    },
     "require-dev": {
         "biblibre/omeka-s-test-helper": "dev-master"
     },
