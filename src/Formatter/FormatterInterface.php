@@ -1,7 +1,7 @@
 <?php
 namespace BulkExport\Formatter;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 interface FormatterInterface
 {

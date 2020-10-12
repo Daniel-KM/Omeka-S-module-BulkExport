@@ -8,12 +8,12 @@ if (!class_exists(\Generic\AbstractModule::class)) {
 }
 
 use Generic\AbstractModule;
+use Laminas\EventManager\Event;
+use Laminas\EventManager\SharedEventManagerInterface;
+use Laminas\ModuleManager\ModuleManager;
+use Laminas\Mvc\MvcEvent;
 use Log\Stdlib\PsrMessage;
 use Omeka\Module\Exception\ModuleCannotInstallException;
-use Zend\EventManager\Event;
-use Zend\EventManager\SharedEventManagerInterface;
-use Zend\ModuleManager\ModuleManager;
-use Zend\Mvc\MvcEvent;
 
 class Module extends AbstractModule
 {

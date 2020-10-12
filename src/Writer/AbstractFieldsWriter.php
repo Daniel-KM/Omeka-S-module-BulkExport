@@ -86,7 +86,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     protected $prependFieldNames = false;
 
     /**
-     * @var \Zend\Mvc\I18n\Translator
+     * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
 

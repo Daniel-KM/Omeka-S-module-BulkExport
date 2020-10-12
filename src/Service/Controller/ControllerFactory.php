@@ -2,7 +2,7 @@
 namespace BulkExport\Service\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ControllerFactory implements FactoryInterface
 {

@@ -2,7 +2,7 @@
 namespace BulkExport\Service\Formatter;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class FormatterFactory implements FactoryInterface
 {

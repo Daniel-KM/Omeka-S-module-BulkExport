@@ -137,13 +137,13 @@ trait ResourceFieldsTrait
                 'o:media' => $this->translator->translate('Media'), // @translate
                 'o:media[o:id]' => $this->translator->translate('Media id'), // @translate
                 'o:media[file]' => $this->translator->translate('Media file'), // @translate
-                'o:media[media_type]' =>  $this->translator->translate('File media type'), // @translate,
-                'o:media[size]' =>  $this->translator->translate('File size'), // @translate,
-                'o:media[original_url]' =>  $this->translator->translate('Original file url'), // @translate,
+                'o:media[media_type]' => $this->translator->translate('File media type'), // @translate,
+                'o:media[size]' => $this->translator->translate('File size'), // @translate,
+                'o:media[original_url]' => $this->translator->translate('Original file url'), // @translate,
                 'o:asset' => $this->translator->translate('Asset'), // @translate
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
-                'url' =>  $this->translator->translate('Url'), // @translate,
-                'resource_type' =>  $this->translator->translate('Resource type'), // @translate,
+                'url' => $this->translator->translate('Url'), // @translate,
+                'resource_type' => $this->translator->translate('Resource type'), // @translate,
             ];
         }
 

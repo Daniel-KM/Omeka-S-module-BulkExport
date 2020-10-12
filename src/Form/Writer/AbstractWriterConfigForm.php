@@ -2,8 +2,8 @@
 namespace BulkExport\Form\Writer;
 
 use BulkExport\Traits\ServiceLocatorAwareTrait;
-use Zend\Form\Element;
-use Zend\Form\Form;
+use Laminas\Form\Element;
+use Laminas\Form\Form;
 
 abstract class AbstractWriterConfigForm extends Form
 {

@@ -58,10 +58,10 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
             }
         }
 
-        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
         if ($this->isId) {
             foreach ($this->resourceIds as $resourceId) {
                 try {
+                    /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
                     continue;

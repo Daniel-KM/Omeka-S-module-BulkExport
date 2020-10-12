@@ -152,7 +152,7 @@ trait MetadataToStringTrait
 
             // All properties for all resources.
             default:
-                /** @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
+                /* @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
                 if (empty($params['only_first'])) {
                     $vv = $resource->value($metadata, ['all' => true, 'default' => []]);
                 } else {

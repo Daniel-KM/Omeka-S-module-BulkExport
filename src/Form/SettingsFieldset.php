@@ -2,9 +2,9 @@
 namespace BulkExport\Form;
 
 use BulkExport\Form\Writer\MetadataSelectTrait;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
 use Omeka\Form\Element\PropertySelect;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
 
 class SettingsFieldset extends Fieldset
 {

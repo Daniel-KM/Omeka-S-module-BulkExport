@@ -3,8 +3,8 @@
 namespace BulkExport\Controller;
 
 use BulkExport\Formatter\Manager as FormatterManager;
+use Laminas\Mvc\Controller\AbstractActionController;
 use Log\Stdlib\PsrMessage;
-use Zend\Mvc\Controller\AbstractActionController;
 
 class OutputController extends AbstractActionController
 {
@@ -109,7 +109,7 @@ class OutputController extends AbstractActionController
         $response
             ->setContent($content);
 
-        /** @var \Zend\Http\Headers $headers */
+        /** @var \Laminas\Http\Headers $headers */
         $headers = $response
             ->getHeaders()
             ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)

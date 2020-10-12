@@ -2,13 +2,13 @@
 
 namespace BulkExport\Formatter;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Log\Stdlib\PsrMessage;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractFormatter implements FormatterInterface
 {
     /**
-     * @var \Zend\ServiceManager\ServiceLocatorInterface
+     * @var \Laminas\ServiceManager\ServiceLocatorInterface
      */
     protected $services;
 
@@ -33,7 +33,7 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $defaultOptions = [];
 
     /**
-     * @var \Zend\Log\Logger
+     * @var \Laminas\Log\Logger
      */
     protected $logger;
 
@@ -43,7 +43,7 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $api;
 
     /**
-     * @var \Zend\Mvc\I18n\Translator
+     * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
 
@@ -349,7 +349,6 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->content = null;
         return $this;
     }
-
 
     protected function mapApiResourceToJsonResourceType($resourceType)
     {

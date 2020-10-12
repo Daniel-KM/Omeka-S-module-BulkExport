@@ -3,7 +3,7 @@ namespace BulkExport\Service\ViewHelper;
 
 use BulkExport\View\Helper\ListFormatters;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ListFormattersFactory implements FactoryInterface
 {

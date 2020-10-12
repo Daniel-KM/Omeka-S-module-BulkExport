@@ -3,8 +3,8 @@ namespace BulkExport\Service\Plugin;
 
 use BulkExport\Formatter\Manager;
 use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Omeka\Service\Exception\ConfigException;
-use Zend\ServiceManager\Factory\FactoryInterface;
 
 class FormatterManagerFactory implements FactoryInterface
 {

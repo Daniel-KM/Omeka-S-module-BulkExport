@@ -20,7 +20,7 @@ abstract class AbstractViewFormatter extends AbstractFormatter
     protected $converterName;
 
     /**
-     * @var \Zend\View\Helper\AbstractHelper|callable;
+     * @var \Laminas\View\Helper\AbstractHelper|callable;
      */
     protected $converter;
 

@@ -7,12 +7,12 @@ use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Traits\ConfigurableTrait;
 use BulkExport\Traits\ParametrizableTrait;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
+use Laminas\Form\Form;
+use Laminas\Log\Logger;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Log\Stdlib\PsrMessage;
 use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Job\AbstractJob as Job;
-use Zend\Form\Form;
-use Zend\Log\Logger;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 abstract class AbstractWriter implements WriterInterface, Configurable, Parametrizable
 {

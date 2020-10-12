@@ -2,9 +2,9 @@
 
 namespace BulkExport\Writer;
 
+use Laminas\Log\Logger;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Omeka\Job\AbstractJob as Job;
-use Zend\Log\Logger;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * A writer outputs metadata.

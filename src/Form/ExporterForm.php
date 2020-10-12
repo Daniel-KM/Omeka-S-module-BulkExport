@@ -2,11 +2,11 @@
 namespace BulkExport\Form;
 
 use BulkExport\Entity\Exporter;
-use BulkExport\Writer\Manager as WriterManager;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\Form\Form;
+use BulkExport\Writer\Manager as WriterManager;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Form;
 
 class ExporterForm extends Form
 {

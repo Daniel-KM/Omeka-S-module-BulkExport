@@ -4,7 +4,7 @@ namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 class TsvWriter extends CsvWriter
 {

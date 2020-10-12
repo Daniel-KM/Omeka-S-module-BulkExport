@@ -2,9 +2,9 @@
 namespace BulkExport\Controller\Admin;
 
 use BulkExport\Traits\ServiceLocatorAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Model\ViewModel;
 
 class BulkExportController extends AbstractActionController
 {

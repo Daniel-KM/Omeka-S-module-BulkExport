@@ -3,7 +3,7 @@ namespace BulkExport\Service\Form;
 
 use BulkExport\Form\SettingsFieldset;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class SettingsFieldsetFactory implements FactoryInterface
 {

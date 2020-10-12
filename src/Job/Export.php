@@ -4,11 +4,11 @@ namespace BulkExport\Job;
 use BulkExport\Api\Representation\ExportRepresentation;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Writer\WriterInterface;
 use BulkExport\Writer\Manager as WriterManager;
+use BulkExport\Writer\WriterInterface;
+use Laminas\Log\Logger;
 use Log\Stdlib\PsrMessage;
 use Omeka\Job\AbstractJob;
-use Zend\Log\Logger;
 
 class Export extends AbstractJob
 {
@@ -18,7 +18,7 @@ class Export extends AbstractJob
     protected $export;
 
     /**
-     * @var \Zend\Log\Logger
+     * @var \Laminas\Log\Logger
      */
     protected $logger;
 
@@ -103,7 +103,7 @@ class Export extends AbstractJob
     /**
      * Get the logger for the bulk process (the Omeka one, with reference id).
      *
-     * @return \Zend\Log\Logger
+     * @return \Laminas\Log\Logger
      */
     protected function getLogger()
     {
@@ -111,7 +111,7 @@ class Export extends AbstractJob
             return $this->logger;
         }
         $this->logger = $this->getServiceLocator()->get('Omeka\Logger');
-        $referenceId = new \Zend\Log\Processor\ReferenceId();
+        $referenceId = new \Laminas\Log\Processor\ReferenceId();
         $referenceId->setReferenceId('bulk/export/' . $this->getExport()->id());
         $this->logger->addProcessor($referenceId);
         return $this->logger;
@@ -211,7 +211,7 @@ class Export extends AbstractJob
             $siteSlug = $site ? $site->slug() : '***';
         }
 
-        /** @var \Zend\Mvc\MvcEvent $mvcEvent */
+        /** @var \Laminas\Mvc\MvcEvent $mvcEvent */
         $mvcEvent = $services->get('Application')->getMvcEvent();
         $routeMatch = $mvcEvent->getRouteMatch();
         if ($routeMatch) {
@@ -224,7 +224,7 @@ class Export extends AbstractJob
                 'action' => 'index',
                 'site-slug' => $siteSlug,
             ];
-            $routeMatch = new \Zend\Router\Http\RouteMatch($params);
+            $routeMatch = new \Laminas\Router\Http\RouteMatch($params);
             $routeMatch->setMatchedRouteName('site');
             $mvcEvent->setRouteMatch($routeMatch);
         }
@@ -238,7 +238,7 @@ class Export extends AbstractJob
 
     protected function prepareServerUrl()
     {
-        /** @var \Zend\View\Helper\ServerUrl $serverUrl */
+        /** @var \Laminas\View\Helper\ServerUrl $serverUrl */
         $serverUrl = $this->getServiceLocator()->get('ViewHelperManager')->get('ServerUrl');
         if (!$serverUrl->getHost()) {
             $host = $this->getArg('host', 'localhost');

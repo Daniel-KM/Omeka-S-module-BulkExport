@@ -1,7 +1,7 @@
 <?php
 namespace BulkExport\Form\Writer;
 
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 trait ResourceTypesSelectTrait
 {

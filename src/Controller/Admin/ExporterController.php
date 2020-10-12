@@ -9,13 +9,13 @@ use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Job\Export as JobExport;
 use BulkExport\Traits\ServiceLocatorAwareTrait;
+use Laminas\Form\Element;
+use Laminas\Form\Fieldset;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 use Log\Stdlib\PsrMessage;
-use Zend\Form\Element;
-use Zend\Form\Fieldset;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
 
 class ExporterController extends AbstractActionController
 {
@@ -181,7 +181,7 @@ class ExporterController extends AbstractActionController
 
     /**
      * @todo Simplify code of this three steps process.
-     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
      */
     public function startAction()
     {
@@ -197,7 +197,7 @@ class ExporterController extends AbstractActionController
 
         $writer = $exporter->writer();
 
-        /** @var \Zend\Session\SessionManager $sessionManager */
+        /** @var \Laminas\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
         $session = new Container('ExporterStartForm', $sessionManager);
 
@@ -345,7 +345,7 @@ class ExporterController extends AbstractActionController
 
         $writer = $exporter->writer();
         if ($writer instanceof Parametrizable) {
-            /* @return \Zend\Form\Form */
+            /* @return \Laminas\Form\Form */
             $formsCallbacks['writer'] = function () use ($writer, $controller) {
                 $writerForm = $controller->getForm($writer->getParamsFormClass());
                 $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
@@ -374,7 +374,7 @@ class ExporterController extends AbstractActionController
             };
         }
 
-        /* @return \Zend\Form\Form */
+        /* @return \Laminas\Form\Form */
         $formsCallbacks['start'] = function () use ($controller) {
             $startForm = $controller->getForm(ExporterStartForm::class);
             $startForm->add([

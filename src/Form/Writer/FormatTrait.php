@@ -1,8 +1,8 @@
 <?php
 namespace BulkExport\Form\Writer;
 
+use Laminas\Form\Element;
 use Omeka\Form\Element\PropertySelect;
-use Zend\Form\Element;
 
 trait FormatTrait
 {

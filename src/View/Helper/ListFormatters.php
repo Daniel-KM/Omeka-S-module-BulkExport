@@ -2,7 +2,7 @@
 namespace BulkExport\View\Helper;
 
 use BulkExport\Formatter\Manager as FormatterManager;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class ListFormatters extends AbstractHelper
 {

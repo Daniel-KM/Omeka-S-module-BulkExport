@@ -1,7 +1,7 @@
 <?php
 namespace BulkExport\Interfaces;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 interface Parametrizable
 {

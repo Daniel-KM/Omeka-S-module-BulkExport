@@ -27,7 +27,7 @@ trait ListTermsTrait
     /**
      * To be prepared ouside.
      *
-     * @var \Zend\Mvc\I18n\Translator
+     * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
 
@@ -217,7 +217,6 @@ trait ListTermsTrait
         $this->resourceClassLabelsByTerm = array_column($terms, 'label', 'term');
         return $this->resourceClassLabelsByTerm;
     }
-
 
     protected function translateProperty($property)
     {
