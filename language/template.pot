@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-21 00:00+0000\n"
+"POT-Creation-Date: 2020-10-12 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Controller/OutputController.php:30
+#: src/Controller/OutputController.php:31
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
@@ -62,87 +62,91 @@ msgid "Bibliography"
 msgstr ""
 
 #: src/Traits/OpenDocumentTextTemplateTrait.php:66
-msgid "Digital library)"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:111
-msgid "id"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:115
-msgid "Is public"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:116
-msgid "Is open"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:118
-msgid "Resource id"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:119
-msgid "Resource identifier"
+msgid "Digital library"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:120
-msgid "Resource title"
+msgid "id"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:122
-msgid "Item set id"
+msgid "Resource class"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:124
+msgid "Is public"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:125
-msgid "Item id"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:126
-msgid "Item identifier"
+msgid "Is open"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:127
-msgid "Item title"
+msgid "Resource id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:128
+msgid "Resource identifier"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:129
-msgid "Media id"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:130
-msgid "Media file"
+msgid "Resource title"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:131
-msgid "File media type"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:132
-msgid "File size"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:133
-msgid "Original file url"
+msgid "Item set id"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:134
-msgid "Asset"
+msgid "Item id"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:135
-msgid "Annotation"
+msgid "Item identifier"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:136
+msgid "Item title"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:138
+msgid "Media id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:139
+msgid "Media file"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:140
+msgid "File media type"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:141
+msgid "File size"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:142
+msgid "Original file url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:143
+msgid "Asset"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:144
+msgid "Annotation"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:145
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:154
+#: src/Traits/ResourceFieldsTrait.php:163
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:159
+#: src/Traits/ResourceFieldsTrait.php:168
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
@@ -414,12 +418,12 @@ msgstr ""
 msgid "CSV"
 msgstr ""
 
-#: Module.php:48
+#: Module.php:48 Module.php:276
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:280 Module.php:290
-msgid "The destination folder \"{path}\" is not writeable."
+#: Module.php:287
+msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:27 src/Form/SiteSettingsFieldset.php:27
@@ -555,61 +559,61 @@ msgid "Resource metadata"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:46
-#: src/Form/Writer/MetadataSelectTrait.php:63
-#: src/Form/Writer/MetadataSelectTrait.php:71
-#: src/Form/Writer/MetadataSelectTrait.php:80
-#: src/Form/Writer/MetadataSelectTrait.php:88
+#: src/Form/Writer/MetadataSelectTrait.php:64
+#: src/Form/Writer/MetadataSelectTrait.php:72
+#: src/Form/Writer/MetadataSelectTrait.php:81
+#: src/Form/Writer/MetadataSelectTrait.php:89
 msgid "Internal id"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:51
-msgid "Resource class"
-msgstr ""
-
-#: src/Form/Writer/MetadataSelectTrait.php:52
-msgid "Owner email"
+#: src/Form/Writer/MetadataSelectTrait.php:47
+msgid "Resource url"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:53
-msgid "Owner id"
+msgid "Owner email"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:54
+msgid "Owner id"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:55
 msgid "Visibility public/private"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:56
+#: src/Form/Writer/MetadataSelectTrait.php:57
 msgid "Openness"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:57
+#: src/Form/Writer/MetadataSelectTrait.php:58
 msgid "All used properties"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:61
+#: src/Form/Writer/MetadataSelectTrait.php:62
 msgid "Item set (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:65
-#: src/Form/Writer/MetadataSelectTrait.php:74
-#: src/Form/Writer/MetadataSelectTrait.php:82
-#: src/Form/Writer/MetadataSelectTrait.php:90
+#: src/Form/Writer/MetadataSelectTrait.php:66
+#: src/Form/Writer/MetadataSelectTrait.php:75
+#: src/Form/Writer/MetadataSelectTrait.php:83
+#: src/Form/Writer/MetadataSelectTrait.php:91
 msgid "Label (first title)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:69
+#: src/Form/Writer/MetadataSelectTrait.php:70
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:72
+#: src/Form/Writer/MetadataSelectTrait.php:73
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:78
+#: src/Form/Writer/MetadataSelectTrait.php:79
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:86
+#: src/Form/Writer/MetadataSelectTrait.php:87
 msgid "Resource (for annotation)"
 msgstr ""
 
@@ -671,20 +675,20 @@ msgid ""
 "are required."
 msgstr ""
 
-#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:298
-#: src/Writer/TextWriter.php:49
+#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:308
+#: src/Writer/TextWriter.php:52
 msgid "Unable to open output: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:335
+#: src/Formatter/AbstractFormatter.php:345
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFieldsFormatter.php:51
+#: src/Formatter/AbstractFieldsFormatter.php:44
 msgid "No metadata are used in any resources."
 msgstr ""
 
-#: src/Controller/OutputController.php:100
+#: src/Controller/OutputController.php:103
 msgid "Unable to format resources as {format}."
 msgstr ""
 
@@ -727,23 +731,23 @@ msgstr ""
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:286
+#: src/Controller/Admin/ExporterController.php:289
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:287
+#: src/Controller/Admin/ExporterController.php:290
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:306
+#: src/Controller/Admin/ExporterController.php:309
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:366
+#: src/Controller/Admin/ExporterController.php:369
 msgid "Continue"
 msgstr ""
 
@@ -771,15 +775,15 @@ msgstr ""
 msgid "Export completed"
 msgstr ""
 
-#: src/Job/Export.php:97
-msgid "The export is available as \"{filename}\"."
+#: src/Job/Export.php:98
+msgid "The export is available at {url}."
 msgstr ""
 
-#: src/Job/Export.php:147
+#: src/Job/Export.php:148
 msgid "Export record does not exist"
 msgstr ""
 
-#: src/Job/Export.php:166
+#: src/Job/Export.php:167
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
@@ -794,7 +798,7 @@ msgid ""
 "characters."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:167
+#: src/Traits/ResourceFieldsTrait.php:176
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
