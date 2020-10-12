@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace BulkExport\Service\Form;
 
 use BulkExport\Form\SettingsFieldset;

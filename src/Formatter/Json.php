@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace BulkExport\Formatter;
 
@@ -15,7 +15,7 @@ class Json extends AbstractFormatter
         'flags' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_PARTIAL_OUTPUT_ON_ERROR,
     ];
 
-    protected function process()
+    protected function process(): void
     {
         if ($this->isSingle) {
             $this->processSingle();
@@ -43,13 +43,13 @@ class Json extends AbstractFormatter
         $this->toOutput();
     }
 
-    protected function processSingle()
+    protected function processSingle(): void
     {
         $this->content = json_encode($this->resource, $this->options['flags']);
         $this->toOutput();
     }
 
-    protected function processByOne()
+    protected function processByOne(): void
     {
         $this->initializeOutput();
         if ($this->hasError) {

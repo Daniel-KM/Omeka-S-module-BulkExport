@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace BulkExportTest\Controller;
 
@@ -11,12 +11,12 @@ abstract class BulkExportControllerTestCase extends OmekaControllerTestCase
         return [];
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->loginAsAdmin();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 }

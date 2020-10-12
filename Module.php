@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace BulkExport;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
@@ -21,12 +21,12 @@ class Module extends AbstractModule
 
     protected $dependency = 'Log';
 
-    public function init(ModuleManager $moduleManager)
+    public function init(ModuleManager $moduleManager): void
     {
         require_once __DIR__ . '/vendor/autoload.php';
     }
 
-    public function onBootstrap(MvcEvent $event)
+    public function onBootstrap(MvcEvent $event): void
     {
         parent::onBootstrap($event);
 
@@ -39,7 +39,7 @@ class Module extends AbstractModule
         ;
     }
 
-    protected function preInstall()
+    protected function preInstall(): void
     {
         $config = $this->getServiceLocator()->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
@@ -52,7 +52,7 @@ class Module extends AbstractModule
         }
     }
 
-    protected function postInstall()
+    protected function postInstall(): void
     {
         $directory = new \RecursiveDirectoryIterator(__DIR__ . '/data/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directory);
@@ -61,7 +61,7 @@ class Module extends AbstractModule
         }
     }
 
-    protected function installExporter($filepath)
+    protected function installExporter($filepath): void
     {
         // The resource "bulk_exporters" is not available during upgrade.
         require_once __DIR__ . '/src/Entity/Export.php';
@@ -83,7 +83,7 @@ class Module extends AbstractModule
         $entityManager->flush();
     }
 
-    protected function preUninstall()
+    protected function preUninstall(): void
     {
         if (!empty($_POST['remove-bulk-exports'])) {
             $config = $this->getServiceLocator()->get('Config');
@@ -92,7 +92,7 @@ class Module extends AbstractModule
         }
     }
 
-    public function warnUninstall(Event $event)
+    public function warnUninstall(Event $event): void
     {
         $view = $event->getTarget();
         $module = $view->vars()->module;
@@ -125,7 +125,7 @@ class Module extends AbstractModule
         echo $html;
     }
 
-    public function attachListeners(SharedEventManagerInterface $sharedEventManager)
+    public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
         // Append the links to output formats.
         $controllers = [
@@ -208,7 +208,7 @@ class Module extends AbstractModule
         );
     }
 
-    public function handleMainSettingsFilters(Event $event)
+    public function handleMainSettingsFilters(Event $event): void
     {
         $event->getParam('inputFilter')->get('bulkexport')
             ->add([
@@ -221,7 +221,7 @@ class Module extends AbstractModule
             ]);
     }
 
-    public function handleSiteSettingsFilters(Event $event)
+    public function handleSiteSettingsFilters(Event $event): void
     {
         $event->getParam('inputFilter')->get('bulkexport')
             ->add([
@@ -234,14 +234,14 @@ class Module extends AbstractModule
             ]);
     }
 
-    public function handleViewShowAfter(Event $event)
+    public function handleViewShowAfter(Event $event): void
     {
         $view = $event->getTarget();
         $view->vars()->offsetSet('formatters', $view->listFormatters(true));
         echo $view->partial('common/bulk-export-formatters-resource');
     }
 
-    public function handleViewBrowseAfter(Event $event)
+    public function handleViewBrowseAfter(Event $event): void
     {
         $controller = strtolower($event->getTarget()->params()->fromRoute('__CONTROLLER__'));
         $resourceTypes = [
@@ -254,7 +254,7 @@ class Module extends AbstractModule
         $this->handleViewBrowseAfterResources($event, $resourceType);
     }
 
-    public function handleViewBrowseAfterResources(Event $event, $resourceType = 'resource')
+    public function handleViewBrowseAfterResources(Event $event, $resourceType = 'resource'): void
     {
         $view = $event->getTarget();
         $view->vars()->offsetSet('formatters', $view->listFormatters(true));

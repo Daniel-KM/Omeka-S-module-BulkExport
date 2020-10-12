@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace BulkExport\Formatter;
 
@@ -24,7 +24,7 @@ abstract class AbstractViewFormatter extends AbstractFormatter
      */
     protected $converter;
 
-    protected function process()
+    protected function process(): void
     {
         $this->initializeOutput();
         if ($this->hasError) {
@@ -69,7 +69,7 @@ abstract class AbstractViewFormatter extends AbstractFormatter
         $this->finalizeOutput();
     }
 
-    protected function writeResource(AbstractResourceEntityRepresentation $resource, $index)
+    protected function writeResource(AbstractResourceEntityRepresentation $resource, $index): void
     {
         $conv = $this->converter;
         fwrite($this->handle, $conv($resource, $index));

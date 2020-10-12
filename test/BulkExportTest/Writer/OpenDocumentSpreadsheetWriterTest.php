@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace BulkExportTest\Writer;
 
 use BulkExport\Writer\OpenDocumentSpreadsheetWriter;
@@ -29,7 +29,7 @@ class OpenDocumentSpreadsheetWriterTest extends AbstractWriter
     /**
      * @dataProvider WriterProvider
      */
-    public function testCountRows($filepath, $options, $expected)
+    public function testCountRows($filepath, $options, $expected): void
     {
         $this->markTestSkipped('TODO Count empty rows with spreadsheet.');
     }

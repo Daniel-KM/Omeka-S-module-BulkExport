@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace BulkExport\Form;
 
 use BulkExport\Form\Writer\MetadataSelectTrait;
@@ -17,7 +17,7 @@ class SiteSettingsFieldset extends Fieldset
 
     protected $formatters = [];
 
-    public function init()
+    public function init(): void
     {
         $this
             ->add([

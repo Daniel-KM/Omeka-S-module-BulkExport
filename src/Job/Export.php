@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace BulkExport\Job;
 
 use BulkExport\Api\Representation\ExportRepresentation;
@@ -27,7 +27,7 @@ class Export extends AbstractJob
      */
     protected $api;
 
-    public function perform()
+    public function perform(): void
     {
         // Init logger and export.
         $this->getLogger();
@@ -77,7 +77,7 @@ class Export extends AbstractJob
      * @param ExportRepresentation $export
      * @param WriterInterface $writer
      */
-    protected function saveFilename(ExportRepresentation $export, WriterInterface $writer)
+    protected function saveFilename(ExportRepresentation $export, WriterInterface $writer): void
     {
         if (!($writer instanceof Parametrizable)) {
             return;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace BulkExport\Formatter;
 
@@ -30,7 +30,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         return parent::format($resources, $output, $options + $this->defaultOptionsFields);
     }
 
-    protected function process()
+    protected function process(): void
     {
         $this->initializeOutput();
         if ($this->hasError) {
