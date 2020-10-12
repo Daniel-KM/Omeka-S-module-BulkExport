@@ -195,7 +195,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $destinationDir = $basePath . '/bulk_export';
 
         $exporterLabel = $this->getParam('exporter_label', '');
-        $base = preg_replace('/[^A-Za-z0-9 ]/', '_', $exporterLabel);
+        $base = preg_replace('/[^A-Za-z0-9]/', '_', $exporterLabel);
         $base = $base ? preg_replace('/_+/', '_', $base) . '-' : '';
         $date = $this->getParam('export_started', new \DateTime())->format('Ymd-His');
         $extension = $this->getExtension();
