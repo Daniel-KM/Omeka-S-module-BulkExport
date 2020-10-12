@@ -34,7 +34,7 @@ uncompress it in the `modules` directory.
 If the module was installed from the source, rename the name of the folder of
 the module to `BulkExport`, go to the root of the module, and run:
 
-```
+```sh
 composer install --no-dev
 ```
 
@@ -76,7 +76,7 @@ your archives regularly so you can roll back if needed.
 Troubleshooting
 ---------------
 
-See online issues on the [module issues] page on GitHub.
+See online issues on the [module issues] page on GitLab.
 
 
 License
@@ -113,23 +113,23 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019-2020 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2019-2020 (see [Daniel-KM] on GitLab)
 
 This module was initially inspired by the [Omeka Classic] [Export plugin], built
 by [Biblibre].
 
 
-[Bulk Export]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport
+[Bulk Export]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport
 [Omeka S]: https://omeka.org/s
-[Bulk Import]: https://github.com/Daniel-KM/Omeka-S-module-BulkImport
+[Bulk Import]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkImport
 [Omeka Classic]: https://omeka.org/classic
 [Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
-[Bibliography]: https://github.com/Daniel-KM/Omeka-S-module-Bibliography
-[Generic]: https://github.com/Daniel-KM/Omeka-S-module-Generic
-[Log]: https://github.com/Daniel-KM/Omeka-S-module-Log
-[BulkExport.zip]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/releases
+[Bibliography]: https://gitlab.com/Daniel-KM/Omeka-S-module-Bibliography
+[Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
+[Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
+[BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
-[module issues]: https://github.com/Daniel-KM/Omeka-S-module-BulkExport/issues
+[module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
@@ -137,4 +137,4 @@ by [Biblibre].
 [MIT]: https://github.com/sandywalker/webui-popover/blob/master/LICENSE.txt
 [BibLibre]: https://github.com/BibLibre
 [GitLab]: https://gitlab.com/Daniel-KM
-[Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
+[Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
