@@ -254,7 +254,7 @@ class Module extends AbstractModule
         $this->handleViewBrowseAfterResources($event, $resourceType);
     }
 
-    public function handleViewBrowseAfterResources(Event $event, $resourceType = 'resource'): void
+    public function handleViewBrowseAfterResources(Event $event, string $resourceType = 'resource'): void
     {
         $view = $event->getTarget();
         $view->vars()->offsetSet('formatters', $view->listFormatters(true));
@@ -268,7 +268,7 @@ class Module extends AbstractModule
      * @param string $dirPath Absolute path.
      * @return string|null
      */
-    protected function checkDestinationDir($dirPath)
+    protected function checkDestinationDir(string $dirPath): ?string
     {
         if (file_exists($dirPath)) {
             if (!is_dir($dirPath) || !is_readable($dirPath) || !is_writable($dirPath)) {
@@ -298,7 +298,7 @@ class Module extends AbstractModule
      * @param string $dirpath Absolute path.
      * @return bool
      */
-    private function rmDir($dirPath)
+    private function rmDir(string $dirPath): bool
     {
         if (!file_exists($dirPath)) {
             return true;
