@@ -17,7 +17,7 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
     protected $configFormClass = TextWriterConfigForm::class;
     protected $paramsFormClass = TextWriterConfigForm::class;
 
-    public function isValid()
+    public function isValid(): bool
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->lastErrorMessage = new PsrMessage(

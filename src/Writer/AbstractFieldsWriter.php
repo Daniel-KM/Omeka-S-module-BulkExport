@@ -90,7 +90,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
      */
     protected $translator;
 
-    public function isValid()
+    public function isValid(): bool
     {
         $config = $this->getServiceLocator()->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');

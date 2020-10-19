@@ -50,7 +50,7 @@ interface WriterInterface
      *
      * @return bool
      */
-    public function isValid();
+    public function isValid(): bool;
 
     /**
      * Get the last error message, in particular to know why writer is invalid.

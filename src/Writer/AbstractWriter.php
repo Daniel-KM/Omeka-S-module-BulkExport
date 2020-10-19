@@ -98,7 +98,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $this->extension;
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
         $this->lastErrorMessage = null;
         return true;

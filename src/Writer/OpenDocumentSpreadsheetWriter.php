@@ -40,7 +40,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $spreadsheetType = Type::ODS;
 
-    public function isValid()
+    public function isValid(): bool
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->lastErrorMessage = new PsrMessage(
