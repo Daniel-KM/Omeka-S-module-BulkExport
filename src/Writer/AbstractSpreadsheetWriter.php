@@ -2,7 +2,8 @@
 
 namespace BulkExport\Writer;
 
-use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
@@ -52,7 +53,21 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
     protected function initializeOutput()
     {
-        $this->spreadsheetWriter = WriterFactory::create($this->spreadsheetType);
+        switch ($this->spreadsheetType) {
+            case Type::CSV:
+                $this->spreadsheetWriter = WriterEntityFactory::createCSVWriter();
+                break;
+            case Type::ODS:
+                $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
+                break;
+            default:
+                $this->logger->err(
+                    'Unsupported format {format} for spreadsheet.', // @translate
+                    ['format' => $this->spreadsheet]
+                );
+                $this->hasError = true;
+                return $this;
+        }
         $this->spreadsheetWriter
             ->openToFile($this->filepath);
         return $this;
@@ -60,8 +75,9 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
     protected function writeFields(array $fields)
     {
+        $row = WriterEntityFactory::createRowFromArray($fields);
         $this->spreadsheetWriter
-            ->addRow($fields);
+            ->addRow($row);
         return $this;
     }
 

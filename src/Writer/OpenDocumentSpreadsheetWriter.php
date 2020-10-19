@@ -3,7 +3,7 @@
 namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Log\Stdlib\PsrMessage;
 
@@ -57,7 +57,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
 
-        $this->spreadsheetWriter = WriterFactory::create($this->spreadsheetType);
+        $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
         $this->spreadsheetWriter
             ->setTempFolder($tempDir)
             ->openToFile($this->filepath);

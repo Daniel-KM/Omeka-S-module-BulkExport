@@ -3,7 +3,7 @@
 namespace BulkExport\Formatter;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Log\Stdlib\PsrMessage;
 
 class Ods extends AbstractSpreadsheetFormatter
@@ -38,7 +38,7 @@ class Ods extends AbstractSpreadsheetFormatter
             // "php://temp" doesn't seem to work.
             : tempnam($tempDir, 'omk_export_');
 
-        $this->spreadsheetWriter = WriterFactory::create($this->spreadsheetType);
+        $this->spreadsheetWriter = WriterEntityFactory::createcreateODSWriter();
         try {
             $this->spreadsheetWriter
                 ->setTempFolder($tempDir)
@@ -55,8 +55,9 @@ class Ods extends AbstractSpreadsheetFormatter
 
     protected function writeFields(array $fields)
     {
+        $row = $this->spreadsheetWriter->createRowFromArray($fields);
         $this->spreadsheetWriter
-            ->addRow($fields);
+            ->addRow($row);
         return $this;
     }
 
