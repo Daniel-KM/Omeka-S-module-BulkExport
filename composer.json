@@ -1,6 +1,6 @@
 {
     "require": {
-        "box/spout": "^2.7",
+        "box/spout": "^3.1",
         "phpoffice/phpword": "^0.17.0",
         "laminas/laminas-dependency-plugin": "^1.0"
     },
