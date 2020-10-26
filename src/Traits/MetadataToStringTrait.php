@@ -209,7 +209,9 @@ trait MetadataToStringTrait
                         case strpos($type, 'valuesuggest:') === 0 || strpos($type, 'valuesuggestall:') === 0:
                             $v = $v->uri();
                             break;
-                            // Module RdfDatatype.
+                        // Module DataTypeRdf.
+                        case 'xml':
+                        // Module RdfDatatype.
                         case 'rdf:XMLLiteral':
                         case 'xsd:date':
                         case 'xsd:dateTime':
@@ -222,12 +224,15 @@ trait MetadataToStringTrait
                         case 'xsd:time':
                             $v = (string) $v;
                             break;
+                        case 'integer':
                         case 'xsd:integer':
                             $v = (int) $v->value();
                             break;
+                        case 'boolean':
                         case 'xsd:boolean':
                             $v = $v->value() ? 'true' : 'false';
                             break;
+                        case 'html':
                         case 'rdf:HTML':
                             $v = $v->asHtml();
                             break;
