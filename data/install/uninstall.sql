@@ -1,5 +1,3 @@
-ALTER TABLE bulk_export DROP FOREIGN KEY FK_625A30FDB4523DE5;
-ALTER TABLE bulk_export DROP FOREIGN KEY FK_625A30FDBE04EA9;
-ALTER TABLE bulk_exporter DROP FOREIGN KEY FK_6093500B7E3C61F9;
-DROP TABLE bulk_export;
-DROP TABLE bulk_exporter;
+SET foreign_key_checks = 0;
+DROP TABLE `bulk_export`;
+DROP TABLE `bulk_exporter`;
