@@ -193,6 +193,10 @@ trait MetadataToStringTrait
                             $vvr = $v->valueResource();
                             $v = $vvr ? $this->stringifyResource($vvr, $params) : (string) $v->value();
                             break;
+                        // Module module Numeric data type.
+                        case strpos($type, 'numeric:') === 0:
+                            $v = (string) $v;
+                            break;
                         // Module DataTypeRdf.
                         case 'xml':
                         // Module RdfDatatype.
