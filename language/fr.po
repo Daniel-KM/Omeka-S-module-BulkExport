@@ -797,7 +797,7 @@ msgstr "Export complété"
 
 #: src/Job/Export.php:98
 msgid "The export is available at {url}."
-msgstr "L'export est disponible à \"{url}\"."
+msgstr "L’export est disponible à \"{url}\"."
 
 #: src/Job/Export.php:148
 msgid "Export record does not exist"
@@ -877,7 +877,7 @@ msgstr "OpenDocument Spreadsheet"
 
 #: src/Writer/AbstractFieldsWriter.php:100
 msgid "Output directory \"{folder}\" is not writeable."
-msgstr "Le dossier de sortie ({folder}) n’'est pas inscriptible."
+msgstr "Le dossier de sortie ({folder}) n’est pas inscriptible."
 
 #: src/Writer/AbstractFieldsWriter.php:125
 msgid "No headers are used in any resources."
