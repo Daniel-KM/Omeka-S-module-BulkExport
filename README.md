@@ -22,6 +22,9 @@ Installation
 
 This module requires the module [Log] and the optional module [Generic].
 
+**Important**: If you use the module [CSVImport] in parallel, you should apply [this patch]
+of use [this version].
+
 See general end user documentation for [installing a module].
 
 * From the zip
@@ -129,6 +132,9 @@ by [Biblibre].
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
+[CSV Import]: https://github.com/omeka-s-modules/CSVImport
+[this patch]: https://github.com/omeka-s-modules/CSVImport/pull/182
+[this version]: https://github.com/Daniel-KM/Omeka-S-module-CSVImport
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
