@@ -3,6 +3,7 @@
 namespace BulkExport\Traits;
 
 use Omeka\Api\Representation\AbstractRepresentation;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AbstractResourceRepresentation;
 
 trait MetadataToStringTrait
@@ -152,10 +153,11 @@ trait MetadataToStringTrait
 
             // All properties for all resources.
             default:
-                /* @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
                 if (empty($params['only_first'])) {
+                    /** @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
                     $vv = $resource->value($metadata, ['all' => true]);
                 } else {
+                    /** @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
                     $vv = $resource->value($metadata, ['default' => false]);
                     $vv = $vv ? [$vv] : [];
                 }
@@ -167,30 +169,7 @@ trait MetadataToStringTrait
                         case 'resource:media':
                         case 'resource:itemset':
                         case 'resource:annotation':
-                            $v = $v->valueResource();
-                            switch ($params['format_resource']) {
-                                case 'id':
-                                    $v = $v->id();
-                                    break;
-                                case 'identifier':
-                                    $v = $v->value($params['format_resource_property']);
-                                    break;
-                                case 'identifier_id':
-                                    $v = $v->value($params['format_resource_property'], ['default' => $v->id()]);
-                                    break;
-                                case 'title':
-                                    $v = $v->displayTitle('[#' . $v->id() . ']');
-                                    break;
-                                case 'url':
-                                    $v = empty($params['site_slug']) ? $v->apiUrl() : $v->siteUrl($params['site_slug']);
-                                    break;
-                                case 'url_title':
-                                default:
-                                    $vUrl = empty($params['site_slug']) ? $v->apiUrl() : $v->siteUrl($params['site_slug']);
-                                    $vTitle = $v->displayTitle('');
-                                    $v = $vUrl . (strlen($vTitle) ? ' ' . $vTitle : '');
-                                    break;
-                            }
+                            $v = $this->stringifyResource($v->valueResource(), $params);
                             break;
                         case 'uri':
                             switch ($params['format_uri']) {
@@ -208,6 +187,11 @@ trait MetadataToStringTrait
                             break;
                         case strpos($type, 'valuesuggest:') === 0 || strpos($type, 'valuesuggestall:') === 0:
                             $v = $v->uri();
+                            break;
+                        // Module Custom vocab.
+                        case strpos($type, 'customvocab:') === 0:
+                            $vvr = $v->valueResource();
+                            $v = $vvr ? $this->stringifyResource($vvr, $params) : (string) $v->value();
                             break;
                         // Module DataTypeRdf.
                         case 'xml':
@@ -249,6 +233,34 @@ trait MetadataToStringTrait
                 unset($v);
                 return $vv;
         }
+    }
+
+    protected function stringifyResource(AbstractResourceEntityRepresentation $resource, array $params): string
+    {
+        switch ($params['format_resource']) {
+            case 'id':
+                $v = (string) $resource->id();
+                break;
+            case 'identifier':
+                $v = (string) $resource->value($params['format_resource_property']);
+                break;
+            case 'identifier_id':
+                $v = (string) $resource->value($params['format_resource_property'], ['default' => $resource->id()]);
+                break;
+            case 'title':
+                $v = $resource->displayTitle('[#' . $resource->id() . ']');
+                break;
+            case 'url':
+                $v = empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug']);
+                break;
+            case 'url_title':
+            default:
+                $vUrl = empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug']);
+                $vTitle = $resource->displayTitle('');
+                $v = $vUrl . (strlen($vTitle) ? ' ' . $vTitle : '');
+                break;
+        }
+        return $v;
     }
 
     /**
