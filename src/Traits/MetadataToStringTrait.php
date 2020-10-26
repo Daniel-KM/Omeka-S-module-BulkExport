@@ -154,7 +154,7 @@ trait MetadataToStringTrait
             default:
                 /* @var \Omeka\Api\Representation\ValueRepresentation[] $vv */
                 if (empty($params['only_first'])) {
-                    $vv = $resource->value($metadata, ['all' => true, 'default' => []]);
+                    $vv = $resource->value($metadata, ['all' => true]);
                 } else {
                     $vv = $resource->value($metadata, ['default' => false]);
                     $vv = $vv ? [$vv] : [];
