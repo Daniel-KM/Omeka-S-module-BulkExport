@@ -234,7 +234,7 @@ class ExporterController extends AbstractActionController
                     default:
                     case 'writer':
                         $writer->handleParamsForm($form);
-                        $session->comment = trim($data['comment']);
+                        $session->comment = trim((string) $data['comment']);
                         $session->useBackground = (bool) ($data['use_background']);
                         $session->writer = $writer->getParams();
                         if (!$writer->isValid()) {
@@ -248,7 +248,7 @@ class ExporterController extends AbstractActionController
 
                     case 'start':
                         $exportData = [];
-                        $exportData['o-module-bulk:comment'] = trim($session['comment']) ?: null;
+                        $exportData['o-module-bulk:comment'] = trim((string) $session['comment']) ?: null;
                         $exportData['o-module-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {
                             $exportData['o-module-bulk:writer_params'] = $writer->getParams();
