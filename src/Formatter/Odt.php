@@ -28,8 +28,8 @@ class Odt extends AbstractFieldsFormatter
                 'To process export to "{format}", the php extensions "zip" and "xml" are required.', // @translate
                 ['format' => $this->getLabel()]
             ));
-            $this->hasError = false;
-            $resources = false;
+            $this->hasError = true;
+            return $this;
         }
         return parent::format($resources, $output, $options);
     }

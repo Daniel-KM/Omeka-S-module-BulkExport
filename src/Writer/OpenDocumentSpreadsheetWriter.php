@@ -49,6 +49,13 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
             );
             return false;
         }
+        // The version of Box/Spout should be >= 3.0, but there is no version
+        // inside php, so check against a class.
+        // This check is needed, because CSV Import still uses version 2.7.
+        if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
+            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
+            return false;
+        }
         return parent::isValid();
     }
 

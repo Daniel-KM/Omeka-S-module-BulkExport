@@ -24,7 +24,7 @@ $urlBase = $url('top') . 'files/bulk_export/';
         <?php foreach ($exports as $export): ?>
             <?php $status = $translate($export->status()); ?>
             <?php $filename = $export->filename(); ?>
-            <?php $fileUrl = $export->isCompleted() && $filename ? $urlBase . $filename : ''; ?>
+            <?php $fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : ''; ?>
             <tr>
                 <td>
                     <?php $comment = $export->comment() ?>
