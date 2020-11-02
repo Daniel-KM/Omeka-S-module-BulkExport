@@ -267,7 +267,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             // Modules.
             'oa:Annotation' => \Annotate\Entity\Annotation::class,
         ];
-        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+        return $mapping[$jsonResourceType] ?? null;
     }
 
     protected function mapResourceTypeToApiResource($jsonResourceType)
@@ -292,36 +292,32 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             // Modules.
             'oa:Annotation' => 'annotations',
         ];
-        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+        return $mapping[$jsonResourceType] ?? null;
     }
 
     protected function mapResourceTypeToText($jsonResourceType)
     {
-        static $mapping;
-        if (empty($mapping)) {
-            $translate = $this->getServiceLocator()->get('ViewHelperManager')->get('translate');
-            $mapping = [
-                // Core.
-                'o:User' => $translate('users'),
-                'o:Vocabulary' => $translate('vocabularies'),
-                'o:ResourceClass' => $translate('resource classes'),
-                'o:ResourceTemplate' => $translate('resource templates'),
-                'o:Property' => $translate('properties'),
-                'o:Item' => $translate('items'),
-                'o:Media' => $translate('media'),
-                'o:ItemSet' => $translate('item sets'),
-                'o:Module' => $translate('modules'),
-                'o:Site' => $translate('sites'),
-                'o:SitePage' => $translate('site pages'),
-                'o:Job' => $translate('jobs'),
-                'o:Resource' => $translate('resources'),
-                'o:Asset' => $translate('assets'),
-                'o:ApiResource' => $translate('api resources'),
-                // Modules.
-                'oa:Annotation' => $translate('annotations'),
-            ];
-        }
-        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+        $mapping = [
+            // Core.
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource classes',
+            'o:ResourceTemplate' => 'resource templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api resources',
+            // Modules.
+            'oa:Annotation' => 'annotations',
+        ];
+        return $mapping[$jsonResourceType] ?? null;
     }
 
     protected function mapResourceTypeToTable($jsonResourceType)
@@ -354,6 +350,32 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $class = get_class($representation);
         $mapping = [
             // Core.
+            \Omeka\Api\Representation\UserRepresentation::class => 'users',
+            \Omeka\Api\Representation\VocabularyRepresentation::class => 'vocabularies',
+            \Omeka\Api\Representation\ResourceClassRepresentation::class => 'resource_classes',
+            \Omeka\Api\Representation\ResourceTemplateRepresentation::class => 'resource_templates',
+            \Omeka\Api\Representation\PropertyRepresentation::class => 'properties',
+            \Omeka\Api\Representation\ItemRepresentation::class => 'items',
+            \Omeka\Api\Representation\MediaRepresentation::class => 'media',
+            \Omeka\Api\Representation\ItemSetRepresentation::class => 'item_sets',
+            \Omeka\Api\Representation\ModuleRepresentation::class => 'modules',
+            \Omeka\Api\Representation\SiteRepresentation::class => 'sites',
+            \Omeka\Api\Representation\SitePageRepresentation::class => 'site_pages',
+            \Omeka\Api\Representation\JobRepresentation::class => 'jobs',
+            \Omeka\Api\Representation\ResourceReference::class => 'resources',
+            \Omeka\Api\Representation\AssetRepresentation::class => 'assets',
+            \Omeka\Api\Representation\ApiResourceRepresentation::class => 'api_resources',
+            // Modules.
+            \Annotate\Api\Representation\AnnotationRepresentation::class => 'annotations',
+        ];
+        return $mapping[$class] ?? null;
+    }
+
+    protected function mapRepresentationToResourceTypeText(AbstractRepresentation $representation)
+    {
+        $class = get_class($representation);
+        $mapping = [
+            // Core.
             \Omeka\Api\Representation\UserRepresentation::class => 'User',
             \Omeka\Api\Representation\VocabularyRepresentation::class => 'Vocabulary',
             \Omeka\Api\Representation\ResourceClassRepresentation::class => 'Resource class',
@@ -372,6 +394,6 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             // Modules.
             \Annotate\Api\Representation\AnnotationRepresentation::class => 'Annotation',
         ];
-        return isset($mapping[$class]) ? $mapping[$class] : null;
+        return $mapping[$class] ?? null;
     }
 }

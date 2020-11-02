@@ -109,7 +109,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
             if ($check) {
                 $this->logger->warn(
                     'Skipped {resource_type} #{resource_id}: it contains the separator "{separator}".', // @translate
-                    ['resource_type' => $this->mapResourceTypeToText($resource->getJsonLdType()), 'resource_id' => $resource->id(), 'separator' => $separator]
+                    ['resource_type' => $this->mapRepresentationToResourceTypeText($resource), 'resource_id' => $resource->id(), 'separator' => $separator]
                 );
                 $dataResource = [];
                 break;
