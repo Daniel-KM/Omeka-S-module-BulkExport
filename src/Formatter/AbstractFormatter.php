@@ -172,7 +172,7 @@ abstract class AbstractFormatter implements FormatterInterface
         // The api is almost always required.
         $this->logger = $this->services->get('Omeka\Logger');
         $this->api = $this->services->get('ControllerPluginManager')->get('api');
-        $this->translator = $this->getServiceLocator()->get('MvcTranslator');
+        $this->translator = $this->services->get('MvcTranslator');
 
         $resourceTypes = [
             'items',
@@ -246,6 +246,19 @@ abstract class AbstractFormatter implements FormatterInterface
                             if ($hasLimit) {
                                 $this->query['limit'] = (int) $options['limit'];
                             }
+                            // Avoid an issue when the query contains a page
+                            // without per_page and take main limit in account.
+                            if (!empty($this->query['page'])) {
+                                if (empty($this->query['per_page'])) {
+                                    $this->query['per_page'] = (int) $this->services->get('Omeka\Settings')->get('pagination_per_page') ?: 25;
+                                }
+                                $this->query['offset'] = (int) ceil(($this->query['page'] - 1) * $this->query['per_page']);
+                                $this->query['limit'] = $this->query['per_page'];
+                                unset($this->query['page']);
+                                unset($this->query['per_page']);
+                            }
+                            unset($this->query['page']);
+                            unset($this->query['per_page']);
                             $this->resourceIds = $this->api->search($this->resourceType, $this->query, ['returnScalar' => 'id'])->getContent();
                             $this->isId = true;
                         }

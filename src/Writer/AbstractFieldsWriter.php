@@ -248,6 +248,12 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             ['total' => $statistics['total'], 'resource_type' => $resourceText]
         );
 
+        // Avoid an issue when the query contains a page: there should not be
+        // pagination at this point. Page and limit cannot be mixed.
+        // @see \Omeka\Api\Adapter\AbstractEntityAdapter::limitQuery().
+        unset($this->options['query']['page']);
+        unset($this->options['query']['per_page']);
+
         $offset = 0;
         do {
             if ($this->job->shouldStop()) {

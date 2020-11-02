@@ -33,6 +33,21 @@ class OutputController extends AbstractActionController
             ));
         }
 
+        $isSiteRequest = $this->status()->isSiteRequest();
+        $settings = $isSiteRequest ? $this->siteSettings() : $this->settings();
+
+        $resourceLimit = $settings->get('bulkexport_limit') ?: 1000;
+
+        $resourceTypes = [
+            'item' => 'items',
+            'item-set' => 'item_sets',
+            'media' => 'media',
+            'resource' => 'resources',
+            'annotation' => 'annotations',
+        ];
+        $resourceType = $params->fromRoute('resource-type');
+        $resourceType = $resourceTypes[$resourceType];
+
         // Check the id in the route first to manage the direct route.
         $id = $params->fromRoute('id');
         if ($id) {
@@ -57,13 +72,23 @@ class OutputController extends AbstractActionController
                 }
             } else {
                 $resources = $params->fromQuery();
+                // Avoid issue when the query contains a page without per_page,
+                // for example when copying the url query.
+                if (empty($resources['page'])) {
+                    unset($resources['page']);
+                    unset($resources['per_page']);
+                } else {
+                    // Don't use the value set inside the query for security.
+                    $resources['per_page'] = $settings->get('pagination_per_page') ?: 25;
+                }
+                // This is the direct output, so it is always limited by the
+                // configured limit, so get the ids directly here.
+                $resources['limit'] = $resources['per_page'] ?? $resourceLimit;
+                $resources = $this->api()->search($resourceType, $resources, ['returnScalar' => 'id'])->getContent();
             }
         }
 
-        $isSiteRequest = $this->status()->isSiteRequest();
-
         $options = [];
-        $settings = $isSiteRequest ? $this->siteSettings() : $this->settings();
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;
         $options['metadata'] = $settings->get('bulkexport_metadata', []);
         $options['format_fields'] = $settings->get('bulkexport_format_fields', 'name');
@@ -73,21 +98,8 @@ class OutputController extends AbstractActionController
         $options['format_uri'] = $settings->get('bulkexport_format_uri', 'uri_label');
         $options['template'] = $settings->get('bulkexport_template');
         $options['is_admin_request'] = !$isSiteRequest;
-        $resourceTypes = [
-            'item' => 'items',
-            'item-set' => 'item_sets',
-            'media' => 'media',
-            'resource' => 'resources',
-            'annotation' => 'annotations',
-        ];
-        $resourceType = $params->fromRoute('resource-type');
-        $resourceType = $resourceTypes[$resourceType];
         $options['resource_type'] = $resourceType;
-
-        $resourceLimit = $settings->get('bulkexport_limit', 1000);
-        if ($resourceLimit > 0) {
-            $options['limit'] = $resourceLimit;
-        }
+        $options['limit'] = $resourceLimit;
 
         /** @var \BulkExport\Formatter\FormatterInterface $formatter */
         $formatter = $this->formatterManager->get($format)
