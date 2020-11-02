@@ -45,17 +45,17 @@ trait FormatTrait
                 'options' => [
                     'label' => 'Format of linked resources', // @translate
                     'value_options' => [
-                        'url_title' => 'Omeka url and title', // @translate
+                        'identifier' => 'Identifier (property below)', // @translate
+                        'id' => 'Id', // @translate
+                        'identifier_id' => 'Identifier or id', // @translate
                         'url' => 'Omeka url', // @translate
                         'title' => 'Title', // @translate
-                        'id' => 'Id', // @translate
-                        'identifier' => 'Identifier (property below)', // @translate
-                        'identifier_id' => 'Identifier or id', // @translate
+                        'url_title' => 'Omeka url and title', // @translate
                     ],
                 ],
                 'attributes' => [
                     'id' => 'format_resource',
-                    'value' => 'url_title',
+                    'value' => 'identifier_id',
                 ],
             ])
             ->add([
