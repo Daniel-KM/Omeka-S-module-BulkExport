@@ -92,7 +92,8 @@ class ExporterController extends AbstractActionController
         }
 
         // Check if the exporter has exports.
-        $total = $this->api()->search('bulk_exports', ['exporter_id' => $id])->getTotalResults();
+        // Don't load entities if the only information needed is total results.
+        $total = $this->api()->search('bulk_exports', ['exporter_id' => $id, 'limit' => 0])->getTotalResults();
         if ($total) {
             $this->messenger()->addWarning('This exporter cannot be deleted: exports that use it exist.'); // @translate
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);

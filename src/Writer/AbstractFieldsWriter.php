@@ -351,7 +351,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         foreach ($this->options['resource_types'] as $resourceType) {
             $resource = $this->mapResourceTypeToApiResource($resourceType);
             $result[$resourceType] = $resource
-                ? $api->search($resource, ['limit' => 1] + $this->options['query'], ['initialize' => false, 'finalize' => false])->getTotalResults()
+                ? $api->search($resource, ['limit' => 0] + $this->options['query'], ['initialize' => false, 'finalize' => false])->getTotalResults()
                 : null;
         }
         return $result;
