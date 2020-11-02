@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:00+0000\n"
+"POT-Creation-Date: 2020-11-02 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:110
+#: Module.php:117
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:116
+#: Module.php:123
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:122
+#: Module.php:129
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -33,17 +33,21 @@ msgstr ""
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:601
+#: src/Generic/AbstractModule.php:66
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:621
+#: src/Generic/AbstractModule.php:73
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:689
+#: src/Generic/AbstractModule.php:80
+msgid "This module has resources that connot be installed."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:709
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -87,10 +91,6 @@ msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:128
 msgid "Resource identifier"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:129
-msgid "Resource title"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:131
@@ -149,54 +149,6 @@ msgstr ""
 #: src/Traits/ResourceFieldsTrait.php:168
 #, php-format
 msgid "Annotation target: %s"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:305
-msgid "users"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:306
-msgid "vocabularies"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:307
-msgid "resource classes"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:308
-msgid "resource templates"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:309
-msgid "properties"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:313
-msgid "modules"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:314
-msgid "sites"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:315
-msgid "site pages"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:316
-msgid "jobs"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:317
-msgid "resources"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:319
-msgid "api resources"
-msgstr ""
-
-#: src/Writer/AbstractWriter.php:321
-msgid "annotations"
 msgstr ""
 
 #: view/bulk/admin/bulk-export/index.phtml:18
@@ -271,10 +223,6 @@ msgstr ""
 msgid "Notice"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:30
-msgid "Info"
-msgstr ""
-
 #: view/bulk/admin/export/logs.phtml:31
 msgid "Debug"
 msgstr ""
@@ -285,10 +233,6 @@ msgstr ""
 
 #: view/bulk/admin/export/logs.phtml:41
 msgid "Show only messages whose severity is higher than or equal to"
-msgstr ""
-
-#: view/bulk/admin/export/logs.phtml:49
-msgid "Show"
 msgstr ""
 
 #: view/bulk/admin/export/logs.phtml:58
@@ -418,11 +362,16 @@ msgstr ""
 msgid "CSV"
 msgstr ""
 
-#: Module.php:48 Module.php:276
+#: Module.php:48 Module.php:283
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:287
+#: Module.php:57 src/Formatter/Ods.php:33
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:56
+msgid "The dependency Box/Spout version should be >= 3.0. See readme."
+msgstr ""
+
+#: Module.php:294
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
@@ -474,27 +423,27 @@ msgstr ""
 
 #: src/Form/SettingsFieldset.php:82 src/Form/SiteSettingsFieldset.php:81
 #: src/Form/Writer/FormatTrait.php:48
-msgid "Omeka url and title"
+msgid "Identifier (property below)"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:82
 #: src/Form/Writer/FormatTrait.php:49
-msgid "Omeka url"
+msgid "Id"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:84 src/Form/SiteSettingsFieldset.php:83
+#: src/Form/Writer/FormatTrait.php:50
+msgid "Identifier or id"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:84
 #: src/Form/Writer/FormatTrait.php:51
-msgid "Id"
-msgstr ""
-
-#: src/Form/SettingsFieldset.php:86 src/Form/SiteSettingsFieldset.php:85
-#: src/Form/Writer/FormatTrait.php:52
-msgid "Identifier (property below)"
+msgid "Omeka url"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:86
 #: src/Form/Writer/FormatTrait.php:53
-msgid "Identifier or id"
+msgid "Omeka url and title"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:99 src/Form/SiteSettingsFieldset.php:98
@@ -675,12 +624,12 @@ msgid ""
 "are required."
 msgstr ""
 
-#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:308
+#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:321
 #: src/Writer/TextWriter.php:52
 msgid "Unable to open output: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:345
+#: src/Formatter/AbstractFormatter.php:358
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -688,14 +637,14 @@ msgstr ""
 msgid "No metadata are used in any resources."
 msgstr ""
 
-#: src/Controller/OutputController.php:103
+#: src/Controller/OutputController.php:115
 msgid "Unable to format resources as {format}."
 msgstr ""
 
 #: src/Controller/Admin/ExporterController.php:44
 #: src/Controller/Admin/ExporterController.php:89
-#: src/Controller/Admin/ExporterController.php:133
-#: src/Controller/Admin/ExporterController.php:193
+#: src/Controller/Admin/ExporterController.php:134
+#: src/Controller/Admin/ExporterController.php:194
 msgid "exporter_id"
 msgstr ""
 
@@ -707,47 +656,47 @@ msgstr ""
 msgid "Save of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:97
+#: src/Controller/Admin/ExporterController.php:98
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:110
+#: src/Controller/Admin/ExporterController.php:111
 msgid "Exporter successfully deleted"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:113
+#: src/Controller/Admin/ExporterController.php:114
 msgid "Delete of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:165
+#: src/Controller/Admin/ExporterController.php:166
 msgid "Writer configuration saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:168
+#: src/Controller/Admin/ExporterController.php:169
 msgid "Save of writer configuration failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:259
+#: src/Controller/Admin/ExporterController.php:260
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:289
+#: src/Controller/Admin/ExporterController.php:290
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:290
+#: src/Controller/Admin/ExporterController.php:291
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:309
+#: src/Controller/Admin/ExporterController.php:310
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:369
+#: src/Controller/Admin/ExporterController.php:370
 msgid "Continue"
 msgstr ""
 
@@ -803,13 +752,17 @@ msgstr ""
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:47
+#: src/Writer/AbstractSpreadsheetWriter.php:48
 msgid ""
 "No separator selected: only the first value of each property of each "
 "resource will be output."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:95
+#: src/Writer/AbstractSpreadsheetWriter.php:65
+msgid "Unsupported format {format} for spreadsheet."
+msgstr ""
+
+#: src/Writer/AbstractSpreadsheetWriter.php:111
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
@@ -872,19 +825,19 @@ msgstr ""
 msgid "Starting export of {total} {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:256
+#: src/Writer/AbstractFieldsWriter.php:262
 msgid ""
 "The job \"Export\" was stopped: {processed}/{total} resources processed."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:299
-#: src/Writer/AbstractFieldsWriter.php:311
+#: src/Writer/AbstractFieldsWriter.php:305
+#: src/Writer/AbstractFieldsWriter.php:317
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:316
+#: src/Writer/AbstractFieldsWriter.php:322
 msgid "End export of {total} {resource_type}."
 msgstr ""
 

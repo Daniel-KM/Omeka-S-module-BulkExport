@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-12 00:00+0000\n"
-"PO-Revision-Date: 2020-10-12 00:00+0000\n"
+"POT-Creation-Date: 2020-11-02 00:00+0000\n"
+"PO-Revision-Date: 2020-11-02 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: Module.php:110
+#: Module.php:117
 msgid "WARNING:"
 msgstr "ATTENTION :"
 
-#: Module.php:116
+#: Module.php:123
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr "Tous les exports seront supprimés (dossier \"{folder}\")."
 
-#: Module.php:122
+#: Module.php:129
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
@@ -33,17 +33,21 @@ msgstr "Supprimer le dossier d’export en lot"
 msgid "Unsupported format \"{format}\"."
 msgstr "Format non géré \"{format}\"."
 
-#: src/Generic/AbstractModule.php:601
+#: src/Generic/AbstractModule.php:66
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr "Ce module requiert le module \"%s\"."
 
-#: src/Generic/AbstractModule.php:621
+#: src/Generic/AbstractModule.php:73
 #, php-format
 msgid "This module requires modules \"%s\"."
 msgstr "Ce module requiert les modules \"%s\"."
 
-#: src/Generic/AbstractModule.php:689
+#: src/Generic/AbstractModule.php:80
+msgid "This module has resources that connot be installed."
+msgstr "Ce module a des ressources qui ne peuvent pas être installées."
+
+#: src/Generic/AbstractModule.php:709
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -90,10 +94,6 @@ msgstr "Id de la ressource"
 #: src/Traits/ResourceFieldsTrait.php:128
 msgid "Resource identifier"
 msgstr "Identifiant de la ressource"
-
-#: src/Traits/ResourceFieldsTrait.php:129
-msgid "Resource title"
-msgstr "Titre de la ressource"
 
 #: src/Traits/ResourceFieldsTrait.php:131
 msgid "Item set id"
@@ -152,54 +152,6 @@ msgstr "Corps de l’annotation : %s"
 #, php-format
 msgid "Annotation target: %s"
 msgstr "Cible de l’annotation : %s"
-
-#: src/Writer/AbstractWriter.php:305
-msgid "users"
-msgstr "utilisateurs"
-
-#: src/Writer/AbstractWriter.php:306
-msgid "vocabularies"
-msgstr "vocabulaires"
-
-#: src/Writer/AbstractWriter.php:307
-msgid "resource classes"
-msgstr "classes de ressource"
-
-#: src/Writer/AbstractWriter.php:308
-msgid "resource templates"
-msgstr "modèles de ressource"
-
-#: src/Writer/AbstractWriter.php:309
-msgid "properties"
-msgstr "propriétés"
-
-#: src/Writer/AbstractWriter.php:313
-msgid "modules"
-msgstr "modules"
-
-#: src/Writer/AbstractWriter.php:314
-msgid "sites"
-msgstr "sites"
-
-#: src/Writer/AbstractWriter.php:315
-msgid "site pages"
-msgstr "pages de site"
-
-#: src/Writer/AbstractWriter.php:316
-msgid "jobs"
-msgstr "tâches"
-
-#: src/Writer/AbstractWriter.php:317
-msgid "resources"
-msgstr "ressources"
-
-#: src/Writer/AbstractWriter.php:319
-msgid "api resources"
-msgstr "ressources api"
-
-#: src/Writer/AbstractWriter.php:321
-msgid "annotations"
-msgstr "annotations"
 
 #: view/bulk/admin/bulk-export/index.phtml:18
 #: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/logs.phtml:35
@@ -273,10 +225,6 @@ msgstr "Critique"
 msgid "Notice"
 msgstr "Avis"
 
-#: view/bulk/admin/export/logs.phtml:30
-msgid "Info"
-msgstr "Info"
-
 #: view/bulk/admin/export/logs.phtml:31
 msgid "Debug"
 msgstr "Débogage"
@@ -289,10 +237,6 @@ msgstr "Journaux d’export"
 msgid "Show only messages whose severity is higher than or equal to"
 msgstr ""
 "Afficher seulement les messages dont la sévérité est supérieure ou égale à"
-
-#: view/bulk/admin/export/logs.phtml:49
-msgid "Show"
-msgstr "Afficher"
 
 #: view/bulk/admin/export/logs.phtml:58
 msgid "Message"
@@ -421,11 +365,17 @@ msgstr "TSV (tab-separated values)"
 msgid "CSV"
 msgstr "CSV"
 
-#: Module.php:48 Module.php:276
+#: Module.php:48 Module.php:283
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
 
-#: Module.php:287
+#: Module.php:57 src/Formatter/Ods.php:33
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:56
+msgid "The dependency Box/Spout version should be >= 3.0. See readme."
+msgstr ""
+"La dépendance Box/Spout doit avoir une version >= 3.0. Consultez le readme."
+
+#: Module.php:294
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
@@ -477,28 +427,28 @@ msgstr "Format des ressources liées"
 
 #: src/Form/SettingsFieldset.php:82 src/Form/SiteSettingsFieldset.php:81
 #: src/Form/Writer/FormatTrait.php:48
-msgid "Omeka url and title"
-msgstr "Omeka url et titre"
-
-#: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:82
-#: src/Form/Writer/FormatTrait.php:49
-msgid "Omeka url"
-msgstr "Url Omeka"
-
-#: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:84
-#: src/Form/Writer/FormatTrait.php:51
-msgid "Id"
-msgstr "Id"
-
-#: src/Form/SettingsFieldset.php:86 src/Form/SiteSettingsFieldset.php:85
-#: src/Form/Writer/FormatTrait.php:52
 msgid "Identifier (property below)"
 msgstr "Identifiant (propriété ci-dessous)"
 
-#: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:86
-#: src/Form/Writer/FormatTrait.php:53
+#: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:82
+#: src/Form/Writer/FormatTrait.php:49
+msgid "Id"
+msgstr "Id"
+
+#: src/Form/SettingsFieldset.php:84 src/Form/SiteSettingsFieldset.php:83
+#: src/Form/Writer/FormatTrait.php:50
 msgid "Identifier or id"
 msgstr "Identifiant ou id"
+
+#: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:84
+#: src/Form/Writer/FormatTrait.php:51
+msgid "Omeka url"
+msgstr "Url Omeka"
+
+#: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:86
+#: src/Form/Writer/FormatTrait.php:53
+msgid "Omeka url and title"
+msgstr "Omeka url et titre"
 
 #: src/Form/SettingsFieldset.php:99 src/Form/SiteSettingsFieldset.php:98
 #: src/Form/Writer/FormatTrait.php:65
@@ -691,12 +641,12 @@ msgstr ""
 "Pour réaliser un export dans le format \"{format}\", les extensions php \"zip"
 "\" et xml\" sont nécessaires."
 
-#: src/Formatter/Ods.php:49 src/Formatter/AbstractFormatter.php:308
+#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:321
 #: src/Writer/TextWriter.php:52
 msgid "Unable to open output: {error}."
 msgstr "Impossible d’ouvrir la sortie : {error}."
 
-#: src/Formatter/AbstractFormatter.php:345
+#: src/Formatter/AbstractFormatter.php:358
 msgid "Unable to save output to file: {error}."
 msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
 
@@ -704,14 +654,14 @@ msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
 msgid "No metadata are used in any resources."
 msgstr "Aucune métadonnée n’est utilisée dans les ressources."
 
-#: src/Controller/OutputController.php:103
+#: src/Controller/OutputController.php:115
 msgid "Unable to format resources as {format}."
 msgstr "Impossible de formater les ressources en {format}."
 
 #: src/Controller/Admin/ExporterController.php:44
 #: src/Controller/Admin/ExporterController.php:89
-#: src/Controller/Admin/ExporterController.php:133
-#: src/Controller/Admin/ExporterController.php:193
+#: src/Controller/Admin/ExporterController.php:134
+#: src/Controller/Admin/ExporterController.php:194
 msgid "exporter_id"
 msgstr "exporter_id"
 
@@ -723,31 +673,31 @@ msgstr "Exporteur sauvegardé"
 msgid "Save of exporter failed"
 msgstr "Échec de l’enregistrement de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:97
+#: src/Controller/Admin/ExporterController.php:98
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr "L’exporteur ne peut pas être supprimé : des exports l’utilisent."
 
-#: src/Controller/Admin/ExporterController.php:110
+#: src/Controller/Admin/ExporterController.php:111
 msgid "Exporter successfully deleted"
 msgstr "Suppression de l’exporteur réussie"
 
-#: src/Controller/Admin/ExporterController.php:113
+#: src/Controller/Admin/ExporterController.php:114
 msgid "Delete of exporter failed"
 msgstr "Échec de la suppression de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:165
+#: src/Controller/Admin/ExporterController.php:166
 msgid "Writer configuration saved"
 msgstr "Configuration de l’écriveur enregistrée"
 
-#: src/Controller/Admin/ExporterController.php:168
+#: src/Controller/Admin/ExporterController.php:169
 msgid "Save of writer configuration failed"
 msgstr "Échec de l’enregistrement de la configuration"
 
-#: src/Controller/Admin/ExporterController.php:259
+#: src/Controller/Admin/ExporterController.php:260
 msgid "Save of export failed"
 msgstr "Échec de l’enregistrement de la ressource"
 
-#: src/Controller/Admin/ExporterController.php:289
+#: src/Controller/Admin/ExporterController.php:290
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
@@ -755,7 +705,7 @@ msgstr ""
 "Export lancé en arrière-plan (tâche {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}journaux{link_close}). Cela peut prendre un moment."
 
-#: src/Controller/Admin/ExporterController.php:290
+#: src/Controller/Admin/ExporterController.php:291
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
@@ -763,11 +713,11 @@ msgstr ""
 "Export lancé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "journaux{link_close})."
 
-#: src/Controller/Admin/ExporterController.php:309
+#: src/Controller/Admin/ExporterController.php:310
 msgid "Export start failed"
 msgstr "Échec du lancement de l’export"
 
-#: src/Controller/Admin/ExporterController.php:369
+#: src/Controller/Admin/ExporterController.php:370
 msgid "Continue"
 msgstr "Continuer"
 
@@ -824,7 +774,7 @@ msgstr ""
 msgid "%1$s: %2$s"
 msgstr "%1$s : %2$s"
 
-#: src/Writer/AbstractSpreadsheetWriter.php:47
+#: src/Writer/AbstractSpreadsheetWriter.php:48
 msgid ""
 "No separator selected: only the first value of each property of each "
 "resource will be output."
@@ -832,13 +782,17 @@ msgstr ""
 "Aucun séparateur sélectionné : seule la première valeur de chaque propriété "
 "de chaque ressource sera exportée."
 
-#: src/Writer/AbstractSpreadsheetWriter.php:95
+#: src/Writer/AbstractSpreadsheetWriter.php:65
+msgid "Unsupported format {format} for spreadsheet."
+msgstr "Format non géré \"{format}\" pour les tableurs."
+
+#: src/Writer/AbstractSpreadsheetWriter.php:111
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
 msgstr ""
 "Passe {resource_type} #{resource_id} : il contient le séparateur "
-"{separator}\"."
+"\"{separator}\"."
 
 #: src/Writer/AbstractWriter.php:166 src/Writer/AbstractWriter.php:174
 msgid "The destination folder \"{folder}\" is not writeable."
@@ -905,15 +859,14 @@ msgstr ""
 msgid "Starting export of {total} {resource_type}."
 msgstr "Lancement de l’export de {total} {resource_type}."
 
-#: src/Writer/AbstractFieldsWriter.php:256
+#: src/Writer/AbstractFieldsWriter.php:262
 msgid ""
 "The job \"Export\" was stopped: {processed}/{total} resources processed."
 msgstr ""
-"La tâche \"Export\" a été arrêtée : : {processed}/{total} ressources "
-"traitées."
+"La tâche \"Export\" a été arrêtée : {processed}/{total} ressources traitées."
 
-#: src/Writer/AbstractFieldsWriter.php:299
-#: src/Writer/AbstractFieldsWriter.php:311
+#: src/Writer/AbstractFieldsWriter.php:305
+#: src/Writer/AbstractFieldsWriter.php:317
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
@@ -921,7 +874,7 @@ msgstr ""
 "{processed}/{total} {resource_type} traités, {succeed} réussis, {skipped} "
 "ignorés."
 
-#: src/Writer/AbstractFieldsWriter.php:316
+#: src/Writer/AbstractFieldsWriter.php:322
 msgid "End export of {total} {resource_type}."
 msgstr "Fin de l’export de {total} {resource_type}."
 
@@ -937,6 +890,51 @@ msgstr "Exports précédents"
 #, php-format
 msgid "No argument files (%s)."
 msgstr "Fichiers d’arguments manquants (%s)."
+
+#~ msgid "users"
+#~ msgstr "utilisateurs"
+
+#~ msgid "vocabularies"
+#~ msgstr "vocabulaires"
+
+#~ msgid "resource classes"
+#~ msgstr "classes de ressource"
+
+#~ msgid "resource templates"
+#~ msgstr "modèles de ressource"
+
+#~ msgid "properties"
+#~ msgstr "propriétés"
+
+#~ msgid "modules"
+#~ msgstr "modules"
+
+#~ msgid "sites"
+#~ msgstr "sites"
+
+#~ msgid "site pages"
+#~ msgstr "pages de site"
+
+#~ msgid "jobs"
+#~ msgstr "tâches"
+
+#~ msgid "resources"
+#~ msgstr "ressources"
+
+#~ msgid "api resources"
+#~ msgstr "ressources api"
+
+#~ msgid "annotations"
+#~ msgstr "annotations"
+
+#~ msgid "Resource title"
+#~ msgstr "Titre de la ressource"
+
+#~ msgid "Info"
+#~ msgstr "Info"
+
+#~ msgid "Show"
+#~ msgstr "Afficher"
 
 #~ msgid "The destination folder \"{path}\" is not writeable."
 #~ msgstr "Le dossier de destination \"{path}\" n’est pas inscriptible."
