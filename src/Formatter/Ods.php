@@ -48,7 +48,7 @@ class Ods extends AbstractSpreadsheetFormatter
             // "php://temp" doesn't seem to work.
             : tempnam($tempDir, 'omk_export_');
 
-        $this->spreadsheetWriter = WriterEntityFactory::createcreateODSWriter();
+        $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
         try {
             $this->spreadsheetWriter
                 ->setTempFolder($tempDir)
@@ -65,7 +65,7 @@ class Ods extends AbstractSpreadsheetFormatter
 
     protected function writeFields(array $fields)
     {
-        $row = $this->spreadsheetWriter->createRowFromArray($fields);
+        $row = WriterEntityFactory::createRowFromArray($fields);
         $this->spreadsheetWriter
             ->addRow($row);
         return $this;

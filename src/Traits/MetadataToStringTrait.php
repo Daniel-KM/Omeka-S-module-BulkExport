@@ -199,7 +199,7 @@ trait MetadataToStringTrait
                             break;
                         // Module DataTypeRdf.
                         case 'xml':
-                        // Module RdfDatatype.
+                        // Module RdfDatatype (deprecated).
                         case 'rdf:XMLLiteral':
                         case 'xsd:date':
                         case 'xsd:dateTime':
