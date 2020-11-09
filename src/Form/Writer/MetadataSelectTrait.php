@@ -31,6 +31,14 @@ trait MetadataSelectTrait
                     'label' => 'Metadata to exclude', // @translate
                     'info' => 'It is recommended to remove big fields from the list of properties, in particular extracted text.', // @translate
                     'term_as_value' => true,
+                    'prepend_value_options' => [
+                        'metadata' => [
+                            'label' => 'Resource metadata', // @translate
+                            'options' => [
+                                'properties_large' => 'All used properties more than 5000 characters', // @translate
+                            ],
+                        ],
+                    ],
                 ],
                 'attributes' => [
                     'required' => false,
@@ -75,6 +83,7 @@ trait MetadataSelectTrait
                     // For item set.
                     'o:is_open' => 'Openness', // @translate
                     'properties' => 'All used properties', // @translate
+                    'properties_small' => 'All used properties less than 5000 characters', // @translate
                 ],
             ],
             'o:item_set' => [

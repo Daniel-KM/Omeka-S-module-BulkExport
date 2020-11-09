@@ -34,7 +34,7 @@ trait ListTermsTrait
     /**
      * @return array
      */
-    protected function getPropertiesByTerm()
+    protected function getPropertiesByTerm(): array
     {
         if ($this->propertiesByTerm) {
             return $this->propertiesByTerm;
@@ -68,7 +68,7 @@ trait ListTermsTrait
     /**
      * @return array
      */
-    protected function getResourceClassesByTerm()
+    protected function getResourceClassesByTerm(): array
     {
         if ($this->resourceClassesByTerm) {
             return $this->resourceClassesByTerm;
@@ -102,11 +102,20 @@ trait ListTermsTrait
     /**
      * @todo Replace by an option to getPropertiesByTerm.
      *
-     * @param array $resourceClasses
+     * @param array $options Associative array:
+     * - resource_classes (array): limit properties to classes
+     * - min_size (int): property is removed if one value is smaller than it.
+     * - max_size (int): property is removed if one value is larger than it.
      * @return array
      */
-    protected function getUsedPropertiesByTerm(array $resourceClasses = null)
+    protected function getUsedPropertiesByTerm(array $options = []): array
     {
+        $options += [
+            'resource_classes' => [],
+            'min_size' => 0,
+            'max_size' => 0,
+        ];
+
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
 
@@ -130,8 +139,8 @@ trait ListTermsTrait
             ->addOrderBy('property.id')
         ;
 
-        if ($resourceClasses) {
-            if (in_array(\Omeka\Entity\Resource::class, $resourceClasses)) {
+        if (count($options['resource_classes'])) {
+            if (in_array(\Omeka\Entity\Resource::class, $options['resource_classes'])) {
                 $resourceClasses[] = \Omeka\Entity\Item::class;
                 $resourceClasses[] = \Omeka\Entity\ItemSet::class;
                 $resourceClasses[] = \Omeka\Entity\Media::class;
@@ -145,6 +154,16 @@ trait ListTermsTrait
                 ));
         }
 
+        if ((int) $options['min_size'] > 0) {
+            $qb
+                ->andWhere('CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']);
+        }
+
+        if ((int) $options['max_size'] > 0) {
+            $qb
+                ->andWhere('CHAR_LENGTH(`value`.`value`) <= ' . (int) $options['max_size']);
+        }
+
         $stmt = $connection->executeQuery($qb, $qb->getParameters());
         $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return array_column($terms, 'id', 'term');
@@ -153,7 +172,7 @@ trait ListTermsTrait
     /**
      * @return array
      */
-    protected function getPropertyLabelsByTerm()
+    protected function getPropertyLabelsByTerm(): array
     {
         if ($this->propertyLabelsByTerm) {
             return $this->propertyLabelsByTerm;
@@ -187,7 +206,7 @@ trait ListTermsTrait
     /**
      * @return array
      */
-    protected function getResourceClassLabelsByTerm()
+    protected function getResourceClassLabelsByTerm(): array
     {
         if ($this->resourceClassLabelsByTerm) {
             return $this->resourceClassLabelsByTerm;
@@ -218,7 +237,7 @@ trait ListTermsTrait
         return $this->resourceClassLabelsByTerm;
     }
 
-    protected function translateProperty($property)
+    protected function translateProperty($property): string
     {
         $labels = $this->getPropertyLabelsByTerm();
         return ucfirst(isset($labels[$property])
@@ -226,7 +245,7 @@ trait ListTermsTrait
             : $property);
     }
 
-    protected function translateResourceClass($resourceClass)
+    protected function translateResourceClass($resourceClass): string
     {
         $labels = $this->getResourceClassLabelsByTerm();
         return ucfirst(isset($labels[$resourceClass])

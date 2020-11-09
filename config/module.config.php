@@ -282,8 +282,10 @@ return [
                 'o:resource_class',
                 'o:owner',
                 'o:is_public',
+                'properties_small',
             ],
             'bulkexport_metadata_exclude' => [
+                'properties_large',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',
@@ -308,8 +310,10 @@ return [
             'bulkexport_metadata' => [
                 'url',
                 'o:resource_class',
+                'properties_small',
             ],
             'bulkexport_metadata_exclude' => [
+                'properties_large',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',

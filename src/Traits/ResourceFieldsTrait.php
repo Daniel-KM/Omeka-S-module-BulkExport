@@ -28,15 +28,10 @@ trait ResourceFieldsTrait
             return $this;
         }
 
-        $classes = array_map([$this, 'mapResourceTypeToClass'], $this->options['resource_types']);
         if ($listFieldNames) {
             $this->fieldNames = $listFieldNames;
-            $index = array_search('properties', $listFieldNames);
-            $hasProperties = $index !== false;
-            if ($hasProperties) {
-                unset($listFieldNames[$index]);
-                $this->fieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm($classes)));
-            }
+            $this->fieldNames = $this->managePropertiesList($listFieldNames);
+            $hasProperties = in_array('properties', $listFieldNames) || in_array('properties_small', $listFieldNames);
         } else {
             $hasProperties = true;
             if (!empty($this->options['is_admin_request'])) {
@@ -78,7 +73,8 @@ trait ResourceFieldsTrait
                         break;
                 }
             }
-            $this->fieldNames = array_merge($this->fieldNames, array_keys($this->getUsedPropertiesByTerm($classes)));
+            $classes = array_map([$this, 'mapResourceTypeToClass'], $this->options['resource_types']);
+            $this->fieldNames = array_merge($this->fieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'max_size' => 5000])));
         }
 
         if ($hasProperties && in_array('oa:Annotation', $this->options['resource_types'])) {
@@ -95,12 +91,33 @@ trait ResourceFieldsTrait
         }
 
         if ($listFieldsToExclude) {
-            $this->fieldNames = array_diff($this->fieldNames, $listFieldsToExclude);
+            $this->fieldNames = array_diff($this->fieldNames, $this->managePropertiesList($listFieldsToExclude));
         }
 
         $this->fieldNames = array_values($this->fieldNames);
 
         return $this;
+    }
+
+    protected function managePropertiesList(array $listFieldNames): array
+    {
+        $classes = array_map([$this, 'mapResourceTypeToClass'], $this->options['resource_types']);
+        $index = array_search('properties', $listFieldNames);
+        if ($index !== false) {
+            unset($listFieldNames[$index]);
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes])));
+        }
+        $index = array_search('properties_small', $listFieldNames);
+        if ($index !== false) {
+            unset($listFieldNames[$index]);
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'max_size' => 5000])));
+        }
+        $index = array_search('properties_large', $listFieldNames);
+        if ($index !== false) {
+            unset($listFieldNames[$index]);
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'min_size' => 5001])));
+        }
+        return $listFieldNames;
     }
 
     protected function prepareFieldLabels()
