@@ -29,6 +29,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         // TODO Remove query from the config?
         'query',
     ];
@@ -41,6 +42,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 
@@ -48,6 +50,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'resource_type' => null,
         'resource_types' => [],
         'metadata' => [],
+        'metadata_exclude' => [],
         'format_fields' => 'name',
         'format_generic' => 'raw',
         'format_resource' => 'url_title',
@@ -119,7 +122,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         }
 
         $this
-            ->prepareFieldNames($this->options['metadata']);
+            ->prepareFieldNames($this->options['metadata'], $this->options['metadata_exclude']);
 
         if (!count($this->fieldNames)) {
             $this->logger->warn('No headers are used in any resources.'); // @translate

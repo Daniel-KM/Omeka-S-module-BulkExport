@@ -19,9 +19,10 @@ trait ResourceFieldsTrait
 
     /**
      * @param array $listFieldNames Fields to prepare instead of default list.
-     * @return array
+     * @param array $listFieldsToExclude Fields to exclude
+     * @return self
      */
-    protected function prepareFieldNames(array $listFieldNames = null)
+    protected function prepareFieldNames(array $listFieldNames = null, array $listFieldsToExclude = null)
     {
         if (is_array($this->fieldNames)) {
             return $this;
@@ -91,6 +92,10 @@ trait ResourceFieldsTrait
 
         if (count($this->options['resource_types']) > 1 && !in_array('resource_type', $this->fieldNames)) {
             array_unshift($this->fieldNames, 'resource_type');
+        }
+
+        if ($listFieldsToExclude) {
+            $this->fieldNames = array_diff($this->fieldNames, $listFieldsToExclude);
         }
 
         $this->fieldNames = array_values($this->fieldNames);

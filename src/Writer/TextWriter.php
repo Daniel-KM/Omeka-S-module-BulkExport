@@ -21,6 +21,7 @@ class TextWriter extends AbstractFieldsWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 
@@ -32,6 +33,7 @@ class TextWriter extends AbstractFieldsWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 

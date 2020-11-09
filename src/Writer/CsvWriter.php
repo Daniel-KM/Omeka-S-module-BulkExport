@@ -34,6 +34,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 
@@ -49,6 +50,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 

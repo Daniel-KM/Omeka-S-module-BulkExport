@@ -23,6 +23,21 @@ trait MetadataSelectTrait
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more metadata…', // @translate
                 ],
+            ])
+            ->add([
+                'name' => $name . '_exclude',
+                'type' => PropertySelect::class,
+                'options' => [
+                    'label' => 'Metadata to exclude', // @translate
+                    'info' => 'It is recommended to remove big fields from the list of properties, in particular extracted text.', // @translate
+                    'term_as_value' => true,
+                ],
+                'attributes' => [
+                    'required' => false,
+                    'multiple' => true,
+                    'class' => 'chosen-select',
+                    'data-placeholder' => 'Select one or more metadata…', // @translate
+                ],
             ]);
         return $this;
     }
@@ -32,6 +47,10 @@ trait MetadataSelectTrait
         $this->getInputFilter()
             ->add([
                 'name' => $name,
+                'required' => false,
+            ])
+            ->add([
+                'name' => $name . '_exclude',
                 'required' => false,
             ]);
         return $this;

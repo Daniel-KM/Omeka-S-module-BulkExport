@@ -24,6 +24,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
     ];
 
     protected $paramsKeys = [
@@ -35,6 +36,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 

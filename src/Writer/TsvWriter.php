@@ -24,6 +24,7 @@ class TsvWriter extends CsvWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 
@@ -36,6 +37,7 @@ class TsvWriter extends CsvWriter
         'format_uri',
         'resource_types',
         'metadata',
+        'metadata_exclude',
         'query',
     ];
 

@@ -38,7 +38,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         }
 
         $this
-            ->prepareFieldNames($this->options['metadata']);
+            ->prepareFieldNames($this->options['metadata'], $this->options['metadata_exclude']);
 
         if (!count($this->fieldNames)) {
             $this->logger->warn('No metadata are used in any resources.'); // @translate

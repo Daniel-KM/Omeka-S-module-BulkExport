@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport;
 
 return [
@@ -275,6 +276,16 @@ return [
             'bulkexport_format_resource' => 'identifier_id',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
+            'bulkexport_metadata' => [
+                'o:id',
+                'o:resource_template',
+                'o:resource_class',
+                'o:owner',
+                'o:is_public',
+            ],
+            'bulkexport_metadata_exclude' => [
+                'extracttext:extracted_text',
+            ],
             'bulkexport_template' => '',
         ],
         'site_settings' => [
@@ -294,6 +305,13 @@ return [
             'bulkexport_format_resource' => 'url_title',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
+            'bulkexport_metadata' => [
+                'url',
+                'o:resource_class',
+            ],
+            'bulkexport_metadata_exclude' => [
+                'extracttext:extracted_text',
+            ],
             'bulkexport_template' => '',
         ],
     ],
