@@ -225,6 +225,10 @@ class Module extends AbstractModule
             ->add([
                 'name' => 'bulkexport_metadata',
                 'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata_exclude',
+                'required' => false,
             ]);
     }
 
@@ -237,6 +241,10 @@ class Module extends AbstractModule
             ])
             ->add([
                 'name' => 'bulkexport_metadata',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata_exclude',
                 'required' => false,
             ]);
     }
