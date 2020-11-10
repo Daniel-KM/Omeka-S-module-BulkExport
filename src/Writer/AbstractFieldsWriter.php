@@ -167,7 +167,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         $query = $this->options['query'];
         if (!is_array($query)) {
             $queryArray = [];
-            parse_str($query, $queryArray);
+            parse_str((string) $query, $queryArray);
             $query = $queryArray;
             $this->options['query'] = $query;
         }
