@@ -258,14 +258,22 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event): void
     {
-        $controller = strtolower($event->getTarget()->params()->fromRoute('__CONTROLLER__'));
+        $controller = strtolower($event->getTarget()->params()->fromRoute('__CONTROLLER__') ?? $event->getTarget()->params()->fromRoute('controller', ''));
         $resourceTypes = [
-            'item',
-            'item-set',
-            'media',
-            'annotation',
+            'item' => 'item',
+            'item-set' => 'item-set',
+            'media' => 'media',
+            'annotation' => 'annotation',
+            'Omeka\Controller\Site\Item' => 'item',
+            'Omeka\Controller\Site\ItemSet' => 'item-set',
+            'Omeka\Controller\Site\Media' => 'media',
+            'Annotate\Controller\Site\Annotation' => 'annotation',
+            'Omeka\Controller\Admin\Item' => 'item',
+            'Omeka\Controller\Admin\ItemSet' => 'item-set',
+            'Omeka\Controller\Admin\Media' => 'media',
+            'Annotate\Controller\Admin\Annotation' => 'annotation',
         ];
-        $resourceType = in_array($controller, $resourceTypes) ? $controller : 'resource';
+        $resourceType = $resourceTypes[$controller] ?? 'resource';
         $this->handleViewBrowseAfterResources($event, $resourceType);
     }
 
