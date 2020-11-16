@@ -48,14 +48,14 @@ class Module extends AbstractModule
                 'The directory "{path}" is not writeable.', // @translate
                 ['path' => $basePath]
             );
-            throw new ModuleCannotInstallException($message);
+            throw new ModuleCannotInstallException((string) $message);
         }
         // The version of Box/Spout should be >= 3.0, but there is no version
         // inside the library, so check against a class.
         // This check is needed, because CSV Import still uses version 2.7.
         if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
             $message = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
-            throw new ModuleCannotInstallException($message);
+            throw new ModuleCannotInstallException((string) $message);
         }
     }
 
