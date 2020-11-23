@@ -269,7 +269,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             }
 
             $response = $api
-                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['initialize' => false, 'finalize' => false]);
+                // Some modules manage some arguments, so keep initialize.
+                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['finalize' => false]);
 
             // TODO Check other resources (user…).
             /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
@@ -360,7 +361,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         foreach ($this->options['resource_types'] as $resourceType) {
             $resource = $this->mapResourceTypeToApiResource($resourceType);
             $result[$resourceType] = $resource
-                ? $api->search($resource, ['limit' => 0] + $this->options['query'], ['initialize' => false, 'finalize' => false])->getTotalResults()
+                // Some modules manage some arguments, so keep initialize.
+                ? $api->search($resource, ['limit' => 0] + $this->options['query'], ['finalize' => false])->getTotalResults()
                 : null;
         }
         return $result;
