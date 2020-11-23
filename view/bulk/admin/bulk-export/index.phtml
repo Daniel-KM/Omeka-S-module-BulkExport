@@ -76,6 +76,6 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 
 <?php if (!empty($exports)): ?>
     <h2><?= $escape($translate('Last exports')) // @translate?></h2>
-    <?= $hyperlink($translate('See all exports') , $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'])) ?>
+    <?= $hyperlink($translate('See all exports'), $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'])) ?>
     <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
 <?php endif; ?>
