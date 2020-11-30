@@ -159,6 +159,7 @@ trait ResourceFieldsTrait
                 'o:media' => $this->translator->translate('Media'), // @translate
                 'o:media[o:id]' => $this->translator->translate('Media id'), // @translate
                 'o:media[file]' => $this->translator->translate('Media file'), // @translate
+                'o:media[source]' => $this->translator->translate('Media source'), // @translate
                 'o:media[media_type]' => $this->translator->translate('File media type'), // @translate,
                 'o:media[size]' => $this->translator->translate('File size'), // @translate,
                 'o:media[original_url]' => $this->translator->translate('Original file url'), // @translate,

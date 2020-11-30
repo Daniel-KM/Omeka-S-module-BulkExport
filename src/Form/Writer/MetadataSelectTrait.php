@@ -99,6 +99,7 @@ trait MetadataSelectTrait
                 'options' => [
                     'o:media[o:id]' => 'Internal id', // @translate
                     'o:media[file]' => 'Url / File', // @translate
+                    'o:media[source]' => 'Source url / file', // @translate
                     'o:media[dcterms:identifier]' => 'Identifier', // @translate
                     'o:media[dcterms:title]' => 'Label (first title)', // @translate
                 ],

@@ -85,11 +85,34 @@ trait MetadataToStringTrait
             case 'o:media[url]':
                 $result = [];
                 if ($resource->resourceName() === 'items') {
+                    /** @var \Omeka\Api\Representation\MediaRepresentation $media */
                     foreach ($resource->media() as $media) {
                         $originalUrl = $media->originalUrl();
                         if ($originalUrl) {
                             $result[] = $originalUrl;
                         }
+                    }
+                } elseif ($resource->resourceName() === 'media') {
+                    $originalUrl = $media->originalUrl();
+                    if ($originalUrl) {
+                        $result[] = $originalUrl;
+                    }
+                }
+                return $result;
+            case 'o:media[source]':
+                $result = [];
+                if ($resource->resourceName() === 'items') {
+                    /** @var \Omeka\Api\Representation\MediaRepresentation $media */
+                    foreach ($resource->media() as $media) {
+                        $source = $media->source();
+                        if ($source) {
+                            $result[] = $source;
+                        }
+                    }
+                } elseif ($resource->resourceName() === 'media') {
+                    $source = $resource->source();
+                    if ($source) {
+                        $result[] = $source;
                     }
                 }
                 return $result;
