@@ -258,7 +258,7 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event): void
     {
-        $controller = strtolower($event->getTarget()->params()->fromRoute('__CONTROLLER__') ?? $event->getTarget()->params()->fromRoute('controller', ''));
+        $controller = strtolower((string) $event->getTarget()->params()->fromRoute('__CONTROLLER__') ?? $event->getTarget()->params()->fromRoute('controller', ''));
         $resourceTypes = [
             'item' => 'item',
             'item-set' => 'item-set',
