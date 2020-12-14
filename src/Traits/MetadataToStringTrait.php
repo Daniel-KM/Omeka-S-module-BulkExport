@@ -93,7 +93,7 @@ trait MetadataToStringTrait
                         }
                     }
                 } elseif ($resource->resourceName() === 'media') {
-                    $originalUrl = $media->originalUrl();
+                    $originalUrl = $resource->originalUrl();
                     if ($originalUrl) {
                         $result[] = $originalUrl;
                     }
