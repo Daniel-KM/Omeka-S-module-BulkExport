@@ -91,3 +91,17 @@ CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:j
 SQL;
     $connection->exec($sql);
 }
+
+if (version_compare($oldVersion, '3.3.12.12', '<')) {
+    // @link https://www.doctrine-project.org/projects/doctrine-dbal/en/2.6/reference/types.html#array-types
+    $sql = <<<'SQL'
+ALTER TABLE `bulk_export`
+CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
+SQL;
+    $connection->exec($sql);
+    $sql = <<<'SQL'
+ALTER TABLE `bulk_exporter`
+CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
+SQL;
+    $connection->exec($sql);
+}

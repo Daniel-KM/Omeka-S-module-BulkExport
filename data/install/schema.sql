@@ -3,7 +3,7 @@ CREATE TABLE `bulk_export` (
     `exporter_id` INT DEFAULT NULL,
     `job_id` INT DEFAULT NULL,
     `comment` VARCHAR(190) DEFAULT NULL,
-    `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
     `filename` VARCHAR(255) DEFAULT NULL,
     INDEX IDX_625A30FDB4523DE5 (`exporter_id`),
     UNIQUE INDEX UNIQ_625A30FDBE04EA9 (`job_id`),
@@ -14,7 +14,7 @@ CREATE TABLE `bulk_exporter` (
     `owner_id` INT DEFAULT NULL,
     `label` VARCHAR(190) DEFAULT NULL,
     `writer_class` VARCHAR(190) DEFAULT NULL,
-    `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+    `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
     INDEX IDX_6093500B7E3C61F9 (`owner_id`),
     PRIMARY KEY(`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
