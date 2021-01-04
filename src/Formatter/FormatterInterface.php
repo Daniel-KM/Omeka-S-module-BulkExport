@@ -9,28 +9,28 @@ interface FormatterInterface
      * @param ServiceLocatorInterface $serviceLocator
      * @return self
      */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator);
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator): FormatterInterface;
 
     /**
      * Get the name of the output format.
      *
      * @return string
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * Return the extension to use for the output filename.
      *
      * @return string
      */
-    public function getExtension();
+    public function getExtension(): string;
 
     /**
      * Specific headers for the response, generally including `Content-Type`.
      *
      * @return array
      */
-    public function getResponseHeaders();
+    public function getResponseHeaders(): array;
 
     /**
      * Get the formatted resources.
@@ -54,5 +54,5 @@ interface FormatterInterface
      * - site_slug (string): slug of a site for url of resources when needed.
      * @return self
      */
-    public function format($resources, $output = null, array $options = []);
+    public function format($resources, $output = null, array $options = []): FormatterInterface;
 }

@@ -31,7 +31,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
      */
     protected $filepath;
 
-    public function format($resources, $output = null, array $options = [])
+    public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         $options += $this->defaultOptionsSpreadsheet;
         $separator = $options['separator'];
@@ -41,7 +41,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
         return parent::format($resources, $output, $options);
     }
 
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = parent::getDataResource($resource);
         if ($this->options['has_separator']) {

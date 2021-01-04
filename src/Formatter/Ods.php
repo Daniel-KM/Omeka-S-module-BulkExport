@@ -15,7 +15,7 @@ class Ods extends AbstractSpreadsheetFormatter
     ];
     protected $spreadsheetType = Type::ODS;
 
-    public function format($resources, $output = null, array $options = [])
+    public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->services->get('Omeka\Logger')->err(new PsrMessage(
@@ -38,7 +38,7 @@ class Ods extends AbstractSpreadsheetFormatter
         return parent::format($resources, $output, $options);
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): FormatterInterface
     {
         $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
         $this->filepath = $this->isOutput
@@ -71,7 +71,7 @@ class Ods extends AbstractSpreadsheetFormatter
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): FormatterInterface
     {
         $this->spreadsheetWriter
             ->close();

@@ -25,7 +25,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
 
     protected $prependFieldNames = false;
 
-    public function format($resources, $output = null, array $options = [])
+    public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         return parent::format($resources, $output, $options + $this->defaultOptionsFields);
     }
@@ -85,7 +85,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         $this->finalizeOutput();
     }
 
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = [];
         $removeEmptyFields = !$this->options['empty_fields'];

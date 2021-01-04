@@ -15,7 +15,7 @@ class Csv extends AbstractSpreadsheetFormatter
         'escape' => '\\',
     ];
 
-    protected function initializeOutput()
+    protected function initializeOutput(): FormatterInterface
     {
         parent::initializeOutput();
         // Prepend the utf-8 bom.

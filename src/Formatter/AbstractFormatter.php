@@ -2,6 +2,7 @@
 
 namespace BulkExport\Formatter;
 
+use Laminas\Http\PhpEnvironment\Response as HttpResponse;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Log\Stdlib\PsrMessage;
 
@@ -127,28 +128,28 @@ abstract class AbstractFormatter implements FormatterInterface
      */
     protected $handle = null;
 
-    public function setServiceLocator(ServiceLocatorInterface $services)
+    public function setServiceLocator(ServiceLocatorInterface $services): FormatterInterface
     {
         $this->services = $services;
         return $this;
     }
 
-    protected function getServiceLocator()
+    protected function getServiceLocator(): ServiceLocatorInterface
     {
         return $this->services;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function getExtension()
+    public function getExtension(): string
     {
         return $this->extension;
     }
 
-    public function getResponseHeaders()
+    public function getResponseHeaders(): array
     {
         return $this->responseHeaders;
     }
@@ -165,7 +166,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this->content;
     }
 
-    public function format($resources, $output = null, array $options = [])
+    public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         $this->reset();
 
@@ -288,7 +289,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
-    protected function reset()
+    protected function reset(): FormatterInterface
     {
         $this->resources = [];
         $this->resourceIds = [];
@@ -309,9 +310,9 @@ abstract class AbstractFormatter implements FormatterInterface
     /**
      * Save the content to the handle.
      */
-    abstract protected function process();
+    abstract protected function process(): void;
 
-    protected function initializeOutput()
+    protected function initializeOutput(): FormatterInterface
     {
         $file = $this->isOutput ? $this->output : 'php://temp';
 
@@ -326,7 +327,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): FormatterInterface
     {
         if (!$this->handle) {
             $this->hasError = true;
@@ -346,7 +347,7 @@ abstract class AbstractFormatter implements FormatterInterface
      * Write the content into output when it is not filled with the formatter.
      * The content is removed.
      */
-    protected function toOutput()
+    protected function toOutput(): FormatterInterface
     {
         if (!$this->isOutput || $this->hasError) {
             return $this;
@@ -364,7 +365,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
-    protected function mapApiResourceToJsonResourceType($resourceType)
+    protected function mapApiResourceToJsonResourceType($resourceType): ?string
     {
         $mapping = [
             // Core.
@@ -386,6 +387,6 @@ abstract class AbstractFormatter implements FormatterInterface
             // Modules.
             'annotations' => 'oa:Annotation',
         ];
-        return isset($mapping[$resourceType]) ? $mapping[$resourceType] : null;
+        return $mapping[$resourceType] ?? null;
     }
 }

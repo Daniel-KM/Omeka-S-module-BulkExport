@@ -12,7 +12,7 @@ class Txt extends AbstractFieldsFormatter
         'Content-type' => 'text/plain',
     ];
 
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = parent::getDataResource($resource);
         // Remove empty metadata.
@@ -28,7 +28,7 @@ class Txt extends AbstractFieldsFormatter
         return $dataResource;
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): FormatterInterface
     {
         parent::initializeOutput();
         // Prepend the utf-8 bom.

@@ -72,6 +72,10 @@ trait OpenDocumentTextTemplateTrait
         return $this;
     }
 
+    /**
+     * @param array $fields
+     * @return self
+     */
     protected function writeFields(array $fields)
     {
         $section = $this->openDocument->addSection(['breakType' => 'continuous']);

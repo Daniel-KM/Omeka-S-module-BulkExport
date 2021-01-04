@@ -21,7 +21,7 @@ class Odt extends AbstractFieldsFormatter
      */
     protected $filepath;
 
-    public function format($resources, $output = null, array $options = [])
+    public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->services->get('Omeka\Logger')->err(new PsrMessage(
@@ -34,7 +34,7 @@ class Odt extends AbstractFieldsFormatter
         return parent::format($resources, $output, $options);
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): FormatterInterface
     {
         $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
         $this->filepath = $this->isOutput
@@ -47,7 +47,7 @@ class Odt extends AbstractFieldsFormatter
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): FormatterInterface
     {
         $objWriter = PhpWord\IOFactory::createWriter($this->openDocument, 'ODText');
         $objWriter->save($this->filepath);
