@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-09 00:00+0000\n"
+"POT-Creation-Date: 2021-01-04 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Controller/OutputController.php:31
+#: src/Controller/OutputController.php:20
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
@@ -47,7 +47,7 @@ msgstr ""
 msgid "This module has resources that connot be installed."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:709
+#: src/Generic/AbstractModule.php:707
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -118,35 +118,39 @@ msgid "Media file"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:162
-msgid "File media type"
+msgid "Media source"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:163
-msgid "File size"
+msgid "File media type"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:164
-msgid "Original file url"
+msgid "File size"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:165
-msgid "Asset"
+msgid "Original file url"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:166
-msgid "Annotation"
+msgid "Asset"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:167
+msgid "Annotation"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:168
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:185
+#: src/Traits/ResourceFieldsTrait.php:186
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:190
+#: src/Traits/ResourceFieldsTrait.php:191
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
@@ -362,16 +366,16 @@ msgstr ""
 msgid "CSV"
 msgstr ""
 
-#: Module.php:48 Module.php:283
-msgid "The directory \"{path}\" is not writeable."
-msgstr ""
-
-#: Module.php:57 src/Formatter/Ods.php:33
+#: data/scripts/upgrade.php:111 Module.php:57 src/Formatter/Ods.php:33
 #: src/Writer/OpenDocumentSpreadsheetWriter.php:58
 msgid "The dependency Box/Spout version should be >= 3.0. See readme."
 msgstr ""
 
-#: Module.php:294
+#: Module.php:48 Module.php:299
+msgid "The directory \"{path}\" is not writeable."
+msgstr ""
+
+#: Module.php:310
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
@@ -526,8 +530,8 @@ msgstr ""
 #: src/Form/Writer/MetadataSelectTrait.php:73
 #: src/Form/Writer/MetadataSelectTrait.php:92
 #: src/Form/Writer/MetadataSelectTrait.php:100
-#: src/Form/Writer/MetadataSelectTrait.php:109
-#: src/Form/Writer/MetadataSelectTrait.php:117
+#: src/Form/Writer/MetadataSelectTrait.php:110
+#: src/Form/Writer/MetadataSelectTrait.php:118
 msgid "Internal id"
 msgstr ""
 
@@ -564,9 +568,9 @@ msgid "Item set (for item)"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:94
-#: src/Form/Writer/MetadataSelectTrait.php:103
-#: src/Form/Writer/MetadataSelectTrait.php:111
-#: src/Form/Writer/MetadataSelectTrait.php:119
+#: src/Form/Writer/MetadataSelectTrait.php:104
+#: src/Form/Writer/MetadataSelectTrait.php:112
+#: src/Form/Writer/MetadataSelectTrait.php:120
 msgid "Label (first title)"
 msgstr ""
 
@@ -578,11 +582,15 @@ msgstr ""
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:107
+#: src/Form/Writer/MetadataSelectTrait.php:102
+msgid "Source url / file"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:108
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:115
+#: src/Form/Writer/MetadataSelectTrait.php:116
 msgid "Resource (for annotation)"
 msgstr ""
 
@@ -644,12 +652,16 @@ msgid ""
 "are required."
 msgstr ""
 
-#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:322
+#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:367
 #: src/Writer/TextWriter.php:54
 msgid "Unable to open output: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:359
+#: src/Formatter/AbstractFormatter.php:175
+msgid "Unable to format resources as {format}."
+msgstr ""
+
+#: src/Formatter/AbstractFormatter.php:404
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -657,46 +669,42 @@ msgstr ""
 msgid "No metadata are used in any resources."
 msgstr ""
 
-#: src/Controller/OutputController.php:116
-msgid "Unable to format resources as {format}."
-msgstr ""
-
-#: src/Controller/Admin/ExporterController.php:44
-#: src/Controller/Admin/ExporterController.php:89
-#: src/Controller/Admin/ExporterController.php:134
-#: src/Controller/Admin/ExporterController.php:194
+#: src/Controller/Admin/ExporterController.php:45
+#: src/Controller/Admin/ExporterController.php:90
+#: src/Controller/Admin/ExporterController.php:135
+#: src/Controller/Admin/ExporterController.php:195
 msgid "exporter_id"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:67
+#: src/Controller/Admin/ExporterController.php:68
 msgid "Exporter successfully saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:70
+#: src/Controller/Admin/ExporterController.php:71
 msgid "Save of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:98
+#: src/Controller/Admin/ExporterController.php:99
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:111
+#: src/Controller/Admin/ExporterController.php:112
 msgid "Exporter successfully deleted"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:114
+#: src/Controller/Admin/ExporterController.php:115
 msgid "Delete of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:166
+#: src/Controller/Admin/ExporterController.php:167
 msgid "Writer configuration saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:169
+#: src/Controller/Admin/ExporterController.php:170
 msgid "Save of writer configuration failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:260
+#: src/Controller/Admin/ExporterController.php:261
 msgid "Save of export failed"
 msgstr ""
 
@@ -716,7 +724,7 @@ msgstr ""
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:370
+#: src/Controller/Admin/ExporterController.php:371
 msgid "Continue"
 msgstr ""
 
@@ -761,13 +769,13 @@ msgstr ""
 msgid "Bibliography from %s"
 msgstr ""
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:92
+#: src/Traits/OpenDocumentTextTemplateTrait.php:96
 msgid ""
 "Skipped field \"{fieldname}\" of resource: it contains more than 1000 "
 "characters."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:198
+#: src/Traits/ResourceFieldsTrait.php:199
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -850,22 +858,22 @@ msgid ""
 "The job \"Export\" was stopped: {processed}/{total} resources processed."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:308
-#: src/Writer/AbstractFieldsWriter.php:320
+#: src/Writer/AbstractFieldsWriter.php:309
+#: src/Writer/AbstractFieldsWriter.php:321
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:325
+#: src/Writer/AbstractFieldsWriter.php:326
 msgid "End export of {total} {resource_type}."
 msgstr ""
 
-#: config/module.config.php:73
+#: config/module.config.php:80
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:86
+#: config/module.config.php:93
 msgid "Past Exports"
 msgstr ""
 

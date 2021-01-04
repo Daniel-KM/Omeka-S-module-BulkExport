@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-09 00:00+0000\n"
-"PO-Revision-Date: 2020-11-09 00:00+0000\n"
+"POT-Creation-Date: 2021-01-04 00:00+0000\n"
+"PO-Revision-Date: 2021-01-04 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: Module.php:117
 msgid "WARNING:"
@@ -29,7 +29,7 @@ msgstr "Tous les exports seront supprimés (dossier \"{folder}\")."
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
-#: src/Controller/OutputController.php:31
+#: src/Controller/OutputController.php:20
 msgid "Unsupported format \"{format}\"."
 msgstr "Format non géré \"{format}\"."
 
@@ -47,7 +47,7 @@ msgstr "Ce module requiert les modules \"%s\"."
 msgid "This module has resources that connot be installed."
 msgstr "Ce module a des ressources qui ne peuvent pas être installées."
 
-#: src/Generic/AbstractModule.php:709
+#: src/Generic/AbstractModule.php:707
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -120,35 +120,39 @@ msgid "Media file"
 msgstr "Fichier média"
 
 #: src/Traits/ResourceFieldsTrait.php:162
+msgid "Media source"
+msgstr "Source du média"
+
+#: src/Traits/ResourceFieldsTrait.php:163
 msgid "File media type"
 msgstr "Type de fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:163
+#: src/Traits/ResourceFieldsTrait.php:164
 msgid "File size"
 msgstr "Taille du fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:164
+#: src/Traits/ResourceFieldsTrait.php:165
 msgid "Original file url"
 msgstr "Url du fichier original"
 
-#: src/Traits/ResourceFieldsTrait.php:165
+#: src/Traits/ResourceFieldsTrait.php:166
 msgid "Asset"
 msgstr "Fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:166
+#: src/Traits/ResourceFieldsTrait.php:167
 msgid "Annotation"
 msgstr "Annotation"
 
-#: src/Traits/ResourceFieldsTrait.php:167
+#: src/Traits/ResourceFieldsTrait.php:168
 msgid "Url"
 msgstr "Url"
 
-#: src/Traits/ResourceFieldsTrait.php:185
+#: src/Traits/ResourceFieldsTrait.php:186
 #, php-format
 msgid "Annotation body: %s"
 msgstr "Corps de l’annotation : %s"
 
-#: src/Traits/ResourceFieldsTrait.php:190
+#: src/Traits/ResourceFieldsTrait.php:191
 #, php-format
 msgid "Annotation target: %s"
 msgstr "Cible de l’annotation : %s"
@@ -365,17 +369,17 @@ msgstr "TSV (tab-separated values)"
 msgid "CSV"
 msgstr "CSV"
 
-#: Module.php:48 Module.php:283
-msgid "The directory \"{path}\" is not writeable."
-msgstr "Le dossier \"{path}\" n’est pas inscriptible."
-
-#: Module.php:57 src/Formatter/Ods.php:33
+#: data/scripts/upgrade.php:111 Module.php:57 src/Formatter/Ods.php:33
 #: src/Writer/OpenDocumentSpreadsheetWriter.php:58
 msgid "The dependency Box/Spout version should be >= 3.0. See readme."
 msgstr ""
 "La dépendance Box/Spout doit avoir une version >= 3.0. Consultez le readme."
 
-#: Module.php:294
+#: Module.php:48 Module.php:299
+msgid "The directory \"{path}\" is not writeable."
+msgstr "Le dossier \"{path}\" n’est pas inscriptible."
+
+#: Module.php:310
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
@@ -537,8 +541,8 @@ msgstr "Propriétés utilisées de plus de 5000 caractères"
 #: src/Form/Writer/MetadataSelectTrait.php:73
 #: src/Form/Writer/MetadataSelectTrait.php:92
 #: src/Form/Writer/MetadataSelectTrait.php:100
-#: src/Form/Writer/MetadataSelectTrait.php:109
-#: src/Form/Writer/MetadataSelectTrait.php:117
+#: src/Form/Writer/MetadataSelectTrait.php:110
+#: src/Form/Writer/MetadataSelectTrait.php:118
 msgid "Internal id"
 msgstr "Id interne"
 
@@ -575,9 +579,9 @@ msgid "Item set (for item)"
 msgstr "Collection (pour item)"
 
 #: src/Form/Writer/MetadataSelectTrait.php:94
-#: src/Form/Writer/MetadataSelectTrait.php:103
-#: src/Form/Writer/MetadataSelectTrait.php:111
-#: src/Form/Writer/MetadataSelectTrait.php:119
+#: src/Form/Writer/MetadataSelectTrait.php:104
+#: src/Form/Writer/MetadataSelectTrait.php:112
+#: src/Form/Writer/MetadataSelectTrait.php:120
 msgid "Label (first title)"
 msgstr "Libellé (premier titre)"
 
@@ -589,11 +593,15 @@ msgstr "Média (pour item)"
 msgid "Url / File"
 msgstr "Url / fichier"
 
-#: src/Form/Writer/MetadataSelectTrait.php:107
+#: src/Form/Writer/MetadataSelectTrait.php:102
+msgid "Source url / file"
+msgstr "Url ou fichier source"
+
+#: src/Form/Writer/MetadataSelectTrait.php:108
 msgid "Item (for media)"
 msgstr "Item (pour média)"
 
-#: src/Form/Writer/MetadataSelectTrait.php:115
+#: src/Form/Writer/MetadataSelectTrait.php:116
 msgid "Resource (for annotation)"
 msgstr "Ressource (pour annotation)"
 
@@ -663,12 +671,16 @@ msgstr ""
 "Pour réaliser un export dans le format \"{format}\", les extensions php \"zip"
 "\" et xml\" sont nécessaires."
 
-#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:322
+#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:367
 #: src/Writer/TextWriter.php:54
 msgid "Unable to open output: {error}."
 msgstr "Impossible d’ouvrir la sortie : {error}."
 
-#: src/Formatter/AbstractFormatter.php:359
+#: src/Formatter/AbstractFormatter.php:175
+msgid "Unable to format resources as {format}."
+msgstr "Impossible de formater les ressources en {format}."
+
+#: src/Formatter/AbstractFormatter.php:404
 msgid "Unable to save output to file: {error}."
 msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
 
@@ -676,46 +688,42 @@ msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
 msgid "No metadata are used in any resources."
 msgstr "Aucune métadonnée n’est utilisée dans les ressources."
 
-#: src/Controller/OutputController.php:116
-msgid "Unable to format resources as {format}."
-msgstr "Impossible de formater les ressources en {format}."
-
-#: src/Controller/Admin/ExporterController.php:44
-#: src/Controller/Admin/ExporterController.php:89
-#: src/Controller/Admin/ExporterController.php:134
-#: src/Controller/Admin/ExporterController.php:194
+#: src/Controller/Admin/ExporterController.php:45
+#: src/Controller/Admin/ExporterController.php:90
+#: src/Controller/Admin/ExporterController.php:135
+#: src/Controller/Admin/ExporterController.php:195
 msgid "exporter_id"
 msgstr "exporter_id"
 
-#: src/Controller/Admin/ExporterController.php:67
+#: src/Controller/Admin/ExporterController.php:68
 msgid "Exporter successfully saved"
 msgstr "Exporteur sauvegardé"
 
-#: src/Controller/Admin/ExporterController.php:70
+#: src/Controller/Admin/ExporterController.php:71
 msgid "Save of exporter failed"
 msgstr "Échec de l’enregistrement de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:98
+#: src/Controller/Admin/ExporterController.php:99
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr "L’exporteur ne peut pas être supprimé : des exports l’utilisent."
 
-#: src/Controller/Admin/ExporterController.php:111
+#: src/Controller/Admin/ExporterController.php:112
 msgid "Exporter successfully deleted"
 msgstr "Suppression de l’exporteur réussie"
 
-#: src/Controller/Admin/ExporterController.php:114
+#: src/Controller/Admin/ExporterController.php:115
 msgid "Delete of exporter failed"
 msgstr "Échec de la suppression de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:166
+#: src/Controller/Admin/ExporterController.php:167
 msgid "Writer configuration saved"
 msgstr "Configuration de l’écriveur enregistrée"
 
-#: src/Controller/Admin/ExporterController.php:169
+#: src/Controller/Admin/ExporterController.php:170
 msgid "Save of writer configuration failed"
 msgstr "Échec de l’enregistrement de la configuration"
 
-#: src/Controller/Admin/ExporterController.php:260
+#: src/Controller/Admin/ExporterController.php:261
 msgid "Save of export failed"
 msgstr "Échec de l’enregistrement de la ressource"
 
@@ -739,7 +747,7 @@ msgstr ""
 msgid "Export start failed"
 msgstr "Échec du lancement de l’export"
 
-#: src/Controller/Admin/ExporterController.php:370
+#: src/Controller/Admin/ExporterController.php:371
 msgid "Continue"
 msgstr "Continuer"
 
@@ -784,14 +792,14 @@ msgstr "L’écriveur \"{writer}\" n’est pas disponible."
 msgid "Bibliography from %s"
 msgstr "Bibliographie de %s"
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:92
+#: src/Traits/OpenDocumentTextTemplateTrait.php:96
 msgid ""
 "Skipped field \"{fieldname}\" of resource: it contains more than 1000 "
 "characters."
 msgstr ""
 "Le champ \"{fieldname}\" a été ignoré : il contient plus de 1000 caractères."
 
-#: src/Traits/ResourceFieldsTrait.php:198
+#: src/Traits/ResourceFieldsTrait.php:199
 #, php-format
 msgid "%1$s: %2$s"
 msgstr "%1$s : %2$s"
@@ -887,8 +895,8 @@ msgid ""
 msgstr ""
 "La tâche \"Export\" a été arrêtée : {processed}/{total} ressources traitées."
 
-#: src/Writer/AbstractFieldsWriter.php:308
-#: src/Writer/AbstractFieldsWriter.php:320
+#: src/Writer/AbstractFieldsWriter.php:309
+#: src/Writer/AbstractFieldsWriter.php:321
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
@@ -896,15 +904,15 @@ msgstr ""
 "{processed}/{total} {resource_type} traités, {succeed} réussis, {skipped} "
 "ignorés."
 
-#: src/Writer/AbstractFieldsWriter.php:325
+#: src/Writer/AbstractFieldsWriter.php:326
 msgid "End export of {total} {resource_type}."
 msgstr "Fin de l’export de {total} {resource_type}."
 
-#: config/module.config.php:73
+#: config/module.config.php:80
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: config/module.config.php:86
+#: config/module.config.php:93
 msgid "Past Exports"
 msgstr "Exports précédents"
 
@@ -939,9 +947,6 @@ msgstr "Fichiers d’arguments manquants (%s)."
 
 #~ msgid "jobs"
 #~ msgstr "tâches"
-
-#~ msgid "resources"
-#~ msgstr "ressources"
 
 #~ msgid "api resources"
 #~ msgstr "ressources api"
