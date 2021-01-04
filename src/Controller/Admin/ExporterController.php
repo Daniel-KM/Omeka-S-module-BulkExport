@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Controller\Admin;
 
 use BulkExport\Api\Representation\ExporterRepresentation;
@@ -75,9 +76,9 @@ class ExporterController extends AbstractActionController
             }
         }
 
-        $view = new ViewModel;
-        $view->setVariable('form', $form);
-        return $view;
+        return new ViewModel([
+            'form' => $form,
+        ]);
     }
 
     public function deleteAction()
@@ -119,10 +120,10 @@ class ExporterController extends AbstractActionController
             }
         }
 
-        $view = new ViewModel;
-        $view->setVariable('entity', $entity);
-        $view->setVariable('form', $form);
-        return $view;
+        return new ViewModel([
+            'entity' => $entity,
+            'form' => $form,
+        ]);
     }
 
     public function configureWriterAction()
@@ -174,10 +175,10 @@ class ExporterController extends AbstractActionController
             }
         }
 
-        $view = new ViewModel;
-        $view->setVariable('writer', $writer);
-        $view->setVariable('form', $form);
-        return $view;
+        return new ViewModel([
+            'writer' => $writer,
+            'form' => $form,
+        ]);
     }
 
     /**
@@ -283,8 +284,7 @@ class ExporterController extends AbstractActionController
                         try {
                             $job = $useBackground
                                 ? $dispatcher->dispatch(JobExport::class, $args)
-                                : $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get('Omeka\Job\DispatchStrategy\Synchronous'));
-
+                                : $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get(\Omeka\Job\DispatchStrategy\Synchronous::class));
                             $urlHelper = $this->url();
                             $message = $useBackground
                                 ? 'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.' // @translate
@@ -325,9 +325,10 @@ class ExporterController extends AbstractActionController
             $form = call_user_func($formCallback);
         }
 
-        $view = new ViewModel;
-        $view->setVariable('exporter', $exporter);
-        $view->setVariable('form', $form);
+        $view = new ViewModel([
+            'exporter' => $exporter,
+            'form' => $form,
+        ]);
         if ($next === 'start') {
             $exportArgs = [];
             $exportArgs['comment'] = $session['comment'];

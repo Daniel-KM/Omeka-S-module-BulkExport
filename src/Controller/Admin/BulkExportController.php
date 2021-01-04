@@ -1,23 +1,12 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Controller\Admin;
 
-use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 
 class BulkExportController extends AbstractActionController
 {
-    use ServiceLocatorAwareTrait;
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     */
-    public function __construct(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->setServiceLocator($serviceLocator);
-    }
-
     public function indexAction()
     {
         // Exporters.
@@ -39,9 +28,9 @@ class BulkExportController extends AbstractActionController
 
         $exports = $response->getContent();
 
-        $view = new ViewModel;
-        $view->setVariable('exporters', $exporters);
-        $view->setVariable('exports', $exports);
-        return $view;
+        return new ViewModel([
+            'exporters' => $exporters,
+            'exports' => $exports,
+        ]);
     }
 }

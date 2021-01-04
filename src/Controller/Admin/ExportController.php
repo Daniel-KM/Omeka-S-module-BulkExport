@@ -1,24 +1,13 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Controller\Admin;
 
-use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Laminas\Log\Logger;
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 
 class ExportController extends AbstractActionController
 {
-    use ServiceLocatorAwareTrait;
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     */
-    public function __construct(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->setServiceLocator($serviceLocator);
-    }
-
     public function indexAction()
     {
         $this->setBrowseDefaults('started');
@@ -31,10 +20,10 @@ class ExportController extends AbstractActionController
 
         $exports = $response->getContent();
 
-        $view = new ViewModel;
-        $view->setVariable('exports', $exports);
-        $view->setVariable('resources', $exports);
-        return $view;
+        return new ViewModel([
+            'exports' => $exports,
+            'resources' => $exports,
+        ]);
     }
 
     public function showAction()
@@ -42,10 +31,10 @@ class ExportController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $export = $this->api()->read('bulk_exports', $id)->getContent();
 
-        $view = new ViewModel;
-        $view->setVariable('export', $export);
-        $view->setVariable('resource', $export);
-        return $view;
+        return new ViewModel([
+            'export' => $export,
+            'resource' => $export,
+        ]);
     }
 
     public function logsAction()
@@ -70,11 +59,11 @@ class ExportController extends AbstractActionController
 
         $logs = $response->getContent();
 
-        $view = new ViewModel;
-        $view->setVariable('export', $export);
-        $view->setVariable('resource', $export);
-        $view->setVariable('logs', $logs);
-        $view->setVariable('severity', $severity);
-        return $view;
+        return new ViewModel([
+            'export' => $export,
+            'resource' => $export,
+            'logs' => $logs,
+            'severity' => $severity,
+        ]);
     }
 }

@@ -2,31 +2,20 @@
 
 namespace BulkExport\Controller;
 
-use BulkExport\Formatter\Manager as FormatterManager;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Log\Stdlib\PsrMessage;
 
 class OutputController extends AbstractActionController
 {
-    /**
-     * @var \BulkExport\Formatter\Manager
-     */
-    protected $formatterManager;
-
-    /**
-     * @param FormatterManager $formatterManager
-     */
-    public function __construct(FormatterManager $formatterManager)
-    {
-        $this->formatterManager = $formatterManager;
-    }
-
     public function outputAction()
     {
         $params = $this->params();
 
+        /** @var \BulkExport\Mvc\Controller\Plugin\ExportFormatter $exportFormatter */
+        $exportFormatter = $this->exportFormatter();
+
         $format = $params->fromRoute('format');
-        if (!$this->formatterManager->has($format)) {
+        if (!$exportFormatter->has($format)) {
             throw new \Omeka\Mvc\Exception\NotFoundException(new PsrMessage(
                 $this->translate('Unsupported format "{format}".'), // @translate
                 ['format' => $format]
@@ -88,6 +77,8 @@ class OutputController extends AbstractActionController
             }
         }
 
+        // Copied in \ApiInfo\Controller\ApiController::getExportOptions().
+
         $options = [];
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;
         $options['metadata'] = $settings->get('bulkexport_metadata', []);
@@ -102,55 +93,9 @@ class OutputController extends AbstractActionController
         $options['resource_type'] = $resourceType;
         $options['limit'] = $resourceLimit;
 
-        /** @var \BulkExport\Formatter\FormatterInterface $formatter */
-        $formatter = $this->formatterManager->get($format)
-            ->format($resources, null, $options);
-        $filename = $this->getFilename($resourceType, $formatter->getExtension(), $id);
-
-        // TODO Use direct output if available (ods and php://output).
-
-        $content = $formatter->getContent();
-        if ($content === false) {
-            // Detailled results are logged.
-            throw new \Omeka\Mvc\Exception\RuntimeException(new PsrMessage(
-                'Unable to format resources as {format}.', // @translate
-                ['format' => $format]
-            ));
-        }
-
-        $response = $this->getResponse();
-        $response
-            ->setContent($content);
-
-        /** @var \Laminas\Http\Headers $headers */
-        $headers = $response
-            ->getHeaders()
-            ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
-            // This is the strlen as bytes, not as character.
-            ->addHeaderLine('Content-length: ' . strlen($content))
-            // When forcing the download of a file over SSL, IE8 and lower
-            // browsers fail if the Cache-Control and Pragma headers are not set.
-            // @see http://support.microsoft.com/KB/323308
-            ->addHeaderLine('Cache-Control: max-age=0')
-            ->addHeaderLine('Expires: 0')
-            ->addHeaderLine('Pragma: public');
-        foreach ($formatter->getResponseHeaders() as $key => $value) {
-            $headers
-                ->addHeaderLine($key, $value);
-        }
-
-        return $response;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getFilename($resourceType, $extension, $resourceId = null)
-    {
-        return $_SERVER['SERVER_NAME']
-            . '-' . $resourceType
-            . ($resourceId ? '-' . $resourceId : '')
-            . '-' . date('Ymd-His')
-            . '.' . $extension;
+        return $exportFormatter
+            ->get($format)
+            ->format($resources, null, $options)
+            ->getResponse($resourceType);
     }
 }

@@ -50,13 +50,20 @@ return [
         ],
     ],
     'controllers' => [
+        // Class is not used as key, since it's set dynamically by sub-route
+        // and it should be available in acl (so alias is mapped later).
+        'invokables' => [
+            'BulkExport\Controller\Admin\BulkExport' => Controller\Admin\BulkExportController::class,
+            'BulkExport\Controller\Admin\Export' => Controller\Admin\ExportController::class,
+            'BulkExport\Controller\Output' => Controller\OutputController::class,
+        ],
         'factories' => [
-            // Class is not used as key, since it's set dynamically by sub-route
-            // and it should be available in acl (so alias is mapped later).
-            'BulkExport\Controller\Admin\BulkExport' => Service\Controller\ControllerFactory::class,
-            'BulkExport\Controller\Admin\Export' => Service\Controller\ControllerFactory::class,
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
-            'BulkExport\Controller\Output' => Service\Controller\OutputControllerFactory::class,
+        ],
+    ],
+    'controller_plugins' => [
+        'factories' => [
+            'exportFormatter' => Service\ControllerPlugin\ExportFormatterFactory::class,
         ],
     ],
     // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
