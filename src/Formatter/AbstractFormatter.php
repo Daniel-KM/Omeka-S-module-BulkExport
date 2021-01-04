@@ -166,6 +166,50 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this->content;
     }
 
+    public function getResponse(string $resourceType = 'resources'): HttpResponse
+    {
+        $content = $this->getContent();
+        if ($content === false) {
+            // Detailled results are logged.
+            throw new \Omeka\Mvc\Exception\RuntimeException(new PsrMessage(
+                'Unable to format resources as {format}.', // @translate
+                ['format' => $this->getLabel()]
+            ));
+        }
+
+        if (is_null($content)) {
+            $content = (string) file_get_contents($this->output);
+        }
+
+        $id = $this->isSingle ? $this->resource->id() : null;
+        $filename = $this->getFilename($resourceType, $this->getExtension(), $id);
+
+        // TODO Use direct output if available (ods and php://output).
+
+        $response = new HttpResponse();
+        $response
+            ->setContent($content);
+
+        /** @var \Laminas\Http\Headers $headers */
+        $headers = $response
+            ->getHeaders()
+            ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
+            // This is the strlen as bytes, not as character.
+            ->addHeaderLine('Content-length: ' . strlen($content))
+            // When forcing the download of a file over SSL, IE8 and lower
+            // browsers fail if the Cache-Control and Pragma headers are not set.
+            // @see http://support.microsoft.com/KB/323308
+            ->addHeaderLine('Cache-Control: max-age=0')
+            ->addHeaderLine('Expires: 0')
+            ->addHeaderLine('Pragma: public');
+        foreach ($this->getResponseHeaders() as $key => $value) {
+            $headers
+                ->addHeaderLine($key, $value);
+        }
+
+        return $response;
+    }
+
     public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         $this->reset();
@@ -388,5 +432,14 @@ abstract class AbstractFormatter implements FormatterInterface
             'annotations' => 'oa:Annotation',
         ];
         return $mapping[$resourceType] ?? null;
+    }
+
+    protected function getFilename($resourceType, $extension, $resourceId = null): string
+    {
+        return ($_SERVER['SERVER_NAME'] ?? 'omeka')
+            . '-' . $resourceType
+            . ($resourceId ? '-' . $resourceId : '')
+            . '-' . date('Ymd-His')
+            . '.' . $extension;
     }
 }

@@ -41,6 +41,13 @@ interface FormatterInterface
     public function getContent();
 
     /**
+     * Get the formatted resources as a response.
+     *
+     * @return \Laminas\Http\PhpEnvironment\Response.
+     */
+    public function getResponse(): \Laminas\Http\PhpEnvironment\Response;
+
+    /**
      * Prepare output for one or multiple resources or ids or via a query.
      *
      * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]|\Omeka\Api\Representation\AbstractResourceEntityRepresentation|int[]|int|array $resources
