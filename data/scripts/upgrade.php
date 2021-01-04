@@ -105,3 +105,10 @@ CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:j
 SQL;
     $connection->exec($sql);
 }
+
+if (version_compare($oldVersion, '3.3.12.13', '<')) {
+    if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
+        $message = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
+        throw new \Omeka\Module\Exception\ModuleCannotInstallException($message);
+    }
+}

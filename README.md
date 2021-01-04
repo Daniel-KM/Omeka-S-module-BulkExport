@@ -23,8 +23,8 @@ Installation
 
 This module requires the module [Log] and the optional module [Generic].
 
-**Important**: If you use the module [CSVImport] in parallel, you should apply [this patch]
-of use [this version].
+**Important**: If you use the module [CSVImport] in parallel, you should apply
+[this patch] or use [this version].
 
 See general end user documentation for [installing a module].
 
@@ -52,12 +52,22 @@ Finally, process the export.
 
 To create a new writer, take your inspiration on the existing `SpreadsheetWriter`.
 
+The output can be set for admin board in the main settings and for each site in
+the settings of each site.
+
+The export is available directly as `/s/my-site/item/{id}.ods`, or any other
+extension (tsv, csv, json, json-ld, list.txt, txt, odt, ods).
+
+The export is available through the api endpoint too with the module [Api Info]
+at `/api/infos/item/{id}.ods`, or any other extension.
+
 
 Notes
 -----
 
 - To convert an export with linked resource exported as url + label into linked
-  resources importable, you need to apply this formula in cald: `=REGEX($Export.B2; "(http:/api/items/)(\d+)([^|\n]*)"; "$2"; "g")`
+  resources importable, you need to apply this formula in LibreOffice Calc:
+  `=REGEX($Export.B2; "(http:/api/items/)(\d+)([^|\n]*)"; "$2"; "g")`
   (to be adapted to your output).
 
 
@@ -117,7 +127,7 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019-2020 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2019-2021 (see [Daniel-KM] on GitLab)
 
 This module was initially inspired by the [Omeka Classic] [Export plugin], built
 by [Biblibre].
@@ -134,6 +144,7 @@ by [Biblibre].
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
 [CSV Import]: https://github.com/omeka-s-modules/CSVImport
+[Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
 [this patch]: https://github.com/omeka-s-modules/CSVImport/pull/182
 [this version]: https://github.com/Daniel-KM/Omeka-S-module-CSVImport
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
