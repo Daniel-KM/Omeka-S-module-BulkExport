@@ -60,13 +60,14 @@ return [
         'factories' => [
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
         ],
-        // The aliases simplify the routing.
+        // The aliases simplify the routing, the url assembly and allows to support module Clean url.
         'aliases' => [
             'BulkExport\Controller\Item' => Controller\OutputController::class,
             'BulkExport\Controller\ItemSet' => Controller\OutputController::class,
             'BulkExport\Controller\Media' => Controller\OutputController::class,
             'BulkExport\Controller\Resource' => Controller\OutputController::class,
             'BulkExport\Controller\Annotation' => Controller\OutputController::class,
+            'BulkExport\Controller\CleanUrlController' => Controller\OutputController::class,
         ],
     ],
     'controller_plugins' => [
@@ -157,6 +158,7 @@ return [
                             ],
                         ],
                     ],
+                    // These routes allow to have a url without the action.
                     'resource-output' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [

@@ -46,9 +46,14 @@ class OutputController extends AbstractActionController
         ];
         $resourceType = $params->fromRoute('__CONTROLLER__');
         if (empty($resourceTypes[$resourceType])) {
-            throw new \Omeka\Mvc\Exception\NotFoundException(
-                $this->translate('Unsupported resource type to export.') // @translate
-            );
+            // Support module Clean url.
+            $resourceType = $params->fromRoute('forward');
+            if (!$resourceType || empty($resourceTypes[$resourceType['__CONTROLLER__']])) {
+                throw new \Omeka\Mvc\Exception\NotFoundException(
+                    $this->translate('Unsupported resource type to export.') // @translate
+                );
+            }
+            $resourceType = $resourceType['__CONTROLLER__'];
         }
         $resourceType = $resourceTypes[$resourceType];
 
