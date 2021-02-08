@@ -169,7 +169,7 @@ msgstr "Cible de l’annotation : %s"
 #: view/bulk/admin/exporter/edit.phtml:16
 #: view/bulk/admin/exporter/start.phtml:17
 msgid "Bulk export"
-msgstr "Bulk export"
+msgstr "Export en lot"
 
 #: view/bulk/admin/bulk-export/index.phtml:20
 msgid "Available exporters"
@@ -313,7 +313,7 @@ msgstr "Créer un nouvel exporteur"
 
 #: view/bulk/admin/exporter/add.phtml:15
 msgid "Bulk Export"
-msgstr "Bulk export"
+msgstr "Export en lot"
 
 #: view/bulk/admin/exporter/configure-writer.phtml:16
 #: view/bulk/admin/exporter/configure-writer.phtml:19
