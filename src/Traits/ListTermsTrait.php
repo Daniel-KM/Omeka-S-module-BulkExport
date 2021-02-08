@@ -61,7 +61,7 @@ trait ListTermsTrait
         $stmt = $connection->executeQuery($qb);
         // Fetch by key pair is not supported by doctrine 2.0.
         $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->propertiesByTerm = array_column($terms, 'id', 'term');
+        $this->propertiesByTerm = array_map('intval', array_column($terms, 'id', 'term'));
         return $this->propertiesByTerm;
     }
 
@@ -95,7 +95,7 @@ trait ListTermsTrait
         $stmt = $connection->executeQuery($qb);
         // Fetch by key pair is not supported by doctrine 2.0.
         $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->resourceClassesByTerm = array_column($terms, 'id', 'term');
+        $this->resourceClassesByTerm = array_map('intval', array_column($terms, 'id', 'term'));
         return $this->resourceClassesByTerm;
     }
 
@@ -166,7 +166,7 @@ trait ListTermsTrait
 
         $stmt = $connection->executeQuery($qb, $qb->getParameters());
         $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return array_column($terms, 'id', 'term');
+        return array_map('intval', array_column($terms, 'id', 'term'));
     }
 
     /**
