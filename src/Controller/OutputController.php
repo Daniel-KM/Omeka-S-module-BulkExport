@@ -7,7 +7,17 @@ use Log\Stdlib\PsrMessage;
 
 class OutputController extends AbstractActionController
 {
-    public function outputAction()
+    public function browseAction()
+    {
+        return $this->output(false);
+    }
+
+    public function showAction()
+    {
+        return $this->output(true);
+    }
+
+    protected function output($isShow)
     {
         $params = $this->params();
 
@@ -34,7 +44,12 @@ class OutputController extends AbstractActionController
             'resource' => 'resources',
             'annotation' => 'annotations',
         ];
-        $resourceType = $params->fromRoute('resource-type');
+        $resourceType = $params->fromRoute('__CONTROLLER__');
+        if (empty($resourceTypes[$resourceType])) {
+            throw new \Omeka\Mvc\Exception\NotFoundException(
+                $this->translate('Unsupported resource type to export.') // @translate
+            );
+        }
         $resourceType = $resourceTypes[$resourceType];
 
         // Check the id in the route first to manage the direct route.

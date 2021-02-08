@@ -34,7 +34,7 @@ class Module extends AbstractModule
             ->allow(
                 null,
                 ['BulkExport\Controller\Output'],
-                ['output']
+                ['browse', 'show']
             )
         ;
     }

@@ -60,6 +60,14 @@ return [
         'factories' => [
             'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
         ],
+        // The aliases simplify the routing.
+        'aliases' => [
+            'BulkExport\Controller\Item' => Controller\OutputController::class,
+            'BulkExport\Controller\ItemSet' => Controller\OutputController::class,
+            'BulkExport\Controller\Media' => Controller\OutputController::class,
+            'BulkExport\Controller\Resource' => Controller\OutputController::class,
+            'BulkExport\Controller\Annotation' => Controller\OutputController::class,
+        ],
     ],
     'controller_plugins' => [
         'factories' => [
@@ -110,34 +118,73 @@ return [
         'routes' => [
             'site' => [
                 'child_routes' => [
+                    // These routes allow to have a url compatible with Clean url.
+                    'resource' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Laminas\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'action' => 'browse',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'action' => 'browse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'resource-id' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Laminas\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'action' => 'show',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'action' => 'show',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                     'resource-output' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/:resource-type:.:format',
+                            'route' => '/:controller:.:format',
                             'constraints' => [
-                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'controller' => 'resource|item-set|item|media|annotation',
                                 'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'action' => 'browse',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
-                                'controller' => 'Output',
-                                'action' => 'output',
+                                'action' => 'browse',
                             ],
                         ],
                     ],
                     'resource-output-id' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/:resource-type/:id:.:format',
+                            'route' => '/:controller/:id:.:format',
                             'constraints' => [
-                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'controller' => 'resource|item-set|item|media|annotation',
                                 'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
                                 'id' => '\d+',
+                                'action' => 'show',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
-                                'controller' => 'Output',
-                                'action' => 'output',
+                                'action' => 'show',
                             ],
                         ],
                     ],
@@ -156,6 +203,7 @@ return [
                                 'action' => 'index',
                             ],
                         ],
+                        // TODO Check if these routes are still needed.
                         'may_terminate' => true,
                         'child_routes' => [
                             'default' => [
@@ -187,34 +235,74 @@ return [
                             ],
                         ],
                     ],
+                    // These routes allow to have a url compatible with Clean url.
+                    'default' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Laminas\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'action' => 'browse',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'action' => 'browse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'id' => [
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'output' => [
+                                'type' => \Laminas\Router\Http\Segment::class,
+                                'options' => [
+                                    'route' => '.:format',
+                                    'constraints' => [
+                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'action' => 'show',
+                                    ],
+                                    'defaults' => [
+                                        '__NAMESPACE__' => 'BulkExport\Controller',
+                                        'action' => 'show',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    // These routes allow to have a url without the action.
                     'resource-output' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/:resource-type:.:format',
+                            'route' => '/:controller:.:format',
                             'constraints' => [
-                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'controller' => 'resource|item-set|item|media|annotation',
                                 'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'action' => 'browse',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
-                                'controller' => 'Output',
-                                'action' => 'output',
+                                'action' => 'browse',
                             ],
                         ],
                     ],
                     'resource-output-id' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/:resource-type/:id:.:format',
+                            'route' => '/:controller/:id:.:format',
                             'constraints' => [
-                                'resource-type' => 'resource|item-set|item|media|annotation',
+                                'controller' => 'resource|item-set|item|media|annotation',
                                 'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
                                 'id' => '\d+',
+                                'action' => 'show',
                             ],
                             'defaults' => [
                                 '__NAMESPACE__' => 'BulkExport\Controller',
-                                'controller' => 'Output',
-                                'action' => 'output',
+                                'action' => 'show',
                             ],
                         ],
                     ],
