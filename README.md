@@ -56,7 +56,9 @@ The output can be set for admin board in the main settings and for each site in
 the settings of each site.
 
 The export is available directly as `/s/my-site/item/{id}.ods`, or any other
-extension (tsv, csv, json, json-ld, list.txt, txt, odt, ods).
+extension (tsv, csv, json, json-ld, list.txt, txt, odt, ods), or the one of other
+modules, in particular [Bibliography]. This feature is compatible with the module
+[Clean Url].
 
 The export is available through the api endpoint too with the module [Api Info]
 at `/api/infos/item/{id}.ods`, or any other extension.
@@ -139,6 +141,7 @@ by [Biblibre].
 [Omeka Classic]: https://omeka.org/classic
 [Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [Bibliography]: https://gitlab.com/Daniel-KM/Omeka-S-module-Bibliography
+[Clean Url]: https://gitlab.com/Daniel-KM/Omeka-S-module-CleanUrl
 [Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
