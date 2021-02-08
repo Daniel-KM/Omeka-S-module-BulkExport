@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 00:00+0000\n"
-"PO-Revision-Date: 2021-01-04 00:00+0000\n"
+"POT-Creation-Date: 2021-02-01 00:00+0000\n"
+"PO-Revision-Date: 2021-02-01 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -29,9 +29,13 @@ msgstr "Tous les exports seront supprimés (dossier \"{folder}\")."
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
-#: src/Controller/OutputController.php:20
+#: src/Controller/OutputController.php:30
 msgid "Unsupported format \"{format}\"."
 msgstr "Format non géré \"{format}\"."
+
+#: src/Controller/OutputController.php:53
+msgid "Unsupported resource type to export."
+msgstr "Type de ressource non supportée pour l’export."
 
 #: src/Generic/AbstractModule.php:66
 #, php-format
@@ -53,7 +57,7 @@ msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
 "unavailable."
 msgstr ""
-"Le module %s\" a été automatiquement désactivé car ses dépendances ne sont "
+"Le module \"%s\" a été automatiquement désactivé car ses dépendances ne sont "
 "plus disponibles."
 
 #: src/Traits/OpenDocumentTextTemplateTrait.php:19
@@ -908,11 +912,11 @@ msgstr ""
 msgid "End export of {total} {resource_type}."
 msgstr "Fin de l’export de {total} {resource_type}."
 
-#: config/module.config.php:80
+#: config/module.config.php:89
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: config/module.config.php:93
+#: config/module.config.php:102
 msgid "Past Exports"
 msgstr "Exports précédents"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-04 00:00+0000\n"
+"POT-Creation-Date: 2021-02-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,8 +29,12 @@ msgstr ""
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Controller/OutputController.php:20
+#: src/Controller/OutputController.php:30
 msgid "Unsupported format \"{format}\"."
+msgstr ""
+
+#: src/Controller/OutputController.php:53
+msgid "Unsupported resource type to export."
 msgstr ""
 
 #: src/Generic/AbstractModule.php:66
@@ -869,11 +873,11 @@ msgstr ""
 msgid "End export of {total} {resource_type}."
 msgstr ""
 
-#: config/module.config.php:80
+#: config/module.config.php:89
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:93
+#: config/module.config.php:102
 msgid "Past Exports"
 msgstr ""
 
