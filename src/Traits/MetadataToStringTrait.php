@@ -5,11 +5,15 @@ namespace BulkExport\Traits;
 use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\AbstractResourceRepresentation;
+use Omeka\Api\Representation\ValueRepresentation;
 
 trait MetadataToStringTrait
 {
     /**
      * Get the list of string representations of any metadata.
+     *
+     * Portion of code similar in module Oai-Pmh repository.
+     * @see \OaiPmhRepository\OaiPmh\Metadata\AbstractMetadata::formatValue()
      *
      * @param AbstractResourceRepresentation $resource
      * @param string $metadata It can be a key of the json-serialized resource,
@@ -184,6 +188,7 @@ trait MetadataToStringTrait
                     $vv = $resource->value($metadata, ['default' => false]);
                     $vv = $vv ? [$vv] : [];
                 }
+                // Values are converted by reference.
                 foreach ($vv as &$v) {
                     $type = $v->type();
                     switch ($type) {
@@ -192,22 +197,9 @@ trait MetadataToStringTrait
                             $v = $this->stringifyResource($v->valueResource(), $params);
                             break;
                         case 'uri':
-                            switch ($params['format_uri']) {
-                                case 'uri':
-                                    $v = $v->uri();
-                                    break;
-                                case 'html':
-                                    $v = $v->asHtml();
-                                    break;
-                                case 'uri_label':
-                                default:
-                                    $v = trim($v->uri() . ' ' . $v->value());
-                                    break;
-                            }
-                            break;
                         case substr($type, 0, 13) === 'valuesuggest:':
                         case substr($type, 0, 16) === 'valuesuggestall:':
-                            $v = $v->uri();
+                            $v = $this->stringifyUri($v);
                             break;
                         // Module Custom vocab.
                         case substr($type, 0, 12) === 'customvocab:':
@@ -256,6 +248,23 @@ trait MetadataToStringTrait
                 unset($v);
                 return $vv;
         }
+    }
+
+    protected function stringifyUri(ValueRepresentation $value, array $params): string
+    {
+        switch ($params['format_uri']) {
+            case 'uri':
+                $v = (string) $value->uri();
+                break;
+            case 'html':
+                $v = $value->asHtml();
+                break;
+            case 'uri_label':
+            default:
+                $v = trim($value->uri() . ' ' . $value->value());
+                break;
+        }
+        return $v;
     }
 
     protected function stringifyResource(AbstractResourceEntityRepresentation $resource, array $params): string
