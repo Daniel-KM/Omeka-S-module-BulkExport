@@ -217,14 +217,14 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
                     $result = copy($this->filepath, $filepath);
                     @unlink($this->filepath);
                 } catch (\Exception $e) {
-                    throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+                    throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                         'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
                         ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
                     ));
                 }
 
                 if (!$result) {
-                    throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+                    throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                         'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
                         ['filename' => $filename, 'tempfile' => $this->filepath]
                     ));

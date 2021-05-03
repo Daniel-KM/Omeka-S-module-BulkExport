@@ -37,7 +37,7 @@ class Export extends AbstractJob
         $writer = $this->getWriter();
 
         if (!$writer->isValid()) {
-            throw new \Omeka\Job\Exception\RuntimeException(new PsrMessage(
+            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                 'Export error: {error}', // @translate
                 ['error' => $writer->getLastErrorMessage()]
             ));
@@ -163,7 +163,7 @@ class Export extends AbstractJob
         $writerClass = $exporter->writerClass();
         $writerManager = $services->get(WriterManager::class);
         if (!$writerManager->has($writerClass)) {
-            throw new \Omeka\Job\Exception\InvalidArgumentException(new PsrMessage(
+            throw new \Omeka\Job\Exception\InvalidArgumentException((string) new PsrMessage(
                 'Writer "{writer}" is not available.', // @translate
                 ['writer' => $writerClass]
             ));

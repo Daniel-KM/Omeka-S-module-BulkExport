@@ -171,7 +171,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $content = $this->getContent();
         if ($content === false) {
             // Detailled results are logged.
-            throw new \Omeka\Mvc\Exception\RuntimeException(new PsrMessage(
+            throw new \Omeka\Mvc\Exception\RuntimeException((string) new PsrMessage(
                 'Unable to format resources as {format}.', // @translate
                 ['format' => $this->getLabel()]
             ));

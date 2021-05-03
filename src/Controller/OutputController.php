@@ -26,7 +26,7 @@ class OutputController extends AbstractActionController
 
         $format = $params->fromRoute('format');
         if (!$exportFormatter->has($format)) {
-            throw new \Omeka\Mvc\Exception\NotFoundException(new PsrMessage(
+            throw new \Omeka\Mvc\Exception\NotFoundException((string) new PsrMessage(
                 $this->translate('Unsupported format "{format}".'), // @translate
                 ['format' => $format]
             ));
