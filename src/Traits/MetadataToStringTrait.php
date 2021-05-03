@@ -188,10 +188,7 @@ trait MetadataToStringTrait
                     $type = $v->type();
                     switch ($type) {
                         case 'resource':
-                        case 'resource:item':
-                        case 'resource:media':
-                        case 'resource:itemset':
-                        case 'resource:annotation':
+                        case substr($type, 0, 9) === 'resource:':
                             $v = $this->stringifyResource($v->valueResource(), $params);
                             break;
                         case 'uri':
@@ -208,16 +205,17 @@ trait MetadataToStringTrait
                                     break;
                             }
                             break;
-                        case strpos($type, 'valuesuggest:') === 0 || strpos($type, 'valuesuggestall:') === 0:
+                        case substr($type, 0, 13) === 'valuesuggest:':
+                        case substr($type, 0, 16) === 'valuesuggestall:':
                             $v = $v->uri();
                             break;
                         // Module Custom vocab.
-                        case strpos($type, 'customvocab:') === 0:
+                        case substr($type, 0, 12) === 'customvocab:':
                             $vvr = $v->valueResource();
                             $v = $vvr ? $this->stringifyResource($vvr, $params) : (string) $v->value();
                             break;
                         // Module module Numeric data type.
-                        case strpos($type, 'numeric:') === 0:
+                        case substr($type, 0, 8) === 'numeric:':
                             $v = (string) $v;
                             break;
                         // Module DataTypeRdf.
@@ -249,11 +247,9 @@ trait MetadataToStringTrait
                             break;
                         case 'literal':
                         default:
-                            if ($params['format_generic'] === 'html') {
-                                $v = $v->asHtml();
-                            } else {
-                                $v = (string) $v;
-                            }
+                            $v = $params['format_generic'] === 'html'
+                                ? $v->asHtml()
+                                : (string) $v;
                             break;
                     }
                 }

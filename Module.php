@@ -46,7 +46,7 @@ class Module extends AbstractModule
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
             $message = new PsrMessage(
                 'The directory "{path}" is not writeable.', // @translate
-                ['path' => $basePath]
+                ['path' => $basePath . '/bulk_export']
             );
             throw new ModuleCannotInstallException((string) $message);
         }

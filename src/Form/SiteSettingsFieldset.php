@@ -78,12 +78,12 @@ class SiteSettingsFieldset extends Fieldset
                 'options' => [
                     'label' => 'Format of linked resources', // @translate
                     'value_options' => [
+                        'url_title' => 'Omeka url and title', // @translate
+                        'title' => 'Title', // @translate
+                        'url' => 'Omeka url', // @translate
                         'identifier' => 'Identifier (property below)', // @translate
                         'id' => 'Id', // @translate
                         'identifier_id' => 'Identifier or id', // @translate
-                        'url' => 'Omeka url', // @translate
-                        'title' => 'Title', // @translate
-                        'url_title' => 'Omeka url and title', // @translate
                     ],
                 ],
                 'attributes' => [
