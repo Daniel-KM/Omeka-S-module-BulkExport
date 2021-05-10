@@ -199,7 +199,7 @@ trait MetadataToStringTrait
                         case 'uri':
                         case substr($type, 0, 13) === 'valuesuggest:':
                         case substr($type, 0, 16) === 'valuesuggestall:':
-                            $v = $this->stringifyUri($v);
+                            $v = $this->stringifyUri($v, $params);
                             break;
                         // Module Custom vocab.
                         case substr($type, 0, 12) === 'customvocab:':
