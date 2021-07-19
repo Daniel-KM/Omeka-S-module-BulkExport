@@ -288,11 +288,15 @@ trait MetadataToStringTrait
                 $v = $resource->displayTitle('[#' . $resource->id() . ']');
                 break;
             case 'url':
-                $v = empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug']);
+                $v = $this->isAdminRequest()
+                    ? $resource->adminUrl(null, true)
+                    : (empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug'], true));
                 break;
             case 'url_title':
             default:
-                $vUrl = empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug']);
+                $vUrl = $this->isAdminRequest()
+                    ? $resource->adminUrl(null, true)
+                    : (empty($params['site_slug']) ? $resource->apiUrl() : $resource->siteUrl($params['site_slug'], true));
                 $vTitle = $resource->displayTitle('');
                 $v = $vUrl . (strlen($vTitle) ? ' ' . $vTitle : '');
                 break;
