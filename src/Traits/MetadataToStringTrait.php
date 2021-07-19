@@ -44,7 +44,12 @@ trait MetadataToStringTrait
             case 'o:id':
                 return [$resource->id()];
             case 'url':
-                return [$resource->url(null, true)];
+                // Should be enough, but CleanUrl needs the site slug.
+                // return [$resource->url(null, true)];
+                return $this->isAdminRequest
+                    ? [$resource->adminUrl(null, true)]
+                    // Need site slug, but no background job in public.
+                    : [$resource->siteUrl(null, true)];
             case 'resource_type':
                 return [$this->labelResource($resource)];
             case 'o:resource_template':
@@ -360,5 +365,14 @@ trait MetadataToStringTrait
         return isset($mapping[$class])
             ? $mapping[$class]
             : str_replace('Representation', '', substr($class, strrpos($class, '\\') + 1));
+    }
+
+    protected function isAdminRequest(): bool
+    {
+        static $status;
+        if (is_null($status)) {
+            $status = $this->getServiceLocator()->get('Omeka\Status')->isAdminRequest();
+        }
+        return $status;
     }
 }
