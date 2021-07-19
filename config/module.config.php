@@ -333,6 +333,7 @@ return [
             Writer\TsvWriter::class => Writer\TsvWriter::class,
         ],
     ],
+    // Should be root key, so services are loaded automatically.
     'formatters' => [
         'factories' => [
             Formatter\Csv::class => Service\Formatter\FormatterFactory::class,

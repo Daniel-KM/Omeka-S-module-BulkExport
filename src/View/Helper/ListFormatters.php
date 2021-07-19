@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\View\Helper;
 
 use BulkExport\Formatter\Manager as FormatterManager;
@@ -16,10 +17,6 @@ class ListFormatters extends AbstractHelper
      */
     protected $formatters;
 
-    /**
-     * @param FormatterManager $formatterManager
-     * @param array $formatters
-     */
     public function __construct(FormatterManager $formatterManager, array $formatters)
     {
         $this->formatterManager = $formatterManager;
@@ -32,7 +29,7 @@ class ListFormatters extends AbstractHelper
      * @param bool $available Return only the formatters set in the settings.
      * @return array Associative array with extension as key and label as value.
      */
-    public function __invoke($available = false)
+    public function __invoke($available = false): array
     {
         $list = [];
         if ($available) {

@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Service\Form;
 
 use BulkExport\Form\SiteSettingsFieldset;
@@ -10,6 +11,7 @@ class SiteSettingsFieldsetFactory implements FactoryInterface
     public function __invoke(ContainerInterface $services, $requestedName, array $options = null)
     {
         $formatters = $services->get('Config')['formatters']['aliases'];
+        /** @var \BulkExport\Formatter\Manager $formatterManager */
         $formatterManager = $services->get('BulkExport\Formatter\Manager');
         foreach (array_keys($formatters) as $formatter) {
             $formatters[$formatter] = $formatterManager->get($formatter)->getLabel();
