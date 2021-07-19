@@ -1,7 +1,7 @@
 {
     "require": {
-        "box/spout": "^3.1",
-        "phpoffice/phpword": "^0.17.0"
+        "box/spout": "3.1.0",
+        "phpoffice/phpword": "^0.18"
     },
     "require-dev": {
         "biblibre/omeka-s-test-helper": "dev-master"
