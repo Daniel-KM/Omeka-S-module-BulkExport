@@ -1,6 +1,6 @@
 {
     "require": {
-        "box/spout": "3.1.0",
+        "box/spout": "^3.3",
         "phpoffice/phpword": "^0.18",
         "doctrine/inflector": "^2.0"
     },
