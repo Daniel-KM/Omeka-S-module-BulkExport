@@ -4,10 +4,12 @@
  * @var \BulkExport\Api\Representation\ExportRepresentation[] $exports
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
-$hyperlink = $this->plugin('hyperlink');
-$url = $this->plugin('url');
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
+$hyperlink = $plugins->get('hyperlink');
+$url = $plugins->get('url');
+
 $urlBase = $url('top') . 'files/bulk_export/';
 ?>
 
@@ -22,46 +24,48 @@ $urlBase = $url('top') . 'files/bulk_export/';
     </thead>
     <tbody>
         <?php foreach ($exports as $export): ?>
-            <?php $status = $translate($export->status()); ?>
-            <?php $filename = $export->filename(); ?>
-            <?php $fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : ''; ?>
+            <?php
+            $status = $translate($export->statusLabel());
+            $filename = $export->filename();
+            $fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : '';
+            $exporter = $export->exporter();
+            ?>
             <tr>
                 <td>
                     <?php $comment = $export->comment() ?>
                     <?php if ($comment): ?>
                     <?= $comment ?>
-                    <span class="bulk-label-sub"><?= $export->exporter()->label() ?></span>
+                    <span class="bulk-label-sub"><?= $exporter ? $exporter->label() : '' ?></span>
                     <?php else: ?>
-                    <?= $export->exporter()->label() ?>
+                    <?= $exporter ? $exporter->label() : $translate('[Unknown]') ?>
                     <?php endif; ?>
                     <ul class="actions">
-                        <?php if ($export->isInProgress()): ?>
-                        <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
-                            'class' => 'fas fa-times-circle',
-                            'title' => $translate('Stop'), // @translate
-                        ]) ?></li>
-                        <?php endif; ?>
-                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'show', 'id' => $export->id()]), [
-                            'class' => 'fas fa-cogs',
-                            'title' => $translate('See params'),
-                        ]) ?></li>
-                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]), [
-                            'class' => 'fas fa-list',
-                            'title' => $translate('See logs'),
-                        ]) ?></li>
                         <?php if ($fileUrl): ?>
-                        <li><?php
-                        echo $hyperlink('', $fileUrl, [
-                            'class' => 'fas fa-cloud-download-alt',
+                        <li><?= $hyperlink('', $fileUrl, [
+                            'class' => 'fas fa-cloud-download-alt o-icon-',
                             'title' => $translate('Get file'), // @translate
                             'download' => '',
                         ]) ?></li>
                         <?php endif; ?>
+                        <?php if ($export->isInProgress()): ?>
+                        <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
+                            'class' => 'fas fa-times-circle o-icon-',
+                            'title' => $translate('Stop'), // @translate
+                        ]) ?></li>
+                        <?php endif; ?>
+                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'show', 'id' => $export->id()]), [
+                            'class' => 'fas fa-cogs o-icon-',
+                            'title' => $translate('See params'),
+                        ]) ?></li>
+                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]), [
+                            'class' => 'fas fa-list o-icon-',
+                            'title' => $translate('See logs'),
+                        ]) ?></li>
                     </ul>
                 </td>
                 <td><?= $fileUrl ? $hyperlink($status, $fileUrl) : $status ?></td>
-                <td><?php if ($export->started()) echo $export->started()->format('Y-m-d H:i:s'); ?></td>
-                <td><?php if ($export->ended()) echo $export->ended()->format('Y-m-d H:i:s'); ?></td>
+                <td><?= $export->started() ? $export->started()->format('Y-m-d H:i:s') : '' ?></td>
+                <td><?= $export->ended() ? $export->ended()->format('Y-m-d H:i:s') : '' ?></td>
             </tr>
         <?php endforeach; ?>
     </tbody>

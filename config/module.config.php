@@ -52,6 +52,7 @@ return [
     'controllers' => [
         // Class is not used as key, since it's set dynamically by sub-route
         // and it should be available in acl (so alias is mapped later).
+        // TODO Find a way to keep class as main key as usual.
         'invokables' => [
             'BulkExport\Controller\Admin\BulkExport' => Controller\Admin\BulkExportController::class,
             'BulkExport\Controller\Admin\Export' => Controller\Admin\ExportController::class,
@@ -102,7 +103,7 @@ return [
                         'label' => 'Past Exports', // @translate
                         'route' => 'admin/bulk-export/default',
                         'controller' => 'export',
-                        'action' => 'index',
+                        'action' => 'browse',
                         'pages' => [
                             [
                                 'route' => 'admin/bulk-export/id',

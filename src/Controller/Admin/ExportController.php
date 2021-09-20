@@ -10,6 +10,13 @@ class ExportController extends AbstractActionController
 {
     public function indexAction()
     {
+        $params = $this->params()->fromRoute();
+        $params['action'] = 'browse';
+        return $this->forward()->dispatch(__CLASS__, $params);
+    }
+
+    public function browseAction()
+    {
         $this->setBrowseDefaults('started');
 
         $page = $this->params()->fromQuery('page', 1);

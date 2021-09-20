@@ -17,7 +17,8 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 <div id="content">
     <h2><?= $escape(sprintf($translate('Export #%d'), $export->id())) ?></h2>
     <ul>
-        <li><?= sprintf($translate('exporter: %s'), $export->exporter()->label()) ?></li>
+        <li><?= sprintf($translate('owner: %s'), $export->exporter()->label()) ?></li>
+        <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
         <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
         <li><?= sprintf($translate('Status: %s'), $export->statusLabel()) ?></li>
         <?php if ($v = $export->started()): ?>

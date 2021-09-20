@@ -1,0 +1,73 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExporterRepresentation[] $exporters
+ */
+
+use BulkExport\Interfaces\Configurable as ConfigurableExport;
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
+$hyperlink = $plugins->get('hyperlink');
+?>
+
+<h2><?= $escape($translate('Available exporters')) ?></h2>
+<?= $hyperlink($translate('Add an exporter'), $this->url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'])) ?>
+
+<?php if (count($exporters)): ?>
+
+<table class="tablesaw batch-edit" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+            <th><?= $escape($translate('Name')) ?></th>
+            <th><?= $escape($translate('Writer')) ?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($exporters as $exporter): ?>
+        <?php
+        $userIsAllowedUpdate = $exporter->userIsAllowed('update');
+        $userIsAllowedDelete = $exporter->userIsAllowed('delete');
+        ?>
+        <tr>
+            <td>
+                <?= $hyperlink($exporter->label(), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])) ?>
+                <ul class="actions">
+                    <li><?= $exporter->link('', 'start', [
+                        'class' => 'fas fa-cloud-download-alt o-icon-',
+                        'title' => $translate('Export'),
+                    ]) ?></li>
+                    <?php if ($userIsAllowedUpdate): ?>
+                    <li><?= $exporter->link('', 'edit', [
+                        'class' => 'o-icon-edit',
+                        'title' => $translate('Edit'),
+                    ]) ?></li>
+                    <?php endif; ?>
+                    <?php if ($userIsAllowedDelete): ?>
+                    <li><?= $exporter->link('', 'delete', [
+                        'class' => 'o-icon-delete',
+                        'title' => $translate('Delete'),
+                    ]) /*
+                    echo $this->hyperlink('', '#', [
+                        'data-sidebar-selector' => '#sidebar',
+                        'data-sidebar-content-url' => $exporter->url('delete-confirm'),
+                        'class' => 'o-icon-delete sidebar-content',
+                        'title' => $translate('Delete'),
+                    ]); */ ?></li>
+                    <?php endif; ?>
+                </ul>
+            </td>
+            <td>
+                <?php $writer = $exporter->writer(); ?>
+                <?= $writer ? $writer->getLabel() : null ?>
+                <?php if ($writer instanceof ConfigurableExport): ?>
+                    (<?= $hyperlink($translate('Configure'), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php endif; ?>
