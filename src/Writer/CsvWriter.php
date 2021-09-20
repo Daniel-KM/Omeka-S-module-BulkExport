@@ -3,6 +3,7 @@
 namespace BulkExport\Writer;
 
 use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use BulkExport\Form\Writer\CsvWriterConfigForm;
 
 /**
@@ -55,6 +56,15 @@ class CsvWriter extends AbstractSpreadsheetWriter
     ];
 
     protected $spreadsheetType = Type::CSV;
+
+    public function isValid(): bool
+    {
+        if (WriterEntityFactory::createODSWriter() instanceof \Box\Spout\Writer\AbstractWriter) {
+            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme.'; // @translate
+            return false;
+        }
+        return parent::isValid();
+    }
 
     protected function initializeOutput()
     {

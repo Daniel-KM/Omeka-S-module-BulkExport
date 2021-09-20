@@ -52,15 +52,13 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
             return false;
         }
         // The version of Box/Spout should be >= 3.0, but there is no version
-        // inside php, so check against a class.
-        // This check is needed, because CSV Import still uses version 2.7.
-        // TODO Re-enable the check when patch https://github.com/omeka-s-modules/CSVImport/pull/182 will be included.
-        /*
-        if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
-            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
+        // inside php, so check against a new file (factory uses class outside).
+        // This check is needed, because CSV Import still uses version 2.7 (stable version).
+        // @see https://github.com/omeka-s-modules/CSVImport/pull/182
+        if (WriterEntityFactory::createODSWriter() instanceof \Box\Spout\Writer\AbstractWriter) {
+            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme.'; // @translate
             return false;
         }
-        */
         return parent::isValid();
     }
 
@@ -68,7 +66,6 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
     {
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
-
         $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
         $this->spreadsheetWriter
             ->setTempFolder($tempDir)
