@@ -5,8 +5,10 @@
  * @var \BulkExport\Api\Representation\ExportRepresentation $resource
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins('translate');
+$escape = $plugins('escapeHtml');
+$hyperlink = $plugins('hyperlink');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exports show');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
@@ -21,8 +23,8 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 <div id="content">
     <h2><?= $escape(sprintf($translate('Export #%d'), $export->id())) ?></h2>
     <ul>
-        <li><?= sprintf($translate('owner: %s'), $export->exporter()->label()) ?></li>
-        <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
+        <li><?= sprintf($translate('Exporter: %s'), $export->exporter()->label()) ?></li>
+        <li><?= sprintf($translate('Owner: %s'), $export->owner() ? $hyperlink($export->owner()->name(), $export->owner()->adminUrl()) : $translate('[Unknown]')) ?></li>
         <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
         <li><?= sprintf($translate('Status: %s'), $export->statusLabel()) ?></li>
         <?php if ($v = $export->started()): ?>

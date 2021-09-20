@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Entity;
 
 use Omeka\Entity\AbstractEntity;
 use Omeka\Entity\Job;
+use Omeka\Entity\User;
 
 /**
  * @Entity
@@ -34,14 +36,16 @@ class Export extends AbstractEntity
     protected $exporter;
 
     /**
-     * @var string
-     * @Column(
-     *     type="string",
+     * @var User
+     * @ManyToOne(
+     *     targetEntity=\Omeka\Entity\User::class
+     * )
+     * @JoinColumn(
      *     nullable=true,
-     *     length=190
+     *     onDelete="SET NULL"
      * )
      */
-    protected $comment;
+    protected $owner;
 
     /**
      * @var Job
@@ -54,6 +58,16 @@ class Export extends AbstractEntity
      * )
      */
     protected $job;
+
+    /**
+     * @var string
+     * @Column(
+     *     type="string",
+     *     nullable=true,
+     *     length=190
+     * )
+     */
+    protected $comment;
 
     /**
      * @var array
@@ -79,92 +93,71 @@ class Export extends AbstractEntity
         return $this->id;
     }
 
-    /**
-     * @param Exporter $exporter
-     * @return self
-     */
-    public function setExporter(Exporter $exporter)
+    public function setExporter(Exporter $exporter): self
     {
         $this->exporter = $exporter;
         return $this;
     }
 
-    /**
-     * @return \BulkExport\Entity\Exporter
-     */
-    public function getExporter()
+    public function getExporter(): \BulkExport\Entity\Exporter
     {
         return $this->exporter;
     }
 
-    /**
-     * @param string $comment
-     * @return self
-     */
-    public function setComment($comment)
+    public function setOwner(?User $owner): self
     {
-        $this->comment = $comment;
+        $this->owner = $owner;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getComment()
+    public function getOwner(): ?\Omeka\Entity\User
     {
-        return $this->comment;
+        return $this->owner;
     }
 
-    /**
-     * @param Job $job
-     * @return self
-     */
-    public function setJob(Job $job)
+    public function setJob(?Job $job): self
     {
         $this->job = $job;
         return $this;
     }
 
-    /**
-     * @return \Omeka\Entity\Job
-     */
-    public function getJob()
+    public function getJob(): ?\Omeka\Entity\Job
     {
         return $this->job;
     }
 
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
     /**
      * @param array|\Traversable $writerParams
-     * @return self
      */
-    public function setWriterParams($writerParams)
+    public function setWriterParams($writerParams): self
     {
         $this->writerParams = $writerParams;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getWriterParams()
+    public function getWriterParams(): ?array
     {
         return $this->writerParams;
     }
 
-    /**
-     * @param string $filename
-     * @return self
-     */
-    public function setFilename($filename)
+    public function setFilename(?string $filename): self
     {
         $this->filename = $filename;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
+    public function getFilename(): ?string
     {
         return $this->filename;
     }

@@ -26,7 +26,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * @var boolean flag indicating if this object was already initialized
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__isInitialized
+     * @see \Doctrine\Persistence\Proxy::__isInitialized
      */
     public $__isInitialized__ = false;
 
@@ -66,10 +66,10 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'owner', 'exports'];
+            return ['__isInitialized__', 'id', 'owner', 'label', 'writerClass', 'writerConfig', 'exports'];
         }
 
-        return ['__isInitialized__', 'id', 'label', 'writerClass', 'writerConfig', 'owner', 'exports'];
+        return ['__isInitialized__', 'id', 'owner', 'label', 'writerClass', 'writerConfig', 'exports'];
     }
 
     /**
@@ -194,73 +194,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setLabel($label)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setLabel', [$label]);
-
-        return parent::setLabel($label);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getLabel()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getLabel', []);
-
-        return parent::getLabel();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setWriterClass($writerClass)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterClass', [$writerClass]);
-
-        return parent::setWriterClass($writerClass);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getWriterClass()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterClass', []);
-
-        return parent::getWriterClass();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setWriterConfig($writerConfig)
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterConfig', [$writerConfig]);
-
-        return parent::setWriterConfig($writerConfig);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getWriterConfig()
-    {
-
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterConfig', []);
-
-        return parent::getWriterConfig();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOwner(\Omeka\Entity\User $owner = NULL)
+    public function setOwner(?\Omeka\Entity\User $owner): \BulkExport\Entity\Exporter
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOwner', [$owner]);
@@ -271,7 +205,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function getOwner()
+    public function getOwner(): ?\Omeka\Entity\User
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getOwner', []);
@@ -282,7 +216,73 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function getExports()
+    public function setLabel(?string $label): \BulkExport\Entity\Exporter
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setLabel', [$label]);
+
+        return parent::setLabel($label);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getLabel(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getLabel', []);
+
+        return parent::getLabel();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setWriterClass(?string $writerClass): \BulkExport\Entity\Exporter
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterClass', [$writerClass]);
+
+        return parent::setWriterClass($writerClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getWriterClass(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterClass', []);
+
+        return parent::getWriterClass();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setWriterConfig($writerConfig): \BulkExport\Entity\Exporter
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterConfig', [$writerConfig]);
+
+        return parent::setWriterConfig($writerConfig);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getWriterConfig(): ?array
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterConfig', []);
+
+        return parent::getWriterConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExports(): \Doctrine\Common\Collections\ArrayCollection
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getExports', []);

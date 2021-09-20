@@ -16,6 +16,7 @@ class ExportAdapter extends AbstractEntityAdapter
     protected $sortFields = [
         'id' => 'id',
         'exporter_id' => 'exporterId',
+        'owner_id' => 'ownerId',
     ];
 
     public function getResourceName()
@@ -51,6 +52,20 @@ class ExportAdapter extends AbstractEntityAdapter
                 $expr->eq(
                     'omeka_root.job',
                     $this->createNamedParameter($qb, $query['job_id'])
+                )
+            );
+        }
+
+        if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
+            $userAlias = $this->createAlias();
+            $qb->innerJoin(
+                'omeka_root.owner',
+                $userAlias
+            );
+            $qb->andWhere(
+                $qb->eq(
+                    'omeka_root.id',
+                    $this->createNamedParameter($qb, $query['owner_id'])
                 )
             );
         }

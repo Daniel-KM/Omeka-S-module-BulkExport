@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,6 +20,18 @@ class Exporter extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+
+    /**
+     * @var User
+     * @ManyToOne(
+     *     targetEntity=\Omeka\Entity\User::class
+     * )
+     * @JoinColumn(
+     *     nullable=true,
+     *     onDelete="SET NULL"
+     * )
+     */
+    protected $owner;
 
     /**
      * @var string
@@ -50,18 +63,6 @@ class Exporter extends AbstractEntity
     protected $writerConfig;
 
     /**
-     * @var User
-     * @ManyToOne(
-     *     targetEntity=\Omeka\Entity\User::class
-     * )
-     * @JoinColumn(
-     *     nullable=true,
-     *     onDelete="SET NULL"
-     * )
-     */
-    protected $owner;
-
-    /**
      * @OneToMany(
      *     targetEntity=Export::class,
      *     mappedBy="exporter",
@@ -82,82 +83,57 @@ class Exporter extends AbstractEntity
         return $this->id;
     }
 
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $writerClass
-     * @return self
-     */
-    public function setWriterClass($writerClass)
-    {
-        $this->writerClass = $writerClass;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWriterClass()
-    {
-        return $this->writerClass;
-    }
-
-    /**
-     * @param array $writerConfig
-     * @return self
-     */
-    public function setWriterConfig($writerConfig)
-    {
-        $this->writerConfig = $writerConfig;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getWriterConfig()
-    {
-        return $this->writerConfig;
-    }
-
-    /**
-     * @param User $owner
-     * @return self
-     */
-    public function setOwner(User $owner = null)
+    public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
         return $this;
     }
 
-    /**
-     * @return \Omeka\Entity\User
-     */
-    public function getOwner()
+    public function getOwner(): ?\Omeka\Entity\User
     {
         return $this->owner;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setWriterClass(?string $writerClass): self
+    {
+        $this->writerClass = $writerClass;
+        return $this;
+    }
+
+    public function getWriterClass(): ?string
+    {
+        return $this->writerClass;
+    }
+
+    /**
+     * @param array|\Traversable $writerConfig
+     */
+    public function setWriterConfig($writerConfig): self
+    {
+        $this->writerConfig = $writerConfig;
+        return $this;
+    }
+
+    public function getWriterConfig(): ?array
+    {
+        return $this->writerConfig;
     }
 
     /**
      * @return Export[]
      */
-    public function getExports()
+    public function getExports(): ArrayCollection
     {
         return $this->exports();
     }

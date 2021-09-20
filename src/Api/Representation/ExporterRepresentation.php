@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Api\Representation;
 
 use BulkExport\Interfaces\Configurable;
@@ -25,13 +26,12 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     public function getJsonLd()
     {
         $owner = $this->owner();
-
         return [
             'o:id' => $this->id(),
+            'o:owner' => $owner ? $owner->getReference() : null,
             'o:label' => $this->label(),
             'o-module-bulk:writer_class' => $this->writerClass(),
             'o-module-bulk:writer_config' => $this->writerConfig(),
-            'o:owner' => $owner ? $owner->getReference() : null,
         ];
     }
 
@@ -40,62 +40,39 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return 'o-module-bulk:Exporter';
     }
 
-    /**
-     * @return \BulkExport\Entity\Exporter
-     */
-    public function getResource()
+    public function owner(): ?\Omeka\Api\Representation\UserRepresentation
     {
-        return $this->resource;
+        $user = $this->resource->getOwner();
+        return $user
+            ? $this->getAdapter('users')->getRepresentation($user)
+            : null;
     }
 
-    /**
-     * @return string
-     */
-    public function label()
+    public function label(): string
     {
-        return $this->resource->getLabel();
+        return (string) $this->resource->getLabel();
     }
 
-    /**
-     * @return string
-     */
-    public function writerClass()
+    public function writerClass(): ?string
     {
         return $this->resource->getWriterClass();
     }
 
-    /**
-     * @return array
-     */
-    public function writerConfig()
+    public function writerConfig(): array
     {
         return $this->resource->getWriterConfig() ?: [];
     }
 
-    /**
-     * Get the owner of this exporter.
-     *
-     * @return \Omeka\Api\Representation\UserRepresentation|null
-     */
-    public function owner()
-    {
-        return $this->getAdapter('users')
-            ->getRepresentation($this->resource->getOwner());
-    }
-
-    /**
-     * @return \BulkExport\Writer\WriterInterface|null
-     */
-    public function writer()
+    public function writer(): ?\BulkExport\Writer\WriterInterface
     {
         if ($this->writer) {
             return $this->writer;
         }
 
         $writerClass = $this->writerClass();
-        $writerManager = $this->getWriterManager();
-        if ($writerManager->has($writerClass)) {
-            $this->writer = $writerManager->get($writerClass);
+        $manager = $this->getWriterManager();
+        if ($manager->has($writerClass)) {
+            $this->writer = $manager->get($writerClass);
             if ($this->writer instanceof Configurable) {
                 $config = $this->writerConfig();
                 $this->writer->setConfig($config);
@@ -105,10 +82,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return $this->writer;
     }
 
-    /**
-     * @return WriterManager
-     */
-    protected function getWriterManager()
+    protected function getWriterManager(): WriterManager
     {
         if (!$this->writerManager) {
             $this->writerManager = $this->getServiceLocator()->get(WriterManager::class);
@@ -128,5 +102,10 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             ],
             ['force_canonical' => $canonical]
         );
+    }
+
+    public function getResource(): \BulkExport\Entity\Exporter
+    {
+        return $this->resource;
     }
 }

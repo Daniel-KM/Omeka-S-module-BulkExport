@@ -250,6 +250,7 @@ class ExporterController extends AbstractActionController
 
                     case 'start':
                         $exportData = [];
+                        $exportData['o:owner'] = $this->identity();
                         $exportData['o-module-bulk:comment'] = trim((string) $session['comment']) ?: null;
                         $exportData['o-module-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {

@@ -16,6 +16,7 @@ class ExporterAdapter extends AbstractEntityAdapter
         'id' => 'id',
         'label' => 'label',
         'writer_class' => 'writerClass',
+        'owner_id' => 'ownerId',
     ];
 
     public function getResourceName()

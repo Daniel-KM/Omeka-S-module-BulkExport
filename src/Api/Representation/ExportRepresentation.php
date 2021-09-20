@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Api\Representation;
 
 use Omeka\Api\Representation\AbstractEntityRepresentation;
@@ -8,11 +9,15 @@ class ExportRepresentation extends AbstractEntityRepresentation
 {
     public function getJsonLd()
     {
+        $exporter = $this->exporter();
+        $owner = $this->owner();
+        $job = $this->job();
         return [
             'o:id' => $this->id(),
-            'o-module-bulk:exporter' => $this->exporter()->getReference(),
+            'o-module-bulk:exporter' => $exporter ? $exporter->getReference() : null,
+            'o:owner' => $owner ? $owner->getReference() : null,
+            'o:job' => $job ? $job->getReference() : null,
             'o-module-bulk:comment' => $this->comment(),
-            'o:job' => $this->job(),
             'o:status' => $this->status(),
             'o:started' => $this->started(),
             'o:ended' => $this->ended(),
@@ -31,10 +36,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
         return 'o-module-bulk:Export';
     }
 
-    /**
-     * @return ExporterRepresentation|null
-     */
-    public function exporter()
+    public function exporter(): ?ExporterRepresentation
     {
         $exporter = $this->resource->getExporter();
         return $exporter
@@ -42,18 +44,15 @@ class ExportRepresentation extends AbstractEntityRepresentation
             : null;
     }
 
-    /**
-     * @return string
-     */
-    public function comment()
+    public function owner(): ?\Omeka\Api\Representation\UserRepresentation
     {
-        return $this->resource->getComment();
+        $user = $this->resource->getOwner();
+        return $user
+            ? $this->getAdapter('users')->getRepresentation($user)
+            : null;
     }
 
-    /**
-     * @return JobRepresentation|null
-     */
-    public function job()
+    public function job(): ?JobRepresentation
     {
         $job = $this->resource->getJob();
         return $job
@@ -61,80 +60,58 @@ class ExportRepresentation extends AbstractEntityRepresentation
             : null;
     }
 
-    /**
-     * @return string
-     */
-    public function filename()
+    public function comment(): string
+    {
+        return (string) $this->resource->getComment();
+    }
+
+    public function filename(): ?string
     {
         return $this->resource->getFilename();
     }
 
-    /**
-     * @return array
-     */
-    public function writerParams()
+    public function writerParams(): array
     {
-        return $this->resource->getWriterParams();
+        return $this->resource->getWriterParams() ?: [];
     }
 
-    /**
-     * @return string
-     */
-    public function status()
+    public function status(): string
     {
         $job = $this->job();
         return $job ? $job->status() : 'ready'; // @translate
     }
 
-    /**
-     * @return string
-     */
-    public function statusLabel()
+    public function statusLabel(): string
     {
         $job = $this->job();
         return $job ? $job->statusLabel() : 'Ready'; // @translate
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function started()
+    public function started(): ?\DateTime
     {
         $job = $this->job();
         return $job ? $job->started() : null;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function ended()
+    public function ended(): ?\DateTime
     {
         $job = $this->job();
         return $job ? $job->ended() : null;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInProgress()
+    public function isInProgress(): bool
     {
         $job = $this->job();
         return $job && $job->status() === \Omeka\Entity\Job::STATUS_IN_PROGRESS;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCompleted()
+    public function isCompleted(): bool
     {
         $job = $this->job();
         return $job && $job->status() === \Omeka\Entity\Job::STATUS_COMPLETED;
     }
 
-    /**
-     * @return int
-     */
-    public function logCount()
+    public function logCount(): int
     {
         $job = $this->job();
         if (!$job) {

@@ -26,7 +26,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * @var boolean flag indicating if this object was already initialized
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__isInitialized
+     * @see \Doctrine\Persistence\Proxy::__isInitialized
      */
     public $__isInitialized__ = false;
 
@@ -66,10 +66,10 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'exporter', 'comment', 'job', 'writerParams', 'filename'];
+            return ['__isInitialized__', 'id', 'exporter', 'owner', 'job', 'comment', 'writerParams', 'filename'];
         }
 
-        return ['__isInitialized__', 'id', 'exporter', 'comment', 'job', 'writerParams', 'filename'];
+        return ['__isInitialized__', 'id', 'exporter', 'owner', 'job', 'comment', 'writerParams', 'filename'];
     }
 
     /**
@@ -194,7 +194,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setExporter(\BulkExport\Entity\Exporter $exporter)
+    public function setExporter(\BulkExport\Entity\Exporter $exporter): \BulkExport\Entity\Export
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setExporter', [$exporter]);
@@ -205,7 +205,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function getExporter()
+    public function getExporter(): \BulkExport\Entity\Exporter
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getExporter', []);
@@ -216,29 +216,29 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setComment($comment)
+    public function setOwner(?\Omeka\Entity\User $owner): \BulkExport\Entity\Export
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setComment', [$comment]);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setOwner', [$owner]);
 
-        return parent::setComment($comment);
+        return parent::setOwner($owner);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getComment()
+    public function getOwner(): ?\Omeka\Entity\User
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getComment', []);
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getOwner', []);
 
-        return parent::getComment();
+        return parent::getOwner();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setJob(\Omeka\Entity\Job $job)
+    public function setJob(?\Omeka\Entity\Job $job): \BulkExport\Entity\Export
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setJob', [$job]);
@@ -249,7 +249,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function getJob()
+    public function getJob(): ?\Omeka\Entity\Job
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getJob', []);
@@ -260,7 +260,29 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setWriterParams($writerParams)
+    public function setComment(?string $comment): \BulkExport\Entity\Export
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setComment', [$comment]);
+
+        return parent::setComment($comment);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getComment(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getComment', []);
+
+        return parent::getComment();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setWriterParams($writerParams): \BulkExport\Entity\Export
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriterParams', [$writerParams]);
@@ -271,7 +293,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function getWriterParams()
+    public function getWriterParams(): ?array
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriterParams', []);
@@ -282,7 +304,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function setFilename($filename)
+    public function setFilename(?string $filename): \BulkExport\Entity\Export
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFilename', [$filename]);
@@ -293,7 +315,7 @@ class Export extends \BulkExport\Entity\Export implements \Doctrine\ORM\Proxy\Pr
     /**
      * {@inheritDoc}
      */
-    public function getFilename()
+    public function getFilename(): ?string
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFilename', []);
