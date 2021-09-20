@@ -14,6 +14,10 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 
 <?= $this->pageTitle($translate('Export'), 1, $translate('Bulk export')) ?>
 
+<nav class="section-nav">
+    <?= $this->navigation('Laminas\Navigation\BulkExport')->menu() ?>
+</nav>
+
 <div id="content">
     <h2><?= $escape(sprintf($translate('Export #%d'), $export->id())) ?></h2>
     <ul>

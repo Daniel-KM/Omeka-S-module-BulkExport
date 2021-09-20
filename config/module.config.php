@@ -115,6 +115,22 @@ return [
                 ],
             ],
         ],
+        'BulkExport' => [
+            [
+                'label' => 'Params', // @translate
+                'route' => 'admin/bulk-export/id',
+                'controller' => 'export',
+                'action' => 'show',
+                'useRouteMatch' => true,
+            ],
+            [
+                'label' => 'Logs', // @translate
+                'route' => 'admin/bulk-export/id',
+                'controller' => 'export',
+                'action' => 'logs',
+                'useRouteMatch' => true,
+            ],
+        ],
     ],
     'router' => [
         'routes' => [
