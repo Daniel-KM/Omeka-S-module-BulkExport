@@ -1,0 +1,62 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExportRepresentation $resource
+ * @var \BulkExport\Api\Representation\ExportRepresentation $export
+ * @var string $resourceLabel
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
+$hyperlink = $plugins->get('hyperlink');
+$url = $plugins->get('url');
+
+$urlBase = $url('top') . 'files/bulk_export/';
+
+$comment = $export->comment();
+$status = $translate($export->statusLabel());
+$owner = $export->owner();
+$filename = $export->filename();
+$fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : '';
+$exporter = $export->exporter();
+ ?>
+
+<div class="resource-details">
+    <h3 class="o-title"><?= $escape(sprintf('Export #%d', $export->id())) ?></h3>
+    <?php if ($comment): ?>
+    <div class="o-description"><?= $escape($resource->comment()) ?></div>
+    <?php endif; ?>
+    <?php if ($fileUrl): ?>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Output file')) ?></h4>
+        <div class="value"><?= $hyperlink($filename, $fileUrl, ['title' => $translate('Get file'), 'download' => ''])?></div>
+    </div>
+    <?php endif; ?>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Exporter')) ?></h4>
+        <div class="value"><?= $exporter ? $exporter->label() : $translate('[Unknown]') ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Status')) ?></h4>
+        <div class="value"><?= $translate($status) ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Owner')) ?></h4>
+        <div class="value"><?= $owner ? $hyperlink($owner->name(), $owner->adminUrl()) : $translate('[no owner]') ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Started')) ?></h4>
+        <div class="value"><?= $export->started() ? $export->started()->format('Y-m-d H:i:s') : '' ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Completed')) ?></h4>
+        <div class="value"><?= $export->ended() ? $export->ended()->format('Y-m-d H:i:s') : '' ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Logs')) ?></h4>
+        <?= $hyperlink($translate('See logs'), $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])) ?>
+    </div>
+
+    <?php $this->trigger('view.details', ['entity' => $resource]); ?>
+</div>

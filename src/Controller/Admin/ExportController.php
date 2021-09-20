@@ -44,6 +44,43 @@ class ExportController extends AbstractActionController
         ]);
     }
 
+    public function deleteConfirmAction()
+    {
+        $linkTitle = (bool) $this->params()->fromQuery('link-title', true);
+        $export = $this->api()->read('bulk_exports', $this->params('id'))->getContent();
+        $view = new ViewModel([
+            'resource' => $export,
+            'resourceLabel' => 'export', // @translate
+            'partialPath' => 'bulk/admin/export/show-details',
+            'linkTitle' => $linkTitle,
+            'export' => $export,
+        ]);
+        return $view
+            ->setTerminal(true)
+            ->setTemplate('common/delete-confirm-details');
+    }
+
+    public function deleteAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            $form = $this->getForm(\Omeka\Form\ConfirmForm::class);
+            $form->setData($this->getRequest()->getPost());
+            if ($form->isValid()) {
+                $response = $this->api($form)->delete('bulk_exports', $this->params('id'));
+                if ($response) {
+                    $this->messenger()->addSuccess('Export successfully deleted'); // @translate
+                }
+            } else {
+                $this->messenger()->addFormErrors($form);
+            }
+        }
+        return $this->redirect()->toRoute(
+            'admin/bulk-export',
+            ['action' => 'browse'],
+            true
+        );
+    }
+
     public function logsAction()
     {
         $id = $this->params()->fromRoute('id');

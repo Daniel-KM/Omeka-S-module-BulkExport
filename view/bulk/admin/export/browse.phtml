@@ -14,13 +14,11 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 
 <?= $this->pageTitle($translate('Exports'), 1, $translate('Bulk export')) ?>
 
-<div id="content">
-    <h2><?= $escape($translate('Exports')) ?></h2>
+<h2><?= $escape($translate('Exports')) ?></h2>
 
-    <?php if (count($exports)): ?>
-        <?= $this->pagination() ?>
-        <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
-    <?php else: ?>
-        <p><?= $escape($translate('No exports yet.')) ?></p>
-    <?php endif; ?>
-</div>
+<?php if (count($exports)): ?>
+    <?= $this->pagination() ?>
+    <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
+<?php else: ?>
+    <p><?= $escape($translate('No exports yet.')) ?></p>
+<?php endif; ?>

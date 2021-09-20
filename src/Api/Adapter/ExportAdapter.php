@@ -85,4 +85,18 @@ class ExportAdapter extends AbstractEntityAdapter
             $entity->$method($value);
         }
     }
+
+    public function deleteEntity(Request $request)
+    {
+        /** @var \BulkExport\Entity\Export $entity */
+        $entity = parent::deleteEntity($request);
+        // Deletion rights is already checked.
+        $config = $this->getServiceLocator()->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $filepath = $basePath . '/bulk_export/' . $entity->getFilename();
+        if (file_exists($filepath) && is_writeable($filepath)) {
+            unlink($filepath);
+        }
+        return $entity;
+    }
 }

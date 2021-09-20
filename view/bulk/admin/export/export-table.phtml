@@ -13,6 +13,8 @@ $url = $plugins->get('url');
 $urlBase = $url('top') . 'files/bulk_export/';
 ?>
 
+<?php $this->trigger('view.browse.before'); ?>
+
 <table class="tablesaw" data-tablesaw-mode="stack">
     <thead>
         <tr>
@@ -31,6 +33,7 @@ $urlBase = $url('top') . 'files/bulk_export/';
             $filename = $export->filename();
             $fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : '';
             $exporter = $export->exporter();
+            $userIsAllowedDelete = $exporter->userIsAllowed('delete');
             ?>
             <tr>
                 <td>
@@ -63,6 +66,14 @@ $urlBase = $url('top') . 'files/bulk_export/';
                             'class' => 'fas fa-list o-icon-',
                             'title' => $translate('See logs'),
                         ]) ?></li>
+                    <?php if ($userIsAllowedDelete): ?>
+                    <li><?= $hyperlink('', '#', [
+                            'data-sidebar-selector' => '#sidebar',
+                            'data-sidebar-content-url' => $export->url('delete-confirm'),
+                            'class' => 'o-icon-delete sidebar-content',
+                            'title' => $translate('Delete'),
+                        ]) ?></li>
+                    <?php endif; ?>
                     </ul>
                 </td>
                 <td><?= $fileUrl ? $hyperlink($status, $fileUrl) : $status ?></td>
@@ -73,3 +84,15 @@ $urlBase = $url('top') . 'files/bulk_export/';
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<?php $this->trigger('view.browse.after'); ?>
+
+<?php if (!$exports) return; ?>
+
+<div id="sidebar" class="sidebar">
+    <?= $hyperlink('', '#', [
+        'class' => 'sidebar-close o-icon-close',
+        'title' => $translate('Close'),
+    ]) ?>
+    <div class="sidebar-content"></div>
+</div>
