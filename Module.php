@@ -30,11 +30,88 @@ class Module extends AbstractModule
     {
         parent::onBootstrap($event);
 
-        $this->getServiceLocator()->get('Omeka\Acl')
+        /**
+         * @var \Omeka\Permissions\Acl $acl
+         * @see \Omeka\Service\AclFactory
+         */
+        $services = $this->getServiceLocator();
+        $acl = $services->get('Omeka\Acl');
+
+        $roles = $acl->getRoles();
+        $backendRoles = array_diff($roles, ['guest']);
+        $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
+
+        $acl
+            // Anybody can read stream output.
             ->allow(
                 null,
                 ['BulkExport\Controller\Output'],
                 ['browse', 'show']
+            )
+
+            // Admin part.
+            // Any back-end roles can export via background job.
+            // User < editor can only edit own exporters.
+            // Editor and admins can edit all of them.
+            // TODO Rights on exports and deletion.
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\BulkExport'],
+                ['browse', 'index']
+            )
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\Exporter'],
+                ['add', 'start', 'edit', 'configure', 'delete'],
+            )
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\Export'],
+                ['browse', 'index', 'show', 'logs']
+            )
+            ->allow(
+                $backendRoles,
+                [
+                    \BulkExport\Api\Adapter\ExporterAdapter::class,
+                    \BulkExport\Api\Adapter\ExportAdapter::class,
+                ],
+                ['search', 'read', 'create', 'update', 'delete']
+            )
+
+            ->allow(
+                $baseRoles,
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['create']
+            )
+            ->allow(
+                $baseRoles,
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['read', 'update', 'delete'],
+                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
+            )
+
+            ->allow(
+                ['editor'],
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['create', 'read', 'update']
+            )
+            ->allow(
+                ['editor'],
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['delete'],
+                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
             )
         ;
     }
