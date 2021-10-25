@@ -219,7 +219,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->api = $this->services->get('ControllerPluginManager')->get('api');
         $this->translator = $this->services->get('MvcTranslator');
 
-        $resourceTypes = [
+        $resourceNames = [
             'items',
             'item_sets',
             'media',
@@ -237,7 +237,7 @@ abstract class AbstractFormatter implements FormatterInterface
         ];
         $hasLimit = $options['limit'] > 0;
 
-        if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceTypes)) {
+        if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceNames)) {
             $this->resourceType = $options['resource_type'];
         }
         $options['resource_types'] = empty($this->resourceType)

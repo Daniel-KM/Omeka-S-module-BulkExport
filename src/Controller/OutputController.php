@@ -33,11 +33,19 @@ class OutputController extends AbstractActionController
         }
 
         $isSiteRequest = $this->status()->isSiteRequest();
-        $settings = $isSiteRequest ? $this->siteSettings() : $this->settings();
+        $isAdmin = !$isSiteRequest;
 
-        $resourceLimit = $settings->get('bulkexport_limit') ?: 1000;
+        // This is the direct output, so always limited by the configured limit.
+        $settings = $this->settings();
+        if ($isAdmin) {
+            $resourceLimit = $settings->get('bulkexport_limit');
+        } else {
+            $siteSettings = $this->siteSettings();
+            $resourceLimit = $siteSettings->get('bulkexport_limit') ?: $settings->get('bulkexport_limit');
+        }
+        $resourceLimit = (int) $resourceLimit ?: 1000;
 
-        $resourceTypes = [
+        $resourceTypesToNames = [
             'item' => 'items',
             'item-set' => 'item_sets',
             'media' => 'media',
@@ -45,17 +53,23 @@ class OutputController extends AbstractActionController
             'annotation' => 'annotations',
         ];
         $resourceType = $params->fromRoute('__CONTROLLER__');
-        if (empty($resourceTypes[$resourceType])) {
-            // Support module Clean url.
-            $resourceType = $params->fromRoute('forward');
-            if (!$resourceType || empty($resourceTypes[$resourceType['__CONTROLLER__']])) {
-                throw new \Omeka\Mvc\Exception\NotFoundException(
-                    $this->translate('Unsupported resource type to export.') // @translate
-                );
+        // Support common modules.
+        if (empty($resourceTypesToNames[$resourceType])) {
+            if (in_array($resourceType, ['AdvancedSearch\Controller\IndexController', 'Search\Controller\IndexController'])) {
+                // TODO It may be an item set.
+                $resourceType = 'resource';
+            } else {
+                // Support module Clean url.
+                $resourceTypeClean = $params->fromRoute('forward');
+                if (!$resourceTypeClean || empty($resourceTypesToNames[$resourceTypeClean['__CONTROLLER__']])) {
+                    throw new \Omeka\Mvc\Exception\NotFoundException(
+                        $this->translate('Unsupported resource type to export.') // @translate
+                    );
+                }
+                $resourceType = $resourceTypeClean['__CONTROLLER__'];
             }
-            $resourceType = $resourceType['__CONTROLLER__'];
         }
-        $resourceType = $resourceTypes[$resourceType];
+        $resourceName = $resourceTypesToNames[$resourceType];
 
         // Check the id in the route first to manage the direct route.
         $id = $params->fromRoute('id');
@@ -71,14 +85,24 @@ class OutputController extends AbstractActionController
                     $resources = explode(',', $id);
                     $id = null;
                 } else {
-                    $resources = (int) $id;
+                    $id = (int) $id;
+                    $resources = $id;
                 }
                 if (is_array($resources)) {
                     $resources = array_values(array_unique(array_filter(array_map('intval', $resources))));
                     if (!$resources) {
-                        throw new \Omeka\Mvc\Exception\NotFoundException();
+                        throw new \Omeka\Mvc\Exception\RuntimeException(
+                            $this->translate('The list of ids should be a list of numeric internal identifiers.') // @translate
+                        );
                     }
+                    // This is the direct output, so it is always limited by the
+                    // configured limit.
+                    $resources = array_slice($resources, 0, $resourceLimit);
                 }
+            } elseif ($resourceName === 'resources') {
+                throw new \Omeka\Mvc\Exception\RuntimeException(
+                    $this->translate('A query cannot be used to export "resources": set the resource type or use the list of ids instead.') // @translate
+                );
             } else {
                 $resources = $params->fromQuery();
                 // Avoid issue when the query contains a page without per_page,
@@ -86,14 +110,19 @@ class OutputController extends AbstractActionController
                 if (empty($resources['page'])) {
                     unset($resources['page']);
                     unset($resources['per_page']);
+                    // This is the direct output, so it is always limited by the
+                    // configured limit, so get the ids directly here.
+                    $resources['limit'] = $resourceLimit;
                 } else {
                     // Don't use the value set inside the query for security.
-                    $resources['per_page'] = $settings->get('pagination_per_page') ?: 25;
+                    if ($isAdmin) {
+                        $paginationPerPage = $settings->get('pagination_per_page');
+                    } else {
+                        $paginationPerPage = $siteSettings->get('pagination_per_page') ?: $settings->get('pagination_per_page');
+                    }
+                    $resources['per_page'] = $paginationPerPage ?: 25;
                 }
-                // This is the direct output, so it is always limited by the
-                // configured limit, so get the ids directly here.
-                $resources['limit'] = $resources['per_page'] ?? $resourceLimit;
-                $resources = $this->api()->search($resourceType, $resources, ['returnScalar' => 'id'])->getContent();
+                $resources = $this->api()->search($resourceName, $resources, ['returnScalar' => 'id'])->getContent();
             }
         }
 
@@ -110,7 +139,7 @@ class OutputController extends AbstractActionController
         $options['format_uri'] = $settings->get('bulkexport_format_uri', 'uri_label');
         $options['template'] = $settings->get('bulkexport_template');
         $options['is_admin_request'] = !$isSiteRequest;
-        $options['resource_type'] = $resourceType;
+        $options['resource_type'] = $resourceName;
         $options['limit'] = $resourceLimit;
 
         return $exportFormatter

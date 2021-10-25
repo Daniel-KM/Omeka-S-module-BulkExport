@@ -4,6 +4,8 @@
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
  * @var array $formatters
+ *
+ * @deprecated Use helper bulkExport() and template bulk-export instead.
  */
 
 if (!count($formatters)):
@@ -25,7 +27,7 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport
     <ul class="formatters value">
     <?php foreach ($formatters as $format => $label): ?>
         <?php $urlFormat = $url($route, ['controller' => $resource->getControllerName(), 'format' => $format, 'id' => $resource->id()], true); ?>
-        <li><a href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
+        <li><a download="download" href="<?= $escapeAttr($urlFormat) ?>"><?= $label ?></a></li>
     <?php endforeach; ?>
     </ul>
 </div>

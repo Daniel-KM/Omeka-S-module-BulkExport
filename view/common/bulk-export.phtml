@@ -1,0 +1,42 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var mixed $resourcesOrIdsOrQuery The requested resources.
+ * @var string $resourceType "item", "item-set", "media", "annotation", or "resource".
+ * @var array $exporters
+ * @var array $urls
+ * @var string $heading
+ * @var string $divclass
+ * @var bool $isMultiple
+ */
+
+// Fake or invisible ids or no exporters.
+if (!count($urls)) return;
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$route = $this->status()->isAdminRequest() ? 'admin/resource-output' : 'site/resource-output';
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
+?>
+
+<div class="bulk-export <?= $divclass ?>">
+    <?php if ($heading): ?>
+    <h4><?= $escape($heading) ?></h4>
+    <?php endif; ?>
+    <ul class="exporters">
+    <?php foreach ($exporters as $format => $label):
+    $labelFormat = in_array($format, ['ods', 'xlsx', 'xls'])
+        ? sprintf($translate('Download as spreadsheet %s'), $label)
+        : (in_array($format, ['bib.txt', 'bib.odt'])
+            ? $translate('Download as text')
+            : sprintf($translate('Download as %s'), $label));
+        ?>
+        <li><a download="download" class="download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labelFormat) ?>"><?= $label ?></a></li>
+    <?php endforeach; ?>
+    </ul>
+</div>

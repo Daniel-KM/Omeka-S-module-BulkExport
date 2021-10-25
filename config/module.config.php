@@ -35,6 +35,7 @@ return [
     ],
     'view_helpers' => [
         'invokables' => [
+            'bulkExport' => View\Helper\BulkExport::class,
             // Deprecated.
             'listFormatters' => View\Helper\ListFormatters::class,
         ],
@@ -179,7 +180,8 @@ return [
                             ],
                         ],
                     ],
-                    // These routes allow to have a url without the action.
+                    // These routes allow to create url without the action,
+                    // but the routing matches main child routes.
                     'resource-output' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [

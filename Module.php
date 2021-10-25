@@ -332,8 +332,13 @@ class Module extends AbstractModule
     public function handleViewShowAfter(Event $event): void
     {
         $view = $event->getTarget();
-        $view->vars()->offsetSet('formatters', $view->listFormatters(true));
-        echo $view->partial('common/bulk-export-formatters-resource');
+        $vars = $view->vars();
+        $resource = $vars->offsetGet('resource');
+        echo $view->bulkExport($resource, [
+            'site' => $vars->offsetGet('site'),
+            'exporters' => $view->bulkExporters(),
+            'resourceType' => $resource->getControllerName(),
+        ]);
     }
 
     public function handleViewBrowseAfter(Event $event): void
@@ -358,10 +363,18 @@ class Module extends AbstractModule
         $controller = $params->fromRoute('__CONTROLLER__') ?? $params->fromRoute('controller', '');
         $resourceType = $resourceTypes[strtolower($controller)] ?? 'resource';
 
-        $vars = $view->vars();
-        $vars->offsetSet('formatters', $view->listFormatters(true));
-        $vars->offsetSet('resourceType', $resourceType);
-        echo $view->partial('common/bulk-export-formatters', $vars);
+        $query = $view->params()->fromQuery();
+
+        // Get all resources of the result, not only the first page.
+        // There is a specific limit for the number of resources to output.
+        // For longer output, use job process for now.
+        unset($query['page']);
+
+        echo $view->bulkExport($query, [
+            'site' => $view->vars()->offsetGet('site'),
+            'exporters' => $view->bulkExporters(),
+            'resourceType' => $resourceType,
+        ]);
     }
 
     /**
