@@ -338,31 +338,30 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event): void
     {
-        $controller = strtolower((string) $event->getTarget()->params()->fromRoute('__CONTROLLER__') ?? $event->getTarget()->params()->fromRoute('controller', ''));
+        $view = $event->getTarget();
+
         $resourceTypes = [
             'item' => 'item',
             'item-set' => 'item-set',
             'media' => 'media',
             'annotation' => 'annotation',
-            'Omeka\Controller\Site\Item' => 'item',
-            'Omeka\Controller\Site\ItemSet' => 'item-set',
-            'Omeka\Controller\Site\Media' => 'media',
-            'Annotate\Controller\Site\Annotation' => 'annotation',
-            'Omeka\Controller\Admin\Item' => 'item',
-            'Omeka\Controller\Admin\ItemSet' => 'item-set',
-            'Omeka\Controller\Admin\Media' => 'media',
-            'Annotate\Controller\Admin\Annotation' => 'annotation',
+            'omeka\controller\site\item' => 'item',
+            'omeka\controller\site\itemSet' => 'item-set',
+            'omeka\controller\site\media' => 'media',
+            'annotate\controller\site\annotation' => 'annotation',
+            'omeka\controller\admin\item' => 'item',
+            'omeka\controller\admin\itemset' => 'item-set',
+            'omeka\controller\admin\media' => 'media',
+            'annotate\controller\admin\annotation' => 'annotation',
         ];
-        $resourceType = $resourceTypes[$controller] ?? 'resource';
-        $this->handleViewBrowseAfterResources($event, $resourceType);
-    }
+        $params = $view->params();
+        $controller = $params->fromRoute('__CONTROLLER__') ?? $params->fromRoute('controller', '');
+        $resourceType = $resourceTypes[strtolower($controller)] ?? 'resource';
 
-    public function handleViewBrowseAfterResources(Event $event, string $resourceType = 'resource'): void
-    {
-        $view = $event->getTarget();
-        $view->vars()->offsetSet('formatters', $view->listFormatters(true));
-        $view->vars()->offsetSet('resourceType', $resourceType);
-        echo $view->partial('common/bulk-export-formatters', $view->vars());
+        $vars = $view->vars();
+        $vars->offsetSet('formatters', $view->listFormatters(true));
+        $vars->offsetSet('resourceType', $resourceType);
+        echo $view->partial('common/bulk-export-formatters', $vars);
     }
 
     /**

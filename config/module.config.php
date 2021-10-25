@@ -34,8 +34,12 @@ return [
         ],
     ],
     'view_helpers' => [
+        'invokables' => [
+            // Deprecated.
+            'listFormatters' => View\Helper\ListFormatters::class,
+        ],
         'factories' => [
-            'listFormatters' => Service\ViewHelper\ListFormattersFactory::class,
+            'bulkExporters' => Service\ViewHelper\BulkExportersFactory::class,
         ],
     ],
     'form_elements' => [
