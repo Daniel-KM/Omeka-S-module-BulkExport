@@ -9,19 +9,23 @@ Bulk Export (module for Omeka S)
 output formats (json, xml, spreadsheet, text), both for admin and public sides.
 It is easily extensible by other modules.
 
-Other known modules that provides output: [Bibliography].
+By default, it adds exporters in the resource browse view and in the resource
+show view. It can be added anywhere else in the theme with a simple helper.
 
 Internally, it allows to manage output formats, that are responsible for
 exporting metadata into a file, a stream or as a string.
 
 As an example, this module defines a sample writer that exports all resources as
-a spreadsheet, that can be imported automatically by [Bulk Import].
+a spreadsheet, that can be imported automatically by [Bulk Import]. Other known
+modules that provides output: [Bibliography].
 
 
 Installation
 ------------
 
 This module requires the module [Log] and the optional module [Generic].
+
+The module [Blocks Disposition] can be used to add it in the public sites.
 
 **Important**: If you use the module [CSVImport] in parallel, you should apply
 [this patch] or use [this version].
@@ -46,14 +50,19 @@ composer install --no-dev
 Quick start
 -----------
 
-First, choose a writer and config it.
+### Automatic list
 
-Finally, process the export.
+The list is added automatically in the admin resource browse pages and in the
+resource show pages. The list of exporters is configurable in the settings. This
+is the same for the sites: use the site settings and eventually the blocks
+disposition config to display the list of exporters.
 
-To create a new writer, take your inspiration on the existing `SpreadsheetWriter`.
+### Helper
 
-The output can be set for admin board in the main settings and for each site in
-the settings of each site.
+The view helper `$this->bulkExport($resourcesOridsOrQuery, $options)` can be
+used anywhere else.
+
+### Manual creation of export urls
 
 The export is available directly as `/s/my-site/item/{id}.ods`, or any other
 extension (tsv, csv, json, json-ld, list.txt, txt, odt, ods), or the one of other
@@ -62,6 +71,24 @@ modules, in particular [Bibliography]. This feature is compatible with the modul
 
 The export is available through the api endpoint too with the module [Api Info]
 at `/api/infos/item/{id}.ods`, or any other extension.
+
+So you can create urls manually or with the routes of the modules ('site/resource-output'
+and 'site/resource-output-id').
+
+### Heavy export
+
+The limit of resources to output is specified in the settings. To output more
+resources, you need to use the bulk export process, that will create the output
+in a file via a background job.
+
+First, choose a writer and config it. Finally, process the export.
+
+
+Development
+-----------
+
+To create a new writer, take your inspiration on the existing `SpreadsheetWriter`
+or the other ones.
 
 
 Notes
@@ -80,6 +107,7 @@ TODO
 - [ ] For spreadsheet, add an option (by default in admin) to set headers with the datatype and the language (so multiple headers for the same property).
 - [x] Rights on exports.
 - [x] Deletion of old exports.
+- [ ] Make any size output real time (streamable).
 
 
 Warning
@@ -143,6 +171,7 @@ by [Biblibre].
 [Omeka Classic]: https://omeka.org/classic
 [Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [Bibliography]: https://gitlab.com/Daniel-KM/Omeka-S-module-Bibliography
+[Blocks Disposition]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlocksDisposition
 [Clean Url]: https://gitlab.com/Daniel-KM/Omeka-S-module-CleanUrl
 [Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
