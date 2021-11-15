@@ -25,11 +25,28 @@ class ExportController extends AbstractActionController
         $response = $this->api()->search('bulk_exports', $query);
         $this->paginator($response->getTotalResults(), $page);
 
+        /*
+        $formDeleteSelected = $this->getForm(\Omeka\Form\ConfirmForm::class);
+        $formDeleteSelected
+            ->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete'], true))
+            ->setButtonLabel('Confirm Delete') // @translate
+            ->setAttribute('id', 'confirm-delete-selected');
+
+        $formDeleteAll = $this->getForm(\Omeka\Form\ConfirmForm::class);
+        $formDeleteAll
+            ->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete-all'], true))
+            ->setButtonLabel('Confirm Delete') // @translate
+            ->setAttribute('id', 'confirm-delete-all')
+            ->get('submit')->setAttribute('disabled', true);
+        */
+
         $exports = $response->getContent();
 
         return new ViewModel([
-            'exports' => $exports,
             'resources' => $exports,
+            'exports' => $exports,
+            // 'formDeleteSelected' => $formDeleteSelected,
+            // 'formDeleteAll' => $formDeleteAll,
         ]);
     }
 
