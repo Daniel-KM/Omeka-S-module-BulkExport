@@ -28,10 +28,16 @@ trait ResourceFieldsTrait
             return $this;
         }
 
+        $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
+        $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
+
         if ($listFieldNames) {
             $this->fieldNames = $listFieldNames;
             $this->fieldNames = $this->managePropertiesList($listFieldNames);
-            $hasProperties = in_array('properties', $listFieldNames) || in_array('properties_small', $listFieldNames);
+            $hasProperties = in_array('properties', $listFieldNames)
+                || in_array('properties_small', $listFieldNames)
+                || in_array('properties_large', $listFieldNames);
+            $usedProperties = array_diff($this->fieldNames, $listFieldNames);
         } else {
             $hasProperties = true;
             if (!empty($this->options['is_admin_request'])) {
@@ -73,8 +79,8 @@ trait ResourceFieldsTrait
                         break;
                 }
             }
-            $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
-            $this->fieldNames = array_merge($this->fieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000])));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000]));
+            $this->fieldNames = array_merge($this->fieldNames, $usedProperties);
         }
 
         if ($hasProperties && in_array('oa:Annotation', $this->options['resource_types'])) {
@@ -91,7 +97,17 @@ trait ResourceFieldsTrait
         }
 
         if ($listFieldsToExclude) {
-            $this->fieldNames = array_diff($this->fieldNames, $this->managePropertiesList($listFieldsToExclude));
+            $toExclude = $this->managePropertiesList($listFieldsToExclude);
+            $this->fieldNames = array_diff($this->fieldNames, $toExclude);
+            $unlimitedUsedProperties = array_diff($unlimitedUsedProperties, $toExclude);
+        }
+
+        $missingProperties = array_diff($unlimitedUsedProperties, $usedProperties);
+        if (count($missingProperties)) {
+            $this->logger->warn(
+                'Some properties are not exported because they contain more or less than 5000 characters: {properties}.', // @translate
+                ['properties' => $missingProperties]
+            );
         }
 
         $this->fieldNames = array_values($this->fieldNames);
@@ -105,17 +121,20 @@ trait ResourceFieldsTrait
         $index = array_search('properties', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses])));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
+            $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
         $index = array_search('properties_small', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000])));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000]));
+            $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
         $index = array_search('properties_large', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => 5001])));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => 5001]));
+            $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
         return $listFieldNames;
     }
