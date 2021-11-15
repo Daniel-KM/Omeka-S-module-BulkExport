@@ -59,6 +59,18 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
             $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme.'; // @translate
             return false;
         }
+
+        $config = $this->getServiceLocator()->get('Config');
+        $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
+        $tempDir = $this->checkDestinationDir($tempDir);
+        if (!$tempDir) {
+            $this->lastErrorMessage = new PsrMessage(
+                'The temporary folder "{folder}" does not exist or is not writeable.', // @translate
+                ['folder' => $tempDir]
+            );
+            return false;
+        }
+
         return parent::isValid();
     }
 

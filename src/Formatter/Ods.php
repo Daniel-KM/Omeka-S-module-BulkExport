@@ -38,6 +38,17 @@ class Ods extends AbstractSpreadsheetFormatter
             return $this;
         }
         */
+
+        $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
+        if (!$this->createDir($tempDir)) {
+            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+                'The temporary folder "{folder}" does not exist or is not writeable.', // @translate
+                ['folder' => $tempDir]
+            ));
+            $this->hasError = true;
+            return $this;
+        }
+
         return parent::format($resources, $output, $options);
     }
 

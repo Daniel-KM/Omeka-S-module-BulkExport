@@ -442,4 +442,18 @@ abstract class AbstractFormatter implements FormatterInterface
             . '-' . date('Ymd-His')
             . '.' . $extension;
     }
+
+    protected function createDir(string $dirPath): bool
+    {
+        if (is_dir($dirPath)) {
+            return is_writeable($dirPath);
+        }
+        if (is_file($dirPath)) {
+            return false;
+        }
+        if ($dirPath !== realpath($dirPath)) {
+            return false;
+        }
+        return (bool) @mkdir($dirPath, 0775, true);
+    }
 }
