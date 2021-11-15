@@ -60,6 +60,7 @@ class Export extends AbstractJob
             $siteSlug = null;
         }
 
+        // TODO Remove checking routes in Omeka v3.1.
         // Avoid a fatal error with background job when there is no route.
         $this->prepareRouteMatchAndSiteSettings($siteSlug);
         $this->prepareServerUrl();

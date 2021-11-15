@@ -257,6 +257,12 @@ class ExporterController extends AbstractActionController
                             $exportData['o-module-bulk:writer_params'] = $writer->getParams();
                         }
 
+                        // Add some default params.
+                        // TODO Make all writers parametrizable.
+                        // @see \BulkExport\Controller\OutputController::output().
+                        $exportData['o-module-bulk:writer_params']['site_slug'] = null;
+                        $exportData['o-module-bulk:writer_params']['is_admin_request'] = true;
+
                         $response = $this->api()->create('bulk_exports', $exportData);
                         if (!$response) {
                             $this->messenger()->addError('Save of export failed'); // @translate
@@ -271,6 +277,7 @@ class ExporterController extends AbstractActionController
 
                         $args = [
                             'export_id' => $export->id(),
+                            // TODO Remove these options for Omeka v3.1.
                             // Save the base url in order to be able to set the
                             // good url for the linked resources and other urls
                             // in the background job.

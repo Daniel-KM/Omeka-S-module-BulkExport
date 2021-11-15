@@ -127,6 +127,7 @@ class OutputController extends AbstractActionController
         }
 
         // Copied in \ApiInfo\Controller\ApiController::getExportOptions().
+        // @see \BulkExport\Controller\Admin\ExporterController::startAction().
 
         $options = [];
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;

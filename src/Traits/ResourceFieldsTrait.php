@@ -43,6 +43,7 @@ trait ResourceFieldsTrait
             if (!empty($this->options['is_admin_request'])) {
                 $this->fieldNames = [
                     'o:id',
+                    'url',
                     'o:resource_template',
                     'o:resource_class',
                     'o:owner',
@@ -50,7 +51,9 @@ trait ResourceFieldsTrait
                 ];
             } else {
                 $this->fieldNames = [
+                    'o:id',
                     'url',
+                    'o:resource_template',
                     'o:resource_class',
                 ];
             }
