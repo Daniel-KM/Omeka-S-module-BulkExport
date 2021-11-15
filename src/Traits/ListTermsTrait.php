@@ -97,7 +97,7 @@ trait ListTermsTrait
      * @todo Replace by an option to getPropertiesByTerm.
      *
      * @param array $options Associative array:
-     * - resource_classes (array): limit properties to classes
+     * - entity_classes (array): limit properties to entity classes.
      * - min_size (int): property is removed if one value is smaller than it.
      * - max_size (int): property is removed if one value is larger than it.
      * @return array
@@ -105,7 +105,7 @@ trait ListTermsTrait
     protected function getUsedPropertiesByTerm(array $options = []): array
     {
         $options += [
-            'resource_classes' => [],
+            'entity_classes' => [],
             'min_size' => 0,
             'max_size' => 0,
         ];
@@ -133,18 +133,12 @@ trait ListTermsTrait
             ->addOrderBy('property.id')
         ;
 
-        if (count($options['resource_classes'])) {
-            if (in_array(\Omeka\Entity\Resource::class, $options['resource_classes'])) {
-                $resourceClasses[] = \Omeka\Entity\Item::class;
-                $resourceClasses[] = \Omeka\Entity\ItemSet::class;
-                $resourceClasses[] = \Omeka\Entity\Media::class;
-                $resourceClasses[] = \Annotate\Entity\Annotation::class;
-            }
+        if (count($options['entity_classes']) && !in_array(\Omeka\Entity\Resource::class, $options['entity_classes'])) {
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
                 ->andWhere($qb->expr()->in(
                     'resource.resource_type',
-                    array_map([$connection, 'quote'], $resourceClasses)
+                    array_map([$connection, 'quote'], array_unique($options['entity_classes']))
                 ));
         }
 

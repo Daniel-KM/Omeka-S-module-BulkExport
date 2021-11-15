@@ -73,15 +73,15 @@ trait ResourceFieldsTrait
                         break;
                 }
             }
-            $classes = array_map([$this, 'mapResourceTypeToClass'], $this->options['resource_types']);
-            $this->fieldNames = array_merge($this->fieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'max_size' => 5000])));
+            $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
+            $this->fieldNames = array_merge($this->fieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000])));
         }
 
         if ($hasProperties && in_array('oa:Annotation', $this->options['resource_types'])) {
-            foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationBody::class])) as $property) {
+            foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationBody::class]])) as $property) {
                 $this->fieldNames[] = 'oa:hasBody[' . $property . ']';
             }
-            foreach (array_keys($this->getUsedPropertiesByTerm([\Annotate\Entity\AnnotationTarget::class])) as $property) {
+            foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationTarget::class]])) as $property) {
                 $this->fieldNames[] = 'oa:hasTarget[' . $property . ']';
             }
         }
@@ -101,21 +101,21 @@ trait ResourceFieldsTrait
 
     protected function managePropertiesList(array $listFieldNames): array
     {
-        $classes = array_map([$this, 'mapResourceTypeToClass'], $this->options['resource_types']);
+        $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
         $index = array_search('properties', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes])));
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses])));
         }
         $index = array_search('properties_small', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'max_size' => 5000])));
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000])));
         }
         $index = array_search('properties_large', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['resource_class' => $classes, 'min_size' => 5001])));
+            $listFieldNames = array_merge($listFieldNames, array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => 5001])));
         }
         return $listFieldNames;
     }
@@ -207,11 +207,11 @@ trait ResourceFieldsTrait
     }
 
     /**
-     * @todo Factorize with \BulkExport\Writer\AbstractWriter::mapResourceTypeToClass()
+     * @todo Factorize with \BulkExport\Writer\AbstractWriter::mapResourceTypeToEntity()
      * @param string $jsonResourceType Or api resource type.
      * @return string|null
      */
-    protected function mapResourceTypeToClass($jsonResourceType)
+    protected function mapResourceTypeToEntity($jsonResourceType)
     {
         $mapping = [
             // Core.

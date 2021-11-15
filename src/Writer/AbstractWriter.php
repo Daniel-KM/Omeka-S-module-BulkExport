@@ -241,11 +241,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     }
 
     /**
-     * @todo Factorize with \BulkExport\Traits\ResourceFieldsTrait::mapResourceTypeToClass()
+     * @todo Factorize with \BulkExport\Traits\ResourceFieldsTrait::mapResourceTypeToEntity()
      * @param string $jsonResourceType
      * @return string|null
      */
-    protected function mapResourceTypeToClass($jsonResourceType)
+    protected function mapResourceTypeToEntity($jsonResourceType)
     {
         $mapping = [
             // Core.
