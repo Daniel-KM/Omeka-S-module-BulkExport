@@ -116,6 +116,7 @@ trait ListTermsTrait
         // List only properties that are used.
         // TODO Limit with the query (via adapter).
         $qb = $connection->createQueryBuilder();
+        $expr = $qb->expr();
         $qb
             ->select(
                 'DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term',
@@ -136,7 +137,7 @@ trait ListTermsTrait
         if (count($options['entity_classes']) && !in_array(\Omeka\Entity\Resource::class, $options['entity_classes'])) {
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
-                ->andWhere($qb->expr()->in(
+                ->andWhere($expr->in(
                     'resource.resource_type',
                     array_map([$connection, 'quote'], array_unique($options['entity_classes']))
                 ));
@@ -144,12 +145,18 @@ trait ListTermsTrait
 
         if ((int) $options['min_size'] > 0) {
             $qb
-                ->andWhere('CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']);
+                ->andWhere($expr->orX(
+                    '`value`.`value` IS NULL',
+                    'CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']
+                ));
         }
 
         if ((int) $options['max_size'] > 0) {
             $qb
-                ->andWhere('CHAR_LENGTH(`value`.`value`) <= ' . (int) $options['max_size']);
+                ->andWhere($expr->orX(
+                    '`value`.`value` IS NULL',
+                    'CHAR_LENGTH(`value`.`value`) <= ' . (int) $options['max_size']
+                ));
         }
 
         $terms = $connection->executeQuery($qb, $qb->getParameters())->fetchAllKeyValue();
