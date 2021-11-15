@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-01 00:00+0000\n"
+"POT-Creation-Date: 2021-11-15 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:117
+#: Module.php:197
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:123
+#: Module.php:203
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:129
+#: Module.php:209
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -33,8 +33,18 @@ msgstr ""
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
-#: src/Controller/OutputController.php:53
+#: src/Controller/OutputController.php:66 src/View/Helper/BulkExport.php:91
 msgid "Unsupported resource type to export."
+msgstr ""
+
+#: src/Controller/OutputController.php:95
+msgid "The list of ids should be a list of numeric internal identifiers."
+msgstr ""
+
+#: src/Controller/OutputController.php:104 src/View/Helper/BulkExport.php:100
+msgid ""
+"A query cannot be used to export \"resources\": set the resource type or use "
+"the list of ids instead."
 msgstr ""
 
 #: src/Generic/AbstractModule.php:66
@@ -48,10 +58,10 @@ msgid "This module requires modules \"%s\"."
 msgstr ""
 
 #: src/Generic/AbstractModule.php:80
-msgid "This module has resources that connot be installed."
+msgid "This module has resources that cannot be installed."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:707
+#: src/Generic/AbstractModule.php:725
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -73,95 +83,96 @@ msgstr ""
 msgid "Digital library"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:142
+#: src/Traits/ResourceFieldsTrait.php:166
 msgid "id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:144
+#: src/Traits/ResourceFieldsTrait.php:168
 msgid "Resource class"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:146
+#: src/Traits/ResourceFieldsTrait.php:170
 msgid "Is public"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:147
+#: src/Traits/ResourceFieldsTrait.php:171
 msgid "Is open"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:149
+#: src/Traits/ResourceFieldsTrait.php:173
 msgid "Resource id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:150
+#: src/Traits/ResourceFieldsTrait.php:174
 msgid "Resource identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:153
+#: src/Traits/ResourceFieldsTrait.php:177
 msgid "Item set id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:156
+#: src/Traits/ResourceFieldsTrait.php:180
 msgid "Item id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:157
+#: src/Traits/ResourceFieldsTrait.php:181
 msgid "Item identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:158
+#: src/Traits/ResourceFieldsTrait.php:182
 msgid "Item title"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:160
+#: src/Traits/ResourceFieldsTrait.php:184
 msgid "Media id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:161
+#: src/Traits/ResourceFieldsTrait.php:185
 msgid "Media file"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:162
+#: src/Traits/ResourceFieldsTrait.php:186
 msgid "Media source"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:163
+#: src/Traits/ResourceFieldsTrait.php:187
 msgid "File media type"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:164
+#: src/Traits/ResourceFieldsTrait.php:188
 msgid "File size"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:165
+#: src/Traits/ResourceFieldsTrait.php:189
 msgid "Original file url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:166
-msgid "Asset"
-msgstr ""
-
-#: src/Traits/ResourceFieldsTrait.php:167
+#: src/Traits/ResourceFieldsTrait.php:191
 msgid "Annotation"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:168
+#: src/Traits/ResourceFieldsTrait.php:192
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:186
+#: src/Traits/ResourceFieldsTrait.php:210
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:191
+#: src/Traits/ResourceFieldsTrait.php:215
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:18
-#: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/logs.phtml:35
-#: view/bulk/admin/export/show.phtml:15
+#: src/View/Helper/BulkExport.php:119
+#, php-format
+msgid "Unsupported resource type to export: %s."
+msgstr ""
+
+#: view/bulk/admin/bulk-export/index.phtml:16
+#: view/bulk/admin/export/browse.phtml:15 view/bulk/admin/export/logs.phtml:35
+#: view/bulk/admin/export/show.phtml:17
 #: view/bulk/admin/exporter/configure-writer.phtml:16
 #: view/bulk/admin/exporter/delete.phtml:16
 #: view/bulk/admin/exporter/edit.phtml:16
@@ -169,50 +180,46 @@ msgstr ""
 msgid "Bulk export"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:20
-msgid "Available exporters"
-msgstr ""
-
 #: view/bulk/admin/bulk-export/index.phtml:21
-msgid "Add an exporter"
-msgstr ""
-
-#: view/bulk/admin/bulk-export/index.phtml:28
-#: view/bulk/admin/export/show.phtml:31 view/bulk/admin/exporter/start.phtml:27
-msgid "Writer"
-msgstr ""
-
-#: view/bulk/admin/bulk-export/index.phtml:78
 msgid "Last exports"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:79
+#: view/bulk/admin/bulk-export/index.phtml:22
 msgid "See all exports"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:41
-msgid "Stop"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:46
-msgid "See params"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:50
-#: view/bulk/admin/export/show.phtml:38
-msgid "See logs"
-msgstr ""
-
-#: view/bulk/admin/export/export-table.phtml:56
-msgid "Get file"
-msgstr ""
-
-#: view/bulk/admin/export/index.phtml:14 view/bulk/admin/export/index.phtml:17
+#: view/bulk/admin/export/browse.phtml:15
+#: view/bulk/admin/export/browse.phtml:17
 msgid "Exports"
 msgstr ""
 
-#: view/bulk/admin/export/index.phtml:23
+#: view/bulk/admin/export/browse.phtml:23
 msgid "No exports yet."
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:45
+#: view/bulk/admin/export/show-details.phtml:38
+#: view/bulk/admin/export/show.phtml:27
+msgid "[Unknown]"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:51
+#: view/bulk/admin/export/show-details.phtml:33
+msgid "Get file"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:58
+msgid "Stop"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:63
+msgid "See params"
+msgstr ""
+
+#: view/bulk/admin/export/export-table.phtml:67
+#: view/bulk/admin/export/show-details.phtml:58
+#: view/bulk/admin/export/show.phtml:45
+msgid "See logs"
 msgstr ""
 
 #: view/bulk/admin/export/logs.phtml:24
@@ -235,73 +242,93 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:35 view/bulk/admin/export/logs.phtml:37
+#: view/bulk/admin/export/logs.phtml:35 view/bulk/admin/export/logs.phtml:42
 msgid "Export logs"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:41
+#: view/bulk/admin/export/logs.phtml:46
 msgid "Show only messages whose severity is higher than or equal to"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:58
+#: view/bulk/admin/export/logs.phtml:63
 msgid "Message"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:59
+#: view/bulk/admin/export/logs.phtml:64
 msgid "Severity"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:60
+#: view/bulk/admin/export/logs.phtml:65
 msgid "Time"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:81
+#: view/bulk/admin/export/logs.phtml:86
 msgid "Full log"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:98
+#: view/bulk/admin/export/logs.phtml:103
 msgid "Manage logs"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:103
+#: view/bulk/admin/export/logs.phtml:108
 msgid "No logs yet."
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:103
+#: view/bulk/admin/export/logs.phtml:108
 msgid "Refresh page"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:18
-#, php-format
-msgid "Export #%d"
+#: view/bulk/admin/export/show-details.phtml:32
+msgid "Output file"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:20
-#, php-format
-msgid "exporter: %s"
+#: view/bulk/admin/export/show-details.phtml:37
+msgid "Exporter"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:21 view/bulk/admin/exporter/start.phtml:25
-#, php-format
-msgid "Comment: %s"
+#: view/bulk/admin/export/show-details.phtml:57
+#: view/bulk/admin/export/show.phtml:44
+msgid "Logs"
 msgstr ""
 
 #: view/bulk/admin/export/show.phtml:24
 #, php-format
-msgid "Started: %s"
+msgid "Export #%d"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:26 view/bulk/admin/exporter/start.phtml:21
+#, php-format
+msgid "Exporter: %s"
 msgstr ""
 
 #: view/bulk/admin/export/show.phtml:27
 #, php-format
+msgid "Owner: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:28 view/bulk/admin/exporter/start.phtml:25
+#, php-format
+msgid "Comment: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:31
+#, php-format
+msgid "Started: %s"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:34
+#, php-format
 msgid "Ended: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:30 view/bulk/admin/exporter/start.phtml:26
+#: view/bulk/admin/export/show.phtml:37 view/bulk/admin/exporter/start.phtml:26
 msgid "Parameters"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:37
-msgid "Logs"
+#: view/bulk/admin/export/show.phtml:38
+#: view/bulk/admin/exporter/exporter-table.phtml:24
+#: view/bulk/admin/exporter/start.phtml:27
+msgid "Writer"
 msgstr ""
 
 #: view/bulk/admin/exporter/add.phtml:15 view/bulk/admin/exporter/add.phtml:18
@@ -344,14 +371,31 @@ msgstr ""
 msgid "Edit exporter"
 msgstr ""
 
+#: view/bulk/admin/exporter/exporter-table.phtml:15
+msgid "Available exporters"
+msgstr ""
+
+#: view/bulk/admin/exporter/exporter-table.phtml:16
+msgid "Add an exporter"
+msgstr ""
+
 #: view/bulk/admin/exporter/start.phtml:17
 #: view/bulk/admin/exporter/start.phtml:20
 msgid "Start export"
 msgstr ""
 
-#: view/bulk/admin/exporter/start.phtml:21
+#: view/common/bulk-export.phtml:34
 #, php-format
-msgid "Exporter: %s"
+msgid "Download as spreadsheet %s"
+msgstr ""
+
+#: view/common/bulk-export.phtml:36
+msgid "Download as text"
+msgstr ""
+
+#: view/common/bulk-export.phtml:37
+#, php-format
+msgid "Download as %s"
 msgstr ""
 
 #: data/exporters/odt.php:4
@@ -366,20 +410,23 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: data/exporters/csv.php:4 src/Writer/CsvWriter.php:19
+#: data/exporters/csv.php:4 src/Writer/CsvWriter.php:20
 msgid "CSV"
 msgstr ""
 
-#: data/scripts/upgrade.php:111 Module.php:57 src/Formatter/Ods.php:33
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:58
-msgid "The dependency Box/Spout version should be >= 3.0. See readme."
+#: data/scripts/upgrade.php:110
+msgid "<"
 msgstr ""
 
-#: Module.php:48 Module.php:299
+#: Module.php:125 Module.php:391
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:310
+#: Module.php:126
+msgid "/bulk_export"
+msgstr ""
+
+#: Module.php:402
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
@@ -429,27 +476,27 @@ msgstr ""
 msgid "Format of linked resources"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:82 src/Form/SiteSettingsFieldset.php:81
+#: src/Form/SettingsFieldset.php:82 src/Form/SiteSettingsFieldset.php:84
 #: src/Form/Writer/FormatTrait.php:48
 msgid "Identifier (property below)"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:82
+#: src/Form/SettingsFieldset.php:83 src/Form/SiteSettingsFieldset.php:85
 #: src/Form/Writer/FormatTrait.php:49
 msgid "Id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:84 src/Form/SiteSettingsFieldset.php:83
+#: src/Form/SettingsFieldset.php:84 src/Form/SiteSettingsFieldset.php:86
 #: src/Form/Writer/FormatTrait.php:50
 msgid "Identifier or id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:84
+#: src/Form/SettingsFieldset.php:85 src/Form/SiteSettingsFieldset.php:83
 #: src/Form/Writer/FormatTrait.php:51
 msgid "Omeka url"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:86
+#: src/Form/SettingsFieldset.php:87 src/Form/SiteSettingsFieldset.php:81
 #: src/Form/Writer/FormatTrait.php:53
 msgid "Omeka url and title"
 msgstr ""
@@ -656,7 +703,15 @@ msgid ""
 "are required."
 msgstr ""
 
-#: src/Formatter/Ods.php:59 src/Formatter/AbstractFormatter.php:367
+#: src/Formatter/Ods.php:23
+msgid "format"
+msgstr ""
+
+#: src/Formatter/Ods.php:45 src/Writer/OpenDocumentSpreadsheetWriter.php:68
+msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
+msgstr ""
+
+#: src/Formatter/Ods.php:73 src/Formatter/AbstractFormatter.php:370
 #: src/Writer/TextWriter.php:54
 msgid "Unable to open output: {error}."
 msgstr ""
@@ -665,7 +720,7 @@ msgstr ""
 msgid "Unable to format resources as {format}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:404
+#: src/Formatter/AbstractFormatter.php:407
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -708,35 +763,47 @@ msgstr ""
 msgid "Save of writer configuration failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:261
+#: src/Controller/Admin/ExporterController.php:268
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:290
+#: src/Controller/Admin/ExporterController.php:298
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:291
+#: src/Controller/Admin/ExporterController.php:299
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:310
+#: src/Controller/Admin/ExporterController.php:318
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:371
+#: src/Controller/Admin/ExporterController.php:379
 msgid "Continue"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:86
+#: src/Controller/Admin/ExportController.php:25
+msgid "bulk_exports"
+msgstr ""
+
+#: src/Controller/Admin/ExportController.php:70
+msgid "export"
+msgstr ""
+
+#: src/Controller/Admin/ExportController.php:88
+msgid "Export successfully deleted"
+msgstr ""
+
+#: src/Api/Representation/ExportRepresentation.php:81
 msgid "ready"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:95
+#: src/Api/Representation/ExportRepresentation.php:87
 msgid "Ready"
 msgstr ""
 
@@ -752,19 +819,19 @@ msgstr ""
 msgid "Export started"
 msgstr ""
 
-#: src/Job/Export.php:71
+#: src/Job/Export.php:72
 msgid "Export completed"
 msgstr ""
 
-#: src/Job/Export.php:98
+#: src/Job/Export.php:99
 msgid "The export is available at {url}."
 msgstr ""
 
-#: src/Job/Export.php:148
+#: src/Job/Export.php:149
 msgid "Export record does not exist"
 msgstr ""
 
-#: src/Job/Export.php:167
+#: src/Job/Export.php:168
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
@@ -779,7 +846,13 @@ msgid ""
 "characters."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:199
+#: src/Traits/ResourceFieldsTrait.php:113
+msgid ""
+"Some properties are not exported because they contain more or less than 5000 "
+"characters: {properties}."
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:223
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -798,6 +871,12 @@ msgstr ""
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
+msgstr ""
+
+#: src/Writer/CsvWriter.php:63 src/Writer/OpenDocumentSpreadsheetWriter.php:59
+msgid ""
+"The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or "
+"CSV Import. See readme."
 msgstr ""
 
 #: src/Writer/AbstractWriter.php:166 src/Writer/AbstractWriter.php:174
@@ -873,12 +952,16 @@ msgstr ""
 msgid "End export of {total} {resource_type}."
 msgstr ""
 
-#: config/module.config.php:89
+#: config/module.config.php:95
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:102
+#: config/module.config.php:108
 msgid "Past Exports"
+msgstr ""
+
+#: config/module.config.php:125
+msgid "Params"
 msgstr ""
 
 #: test/BulkExportTest/Job/ExportTest.php:287
