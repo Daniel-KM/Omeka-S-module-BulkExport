@@ -62,7 +62,7 @@ class Module extends AbstractModule
             ->allow(
                 $backendRoles,
                 ['BulkExport\Controller\Admin\Exporter'],
-                ['add', 'start', 'edit', 'configure', 'delete'],
+                ['add', 'start', 'edit', 'configure', 'delete']
             )
             ->allow(
                 $backendRoles,

@@ -49,7 +49,7 @@ trait ListTermsTrait
                 'property.id AS id',
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
-                'vocabulary.id',
+                'vocabulary.id'
             )
             ->from('property', 'property')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'property.vocabulary_id = vocabulary.id')
