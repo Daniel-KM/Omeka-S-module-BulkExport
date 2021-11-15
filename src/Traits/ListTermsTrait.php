@@ -44,24 +44,21 @@ trait ListTermsTrait
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select([
-                'DISTINCT property.id AS id',
-                "CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
+            ->select(
+                "DISTINCT CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
+                'property.id AS id',
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
                 'vocabulary.id',
-                'property.id',
-            ])
+            )
             ->from('property', 'property')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'property.vocabulary_id = vocabulary.id')
             ->orderBy('vocabulary.id', 'asc')
             ->addOrderBy('property.id', 'asc')
             ->addGroupBy('property.id')
         ;
-        $stmt = $connection->executeQuery($qb);
-        // Fetch by key pair is not supported by doctrine 2.0.
-        $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->propertiesByTerm = array_map('intval', array_column($terms, 'id', 'term'));
+        $terms = $connection->executeQuery($qb)->fetchAllKeyValue();
+        $this->propertiesByTerm = array_map('intval', $terms);
         return $this->propertiesByTerm;
     }
 
@@ -78,24 +75,21 @@ trait ListTermsTrait
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select([
-                'DISTINCT resource_class.id AS id',
-                "CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
+            ->select(
+                "DISTINCT CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
+                'resource_class.id AS id',
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
-                'vocabulary.id',
-                'resource_class.id',
-            ])
+                'vocabulary.id'
+            )
             ->from('resource_class', 'resource_class')
             ->innerJoin('resource_class', 'vocabulary', 'vocabulary', 'resource_class.vocabulary_id = vocabulary.id')
             ->orderBy('vocabulary.id', 'asc')
             ->addOrderBy('resource_class.id', 'asc')
             ->addGroupBy('resource_class.id')
         ;
-        $stmt = $connection->executeQuery($qb);
-        // Fetch by key pair is not supported by doctrine 2.0.
-        $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->resourceClassesByTerm = array_map('intval', array_column($terms, 'id', 'term'));
+        $terms = $connection->executeQuery($qb)->fetchAllKeyValue();
+        $this->resourceClassesByTerm = array_map('intval', $terms);
         return $this->resourceClassesByTerm;
     }
 
@@ -123,13 +117,13 @@ trait ListTermsTrait
         // TODO Limit with the query (via adapter).
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select([
+            ->select(
                 'DISTINCT(CONCAT(vocabulary.prefix, ":", property.local_name)) AS term',
                 'property.id AS id',
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
-                'vocabulary.id',
-            ])
+                'vocabulary.id'
+            )
             ->from('value', 'value')
             ->innerJoin('value', 'property', 'property', 'property.id = value.property_id')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
@@ -164,9 +158,8 @@ trait ListTermsTrait
                 ->andWhere('CHAR_LENGTH(`value`.`value`) <= ' . (int) $options['max_size']);
         }
 
-        $stmt = $connection->executeQuery($qb, $qb->getParameters());
-        $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return array_map('intval', array_column($terms, 'id', 'term'));
+        $terms = $connection->executeQuery($qb, $qb->getParameters())->fetchAllKeyValue();
+        return array_map('intval', $terms);
     }
 
     /**
@@ -182,24 +175,21 @@ trait ListTermsTrait
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select([
+            ->select(
+                "DISTINCT CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
                 'property.label AS label',
-                "CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
                 'vocabulary.id',
-                'property.id',
-            ])
+                'property.id'
+            )
             ->from('property', 'property')
             ->innerJoin('property', 'vocabulary', 'vocabulary', 'property.vocabulary_id = vocabulary.id')
             ->orderBy('vocabulary.id', 'asc')
             ->addOrderBy('property.id', 'asc')
             ->addGroupBy('property.id')
         ;
-        $stmt = $connection->executeQuery($qb);
-        // Fetch by key pair is not supported by doctrine 2.0.
-        $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->propertyLabelsByTerm = array_column($terms, 'label', 'term');
+        $this->propertyLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
         return $this->propertyLabelsByTerm;
     }
 
@@ -216,24 +206,21 @@ trait ListTermsTrait
         $connection = $this->getServiceLocator()->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
-            ->select([
+            ->select(
+                "DISTINCT CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
                 'resource_class.label AS label',
-                "CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
                 // Only the two first selects are needed, but some databases
                 // require "order by" or "group by" value to be in the select.
                 'vocabulary.id',
-                'resource_class.id',
-            ])
+                'resource_class.id'
+            )
             ->from('resource_class', 'resource_class')
             ->innerJoin('resource_class', 'vocabulary', 'vocabulary', 'resource_class.vocabulary_id = vocabulary.id')
             ->orderBy('vocabulary.id', 'asc')
             ->addOrderBy('resource_class.id', 'asc')
             ->addGroupBy('resource_class.id')
         ;
-        $stmt = $connection->executeQuery($qb);
-        // Fetch by key pair is not supported by doctrine 2.0.
-        $terms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $this->resourceClassLabelsByTerm = array_column($terms, 'label', 'term');
+        $this->resourceClassLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
         return $this->resourceClassLabelsByTerm;
     }
 
