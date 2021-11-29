@@ -46,7 +46,7 @@ trait MetadataToStringTrait
             case 'url':
                 // Should be enough, but CleanUrl needs the site slug.
                 // return [$resource->url(null, true)];
-                return $this->isAdminRequest
+                return $this->isAdminRequest()
                     ? [$resource->adminUrl(null, true)]
                     // Need site slug, but no background job in public.
                     : [$resource->siteUrl(null, true)];
