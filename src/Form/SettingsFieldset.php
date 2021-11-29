@@ -89,7 +89,7 @@ class SettingsFieldset extends Fieldset
                 ],
                 'attributes' => [
                     'id' => 'bulkexport_format_resource',
-                    'value' => 'identifier_id',
+                    'value' => 'id',
                 ],
             ])
             ->add([

@@ -55,7 +55,7 @@ trait FormatTrait
                 ],
                 'attributes' => [
                     'id' => 'format_resource',
-                    'value' => 'identifier_id',
+                    'value' => 'id',
                 ],
             ])
             ->add([

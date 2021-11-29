@@ -88,7 +88,7 @@ class SiteSettingsFieldset extends Fieldset
                 ],
                 'attributes' => [
                     'id' => 'bulkexport_format_resource',
-                    'value' => 'url_title',
+                    'value' => 'id',
                 ],
             ])
             ->add([

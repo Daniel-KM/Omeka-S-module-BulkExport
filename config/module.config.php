@@ -394,7 +394,7 @@ return [
             ],
             'bulkexport_format_fields' => 'name',
             'bulkexport_format_generic' => 'string',
-            'bulkexport_format_resource' => 'identifier_id',
+            'bulkexport_format_resource' => 'id',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
             'bulkexport_metadata' => [
@@ -425,10 +425,11 @@ return [
             ],
             'bulkexport_format_fields' => 'label',
             'bulkexport_format_generic' => 'string',
-            'bulkexport_format_resource' => 'url_title',
+            'bulkexport_format_resource' => 'id',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
             'bulkexport_metadata' => [
+                'id',
                 'url',
                 'o:resource_class',
                 'properties_small',
