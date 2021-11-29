@@ -134,21 +134,21 @@ trait ListTermsTrait
             ->addOrderBy('property.id')
         ;
 
+        $bind = [];
+        $types = [];
         if (count($options['entity_classes']) && !in_array(\Omeka\Entity\Resource::class, $options['entity_classes'])) {
             $qb
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
-                ->andWhere($expr->in(
-                    'resource.resource_type',
-                    array_map([$connection, 'quote'], array_unique($options['entity_classes']))
-                ));
+                ->andWhere($expr->in('resource.resource_type', ':entity_classes'))
+            ;
+            $bind['entity_classes'] = array_unique($options['entity_classes']);
+            $types['entity_classes'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+
         }
 
         if ((int) $options['min_size'] > 0) {
             $qb
-                ->andWhere($expr->orX(
-                    '`value`.`value` IS NULL',
-                    'CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']
-                ));
+                ->andWhere('CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']);
         }
 
         if ((int) $options['max_size'] > 0) {
@@ -159,7 +159,7 @@ trait ListTermsTrait
                 ));
         }
 
-        $terms = $connection->executeQuery($qb, $qb->getParameters())->fetchAllKeyValue();
+        $terms = $connection->executeQuery($qb, $bind, $types)->fetchAllKeyValue();
         return array_map('intval', $terms);
     }
 
