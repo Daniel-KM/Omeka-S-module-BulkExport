@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-15 00:00+0000\n"
+"POT-Creation-Date: 2022-01-03 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -83,84 +83,84 @@ msgstr ""
 msgid "Digital library"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:166
+#: src/Traits/ResourceFieldsTrait.php:164
 msgid "id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:168
+#: src/Traits/ResourceFieldsTrait.php:166
 msgid "Resource class"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:170
+#: src/Traits/ResourceFieldsTrait.php:168
 msgid "Is public"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:171
+#: src/Traits/ResourceFieldsTrait.php:169
 msgid "Is open"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:173
+#: src/Traits/ResourceFieldsTrait.php:171
 msgid "Resource id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:174
+#: src/Traits/ResourceFieldsTrait.php:172
 msgid "Resource identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:177
+#: src/Traits/ResourceFieldsTrait.php:175
 msgid "Item set id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:180
+#: src/Traits/ResourceFieldsTrait.php:178
 msgid "Item id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:181
+#: src/Traits/ResourceFieldsTrait.php:179
 msgid "Item identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:182
+#: src/Traits/ResourceFieldsTrait.php:180
 msgid "Item title"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:184
+#: src/Traits/ResourceFieldsTrait.php:182
 msgid "Media id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:185
+#: src/Traits/ResourceFieldsTrait.php:183
 msgid "Media file"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:186
+#: src/Traits/ResourceFieldsTrait.php:184
 msgid "Media source"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:187
+#: src/Traits/ResourceFieldsTrait.php:185
 msgid "File media type"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:188
+#: src/Traits/ResourceFieldsTrait.php:186
 msgid "File size"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:189
+#: src/Traits/ResourceFieldsTrait.php:187
 msgid "Original file url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:191
+#: src/Traits/ResourceFieldsTrait.php:189
 msgid "Annotation"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:192
+#: src/Traits/ResourceFieldsTrait.php:190
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:210
+#: src/Traits/ResourceFieldsTrait.php:208
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:215
+#: src/Traits/ResourceFieldsTrait.php:213
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
@@ -711,7 +711,7 @@ msgstr ""
 msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
 msgstr ""
 
-#: src/Formatter/Ods.php:73 src/Formatter/AbstractFormatter.php:370
+#: src/Formatter/Ods.php:73 src/Formatter/AbstractFormatter.php:367
 #: src/Writer/TextWriter.php:54
 msgid "Unable to open output: {error}."
 msgstr ""
@@ -720,7 +720,7 @@ msgstr ""
 msgid "Unable to format resources as {format}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:407
+#: src/Formatter/AbstractFormatter.php:404
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -767,23 +767,23 @@ msgstr ""
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:298
+#: src/Controller/Admin/ExporterController.php:290
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:299
+#: src/Controller/Admin/ExporterController.php:291
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:318
+#: src/Controller/Admin/ExporterController.php:310
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:379
+#: src/Controller/Admin/ExporterController.php:371
 msgid "Continue"
 msgstr ""
 
@@ -823,15 +823,15 @@ msgstr ""
 msgid "Export completed"
 msgstr ""
 
-#: src/Job/Export.php:99
+#: src/Job/Export.php:100
 msgid "The export is available at {url}."
 msgstr ""
 
-#: src/Job/Export.php:149
+#: src/Job/Export.php:150
 msgid "Export record does not exist"
 msgstr ""
 
-#: src/Job/Export.php:168
+#: src/Job/Export.php:169
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
@@ -846,13 +846,13 @@ msgid ""
 "characters."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:113
+#: src/Traits/ResourceFieldsTrait.php:111
 msgid ""
 "Some properties are not exported because they contain more or less than 5000 "
 "characters: {properties}."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:223
+#: src/Traits/ResourceFieldsTrait.php:221
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
