@@ -2,7 +2,7 @@
     "require": {
         "box/spout": "^3.3",
         "phpoffice/phpword": "^0.18",
-        "doctrine/inflector": "^2.0"
+        "doctrine/inflector": "2.0.4"
     },
     "require-dev": {
         "biblibre/omeka-s-test-helper": "dev-master"
