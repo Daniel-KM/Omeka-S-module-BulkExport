@@ -34,7 +34,7 @@ if (version_compare($oldVersion, '3.0.8', '<')) {
 ALTER TABLE `bulk_export`
     ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.0.7', '>')
@@ -54,18 +54,18 @@ if (version_compare($oldVersion, '3.0.8', '<')) {
 ALTER TABLE `bulk_export`
     ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.5', '<')) {
     $sql = <<<'SQL'
 ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDB4523DE5;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDBE04EA9;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_export`
 CHANGE `exporter_id` `exporter_id` INT DEFAULT NULL,
@@ -74,15 +74,15 @@ CHANGE `comment` `comment` VARCHAR(190) DEFAULT NULL,
 CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
 CHANGE `filename` `filename` VARCHAR(255) DEFAULT NULL;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDB4523DE5 FOREIGN KEY (`exporter_id`) REFERENCES `bulk_exporter` (`id`) ON DELETE SET NULL;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDBE04EA9 FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE SET NULL;
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_exporter`
 CHANGE `owner_id` `owner_id` INT DEFAULT NULL,
@@ -90,7 +90,7 @@ CHANGE `label` `label` VARCHAR(190) DEFAULT NULL,
 CHANGE `writer_class` `writer_class` VARCHAR(190) DEFAULT NULL,
 CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.12', '<')) {
@@ -99,12 +99,12 @@ if (version_compare($oldVersion, '3.3.12.12', '<')) {
 ALTER TABLE `bulk_export`
 CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
     $sql = <<<'SQL'
 ALTER TABLE `bulk_exporter`
 CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
 SQL;
-    $connection->executeQuery($sql);
+    $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.13', '<')) {
@@ -139,6 +139,6 @@ ALTER TABLE `bulk_exporter`
     CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
 SQL;
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
-        $connection->executeQuery($sql);
+        $connection->executeStatement($sql);
     }
 }
