@@ -33,19 +33,19 @@ trait OpenDocumentTextTemplateTrait
             ->addParagraphStyle(
                 'pRecordMetadata', [
                     'spacing' => 240,
-                    'indent' => 240,
+                    'indent' => 3,
                     'keepNext' => true,
                 ]
             );
         $this->openDocument
             ->addFontStyle(
                 'recordLabel',
-                ['name' => 'Arial', 'size' => 12, 'color' => '1B2232', 'bold' => true]
+                ['name' => 'Arial', 'size' => 11, 'color' => '1B2232', 'bold' => true]
             );
         $this->openDocument
             ->addFontStyle(
                 'recordMetadata',
-                ['name' => 'Arial', 'size' => 12]
+                ['name' => 'Arial', 'size' => 9]
             );
 
         $this->openDocument->getDocInfo()
@@ -88,6 +88,14 @@ trait OpenDocumentTextTemplateTrait
             }
             $section->addText($fieldName, 'recordLabel', 'pRecordLabel');
             foreach ($fieldValues as $fieldValue) {
+                if (is_int($fieldValue)) {
+                   $fieldValue = strval($fieldValue);
+                }
+                if (is_string($fieldValue) && (str_contains($fieldValue, '&') || str_contains($fieldValue, '<'))) {
+                    $patterns = array('/&/', '/</');
+                    $replacements = array('&amp;', '&lt;');
+                    $fieldValue = preg_replace($patterns, $replacements, $fieldValue);
+                }
                 $fieldValue = strip_tags($fieldValue);
                 if (mb_strlen($fieldValue) < 1000) {
                     $section->addText($fieldValue, 'recordMetadata', 'pRecordMetadata');
