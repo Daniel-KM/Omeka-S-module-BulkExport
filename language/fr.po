@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-03 00:00+0000\n"
-"PO-Revision-Date: 2022-01-03 00:00+0000\n"
+"POT-Creation-Date: 2022-03-21 00:00+0000\n"
+"PO-Revision-Date: 2022-03-21 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: Module.php:197
+#: Module.php:198
 msgid "WARNING:"
 msgstr "ATTENTION :"
 
-#: Module.php:203
+#: Module.php:204
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr "Tous les exports seront supprimés (dossier \"{folder}\")."
 
-#: Module.php:209
+#: Module.php:210
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
@@ -50,7 +50,7 @@ msgstr ""
 "Une requête ne peut pas être utilisée pour exporter des « ressources » : "
 "indiquer le type de ressources ou utiliser une liste d'ids."
 
-#: src/Generic/AbstractModule.php:66
+#: src/Generic/AbstractModule.php:66 src/Generic/AbstractModule.php:740
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr "Ce module requiert le module \"%s\"."
@@ -64,7 +64,26 @@ msgstr "Ce module requiert les modules \"%s\"."
 msgid "This module has resources that cannot be installed."
 msgstr "Ce module a des ressources qui ne peuvent pas être installées."
 
-#: src/Generic/AbstractModule.php:725
+#: src/Generic/AbstractModule.php:87
+msgid ""
+"This module cannot install its tables, because they exist already. Try to "
+"remove them first."
+msgstr ""
+"Ce module ne peut pas installer ses tables car elles existent déjà. Essayez "
+"de les supprimer manuellement."
+
+#: src/Generic/AbstractModule.php:328
+#, php-format
+msgid "The module removed tables \"%s\" from a previous broken install."
+msgstr ""
+"Le module a supprimé les tables « %s » depuis une installation échouée."
+
+#: src/Generic/AbstractModule.php:735
+#, php-format
+msgid "This module requires the module \"%s\", version %s or above."
+msgstr "Ce module requiert le module « %s », version « %s » ou supérieur."
+
+#: src/Generic/AbstractModule.php:832
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -424,15 +443,15 @@ msgstr "CSV"
 msgid "<"
 msgstr "<"
 
-#: Module.php:125 Module.php:391
+#: Module.php:126 Module.php:392
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
 
-#: Module.php:126
+#: Module.php:127
 msgid "/bulk_export"
 msgstr "/bulk_exports"
 
-#: Module.php:402
+#: Module.php:403
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
@@ -712,17 +731,13 @@ msgstr "Choisir un ou plusieurs types de ressource…"
 msgid "required"
 msgstr "requis"
 
-#: src/Form/Writer/ResourceTypesSelectTrait.php:65
-msgid "Annotations"
-msgstr "Annotations"
-
 #: src/Formatter/Ods.php:22 src/Formatter/Odt.php:28
 msgid ""
 "To process export to \"{format}\", the php extensions \"zip\" and \"xml\" "
 "are required."
 msgstr ""
-"Pour réaliser un export dans le format \"{format}\", les extensions php \"zip"
-"\" et xml\" sont nécessaires."
+"Pour réaliser un export dans le format \"{format}\", les extensions php "
+"\"zip\" et xml\" sont nécessaires."
 
 #: src/Formatter/Ods.php:23
 msgid "format"
@@ -998,15 +1013,15 @@ msgstr ""
 msgid "End export of {total} {resource_type}."
 msgstr "Fin de l’export de {total} {resource_type}."
 
-#: config/module.config.php:95
+#: config/module.config.php:97
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: config/module.config.php:108
+#: config/module.config.php:110
 msgid "Past Exports"
 msgstr "Exports précédents"
 
-#: config/module.config.php:125
+#: config/module.config.php:127
 msgid "Params"
 msgstr "Paramètres"
 
@@ -1014,6 +1029,9 @@ msgstr "Paramètres"
 #, php-format
 msgid "No argument files (%s)."
 msgstr "Fichiers d’arguments manquants (%s)."
+
+#~ msgid "Annotations"
+#~ msgstr "Annotations"
 
 #~ msgid "Asset"
 #~ msgstr "Fichier"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-03 00:00+0000\n"
+"POT-Creation-Date: 2022-03-21 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:197
+#: Module.php:198
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:203
+#: Module.php:204
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:209
+#: Module.php:210
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -47,7 +47,7 @@ msgid ""
 "the list of ids instead."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:66
+#: src/Generic/AbstractModule.php:66 src/Generic/AbstractModule.php:740
 #, php-format
 msgid "This module requires the module \"%s\"."
 msgstr ""
@@ -61,7 +61,23 @@ msgstr ""
 msgid "This module has resources that cannot be installed."
 msgstr ""
 
-#: src/Generic/AbstractModule.php:725
+#: src/Generic/AbstractModule.php:87
+msgid ""
+"This module cannot install its tables, because they exist already. Try to "
+"remove them first."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:328
+#, php-format
+msgid "The module removed tables \"%s\" from a previous broken install."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:735
+#, php-format
+msgid "This module requires the module \"%s\", version %s or above."
+msgstr ""
+
+#: src/Generic/AbstractModule.php:832
 #, php-format
 msgid ""
 "The module \"%s\" was automatically deactivated because the dependencies are "
@@ -418,15 +434,15 @@ msgstr ""
 msgid "<"
 msgstr ""
 
-#: Module.php:125 Module.php:391
+#: Module.php:126 Module.php:392
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:126
+#: Module.php:127
 msgid "/bulk_export"
 msgstr ""
 
-#: Module.php:402
+#: Module.php:403
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
@@ -693,10 +709,6 @@ msgstr ""
 msgid "required"
 msgstr ""
 
-#: src/Form/Writer/ResourceTypesSelectTrait.php:65
-msgid "Annotations"
-msgstr ""
-
 #: src/Formatter/Ods.php:22 src/Formatter/Odt.php:28
 msgid ""
 "To process export to \"{format}\", the php extensions \"zip\" and \"xml\" "
@@ -952,15 +964,15 @@ msgstr ""
 msgid "End export of {total} {resource_type}."
 msgstr ""
 
-#: config/module.config.php:95
+#: config/module.config.php:97
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:108
+#: config/module.config.php:110
 msgid "Past Exports"
 msgstr ""
 
-#: config/module.config.php:125
+#: config/module.config.php:127
 msgid "Params"
 msgstr ""
 
