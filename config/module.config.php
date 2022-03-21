@@ -41,6 +41,8 @@ return [
         ],
         'factories' => [
             'bulkExporters' => Service\ViewHelper\BulkExportersFactory::class,
+            // Copy of AdvancedResourceTemplate.
+            'customVocabBaseType' => Service\ViewHelper\CustomVocabBaseTypeFactory::class,
         ],
     ],
     'form_elements' => [

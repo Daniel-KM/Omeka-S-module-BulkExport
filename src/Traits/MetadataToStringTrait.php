@@ -33,6 +33,12 @@ trait MetadataToStringTrait
      */
     protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = [])
     {
+        static $customVocabBaseTypes;
+
+        if (is_null($customVocabBaseTypes)) {
+            $customVocabBaseTypes = $this->services->get('ViewHelperManager')->get('customVocabBaseType')();
+        }
+
         if (empty($params)) {
             $params = $this->options;
         } else {
@@ -196,20 +202,19 @@ trait MetadataToStringTrait
                 // Values are converted by reference.
                 foreach ($vv as &$v) {
                     $type = $v->type();
+                    $dataTypeColon = strtok($type, ':');
+                    $baseType = $dataTypeColon === 'customvocab' ? $customVocabBaseTypes[(int) substr($v['type'], 12)] ?? 'literal' : null;
                     switch ($type) {
                         case 'resource':
-                        case substr($type, 0, 9) === 'resource:':
+                        case $dataTypeColon === 'resource':
+                        case $baseType === 'resource':
                             $v = $this->stringifyResource($v->valueResource(), $params);
                             break;
                         case 'uri':
-                        case substr($type, 0, 13) === 'valuesuggest:':
-                        case substr($type, 0, 16) === 'valuesuggestall:':
+                        case $dataTypeColon === 'valuesuggest':
+                        case $dataTypeColon === 'valuesuggestall':
+                        case $baseType === 'uri':
                             $v = $this->stringifyUri($v, $params);
-                            break;
-                        // Module Custom vocab.
-                        case substr($type, 0, 12) === 'customvocab:':
-                            $vvr = $v->valueResource();
-                            $v = $vvr ? $this->stringifyResource($vvr, $params) : (string) $v->value();
                             break;
                         // Module module Numeric data type.
                         case substr($type, 0, 8) === 'numeric:':
@@ -243,6 +248,7 @@ trait MetadataToStringTrait
                             $v = $v->asHtml();
                             break;
                         case 'literal':
+                        // case $baseType === 'literal':
                         default:
                             $v = $params['format_generic'] === 'html'
                                 ? $v->asHtml()
@@ -374,9 +380,7 @@ trait MetadataToStringTrait
     protected function isAdminRequest(): bool
     {
         static $status;
-        if (is_null($status)) {
-            $status = $this->getServiceLocator()->get('Omeka\Status')->isAdminRequest();
-        }
-        return $status;
+        return $status
+            ?? $status = $this->getServiceLocator()->get('Omeka\Status')->isAdminRequest();
     }
 }
