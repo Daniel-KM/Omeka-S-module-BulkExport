@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport;
 
 if (!class_exists(\Generic\AbstractModule::class)) {
@@ -417,6 +418,9 @@ class Module extends AbstractModule
     {
         if (!file_exists($dirPath)) {
             return true;
+        }
+        if (strpos($dirPath, '/..') !== false || substr($dirPath, 0, 1) !== '/') {
+            return false;
         }
         $files = array_diff(scandir($dirPath), ['.', '..']);
         foreach ($files as $file) {
