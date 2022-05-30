@@ -129,6 +129,10 @@ class OutputController extends AbstractActionController
         // Copied in \ApiInfo\Controller\ApiController::getExportOptions().
         // @see \BulkExport\Controller\Admin\ExporterController::startAction().
 
+        if ($isSiteRequest) {
+            $settings = $siteSettings;
+        }
+
         $options = [];
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;
         $options['metadata'] = $settings->get('bulkexport_metadata', []);
