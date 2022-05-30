@@ -203,7 +203,7 @@ trait MetadataToStringTrait
                 foreach ($vv as &$v) {
                     $type = $v->type();
                     $dataTypeColon = strtok($type, ':');
-                    $baseType = $dataTypeColon === 'customvocab' ? $customVocabBaseTypes[(int) substr($v['type'], 12)] ?? 'literal' : null;
+                    $baseType = $dataTypeColon === 'customvocab' ? $customVocabBaseTypes[(int) substr($type, 12)] ?? 'literal' : null;
                     switch ($type) {
                         case 'resource':
                         case $dataTypeColon === 'resource':
