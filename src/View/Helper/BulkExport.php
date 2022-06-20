@@ -95,7 +95,7 @@ class BulkExport extends AbstractHelper
                 }
                 $options['resourceType'] = $resourceType;
             }
-            if ($options['resourceType'] === 'resource') {
+            if ($query && $options['resourceType'] === 'resource') {
                 throw new \Omeka\Mvc\Exception\NotFoundException(
                     $view->translate('A query cannot be used to export "resources": set the resource type or use the list of ids instead.') // @translate
                 );
