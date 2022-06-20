@@ -372,9 +372,8 @@ trait MetadataToStringTrait
             // Modules.
             \Annotate\Api\Representation\AnnotationRepresentation::class => 'Annotation',
         ];
-        return isset($mapping[$class])
-            ? $mapping[$class]
-            : str_replace('Representation', '', substr($class, strrpos($class, '\\') + 1));
+        return $mapping[$class]
+            ?? str_replace('Representation', '', substr($class, strrpos($class, '\\') + 1));
     }
 
     protected function isAdminRequest(): bool

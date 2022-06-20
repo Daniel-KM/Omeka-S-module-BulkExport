@@ -199,9 +199,8 @@ trait ResourceFieldsTrait
         if (strpos($fieldName, '[')) {
             $base = strtok($fieldName, '[');
             $property = trim(strok('['), ' []');
-            $second = isset($mapping[$property])
-                ? $mapping[$property]
-                : $this->translateProperty($property);
+            $second = $mapping[$property]
+                ?? $this->translateProperty($property);
             switch ($base) {
                 case 'oa:hasBody':
                     return sprintf(
@@ -214,9 +213,8 @@ trait ResourceFieldsTrait
                         $second
                     );
                 default:
-                    $first = isset($mapping[$base])
-                        ? $mapping[$base]
-                        : $base;
+                    $first = $mapping[$base]
+                        ?? $base;
                     return sprintf(
                         '%1$s: %2$s', // @translate
                         $first,
@@ -274,6 +272,6 @@ trait ResourceFieldsTrait
             // Modules.
             'oa:Annotation' => \Annotate\Entity\Annotation::class,
         ];
-        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+        return $mapping[$jsonResourceType] ?? null;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace BulkExport\View\Helper;
 
-use BulkExport\Formatter\Manager as FormatterManager;
 use Laminas\View\Helper\AbstractHelper;
 
 /**

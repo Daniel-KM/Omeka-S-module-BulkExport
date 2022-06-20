@@ -143,7 +143,6 @@ trait ListTermsTrait
             ;
             $bind['entity_classes'] = array_unique($options['entity_classes']);
             $types['entity_classes'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
-
         }
 
         if ((int) $options['min_size'] > 0) {

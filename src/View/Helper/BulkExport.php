@@ -2,7 +2,6 @@
 
 namespace BulkExport\View\Helper;
 
-use BulkExport\Formatter\Manager as FormatterManager;
 use Laminas\View\Helper\AbstractHelper;
 use Omeka\Api\Representation\SiteRepresentation;
 
@@ -35,7 +34,7 @@ class BulkExport extends AbstractHelper
         $url = $plugins->get('url');
         $api = $plugins->get('api');
 
-        $isAdmin =  empty($options['site']) && $plugins->get('status')->isAdminRequest();
+        $isAdmin = empty($options['site']) && $plugins->get('status')->isAdminRequest();
 
         $options += [
             'site' => null,

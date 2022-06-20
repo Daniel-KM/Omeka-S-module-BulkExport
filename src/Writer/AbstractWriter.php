@@ -342,7 +342,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             // Modules.
             'oa:Annotation' => 'annotation',
         ];
-        return isset($mapping[$jsonResourceType]) ? $mapping[$jsonResourceType] : null;
+        return $mapping[$jsonResourceType] ?? null;
     }
 
     protected function mapRepresentationToResourceType(AbstractRepresentation $representation)
