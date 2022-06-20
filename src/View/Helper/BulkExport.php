@@ -16,7 +16,7 @@ class BulkExport extends AbstractHelper
     /**
      * Output the html to export resources.
      *
-     * @param AbstractResourceEntityRepresentation[]|int[]|array|AbstractResourceEntityRepresentation|int|null $resourcesOrIdsOrQuery
+     * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]|int[]|array|\Omeka\Api\Representation\AbstractResourceEntityRepresentation|int|null $resourcesOrIdsOrQuery
      *   Types must not be mixed. By default, use the current request query.
      * @param array $options Available options:
      * - site (SiteRepresentation): site to use for urls, instead current one.
@@ -138,7 +138,7 @@ class BulkExport extends AbstractHelper
         $siteSlug = $options['site'] ? $options['site']->slug() : null;
         if ($options['isMultiple']) {
             $route = $isAdmin ? 'admin/resource-output' : 'site/resource-output';
-            foreach ($options['exporters'] as $format => $label) {
+            foreach (array_keys($options['exporters']) as $format) {
                 $options['urls'][$format] = $url($route, [
                     'site-slug' => $siteSlug,
                     'controller' => $options['resourceType'],
@@ -150,7 +150,7 @@ class BulkExport extends AbstractHelper
         } else {
             $route = $isAdmin ? 'admin/resource-output-id' : 'site/resource-output-id';
             $resourceId = $firstResource->id();
-            foreach ($options['exporters'] as $format => $label) {
+            foreach (array_keys($options['exporters']) as $format) {
                 $options['urls'][$format] = $url($route, [
                     'site-slug' => $siteSlug,
                     'controller' => $options['resourceType'],
