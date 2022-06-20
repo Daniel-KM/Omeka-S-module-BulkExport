@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Job;
 
 use BulkExport\Api\Representation\ExportRepresentation;
@@ -94,8 +95,8 @@ class Export extends AbstractJob
         ];
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 
-        $config = $this->getServiceLocator()->get('Config');
-        $baseUrl = $config['file_store']['local']['base_uri'] ?: $this->getArg('base_path') . '/files';
+        $services = $this->getServiceLocator();
+        $baseUrl = $services->get('Config')['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
         $this->logger->notice(
             'The export is available at {url}.', // @translate
             ['url' => $baseUrl . '/bulk_export/' . $params['filename']]
@@ -243,8 +244,7 @@ class Export extends AbstractJob
         /** @var \Laminas\View\Helper\ServerUrl $serverUrl */
         $serverUrl = $this->getServiceLocator()->get('ViewHelperManager')->get('ServerUrl');
         if (!$serverUrl->getHost()) {
-            $host = $this->getArg('base_url', 'http://localhost');
-            $serverUrl->setHost($host);
+            $serverUrl->setHost('http://localhost');
         }
         return $this;
     }
