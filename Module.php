@@ -259,12 +259,7 @@ class Module extends AbstractModule
         $sharedEventManager->attach(
             'Selection\Controller\Site\GuestBoard',
             'view.browse.after',
-            [$this, 'handleViewBrowseAfter']
-        );
-        $sharedEventManager->attach(
-            'Basket\Controller\Site\GuestBoard',
-            'view.browse.after',
-            [$this, 'handleViewBrowseAfter']
+            [$this, 'handleViewBrowseAfterSelection']
         );
 
         $sharedEventManager->attach(
@@ -369,7 +364,32 @@ class Module extends AbstractModule
         // Get all resources of the result, not only the first page.
         // There is a specific limit for the number of resources to output.
         // For longer output, use job process for now.
-        unset($query['page']);
+        unset($query['page'], $query['limit']);
+
+        echo $view->bulkExport($query, [
+            'site' => $view->vars()->offsetGet('site'),
+            'exporters' => $view->bulkExporters(),
+            'resourceType' => $resourceType,
+        ]);
+    }
+
+    public function handleViewBrowseAfterSelection(Event $event): void
+    {
+        $view = $event->getTarget();
+        $resourceType = 'resource';
+        $user = $view->identity();
+        if ($user) {
+            $request = $view->params()->fromQuery();
+            $request['owner_id'] = $user->getId();
+            unset($request['page'], $request['limit']);
+            // The view helper api doesn't manage options (returnScalar).
+            $api = $this->getServiceLocator()->get('Omeka\ApiManager');
+            $query = $api->search('selection_resources', $request, ['returnScalar' => 'resource'])->getContent();
+        }
+
+        if (empty($query)) {
+            $query = null;
+        }
 
         echo $view->bulkExport($query, [
             'site' => $view->vars()->offsetGet('site'),
