@@ -91,7 +91,7 @@ return [
                 'route' => 'admin/bulk-export/default',
                 'controller' => 'bulk-export',
                 'resource' => 'BulkExport\Controller\Admin\BulkExport',
-                'class' => 'o-icon-uninstall',
+                'class' => 'o-icon- fa-cloud-download-alt',
                 'pages' => [
                     [
                         'label' => 'Dashboard', // @translate
