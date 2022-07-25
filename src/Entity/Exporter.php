@@ -75,7 +75,7 @@ class Exporter extends AbstractEntity
 
     public function __construct()
     {
-        $this->imports = new ArrayCollection;
+        $this->exports = new ArrayCollection;
     }
 
     public function getId()
@@ -135,6 +135,6 @@ class Exporter extends AbstractEntity
      */
     public function getExports(): ArrayCollection
     {
-        return $this->exports();
+        return $this->exports;
     }
 }
