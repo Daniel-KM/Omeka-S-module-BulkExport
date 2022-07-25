@@ -108,7 +108,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return parent::isValid();
     }
 
-    public function process()
+    public function process(): WriterInterface
     {
         $this->translator = $this->getServiceLocator()->get('MvcTranslator');
 

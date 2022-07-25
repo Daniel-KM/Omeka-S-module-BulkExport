@@ -16,52 +16,32 @@ interface WriterInterface
 {
     /**
      * Writer constructor.
-     *
-     * @param ServiceLocatorInterface $serviceLocator
      */
     public function __construct(ServiceLocatorInterface $services);
 
-    /**
-     * @return string
-     */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * The extension of the output filename.
-     *
-     * @return string
      */
-    public function getExtension();
+    public function getExtension(): ?string;
 
-    /**
-     * @param Logger $logger
-     * @return self
-     */
-    public function setLogger(Logger $logger);
+    public function setLogger(Logger $logger): WriterInterface;
 
-    /**
-     * @param Job $job
-     * @return self
-     */
-    public function setJob(Job $job);
+    public function setJob(Job $job): WriterInterface;
 
     /**
      * Check if the params of the writer are valid, for example the filepath.
-     *
-     * @return bool
      */
     public function isValid(): bool;
 
     /**
      * Get the last error message, in particular to know why writer is invalid.
-     *
-     * @return string
      */
-    public function getLastErrorMessage();
+    public function getLastErrorMessage(): ?string;
 
     /**
      * Process the export.
-     * @return self
      */
-    public function process();
+    public function process(): WriterInterface;
 }

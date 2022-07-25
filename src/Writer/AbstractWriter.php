@@ -88,12 +88,12 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $this->setServiceLocator($services);
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function getExtension()
+    public function getExtension(): ?string
     {
         return $this->extension;
     }
@@ -104,18 +104,18 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return true;
     }
 
-    public function getLastErrorMessage()
+    public function getLastErrorMessage(): ?string
     {
         return $this->lastErrorMessage;
     }
 
-    public function setLogger(Logger $logger)
+    public function setLogger(Logger $logger): WriterInterface
     {
         $this->logger = $logger;
         return $this;
     }
 
-    public function setJob(Job $job)
+    public function setJob(Job $job): WriterInterface
     {
         $this->job = $job;
         return $this;
@@ -148,7 +148,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $this;
     }
 
-    abstract public function process();
+    abstract public function process(): WriterInterface;
 
     /**
      * Check or create the destination folder.
