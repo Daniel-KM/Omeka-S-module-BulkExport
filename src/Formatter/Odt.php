@@ -42,7 +42,7 @@ class Odt extends AbstractFieldsFormatter
             // TODO Use Omeka factory for temp files.
             // TODO Use the method openToBrowser() too.
             // "php://temp" doesn't seem to work.
-            : tempnam($tempDir, 'omk_export_');
+            : @tempnam($tempDir, 'omk_bke_');
         $this->initializeOpenDocumentText();
         return $this;
     }

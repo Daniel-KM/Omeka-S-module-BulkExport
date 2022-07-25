@@ -184,7 +184,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         // TODO Use Omeka factory for temp files.
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
-        $this->filepath = tempnam($tempDir, 'omk_export_');
+        $this->filepath = @tempnam($tempDir, 'omk_bke_');
         return $this;
     }
 
