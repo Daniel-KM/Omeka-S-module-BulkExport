@@ -278,8 +278,11 @@ trait MetadataToStringTrait
         return $v;
     }
 
-    protected function stringifyResource(AbstractResourceEntityRepresentation $resource, array $params): string
+    protected function stringifyResource(?AbstractResourceEntityRepresentation $resource, array $params): string
     {
+        if (!$resource) {
+            return '';
+        }
         switch ($params['format_resource']) {
             case 'id':
                 $v = (string) $resource->id();
