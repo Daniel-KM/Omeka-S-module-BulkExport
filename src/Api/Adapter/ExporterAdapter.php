@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Api\Adapter;
 
 use BulkExport\Api\Representation\ExporterRepresentation;
@@ -15,8 +16,16 @@ class ExporterAdapter extends AbstractEntityAdapter
     protected $sortFields = [
         'id' => 'id',
         'label' => 'label',
-        'writer_class' => 'writerClass',
         'owner_id' => 'ownerId',
+        'writer_class' => 'writerClass',
+    ];
+
+    protected $scalarFields = [
+        'id' => 'id',
+        'label' => 'label',
+        'owner' => 'owner',
+        'writer_class' => 'writerClass',
+        'writer_config' => 'writerConfig',
     ];
 
     public function getResourceName()

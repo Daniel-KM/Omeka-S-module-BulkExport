@@ -17,6 +17,19 @@ class ExportAdapter extends AbstractEntityAdapter
         'id' => 'id',
         'exporter_id' => 'exporterId',
         'owner_id' => 'ownerId',
+        'job_id' => 'job',
+        'comment' => 'comment',
+        'filename' => 'filename',
+    ];
+
+    protected $scalarFields = [
+        'id' => 'id',
+        'exporter' => 'exporter',
+        'owner' => 'owner',
+        'job' => 'job',
+        'comment' => 'comment',
+        'writer_params' => 'writerParams',
+        'filename' => 'filename',
     ];
 
     public function getResourceName()
