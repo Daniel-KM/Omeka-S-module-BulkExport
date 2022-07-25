@@ -31,6 +31,8 @@ trait ResourceFieldsTrait
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
         $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
 
+        $this->options['resource_types'] = $this->options['resource_types'] ?: [];
+
         if ($listFieldNames) {
             $this->fieldNames = $listFieldNames;
             $this->fieldNames = $this->managePropertiesList($listFieldNames);
