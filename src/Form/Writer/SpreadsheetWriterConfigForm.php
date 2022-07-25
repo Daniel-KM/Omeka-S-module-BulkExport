@@ -21,7 +21,7 @@ It is recommended to use a character that is never used, like "|", or a random s
                 ],
                 'attributes' => [
                     'id' => 'separator',
-                    'value' => '',
+                    'value' => '|',
                 ],
             ])
             ->appends()
