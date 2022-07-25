@@ -17,7 +17,9 @@ trait ResourceTypesSelectTrait
             ],
             'attributes' => [
                 'id' => 'resource_types',
-                'value' => ['items'],
+                'value' => [
+                    'o:Item',
+                ],
                 'required' => false,
                 'multiple' => true,
                 'class' => 'chosen-select',
