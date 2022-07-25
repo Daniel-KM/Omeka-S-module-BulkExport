@@ -8,6 +8,7 @@ use Laminas\View\Helper\AbstractHelper;
  * @see \AdvancedResourceTemplate\\View\Helper\CustomVocabBaseType
  * @see \BulkEdit\View\Helper\CustomVocabBaseType
  * @see \BulkExport\View\Helper\CustomVocabBaseType
+ * @see \BulkImport\View\Helper\CustomVocabBaseType
  * Used in Contribute.
  */
 class CustomVocabBaseType extends AbstractHelper

@@ -10,6 +10,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @see \AdvancedResourceTemplate\\View\Helper\CustomVocabBaseType
  * @see \BulkEdit\View\Helper\CustomVocabBaseType
  * @see \BulkExport\View\Helper\CustomVocabBaseType
+ * @see \BulkImport\View\Helper\CustomVocabBaseType
  * Used in Contribute.
  */
 class CustomVocabBaseTypeFactory implements FactoryInterface
