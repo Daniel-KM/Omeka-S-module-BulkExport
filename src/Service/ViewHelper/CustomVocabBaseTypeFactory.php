@@ -7,7 +7,10 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Copy of \AdvancedResourceTemplate\View\Helper\CustomVocabBaseType
+ * @see \AdvancedResourceTemplate\\View\Helper\CustomVocabBaseType
+ * @see \BulkEdit\View\Helper\CustomVocabBaseType
+ * @see \BulkExport\View\Helper\CustomVocabBaseType
+ * Used in Contribute.
  */
 class CustomVocabBaseTypeFactory implements FactoryInterface
 {

@@ -20,6 +20,7 @@ class SiteSettingsFieldset extends Fieldset
     public function init(): void
     {
         $this
+            ->setAttribute('id', 'bulk-export')
             ->add([
                 'name' => 'bulkexport_limit',
                 'type' => Element\Number::class,

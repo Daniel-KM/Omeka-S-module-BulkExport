@@ -41,7 +41,7 @@ return [
         ],
         'factories' => [
             'bulkExporters' => Service\ViewHelper\BulkExportersFactory::class,
-            // Copy of AdvancedResourceTemplate.
+            // Copy from AdvancedResourceTemplate. Copy in BulkExport and BulkEdit. Used in Contribute.
             'customVocabBaseType' => Service\ViewHelper\CustomVocabBaseTypeFactory::class,
         ],
     ],
@@ -437,6 +437,7 @@ return [
                 'properties_small',
             ],
             'bulkexport_metadata_exclude' => [
+                'o:owner',
                 'properties_large',
                 'extracttext:extracted_text',
             ],

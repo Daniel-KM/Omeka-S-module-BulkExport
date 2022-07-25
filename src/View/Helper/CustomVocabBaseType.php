@@ -5,7 +5,10 @@ namespace BulkExport\View\Helper;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * Copy of \AdvancedResourceTemplate\View\Helper\CustomVocabBaseType
+ * @see \AdvancedResourceTemplate\\View\Helper\CustomVocabBaseType
+ * @see \BulkEdit\View\Helper\CustomVocabBaseType
+ * @see \BulkExport\View\Helper\CustomVocabBaseType
+ * Used in Contribute.
  */
 class CustomVocabBaseType extends AbstractHelper
 {
