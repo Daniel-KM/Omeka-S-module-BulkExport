@@ -119,7 +119,9 @@ class Module extends AbstractModule
 
     protected function preInstall(): void
     {
-        $config = $this->getServiceLocator()->get('Config');
+        $services = $this->getServiceLocator();
+
+        $config = $services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
             $message = new PsrMessage(
@@ -128,16 +130,40 @@ class Module extends AbstractModule
             );
             throw new ModuleCannotInstallException((string) $message);
         }
-        // The version of Box/Spout should be >= 3.0, but there is no version
-        // inside the library, so check against a class.
-        // This check is needed, because CSV Import still uses version 2.7.
-        // TODO Re-enable the check when patch https://github.com/omeka-s-modules/CSVImport/pull/182 will be included.
-        /*
-        if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
-            $message = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
-            throw new ModuleCannotInstallException((string) $message);
+
+        // The version of Box/Spout should be >= 3.0, so check modules that use
+        // it. Furthermore, check other modules for compatibility.
+        $modules = [
+            ['name' => 'Generic', 'version' => '3.3.34', 'required' => false],
+            ['name' => 'BulkImport', 'version' => '3.3.21', 'required' => false],
+            ['name' => 'CSVImport', 'version' => '2.3.0', 'required' => false],
+            ['name' => 'CustomVocab', 'version' => '1.6.0', 'required' => false],
+        ];
+        foreach ($modules as $moduleData) {
+            if (method_exists($this, 'checkModuleAvailability')) {
+                $this->checkModuleAvailability($moduleData['name'], $moduleData['version'], $moduleData['required'], true);
+            } else {
+                // @todo Adaptation from Generic method, to be removed in next version.
+                $moduleName = $moduleData['name'];
+                $version = $moduleData['version'];
+                $required = $moduleData['required'];
+                $module = $services->get('Omeka\ModuleManager')->getModule($moduleName);
+                if (!$module || !$this->isModuleActive($moduleName)) {
+                    if (!$required) {
+                        continue;
+                    }
+                    // Else throw message below (required module).
+                } elseif (!$version || version_compare($module->getIni('version') ?? '', $version, '>=')) {
+                    continue;
+                }
+                $translator = $services->get('MvcTranslator');
+                $message = new \Omeka\Stdlib\Message(
+                    $translator->translate('This module requires the module "%s", version %s or above.'), // @translate
+                    $moduleName, $version
+                );
+                throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+            }
         }
-        */
     }
 
     protected function postInstall(): void
