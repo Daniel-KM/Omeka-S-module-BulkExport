@@ -146,7 +146,7 @@ class BulkExport extends AbstractHelper
                     'query' => $query,
                 ]);
             }
-        } else {
+        } elseif (!empty($firstResource)) {
             $route = $isAdmin ? 'admin/resource-output-id' : 'site/resource-output-id';
             $resourceId = $firstResource->id();
             foreach (array_keys($options['exporters']) as $format) {
