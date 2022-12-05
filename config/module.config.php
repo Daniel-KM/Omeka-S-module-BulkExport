@@ -83,62 +83,6 @@ return [
             'exportFormatter' => Service\ControllerPlugin\ExportFormatterFactory::class,
         ],
     ],
-    // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
-    'navigation' => [
-        'AdminModule' => [
-            'bulk-export' => [
-                'label' => 'Bulk Export', // @translate
-                'route' => 'admin/bulk-export/default',
-                'controller' => 'bulk-export',
-                'resource' => 'BulkExport\Controller\Admin\BulkExport',
-                'class' => 'o-icon- fa-cloud-download-alt',
-                'pages' => [
-                    [
-                        'label' => 'Dashboard', // @translate
-                        'route' => 'admin/bulk-export/default',
-                        'controller' => 'bulk-export',
-                        'resource' => 'BulkExport\Controller\Admin\BulkExport',
-                        'pages' => [
-                            [
-                                'route' => 'admin/bulk-export/id',
-                                'controller' => 'exporter',
-                                'visible' => false,
-                            ],
-                        ],
-                    ],
-                    [
-                        'label' => 'Past Exports', // @translate
-                        'route' => 'admin/bulk-export/default',
-                        'controller' => 'export',
-                        'action' => 'browse',
-                        'pages' => [
-                            [
-                                'route' => 'admin/bulk-export/id',
-                                'controller' => 'export',
-                                'visible' => false,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        'BulkExport' => [
-            [
-                'label' => 'Params', // @translate
-                'route' => 'admin/bulk-export/id',
-                'controller' => 'export',
-                'action' => 'show',
-                'useRouteMatch' => true,
-            ],
-            [
-                'label' => 'Logs', // @translate
-                'route' => 'admin/bulk-export/id',
-                'controller' => 'export',
-                'action' => 'logs',
-                'useRouteMatch' => true,
-            ],
-        ],
-    ],
     'router' => [
         'routes' => [
             'site' => [
@@ -347,6 +291,62 @@ return [
             ],
         ],
     ],
+    // TODO Merge bulk navigation and route with module BulkImport (require a main page?).
+    'navigation' => [
+        'AdminModule' => [
+            'bulk-export' => [
+                'label' => 'Bulk Export', // @translate
+                'route' => 'admin/bulk-export/default',
+                'controller' => 'bulk-export',
+                'resource' => 'BulkExport\Controller\Admin\BulkExport',
+                'class' => 'o-icon- fa-cloud-download-alt',
+                'pages' => [
+                    [
+                        'label' => 'Dashboard', // @translate
+                        'route' => 'admin/bulk-export/default',
+                        'controller' => 'bulk-export',
+                        'resource' => 'BulkExport\Controller\Admin\BulkExport',
+                        'pages' => [
+                            [
+                                'route' => 'admin/bulk-export/id',
+                                'controller' => 'exporter',
+                                'visible' => false,
+                            ],
+                        ],
+                    ],
+                    [
+                        'label' => 'Past Exports', // @translate
+                        'route' => 'admin/bulk-export/default',
+                        'controller' => 'export',
+                        'action' => 'browse',
+                        'pages' => [
+                            [
+                                'route' => 'admin/bulk-export/id',
+                                'controller' => 'export',
+                                'visible' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'BulkExport' => [
+            [
+                'label' => 'Params', // @translate
+                'route' => 'admin/bulk-export/id',
+                'controller' => 'export',
+                'action' => 'show',
+                'useRouteMatch' => true,
+            ],
+            [
+                'label' => 'Logs', // @translate
+                'route' => 'admin/bulk-export/id',
+                'controller' => 'export',
+                'action' => 'logs',
+                'useRouteMatch' => true,
+            ],
+        ],
+    ],
     // Writers are designed for job processing and formatters for instant process.
     'bulk_export' => [
         // TODO Normalize writers as manageable or deprecate them.
@@ -359,6 +359,8 @@ return [
         ],
     ],
     // Should be root key, so services are loaded automatically.
+    // TODO Rss/Atom  feeds
+    // TODO Rename the key "fomatters" or genericize.
     'formatters' => [
         'factories' => [
             Formatter\Csv::class => Service\Formatter\FormatterFactory::class,

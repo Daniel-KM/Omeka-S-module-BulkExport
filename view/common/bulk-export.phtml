@@ -16,6 +16,7 @@ if (!count($urls)) return;
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
