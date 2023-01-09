@@ -37,7 +37,7 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport
             ? $translate('Download as text')
             : sprintf($translate('Download as %s'), $label));
         ?>
-        <li><a download="download" class="download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labelFormat) ?>"><?= $label ?></a></li>
+        <li><a download="download" class="exporter download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labelFormat) ?>"><?= $label ?></a></li>
     <?php endforeach; ?>
     </ul>
 </div>
