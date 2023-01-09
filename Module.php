@@ -321,24 +321,31 @@ class Module extends AbstractModule
 
     public function handleMainSettingsFilters(Event $event): void
     {
-        $event->getParam('inputFilter')->get('bulkexport')
-            ->add([
-                'name' => 'bulkexport_formatters',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'bulkexport_metadata',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'bulkexport_metadata_exclude',
-                'required' => false,
-            ]);
+        $inputFilter = version_compare(\Omeka\Module::VERSION, '4', '<')
+            ? $event->getParam('inputFilter')->get('bulkexport')
+            : $event->getParam('inputFilter');
+        $inputFilter
+                ->add([
+                    'name' => 'bulkexport_formatters',
+                    'required' => false,
+                ])
+                ->add([
+                    'name' => 'bulkexport_metadata',
+                    'required' => false,
+                ])
+                ->add([
+                    'name' => 'bulkexport_metadata_exclude',
+                    'required' => false,
+                ]);
+            return;
     }
 
     public function handleSiteSettingsFilters(Event $event): void
     {
-        $event->getParam('inputFilter')->get('bulkexport')
+        $inputFilter = version_compare(\Omeka\Module::VERSION, '4', '<')
+            ? $event->getParam('inputFilter')->get('bulkexport')
+            : $event->getParam('inputFilter');
+        $inputFilter
             ->add([
                 'name' => 'bulkexport_formatters',
                 'required' => false,
