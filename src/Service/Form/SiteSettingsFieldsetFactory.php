@@ -17,7 +17,7 @@ class SiteSettingsFieldsetFactory implements FactoryInterface
             $formatters[$formatter] = $formatterManager->get($formatter)->getLabel();
         }
 
-        $fieldset = new SiteSettingsFieldset(null, $options);
+        $fieldset = new SiteSettingsFieldset(null, $options ?? []);
         return $fieldset
             ->setFormatters($formatters);
     }

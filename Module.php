@@ -20,7 +20,9 @@ class Module extends AbstractModule
 {
     const NAMESPACE = __NAMESPACE__;
 
-    protected $dependency = 'Log';
+    protected $dependencies = [
+        'Log',
+    ];
 
     public function init(ModuleManager $moduleManager): void
     {
@@ -433,7 +435,7 @@ class Module extends AbstractModule
     protected function checkDestinationDir(string $dirPath): ?string
     {
         if (file_exists($dirPath)) {
-            if (!is_dir($dirPath) || !is_readable($dirPath) || !is_writable($dirPath)) {
+            if (!is_dir($dirPath) || !is_readable($dirPath) || !is_writeable($dirPath)) {
                 $this->getServiceLocator()->get('Omeka\Logger')->err(
                     'The directory "{path}" is not writeable.', // @translate
                     ['path' => $dirPath]

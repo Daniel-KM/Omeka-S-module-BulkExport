@@ -84,7 +84,7 @@ TRUNCATE TABLE bulk_export;
 TRUNCATE TABLE bulk_exporter;
 SET FOREIGN_KEY_CHECKS = 1;
 SQL;
-        $conn->exec($sql);
+        $conn->executeStatement($sql);
         $this->entityManager->clear();
     }
 

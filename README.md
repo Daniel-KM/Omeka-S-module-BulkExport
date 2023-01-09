@@ -59,7 +59,7 @@ disposition config to display the list of exporters.
 
 ### Helper
 
-The view helper `$this->bulkExport($resourcesOridsOrQuery, $options)` can be
+The view helper `$this->bulkExport($resourcesOrIdsOrQuery, $options)` can be
 used anywhere else.
 
 ### Manual creation of export urls
@@ -176,7 +176,7 @@ by [Biblibre].
 [Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
-[installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
+[Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [CSV Import]: https://github.com/omeka-s-modules/CSVImport
 [Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
 [this patch]: https://github.com/omeka-s-modules/CSVImport/pull/182

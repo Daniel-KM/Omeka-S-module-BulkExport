@@ -17,7 +17,7 @@ class SettingsFieldsetFactory implements FactoryInterface
             $formatters[$formatter] = $formatterManager->get($formatter)->getLabel();
         }
 
-        $fieldset = new SettingsFieldset(null, $options);
+        $fieldset = new SettingsFieldset(null, $options ?? []);
         return $fieldset
             ->setFormatters($formatters);
     }

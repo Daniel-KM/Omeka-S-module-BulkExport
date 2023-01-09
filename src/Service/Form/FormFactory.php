@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Service\Form;
 
 use Interop\Container\ContainerInterface;
@@ -8,7 +9,7 @@ class FormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $services, $requestedName, array $options = null)
     {
-        $form = new $requestedName(null, $options);
+        $form = new $requestedName(null, $options ?? []);
         return $form
             ->setServiceLocator($services);
     }
