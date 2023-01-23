@@ -1,8 +1,11 @@
 {
     "require": {
         "box/spout": "^3.3",
-        "phpoffice/phpword": "^0.18",
-        "doctrine/inflector": "2.0.4"
+        "phpoffice/phpword": "^0.18"
+    },
+    "replace": {
+        "doctrine/inflector": "*",
+        "laminas/laminas-escaper": "*"
     },
     "require-dev": {
         "biblibre/omeka-s-test-helper": "dev-master"
