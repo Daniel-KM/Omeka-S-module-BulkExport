@@ -159,7 +159,7 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019-2022 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2019-2023 (see [Daniel-KM] on GitLab)
 
 This module was initially inspired by the [Omeka Classic] [Export plugin], built
 by [Biblibre].
