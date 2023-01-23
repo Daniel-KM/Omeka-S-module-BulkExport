@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Form\Writer;
 
 use Omeka\Form\Element\PropertySelect;
@@ -12,6 +13,7 @@ trait MetadataSelectTrait
                 'name' => $name,
                 'type' => PropertySelect::class,
                 'options' => [
+                    'element_group' => 'export',
                     'label' => 'Metadata', // @translate
                     'info' => 'If empty, all used properties will be returned.', // @translate
                     'term_as_value' => true,
@@ -28,6 +30,7 @@ trait MetadataSelectTrait
                 'name' => $name . '_exclude',
                 'type' => PropertySelect::class,
                 'options' => [
+                    'element_group' => 'export',
                     'label' => 'Metadata to exclude', // @translate
                     'info' => 'It is recommended to remove big fields from the list of properties, in particular extracted text.', // @translate
                     'term_as_value' => true,
