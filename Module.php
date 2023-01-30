@@ -133,12 +133,8 @@ class Module extends AbstractModule
             throw new ModuleCannotInstallException((string) $message);
         }
 
-        // The version of Box/Spout should be >= 3.0, so check modules that use
-        // it. Furthermore, check other modules for compatibility.
         $modules = [
             ['name' => 'Generic', 'version' => '3.4.41', 'required' => false],
-            ['name' => 'BulkImport', 'version' => '3.4.38', 'required' => false],
-            ['name' => 'CSVImport', 'version' => '2.3.0', 'required' => false],
             ['name' => 'CustomVocab', 'version' => '1.6.0', 'required' => false],
         ];
         foreach ($modules as $moduleData) {

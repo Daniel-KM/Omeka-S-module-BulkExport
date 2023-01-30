@@ -2,10 +2,10 @@
 
 namespace BulkExport\Writer;
 
-use Box\Spout\Common\Type;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Log\Stdlib\PsrMessage;
+use OpenSpout\Common\Type;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
 class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 {
@@ -49,14 +49,6 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
                 'To process export of "{label}", the php extensions "zip" and "xml" are required.', // @translate
                 ['label' => $this->getLabel()]
             );
-            return false;
-        }
-        // The version of Box/Spout should be >= 3.0, but there is no version
-        // inside php, so check against a new file (factory uses class outside).
-        // This check is needed, because CSV Import still uses version 2.7 (stable version).
-        // @see https://github.com/omeka-s-modules/CSVImport/pull/182
-        if (WriterEntityFactory::createODSWriter() instanceof \Box\Spout\Writer\AbstractWriter) {
-            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme.'; // @translate
             return false;
         }
 

@@ -2,14 +2,15 @@
 
 namespace BulkExport\Writer;
 
-use Box\Spout\Common\Type;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use BulkExport\Form\Writer\CsvWriterConfigForm;
+use OpenSpout\Common\Type;
 
 /**
- * Box Spout Spreadshet writer doesn't support escape for csv (even if it
+ * OpenSpout Spreadshet writer doesn't support escape for csv (even if it
  * manages end of line and encoding). So the basic file handler is used for csv.
  * The format tsv uses the Spout writer, because there is no escape.
+ *
+ * @todo Check if OpenSpout supports escape for csv.
  */
 class CsvWriter extends AbstractSpreadsheetWriter
 {
@@ -56,15 +57,6 @@ class CsvWriter extends AbstractSpreadsheetWriter
     ];
 
     protected $spreadsheetType = Type::CSV;
-
-    public function isValid(): bool
-    {
-        if (WriterEntityFactory::createODSWriter() instanceof \Box\Spout\Writer\AbstractWriter) {
-            $this->lastErrorMessage = 'The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme.'; // @translate
-            return false;
-        }
-        return parent::isValid();
-    }
 
     protected function initializeOutput()
     {

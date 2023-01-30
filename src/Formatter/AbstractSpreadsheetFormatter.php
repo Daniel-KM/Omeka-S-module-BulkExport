@@ -15,14 +15,14 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
     protected $prependFieldNames = true;
 
     /**
-     * @var \Box\Spout\Writer\WriterInterface
+     * @var \OpenSpout\Writer\WriterInterface
      */
     protected $spreadsheetWriter;
 
     /**
      * Type of spreadsheet (default to csv).
      *
-     * @var \Box\Spout\Common\Type
+     * @var \OpenSpout\Common\Type
      */
     protected $spreadsheetType;
 

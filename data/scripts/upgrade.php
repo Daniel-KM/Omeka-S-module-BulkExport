@@ -109,16 +109,6 @@ SQL;
     $connection->executeStatement($sql);
 }
 
-if (version_compare($oldVersion, '3.3.12.13', '<')) {
-    // TODO Re-enable the check when patch https://github.com/omeka-s-modules/CSVImport/pull/182 will be included.
-    /*
-    if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
-        $message = 'The dependency Box/Spout version should be >= 3.0. See readme.'; // @translate
-        throw new \Omeka\Module\Exception\ModuleCannotInstallException($message);
-    }
-    */
-}
-
 if (version_compare($oldVersion, '3.3.13.0', '<')) {
     $sqls = <<<'SQL'
 ALTER TABLE `bulk_export`

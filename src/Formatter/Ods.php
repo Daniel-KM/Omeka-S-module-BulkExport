@@ -2,9 +2,9 @@
 
 namespace BulkExport\Formatter;
 
-use Box\Spout\Common\Type;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Log\Stdlib\PsrMessage;
+use OpenSpout\Common\Type;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
 class Ods extends AbstractSpreadsheetFormatter
 {
@@ -25,19 +25,6 @@ class Ods extends AbstractSpreadsheetFormatter
             $this->hasError = true;
             return $this;
         }
-        // The version of Box/Spout should be >= 3.0, but there is no version
-        // inside the library, so check against a class.
-        // This check is needed, because CSV Import still uses version 2.7.
-        // TODO Re-enable the check when patch https://github.com/omeka-s-modules/CSVImport/pull/182 will be included.
-        /*
-        if (class_exists(\Box\Spout\Reader\ReaderFactory::class)) {
-            $this->services->get('Omeka\Logger')->err(
-                'The dependency Box/Spout version should be >= 3.0. See readme.' // @translate
-            );
-            $this->hasError = true;
-            return $this;
-        }
-        */
 
         $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
         if (!$this->createDir($tempDir)) {
@@ -67,7 +54,7 @@ class Ods extends AbstractSpreadsheetFormatter
             $this->spreadsheetWriter
                 ->setTempFolder($tempDir)
                 ->openToFile($this->filepath);
-        } catch (\Box\Spout\Common\Exception\IOException $e) {
+        } catch (\OpenSpout\Common\Exception\IOException $e) {
             $this->hasError = true;
             $this->services->get('Omeka\Logger')->err(new PsrMessage(
                 'Unable to open output: {error}.', // @translate

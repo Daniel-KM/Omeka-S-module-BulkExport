@@ -2,9 +2,9 @@
 
 namespace BulkExport\Writer;
 
-use Box\Spout\Common\Type;
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Laminas\Form\Form;
+use OpenSpout\Common\Type;
 
 class TsvWriter extends CsvWriter
 {

@@ -2,9 +2,9 @@
 
 namespace BulkExport\Writer;
 
-use Box\Spout\Common\Type;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+use OpenSpout\Common\Type;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
 abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 {
@@ -25,14 +25,14 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
     protected $prependFieldNames = true;
 
     /**
-     * @var \Box\Spout\Writer\WriterInterface
+     * @var \OpenSpout\Writer\WriterInterface
      */
     protected $spreadsheetWriter;
 
     /**
      * Type of spreadsheet (default to csv).
      *
-     * @var \Box\Spout\Common\Type
+     * @var \OpenSpout\Common\Type
      */
     protected $spreadsheetType;
 

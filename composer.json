@@ -1,6 +1,6 @@
 {
     "require": {
-        "box/spout": "^3.3",
+        "openspout/openspout": "^3.7",
         "phpoffice/phpword": "^0.18"
     },
     "replace": {
