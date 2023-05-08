@@ -18,6 +18,11 @@ trait ResourceFieldsTrait
     protected $fieldLabels;
 
     /**
+     * @var string
+     */
+    protected $labelFormatFields = 'name';
+
+    /**
      * @param array $listFieldNames Fields to prepare instead of default list.
      * @param array $listFieldsToExclude Fields to exclude
      * @return self
@@ -144,19 +149,19 @@ trait ResourceFieldsTrait
         return $listFieldNames;
     }
 
-    protected function prepareFieldLabels()
+    protected function prepareFieldLabels(bool $useFirstTemplateProperty = false)
     {
         if (is_array($this->fieldLabels)) {
             return $this;
         }
         $this->fieldLabels = [];
         foreach ($this->fieldNames as $fieldName) {
-            $this->fieldLabels[] = $this->getFieldLabel($fieldName);
+            $this->fieldLabels[] = $this->getFieldLabel($fieldName, $useFirstTemplateProperty);
         }
         return $this;
     }
 
-    protected function getFieldLabel($fieldName)
+    protected function getFieldLabel($fieldName, bool $useFirstTemplateProperty = false): string
     {
         static $mapping;
 
@@ -202,7 +207,7 @@ trait ResourceFieldsTrait
             $base = strtok($fieldName, '[');
             $property = trim(strok('['), ' []');
             $second = $mapping[$property]
-                ?? $this->translateProperty($property);
+                ?? ($useFirstTemplateProperty ? $this->translatePropertyTemplate($fieldName) : $this->translateProperty($fieldName));
             switch ($base) {
                 case 'oa:hasBody':
                     return sprintf(
@@ -215,8 +220,7 @@ trait ResourceFieldsTrait
                         $second
                     );
                 default:
-                    $first = $mapping[$base]
-                        ?? $base;
+                    $first = $mapping[$base] ?? $base;
                     return sprintf(
                         '%1$s: %2$s', // @translate
                         $first,
@@ -225,7 +229,7 @@ trait ResourceFieldsTrait
             }
         }
 
-        return $this->translateProperty($fieldName);
+        return $useFirstTemplateProperty ? $this->translatePropertyTemplate($fieldName) : $this->translateProperty($fieldName);
     }
 
     /**

@@ -23,6 +23,11 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         'empty_fields' => false,
     ];
 
+    /**
+     * Useful only for spreadsheet header.
+     *
+     * @var bool
+     */
     protected $prependFieldNames = false;
 
     public function format($resources, $output = null, array $options = []): FormatterInterface
@@ -48,9 +53,11 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         }
 
         if ($this->prependFieldNames) {
-            if (isset($this->options['format_fields']) && $this->options['format_fields'] === 'label') {
+            $formatFields = $this->options['format_fields'] ?? 'name';
+            $this->labelFormatFields = $formatFields;
+            if ($formatFields === 'label' || $formatFields === 'template') {
                 $this
-                    ->prepareFieldLabels()
+                    ->prepareFieldLabels($formatFields === 'template')
                     ->writeFields($this->fieldLabels);
             } else {
                 $this

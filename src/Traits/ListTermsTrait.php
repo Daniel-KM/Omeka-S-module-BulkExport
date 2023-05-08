@@ -25,6 +25,11 @@ trait ListTermsTrait
     protected $resourceClassLabelsByTerm;
 
     /**
+     * @var array
+     */
+    protected $propertyTemplateLabelsByTerm;
+
+    /**
      * To be prepared ouside.
      *
      * @var \Laminas\Mvc\I18n\Translator
@@ -193,9 +198,6 @@ trait ListTermsTrait
         return $this->propertyLabelsByTerm;
     }
 
-    /**
-     * @return array
-     */
     protected function getResourceClassLabelsByTerm(): array
     {
         if ($this->resourceClassLabelsByTerm) {
@@ -224,19 +226,55 @@ trait ListTermsTrait
         return $this->resourceClassLabelsByTerm;
     }
 
+    /**
+     * Only properties with a template label are returned.
+     */
+    protected function getPropertyTemplateLabelsByTerm(): array
+    {
+        if ($this->propertyTemplateLabelsByTerm) {
+            return $this->propertyTemplateLabelsByTerm;
+        }
+
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $qb = $connection->createQueryBuilder();
+        $qb
+            ->select(
+                "DISTINCT CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
+                'resource_template_property.alternate_label as label'
+            )
+            ->from('resource_template_property', 'resource_template_property')
+            ->innerJoin('resource_template_property', 'property', 'property', 'property.id = resource_template_property.property_id')
+            ->innerJoin('property', 'vocabulary', 'vocabulary', 'vocabulary.id = property.vocabulary_id')
+            ->where('alternate_label IS NOT NULL')
+            ->where('alternate_label != ""')
+            ->addOrderBy('property.id', 'asc')
+        ;
+        $this->propertyTemplateLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
+        return $this->propertyTemplateLabelsByTerm;
+    }
+
     protected function translateProperty($property): string
     {
         $labels = $this->getPropertyLabelsByTerm();
-        return ucfirst(isset($labels[$property])
-            ? $this->translator->translate($labels[$property])
-            : $property);
+        return isset($labels[$property])
+            ? ucfirst($this->translator->translate($labels[$property]))
+            : $property;
     }
 
     protected function translateResourceClass($resourceClass): string
     {
         $labels = $this->getResourceClassLabelsByTerm();
-        return ucfirst(isset($labels[$resourceClass])
-            ? $this->translator->translate($labels[$resourceClass])
-            : $resourceClass);
+        return isset($labels[$resourceClass])
+            ? ucfirst($this->translator->translate($labels[$resourceClass]))
+            : $resourceClass;
+    }
+
+    protected function translatePropertyTemplate($property): string
+    {
+        $labels = $this->getPropertyTemplateLabelsByTerm();
+        return isset($labels[$property])
+            ? ucfirst($labels[$property])
+            : $this->translateProperty($property);
     }
 }

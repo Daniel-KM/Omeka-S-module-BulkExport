@@ -61,6 +61,7 @@ class SettingsFieldset extends Fieldset
                     'value_options' => [
                         'name' => 'Rdf names', // @translate
                         'label' => 'Labels', // @translate
+                        'template' => 'First template alternative name', // @translate
                     ],
                 ],
                 'attributes' => [
