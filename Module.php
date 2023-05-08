@@ -134,7 +134,7 @@ class Module extends AbstractModule
         }
 
         $modules = [
-            ['name' => 'Generic', 'version' => '3.4.41', 'required' => false],
+            ['name' => 'Generic', 'version' => '3.4.43', 'required' => false],
             ['name' => 'CustomVocab', 'version' => '1.6.0', 'required' => false],
         ];
         foreach ($modules as $moduleData) {
