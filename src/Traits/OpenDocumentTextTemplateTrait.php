@@ -88,7 +88,7 @@ trait OpenDocumentTextTemplateTrait
             }
             $section->addText($fieldName, 'recordLabel', 'pRecordLabel');
             foreach ($fieldValues as $fieldValue) {
-                $fieldValue = strip_tags($fieldValue);
+                $fieldValue = strip_tags((string) $fieldValue);
                 if (mb_strlen($fieldValue) < 1000) {
                     $section->addText($fieldValue, 'recordMetadata', 'pRecordMetadata');
                 } else {

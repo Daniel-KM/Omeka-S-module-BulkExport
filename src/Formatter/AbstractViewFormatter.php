@@ -32,7 +32,7 @@ abstract class AbstractViewFormatter extends AbstractFormatter
         }
 
         $viewHelpers = $this->services->get('ViewHelperManager');
-        $isViewHelper = $viewHelpers->has($this->converterName);
+        $isViewHelper = $this->converterName && $viewHelpers->has($this->converterName);
         if ($isViewHelper) {
             $this->converter = $viewHelpers->get($this->converterName);
         } else {
