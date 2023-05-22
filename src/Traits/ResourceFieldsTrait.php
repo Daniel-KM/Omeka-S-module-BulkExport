@@ -280,4 +280,42 @@ trait ResourceFieldsTrait
         ];
         return $mapping[$jsonResourceType] ?? null;
     }
+
+    protected function isSingleField($fieldName): bool
+    {
+        // TODO The single fields may vary according to resource type.
+        $singles = [
+            'o:id',
+            'o:resource_template',
+            'o:resource_class',
+            'o:owner',
+            'o:is_public',
+            'o:is_open',
+            /*
+            'o:resource',
+            'o:resource[o:id]',
+            'o:resource[dcterms:identifier]',
+            'o:resource[dcterms:title]',
+            'o:item_set',
+            'o:item_set[o:id]',
+            'o:item_set[dcterms:title]',
+            'o:item',
+            'o:item[o:id]',
+            'o:item[dcterms:identifier]',
+            'o:item[dcterms:title]',
+            'o:media',
+            'o:media[o:id]',
+            'o:media[file]',
+            'o:media[source]',
+            'o:media[media_type]',
+            'o:media[size]',
+            'o:media[original_url]',
+            'o:annotation',
+            */
+            'o:asset',
+            'url',
+            'resource_type',
+        ];
+        return in_array($fieldName, $singles);
+    }
 }
