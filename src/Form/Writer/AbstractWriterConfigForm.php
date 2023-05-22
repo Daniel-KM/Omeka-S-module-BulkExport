@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Form\Writer;
 
 use BulkExport\Traits\ServiceLocatorAwareTrait;
