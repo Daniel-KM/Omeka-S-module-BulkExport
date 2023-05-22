@@ -210,7 +210,7 @@ class Export extends AbstractJob
 
         if (empty($site)) {
             $response = $this->api()->search('sites', ['limit' => 1]);
-            $site = $response ? $response->getContent()[0] : null;
+            $site = $response ? reset($response->getContent()) : null;
             $siteSlug = $site ? $site->slug() : '***';
         }
 
