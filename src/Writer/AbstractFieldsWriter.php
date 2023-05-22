@@ -30,7 +30,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'resource_types',
         'metadata',
         'metadata_exclude',
-        // TODO Remove query from the config?
+        // Keep query in the config to simplify regular export.
         'query',
     ];
 

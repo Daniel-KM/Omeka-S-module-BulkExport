@@ -352,6 +352,7 @@ return [
         // TODO Normalize writers as manageable or deprecate them.
         'writers' => [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
+            Writer\JsonTableWriter::class => Writer\JsonTableWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
             Writer\OpenDocumentTextWriter::class => Writer\OpenDocumentTextWriter::class,
             Writer\TextWriter::class => Writer\TextWriter::class,
