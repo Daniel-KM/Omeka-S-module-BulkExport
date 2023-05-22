@@ -103,6 +103,7 @@ Notes
 TODO
 ----
 
+- [ ] Remove Writers and factorize with Formatters.
 - [ ] Select resources like in the module ebook.
 - [ ] For spreadsheet, add an option (by default in admin) to set headers with the datatype and the language (so multiple headers for the same property).
 - [x] Rights on exports.
