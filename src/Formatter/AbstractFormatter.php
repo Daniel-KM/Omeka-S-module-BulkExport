@@ -363,7 +363,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->handle = fopen($file, 'w+');
         if (!$this->handle) {
             $this->hasError = true;
-            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+            $this->logger->err(new PsrMessage(
                 'Unable to open output: {error}.', // @translate
                 ['error' => error_get_last()['message']]
             ));
@@ -400,7 +400,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->size = file_put_contents($this->output, $this->content);
         if ($this->size === false) {
             $this->hasError = true;
-            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+            $this->logger->err(new PsrMessage(
                 'Unable to save output to file: {error}.', // @translate
                 ['error' => error_get_last()['message']]
             ));

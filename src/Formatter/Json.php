@@ -2,6 +2,8 @@
 
 namespace BulkExport\Formatter;
 
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
+
 class Json extends AbstractFormatter
 {
     protected $maxDirectJsonEncode = 1000;
@@ -9,7 +11,7 @@ class Json extends AbstractFormatter
     protected $label = 'json';
     protected $extension = 'json';
     protected $responseHeaders = [
-        'Content-type' => 'application/json; charset=utf-8',
+        'Content-type' => 'application/json',
     ];
     protected $defaultOptions = [
         'flags' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_PARTIAL_OUTPUT_ON_ERROR,
@@ -28,24 +30,36 @@ class Json extends AbstractFormatter
         }
 
         if ($this->isId) {
-            $this->resources = [];
-            // TODO Use the entityManager and expression in()?
+            // Process output one by one to avoid memory issue.
+            $this->content = "[\n";
             foreach ($this->resourceIds as $resourceId) {
                 try {
-                    $this->resources[] = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
+                    $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
                     continue;
                 }
+                $this->content .= $this->getDataResource($resource);
+                $this->content .= ",\n";
             }
+            $this->content = rtrim($this->content, ",\n") . "\n]";
+            $this->toOutput();
+            return;
         }
 
-        $this->content = json_encode($this->resources, $this->options['flags']);
+        // Resources are already available.
+        // Process output one by one to avoid memory issue.
+        $this->content = "[\n";
+        foreach ($this->resources as $resource) {
+            $this->content .= $this->getDataResource($resource);
+            $this->content .= ",\n";
+        }
+        $this->content = rtrim($this->content, ",\n") . "\n]";
         $this->toOutput();
     }
 
     protected function processSingle(): void
     {
-        $this->content = json_encode($this->resource, $this->options['flags']);
+        $this->content = $this->getDataResource($this->resource);
         $this->toOutput();
     }
 
@@ -68,11 +82,17 @@ class Json extends AbstractFormatter
             }
             // TODO In the case the user asks something forbidden, there will be one trailing comma.
             $append = $revertedIndex ? ',' : '';
-            fwrite($this->handle, json_encode($resource, $this->options['flags']) . $append . "\n");
+            $jsonResource = $this->getDataResource($resource);
+            fwrite($this->handle, $jsonResource. $append . "\n");
         }
 
         fwrite($this->handle, ']');
 
         $this->finalizeOutput();
+    }
+
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): string
+    {
+        return json_encode($resource, $this->options['flags']);
     }
 }
