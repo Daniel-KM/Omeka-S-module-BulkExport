@@ -106,7 +106,7 @@ class ExportController extends AbstractActionController
         $this->setBrowseDefaults('created');
 
         $severity = $this->params()->fromQuery('severity', Logger::NOTICE);
-        $severity = (int) preg_replace('/[^0-9]+/', '', $severity);
+        $severity = (int) preg_replace('/[^0-9]+/', '', (string) $severity);
         $page = $this->params()->fromQuery('page', 1);
         $query = $this->params()->fromQuery();
         $query['reference'] = 'bulk/export/' . $id;
