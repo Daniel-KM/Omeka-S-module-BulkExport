@@ -353,7 +353,25 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $dataResource;
     }
 
-    protected function countResources()
+    /**
+     * Get all resource ids to be processed by resource type.
+     */
+    protected function getResourceIdsByType(): array
+    {
+        /** @var \Omeka\Api\Manager $api */
+        $api = $this->getServiceLocator()->get('Omeka\ApiManager');
+        $result = [];
+        foreach ($this->options['resource_types'] as $resourceType) {
+            $resource = $this->mapResourceTypeToApiResource($resourceType);
+            $result[$resourceType] = $resource
+                // Some modules manage some arguments, so keep initialize.
+                ? $api->search($resource, $this->options['query'], ['returnScalar' => 'id'])->getContent()
+                : [];
+        }
+        return $result;
+    }
+
+    protected function countResources(): array
     {
         /** @var \Omeka\Api\Manager $api */
         $api = $this->getServiceLocator()->get('Omeka\ApiManager');
@@ -363,7 +381,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             $result[$resourceType] = $resource
                 // Some modules manage some arguments, so keep initialize.
                 ? $api->search($resource, ['limit' => 0] + $this->options['query'], ['finalize' => false])->getTotalResults()
-                : null;
+                : 0;
         }
         return $result;
     }

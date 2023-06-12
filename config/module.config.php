@@ -353,6 +353,7 @@ return [
         // @deprecated To be removed. Only difference with formatters are manual settings or admin/site settings.
         'writers' => [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
+            Writer\GeoJsonWriter::class => Writer\GeoJsonWriter::class,
             Writer\JsonTableWriter::class => Writer\JsonTableWriter::class,
             Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
             Writer\OpenDocumentTextWriter::class => Writer\OpenDocumentTextWriter::class,
