@@ -146,6 +146,7 @@ class OutputController extends AbstractActionController
         $options['format_resource'] = $settings->get('bulkexport_format_resource', 'url_title');
         $options['format_resource_property'] = $settings->get('bulkexport_format_resource_property', 'dcterms:identifier');
         $options['format_uri'] = $settings->get('bulkexport_format_uri', 'uri_label');
+        $options['language'] = $settings->get('bulkexport_language', '');
         $options['template'] = $settings->get('bulkexport_template');
         $options['is_admin_request'] = !$isSiteRequest;
         $options['resource_type'] = $resourceName;

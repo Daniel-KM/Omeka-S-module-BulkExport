@@ -138,6 +138,17 @@ class SettingsFieldset extends Fieldset
                     'value' => 'uri_label',
                 ],
             ])
+            ->add([
+                'name' => 'bulkexport_language',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Language', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_language',
+                ],
+            ])
         ;
         $this->appendMetadataSelect('bulkexport_metadata');
     }

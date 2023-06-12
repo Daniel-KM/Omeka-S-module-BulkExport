@@ -169,6 +169,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
         // Allow to store parent countries names to avoid second level requests.
         static $countries = [];
 
+        $language = $this->options['language'] ?? null;
+
         $xpaths = [
             'uri' => '/rdf:RDF/gn:Feature/@rdf:about',
             // 'altitude' => '',
@@ -178,8 +180,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
             'region' => '/rdf:RDF/gn:Feature/gn:parentCountry/@rdf:resource',
             'name' => [
                 // If there is a language, use it first, else use name.
-                // $language ? '/rdf:RDF/gn:Feature/gn:officialName[@xml:lang="' . $language . '"][1]' : null,
-                // $language ? '/rdf:RDF/gn:Feature/gn:alternateName[@xml:lang="' . $language . '"][1]' : null,
+                $language ? '/rdf:RDF/gn:Feature/gn:officialName[@xml:lang="' . $language . '"][1]' : null,
+                $language ? '/rdf:RDF/gn:Feature/gn:alternateName[@xml:lang="' . $language . '"][1]' : null,
                 '/rdf:RDF/gn:Feature/gn:name[1]',
                 '/rdf:RDF/gn:Feature/gn:shortName[1]',
                 '/rdf:RDF/gn:Feature/gn:officialName[1]',
@@ -240,6 +242,9 @@ class GeoJson extends AbstractFieldsJsonFormatter
     protected function valueFromXPath(DOMXPath $xpath, $queries): ?string
     {
         foreach ((array) $queries as $query) {
+            if ($query === null) {
+                continue;
+            }
             $nodeList = $xpath->query($query);
             if (!$nodeList || !$nodeList->length) {
                 continue;
