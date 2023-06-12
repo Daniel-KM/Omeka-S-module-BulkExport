@@ -96,10 +96,12 @@ class Export extends AbstractJob
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 
         $services = $this->getServiceLocator();
-        $baseUrl = $services->get('Config')['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
+        $config = $services->get('Config');
+        $baseFiles = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $baseUrl = $config['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
         $this->logger->notice(
-            'The export is available at {url}.', // @translate
-            ['url' => $baseUrl . '/bulk_export/' . $params['filename']]
+            'The export is available at {url} (size: {size} bytes).', // @translate
+            ['url' => $baseUrl . '/bulk_export/' . $params['filename'], 'size' => filesize($baseFiles . '/bulk_export/' .$params['filename'])]
         );
     }
 
