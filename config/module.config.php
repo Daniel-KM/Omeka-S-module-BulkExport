@@ -365,6 +365,7 @@ return [
     'formatters' => [
         'factories' => [
             Formatter\Csv::class => Service\Formatter\FormatterFactory::class,
+            Formatter\GeoJson::class => Service\Formatter\FormatterFactory::class,
             Formatter\Json::class => Service\Formatter\FormatterFactory::class,
             Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
             Formatter\JsonTable::class => Service\Formatter\FormatterFactory::class,
@@ -376,6 +377,7 @@ return [
         ],
         'aliases' => [
             'csv' => Formatter\Csv::class,
+            'geojson' => Formatter\GeoJson::class,
             'json' => Formatter\Json::class,
             'json-ld' => Formatter\JsonLd::class,
             'json-table' => Formatter\JsonTable::class,
