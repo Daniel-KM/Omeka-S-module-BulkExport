@@ -125,12 +125,14 @@ class Module extends AbstractModule
 
         $config = $services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $translator = $services->get('MvcTranslator');
+
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
             $message = new PsrMessage(
                 'The directory "{path}" is not writeable.', // @translate
                 ['path' => $basePath . '/bulk_export']
             );
-            throw new ModuleCannotInstallException((string) $message);
+            throw new ModuleCannotInstallException((string) $message->setTranslator($translator));
         }
 
         $modules = [
@@ -154,12 +156,11 @@ class Module extends AbstractModule
                 } elseif (!$version || version_compare($module->getIni('version') ?? '', $version, '>=')) {
                     continue;
                 }
-                $translator = $services->get('MvcTranslator');
-                $message = new \Omeka\Stdlib\Message(
-                    $translator->translate('This module requires the module "%s", version %s or above.'), // @translate
-                    $moduleName, $version
+                $message = new PsrMessage(
+                    'This module requires the module "{module}", version {version} or above.', // @translate
+                    ['module' => $moduleName, 'version' => $version]
                 );
-                throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+                throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message->setTranslator($translator));
             }
         }
     }

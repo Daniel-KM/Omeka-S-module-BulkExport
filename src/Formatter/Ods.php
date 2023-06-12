@@ -2,7 +2,6 @@
 
 namespace BulkExport\Formatter;
 
-use Log\Stdlib\PsrMessage;
 use OpenSpout\Common\Type;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
@@ -18,20 +17,20 @@ class Ods extends AbstractSpreadsheetFormatter
     public function format($resources, $output = null, array $options = []): FormatterInterface
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
-            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+            $this->logger->err(
                 'To process export to "{format}", the php extensions "zip" and "xml" are required.', // @translate
                 ['format' => $this->getLabel()]
-            ));
+            );
             $this->hasError = true;
             return $this;
         }
 
         $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
         if (!$this->createDir($tempDir)) {
-            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+            $this->logger->err(
                 'The temporary folder "{folder}" does not exist or is not writeable.', // @translate
                 ['folder' => $tempDir]
-            ));
+            );
             $this->hasError = true;
             return $this;
         }
@@ -56,10 +55,10 @@ class Ods extends AbstractSpreadsheetFormatter
                 ->openToFile($this->filepath);
         } catch (\OpenSpout\Common\Exception\IOException $e) {
             $this->hasError = true;
-            $this->services->get('Omeka\Logger')->err(new PsrMessage(
+            $this->logger->err(
                 'Unable to open output: {error}.', // @translate
                 ['error' => error_get_last()['message']]
-            ));
+            );
         }
         return $this;
     }

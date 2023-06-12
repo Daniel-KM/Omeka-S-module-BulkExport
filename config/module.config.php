@@ -5,8 +5,8 @@ namespace BulkExport;
 return [
     'service_manager' => [
         'factories' => [
-            Formatter\Manager::class => Service\Plugin\FormatterManagerFactory::class,
-            Writer\Manager::class => Service\Plugin\PluginManagerFactory::class,
+            Formatter\Manager::class => Service\FormatterManagerFactory::class,
+            Writer\Manager::class => Service\PluginManagerFactory::class,
         ],
     ],
     'entity_manager' => [
@@ -349,7 +349,8 @@ return [
     ],
     // Writers are designed for job processing and formatters for instant process.
     'bulk_export' => [
-        // TODO Normalize writers as manageable or deprecate them.
+        // TODO Normalize writers as manageable or deprecate them
+        // @deprecated To be removed. Only difference with formatters are manual settings or admin/site settings.
         'writers' => [
             Writer\CsvWriter::class => Writer\CsvWriter::class,
             Writer\JsonTableWriter::class => Writer\JsonTableWriter::class,
@@ -359,9 +360,8 @@ return [
             Writer\TsvWriter::class => Writer\TsvWriter::class,
         ],
     ],
-    // Should be root key, so services are loaded automatically.
-    // TODO Rss/Atom  feeds
-    // TODO Rename the key "fomatters" or genericize.
+    // TODO Rss/Atom feeds.
+    // TODO Rename the key "fomatters" as "exporters" or genericize.
     'formatters' => [
         'factories' => [
             Formatter\Csv::class => Service\Formatter\FormatterFactory::class,

@@ -188,7 +188,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $this;
     }
 
-    protected function saveFile()
+    protected function getOutputFilepath(): string
     {
         $config = $this->getServiceLocator()->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
@@ -201,38 +201,37 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $extension = $this->getExtension();
 
         // Avoid issue on very big base.
+        $outputFilepath = null;
         $i = 0;
         do {
-            $filename = sprintf(
-                '%s%s%s.%s',
-                $base,
-                $date,
-                $i ? '-' . $i : '',
-                $extension
-            );
+            $filename = sprintf('%s%s%s.%s', $base, $date, $i ? '-' . $i : '', $extension);
+            $outputFilepath = $destinationDir . '/' . $filename;
+        } while (++$i && file_exists($outputFilepath));
 
-            $filepath = $destinationDir . '/' . $filename;
-            if (!file_exists($filepath)) {
-                try {
-                    $result = copy($this->filepath, $filepath);
-                    @unlink($this->filepath);
-                } catch (\Exception $e) {
-                    throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
-                        'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
-                        ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
-                    ));
-                }
+        return $outputFilepath;
+    }
 
-                if (!$result) {
-                    throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
-                        'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
-                        ['filename' => $filename, 'tempfile' => $this->filepath]
-                    ));
-                }
+    protected function saveFile()
+    {
+        $outputFilepath = $this->getOutputFilepath();
+        $filename = basename($outputFilepath);
 
-                break;
-            }
-        } while (++$i);
+        try {
+            $result = copy($this->filepath, $outputFilepath);
+            @unlink($this->filepath);
+        } catch (\Exception $e) {
+            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
+                ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
+            ));
+        }
+
+        if (!$result) {
+            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
+                ['filename' => $filename, 'tempfile' => $this->filepath]
+            ));
+        }
 
         $params = $this->getParams();
         $params['filename'] = $filename;

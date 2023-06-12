@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
-namespace BulkExport\Service\Plugin;
+
+namespace BulkExport\Service;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;

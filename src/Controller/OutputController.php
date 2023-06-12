@@ -55,7 +55,11 @@ class OutputController extends AbstractActionController
         $resourceType = $params->fromRoute('__CONTROLLER__');
         // Support common modules.
         if (empty($resourceTypesToNames[$resourceType])) {
-            if (in_array($resourceType, ['AdvancedSearch\Controller\IndexController', 'Search\Controller\IndexController'])) {
+            if (in_array($resourceType, [
+                'AdvancedSearch\Controller\IndexController',
+                'AdvancedSearch\Controller\SearchController',
+                'Search\Controller\IndexController',
+            ])) {
                 // TODO It may be an item set.
                 $resourceType = 'resource';
             } else {

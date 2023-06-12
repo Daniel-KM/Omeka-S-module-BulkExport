@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
-namespace BulkExport\Service\Plugin;
+
+namespace BulkExport\Service;
 
 use BulkExport\Formatter\Manager;
 use Interop\Container\ContainerInterface;

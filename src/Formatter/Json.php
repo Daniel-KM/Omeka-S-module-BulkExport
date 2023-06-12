@@ -2,6 +2,7 @@
 
 namespace BulkExport\Formatter;
 
+use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 class Json extends AbstractFormatter
@@ -35,7 +36,7 @@ class Json extends AbstractFormatter
             foreach ($this->resourceIds as $resourceId) {
                 try {
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
-                } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                } catch (NotFoundException $e) {
                     continue;
                 }
                 $this->content .= $this->getDataResource($resource);
@@ -77,7 +78,7 @@ class Json extends AbstractFormatter
             --$revertedIndex;
             try {
                 $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
-            } catch (\Omeka\Api\Exception\NotFoundException $e) {
+            } catch (NotFoundException $e) {
                 continue;
             }
             // TODO In the case the user asks something forbidden, there will be one trailing comma. See json-table.
