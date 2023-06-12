@@ -53,8 +53,14 @@ class BulkExport extends AbstractHelper
         }
 
         /** @see \BulkExport\Controller\OutputController::output() */
-        $isQuery = is_null($resourcesOrIdsOrQuery)
-            || (is_array($resourcesOrIdsOrQuery) && !is_numeric(key($resourcesOrIdsOrQuery)));
+        // Default is query.
+        $isQuery = is_null($resourcesOrIdsOrQuery);
+        if (!$isQuery && is_array($resourcesOrIdsOrQuery)) {
+            // Check all keys: this is a list of ids if all keys are numeric and
+            // this is a query if at least one key is not numeric.
+            $isQuery = empty($resourcesOrIdsOrQuery)
+                || count($resourcesOrIdsOrQuery) > count(array_filter(array_map('is_numeric', array_keys($resourcesOrIdsOrQuery))));
+        }
 
         $options['resourcesOrIdsOrQuery'] = $resourcesOrIdsOrQuery;
         $options['isMultiple'] = is_array($resourcesOrIdsOrQuery);
