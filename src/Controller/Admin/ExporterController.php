@@ -57,6 +57,9 @@ class ExporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
+                if (!isset($data['o:label']) || (string) $data['o:label'] === '') {
+                    $data['o:label'] = $this->translate('[No label]'); // @translate
+                }
                 if ($entity) {
                     $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
                 } else {
