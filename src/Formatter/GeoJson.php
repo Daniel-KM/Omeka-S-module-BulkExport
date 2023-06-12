@@ -298,8 +298,13 @@ class GeoJson extends AbstractFieldsJsonFormatter
             ->setHeaders($this->httpHeadersQuery);
 
         try {
+            // Remove deprecation warnings for old php code.
+            $errorLevel = error_reporting();
+            error_reporting(error_reporting() & ~E_DEPRECATED);
             $response = $this->httpClient->send();
+            error_reporting($errorLevel);
         } catch (\Laminas\Http\Client\Exception\ExceptionInterface $e) {
+            error_reporting($errorLevel);
             $this->logger->err(
                 'Connection error when fetching url "{url}": {exception}', // @translate
                 ['url' => $url, 'exception' => $e]
