@@ -196,23 +196,21 @@ class Export extends AbstractJob
 
         if ($siteSlug) {
             try {
-                $response = $this->api()->read('sites', ['slug' => $siteSlug]);
-                $site = $response->getContent();
+                $site = $this->api()->read('sites', ['slug' => $siteSlug])->getContent();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
             }
         } else {
             $defaultSiteId = $services->get('Omeka\Settings')->get('default_site');
             try {
-                $response = $this->api()->read('sites', ['id' => $defaultSiteId]);
-                $site = $response->getContent();
+                $site = $this->api()->read('sites', ['id' => $defaultSiteId])->getContent();
                 $siteSlug = $site->slug();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
             }
         }
 
         if (empty($site)) {
-            $response = $this->api()->search('sites', ['limit' => 1]);
-            $site = $response ? reset($response->getContent()) : null;
+            $site = $this->api()->search('sites', ['limit' => 1])->getContent();
+            $site = $site ? reset($site) : null;
             $siteSlug = $site ? $site->slug() : '***';
         }
 
