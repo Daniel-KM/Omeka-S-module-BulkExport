@@ -65,10 +65,8 @@ return [
         'invokables' => [
             'BulkExport\Controller\Admin\BulkExport' => Controller\Admin\BulkExportController::class,
             'BulkExport\Controller\Admin\Export' => Controller\Admin\ExportController::class,
+            'BulkExport\Controller\Admin\Exporter' => Controller\Admin\ExporterController::class,
             'BulkExport\Controller\Output' => Controller\OutputController::class,
-        ],
-        'factories' => [
-            'BulkExport\Controller\Admin\Exporter' => Service\Controller\ControllerFactory::class,
         ],
         // The aliases simplify the routing, the url assembly and allows to support module Clean url.
         'aliases' => [

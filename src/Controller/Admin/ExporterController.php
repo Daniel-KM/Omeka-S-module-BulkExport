@@ -9,27 +9,15 @@ use BulkExport\Form\ExporterStartForm;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Job\Export as JobExport;
-use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use Log\Stdlib\PsrMessage;
 
 class ExporterController extends AbstractActionController
 {
-    use ServiceLocatorAwareTrait;
-
-    /**
-     * @param ServiceLocatorInterface $serviceLocator
-     */
-    public function __construct(ServiceLocatorInterface $serviceLocator)
-    {
-        $this->setServiceLocator($serviceLocator);
-    }
-
     public function addAction()
     {
         return $this->editAction();
@@ -287,7 +275,7 @@ class ExporterController extends AbstractActionController
                         try {
                             $job = $useBackground
                                 ? $dispatcher->dispatch(JobExport::class, $args)
-                                : $dispatcher->dispatch(JobExport::class, $args, $this->getServiceLocator()->get(\Omeka\Job\DispatchStrategy\Synchronous::class));
+                                : $dispatcher->dispatch(JobExport::class, $args, $export->getServiceLocator()->get(\Omeka\Job\DispatchStrategy\Synchronous::class));
                             $urlHelper = $this->url();
                             $message = $useBackground
                                 ? 'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.' // @translate
