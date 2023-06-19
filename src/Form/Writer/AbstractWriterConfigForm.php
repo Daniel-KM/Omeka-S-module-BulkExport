@@ -2,18 +2,13 @@
 
 namespace BulkExport\Form\Writer;
 
-use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Laminas\Form\Element;
 use Laminas\Form\Form;
 
 abstract class AbstractWriterConfigForm extends Form
 {
-    use ServiceLocatorAwareTrait;
-
-    public function init()
+    protected function appendBase(): self
     {
-        parent::init();
-
         $this
             ->add([
                 'name' => 'comment',
@@ -33,7 +28,7 @@ abstract class AbstractWriterConfigForm extends Form
                 'type' => Element\Checkbox::class,
                 'options' => [
                     'label' => 'Use a background job', // @translate
-                    'info' => 'For complex formats, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
+                    'info' => 'For complex formats or numerous resources, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
                 ],
                 'attributes' => [
                     'id' => 'use_background',

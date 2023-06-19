@@ -16,7 +16,9 @@ use Omeka\Job\AbstractJob as Job;
 
 abstract class AbstractWriter implements WriterInterface, Configurable, Parametrizable
 {
-    use ConfigurableTrait, ParametrizableTrait, ServiceLocatorAwareTrait;
+    use ConfigurableTrait;
+    use ParametrizableTrait;
+    use ServiceLocatorAwareTrait;
 
     /**
      * @var string

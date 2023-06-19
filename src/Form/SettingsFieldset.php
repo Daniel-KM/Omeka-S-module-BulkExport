@@ -92,12 +92,12 @@ class SettingsFieldset extends Fieldset
                     'element_group' => 'export',
                     'label' => 'Format of linked resources', // @translate
                     'value_options' => [
-                        'identifier' => 'Identifier (property below)', // @translate
                         'id' => 'Id', // @translate
+                        'identifier' => 'Identifier (property below)', // @translate
                         'identifier_id' => 'Identifier or id', // @translate
-                        'url' => 'Omeka url', // @translate
-                        'title' => 'Title', // @translate
                         'url_title' => 'Omeka url and title', // @translate
+                        'title' => 'Title', // @translate
+                        'url' => 'Omeka url', // @translate
                     ],
                 ],
                 'attributes' => [

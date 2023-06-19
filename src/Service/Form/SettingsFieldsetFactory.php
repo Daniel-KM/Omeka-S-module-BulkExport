@@ -12,7 +12,7 @@ class SettingsFieldsetFactory implements FactoryInterface
     {
         $formatters = $services->get('Config')['formatters']['aliases'];
         /** @var \BulkExport\Formatter\Manager $formatterManager */
-        $formatterManager = $services->get('BulkExport\Formatter\Manager');
+        $formatterManager = $services->get(\BulkExport\Formatter\Manager::class);
         foreach (array_keys($formatters) as $formatter) {
             $formatters[$formatter] = $formatterManager->get($formatter)->getLabel();
         }

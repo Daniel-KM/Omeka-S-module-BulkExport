@@ -46,14 +46,16 @@ return [
         ],
     ],
     'form_elements' => [
+        'invokables' => [
+            Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
+            Form\ExporterStartForm::class => Form\ExporterStartForm::class,
+            Form\SettingsFieldset::class => Form\SettingsFieldset::class,
+            Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
+            Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,
+            Form\Writer\SpreadsheetWriterConfigForm::class => Form\Writer\SpreadsheetWriterConfigForm::class,
+        ],
         'factories' => [
-            Form\ExporterDeleteForm::class => Service\Form\FormFactory::class,
-            Form\ExporterForm::class => Service\Form\FormFactory::class,
-            Form\ExporterStartForm::class => Service\Form\FormFactory::class,
-            Form\SettingsFieldset::class => Service\Form\SettingsFieldsetFactory::class,
-            Form\SiteSettingsFieldset::class => Service\Form\SiteSettingsFieldsetFactory::class,
-            Form\Writer\CsvWriterConfigForm::class => Service\Form\FormFactory::class,
-            Form\Writer\SpreadsheetWriterConfigForm::class => Service\Form\FormFactory::class,
+            Form\ExporterForm::class => Service\Form\ExporterFormFactory::class,
         ],
     ],
     'controllers' => [

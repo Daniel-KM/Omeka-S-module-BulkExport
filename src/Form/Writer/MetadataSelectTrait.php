@@ -2,7 +2,7 @@
 
 namespace BulkExport\Form\Writer;
 
-use Omeka\Form\Element\PropertySelect;
+use Omeka\Form\Element as OmekaElement;
 
 trait MetadataSelectTrait
 {
@@ -11,7 +11,7 @@ trait MetadataSelectTrait
         $this
             ->add([
                 'name' => $name,
-                'type' => PropertySelect::class,
+                'type' => OmekaElement\PropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Metadata', // @translate
@@ -28,7 +28,7 @@ trait MetadataSelectTrait
             ])
             ->add([
                 'name' => $name . '_exclude',
-                'type' => PropertySelect::class,
+                'type' => OmekaElement\PropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Metadata to exclude', // @translate
