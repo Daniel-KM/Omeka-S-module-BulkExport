@@ -195,7 +195,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $destinationDir = $basePath . '/bulk_export';
 
         $exporterLabel = $this->getParam('exporter_label', '');
-        $base = preg_replace('/[^A-Za-z0-9]/', '_', $exporterLabel);
+        $base = $this->slugify($exporterLabel);
         $base = $base ? preg_replace('/_+/', '_', $base) . '-' : '';
         $date = $this->getParam('export_started', new \DateTime())->format('Ymd-His');
         $extension = $this->getExtension();
@@ -209,6 +209,28 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         } while (++$i && file_exists($outputFilepath));
 
         return $outputFilepath;
+    }
+
+    /**
+     * Transform the given string into a valid filename
+     *
+     * @see \Omeka\Api\Adapter\SiteSlugTrait::slugify()
+     */
+    protected function slugify(string $input): string
+    {
+        if (extension_loaded('intl')) {
+            $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
+            $slug = $transliterator->transliterate($input);
+        } elseif (extension_loaded('iconv')) {
+            $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $input);
+        } else {
+            $slug = $input;
+        }
+        $slug = mb_strtolower($slug, 'UTF-8');
+        $slug = preg_replace('/[^a-z0-9-]+/u', '_', $slug);
+        $slug = preg_replace('/-{2,}/', '_', $slug);
+        $slug = preg_replace('/-*$/', '', $slug);
+        return $slug;
     }
 
     protected function saveFile()
