@@ -63,28 +63,40 @@ class GeoJson extends AbstractFieldsJsonFormatter
             return;
         }
 
+        $entityManager = $this->services->get('Omeka\EntityManager');
+
         $geonamesUrlToResourceIds = [];
 
         if ($this->isId) {
-            foreach ($this->resourceIds as $resourceId) {
-                try {
-                    /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
-                    $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
-                } catch (NotFoundException $e) {
-                    continue;
+            foreach (array_chunk($this->resourceIds, self::SQL_LIMIT) as $idsChunk) {
+                foreach ($idsChunk as $resourceId) {
+                    try {
+                        /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+                        $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
+                    } catch (NotFoundException $e) {
+                        continue;
+                    }
+                    $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
+                    foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
+                        $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resourceId;
+                    }
+                    unset($resource);
                 }
-                $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
-                foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
-                    $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resourceId;
-                }
+                // Avoid memory issue.
+                $entityManager->clear();
             }
         } else {
-            foreach ($this->resources as $resource) {
-                $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
-                foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
-                    $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resource->Id();
+            // Normally useless to set an array chunk: the issue to build the list of resources should have occured earlier.
+            foreach (array_chunk($this->resources, self::SQL_LIMIT) as $idsChunk) {
+                foreach ($idsChunk as $resource) {
+                    $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
+                    foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
+                        $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resource->Id();
+                    }
                 }
             }
+            // Avoid memory issue.
+            $entityManager->clear();
         }
 
         $geoJsons = [];

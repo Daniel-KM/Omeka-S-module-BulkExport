@@ -9,6 +9,13 @@ use Log\Stdlib\PsrMessage;
 abstract class AbstractFormatter implements FormatterInterface
 {
     /**
+     * Limit for the loop to avoid heavy sql requests.
+     *
+     * @var int
+     */
+    const SQL_LIMIT = 100;
+
+    /**
      * @var \Laminas\ServiceManager\ServiceLocatorInterface
      */
     protected $services;
