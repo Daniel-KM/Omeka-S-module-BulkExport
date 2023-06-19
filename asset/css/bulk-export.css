@@ -1,27 +1,20 @@
-/* @deprecated Class "formatters" will be removed in a future version. */
 @media screen {
     .browse .bulk-export h4 {
         display: inline-block;
     }
-    .browse .bulk-export .formatters,
     .browse .bulk-export .exporters {
         display: inline-block;
         padding-left: 6px;
     }
-
-    .browse .sidebar .bulk-export .formatters,
-    .show .bulk-export .formatters,
     .browse .sidebar .bulk-export .exporters,
     .show .bulk-export .exporters {
         padding-left: 0;
     }
-    .bulk-export .formatters li,
     .bulk-export .exporters li {
         list-style: none;
         display: inline-block;
     }
-    .bulk-export .formatters li:not(:last-child):after,
-    .bulk-export .exporters li:not(:last-child):after {
+    .bulk-export .exporters li:not(:last-child)::after {
         content: ' · ';
     }
 }
