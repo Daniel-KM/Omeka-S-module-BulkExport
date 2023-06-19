@@ -92,14 +92,14 @@ trait FormatTrait
                 ],
             ])
             ->add([
-                'name' => 'bulkexport_language',
+                'name' => 'language',
                 'type' => Element\Text::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Language', // @translate
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_language',
+                    'id' => 'language',
                 ],
             ])
         ;
