@@ -36,8 +36,6 @@ return [
     'view_helpers' => [
         'invokables' => [
             'bulkExport' => View\Helper\BulkExport::class,
-            // Deprecated.
-            'listFormatters' => View\Helper\ListFormatters::class,
         ],
         'factories' => [
             'bulkExporters' => Service\ViewHelper\BulkExportersFactory::class,
