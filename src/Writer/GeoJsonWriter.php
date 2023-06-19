@@ -36,7 +36,8 @@ class GeoJsonWriter extends AbstractFieldsJsonWriter
 
         $this->geojsonFormatter = $this->services->get(\BulkExport\Formatter\Manager::class)->get('geojson');
         $this->geojsonFormatter
-            ->format($resourceIds, $this->filepath, $this->options);
+            ->format($resourceIds, $this->filepath, $this->options)
+            ->getContent();
 
         $this
             ->saveFile();

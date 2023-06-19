@@ -18,7 +18,7 @@ use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
  */
 class GeoJson extends AbstractFieldsJsonFormatter
 {
-    protected $label = 'geo-json';
+    protected $label = 'geojson';
     protected $extension = 'geojson';
     protected $responseHeaders = [
         'Content-type' => 'application/geo+json',
