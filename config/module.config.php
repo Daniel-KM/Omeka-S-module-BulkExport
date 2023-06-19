@@ -56,6 +56,11 @@ return [
             Form\ExporterForm::class => Service\Form\ExporterFormFactory::class,
         ],
     ],
+    'resource_page_block_layouts' => [
+        'invokables' => [
+            'bulkExport' => Site\ResourcePageBlockLayout\BulkExport::class,
+        ],
+    ],
     'controllers' => [
         // Class is not used as key, since it's set dynamically by sub-route
         // and it should be available in acl (so alias is mapped later).

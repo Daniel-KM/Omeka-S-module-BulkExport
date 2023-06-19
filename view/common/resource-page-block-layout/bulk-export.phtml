@@ -1,0 +1,13 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ */
+
+$plugins = $this->getHelperPluginManager();
+$bulkExport = $plugins->get('bulkExport');
+?>
+
+<?= $bulkExport($resource, [
+    'divclass' => 'block resource-block block-bulk-export',
+]) ?>
