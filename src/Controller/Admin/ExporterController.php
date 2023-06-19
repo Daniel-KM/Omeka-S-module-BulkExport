@@ -254,17 +254,17 @@ class ExporterController extends AbstractActionController
                     case 'start':
                         $exportData = [];
                         $exportData['o:owner'] = $this->identity();
-                        $exportData['o-module-bulk:comment'] = trim((string) $session['comment']) ?: null;
-                        $exportData['o-module-bulk:exporter'] = $exporter->getResource();
+                        $exportData['o-bulk:comment'] = trim((string) $session['comment']) ?: null;
+                        $exportData['o-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {
-                            $exportData['o-module-bulk:writer_params'] = $writer->getParams();
+                            $exportData['o-bulk:writer_params'] = $writer->getParams();
                         }
 
                         // Add some default params.
                         // TODO Make all writers parametrizable.
                         // @see \BulkExport\Controller\OutputController::output().
-                        $exportData['o-module-bulk:writer_params']['site_slug'] = null;
-                        $exportData['o-module-bulk:writer_params']['is_admin_request'] = true;
+                        $exportData['o-bulk:writer_params']['site_slug'] = null;
+                        $exportData['o-bulk:writer_params']['is_admin_request'] = true;
 
                         $response = $this->api()->create('bulk_exports', $exportData);
                         if (!$response) {

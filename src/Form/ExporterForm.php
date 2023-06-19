@@ -33,14 +33,14 @@ class ExporterForm extends Form
         ]);
 
         $this->add([
-            'name' => 'o-module-bulk:writer_class',
+            'name' => 'o-bulk:writer_class',
             'type' => Element\Select::class,
             'options' => [
                 'label' => 'Writer', // @translate
                 'value_options' => $this->getWriterOptions(),
             ],
             'attributes' => [
-                'id' => 'o-module-bulk-writer-class',
+                'id' => 'o-bulk-writer-class',
             ],
         ]);
 

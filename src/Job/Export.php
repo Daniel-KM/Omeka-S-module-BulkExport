@@ -91,7 +91,7 @@ class Export extends AbstractJob
         }
 
         $data = [
-            'o-module-bulk-export:filename' => $params['filename'],
+            'o:filename' => $params['filename'],
         ];
         $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
 

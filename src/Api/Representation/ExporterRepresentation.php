@@ -30,14 +30,14 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             'o:id' => $this->id(),
             'o:owner' => $owner ? $owner->getReference() : null,
             'o:label' => $this->label(),
-            'o-module-bulk:writer_class' => $this->writerClass(),
-            'o-module-bulk:writer_config' => $this->writerConfig(),
+            'o-bulk:writer_class' => $this->writerClass(),
+            'o-bulk:writer_config' => $this->writerConfig(),
         ];
     }
 
     public function getJsonLdType()
     {
-        return 'o-module-bulk:Exporter';
+        return 'o-bulk:Exporter';
     }
 
     public function owner(): ?\Omeka\Api\Representation\UserRepresentation
