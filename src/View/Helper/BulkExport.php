@@ -33,6 +33,7 @@ class BulkExport extends AbstractHelper
         $plugins = $view->getHelperPluginManager();
         $url = $plugins->get('url');
         $api = $plugins->get('api');
+        $translate = $plugins->get('translate');
 
         $isAdmin = empty($options['site']) && $plugins->get('status')->isAdminRequest();
 
@@ -43,6 +44,7 @@ class BulkExport extends AbstractHelper
             'resourceType' => '',
             'exporters' => null,
             'urls' => [],
+            'labels' => [],
             'heading' => '',
             'divclass' => '',
             'isMultiple' => false,
@@ -168,6 +170,16 @@ class BulkExport extends AbstractHelper
                     'id' => $resourceId,
                 ]);
             }
+        }
+
+        $options['labels'] = [];
+        foreach (array_keys($options['urls']) as $format) {
+            $name = $options['exporters'][$format];
+            $options['labels'][$format] = in_array($format, ['ods', 'xlsx', 'xls'])
+                ? sprintf($translate('Download as spreadsheet %s'), $name) // @translate
+                : (in_array($format, ['bib.txt', 'bib.odt'])
+                    ? $translate('Download as text') // @translate
+                    : sprintf($translate('Download as %s'), $name)); // @translate
         }
 
         $template = $options['template'];
