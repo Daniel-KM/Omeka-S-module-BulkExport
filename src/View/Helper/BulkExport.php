@@ -36,12 +36,17 @@ class BulkExport extends AbstractHelper
 
         $isAdmin = empty($options['site']) && $plugins->get('status')->isAdminRequest();
 
+        // Some options are not options, but added only to set their order.
         $options += [
             'site' => null,
-            'resourceType' => null,
+            'resourcesOrIdsOrQuery' => null,
+            'resourceType' => '',
             'exporters' => null,
-            'heading' => null,
-            'divclass' => null,
+            'urls' => [],
+            'heading' => '',
+            'divclass' => '',
+            'isMultiple' => false,
+            'template' => self::PARTIAL_NAME,
         ];
 
         if (!$isAdmin && is_null($options['site'])) {
@@ -165,7 +170,7 @@ class BulkExport extends AbstractHelper
             }
         }
 
-        $template = $options['template'] ?? self::PARTIAL_NAME;
+        $template = $options['template'];
         unset($options['template']);
         return $template !== self::PARTIAL_NAME && $view->resolver($template)
             ? $view->partial($template, $options)

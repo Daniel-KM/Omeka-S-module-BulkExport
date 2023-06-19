@@ -2,7 +2,7 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var mixed $resourcesOrIdsOrQuery The requested resources.
+ * @var mixed $resourcesOrIdsOrQuery The requested resource(s).
  * @var string $resourceType "item", "item-set", "media", "annotation", or "resource".
  * @var array $exporters
  * @var array $urls
@@ -15,13 +15,11 @@
 if (!count($urls)) return;
 
 $plugins = $this->getHelperPluginManager();
-$url = $plugins->get('url');
 $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 
-$route = $this->status()->isAdminRequest() ? 'admin/resource-output' : 'site/resource-output';
 $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
 ?>
 
