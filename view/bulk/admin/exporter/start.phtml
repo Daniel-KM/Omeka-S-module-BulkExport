@@ -16,7 +16,7 @@ $form->prepare();
 
 <?= $this->pageTitle($translate('Start export'), 1, $translate('Bulk export')) ?>
 
-<div id="content">
+<div id="bulk-export">
     <h2><?= $escape($translate('Start export')) ?></h2>
     <h3><?= $escape(sprintf($translate('Exporter: %s'), $exporter->label())) ?></h3>
     <?php if (isset($exportArgs)): ?>

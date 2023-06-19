@@ -20,7 +20,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
     <?= $this->navigation('Laminas\Navigation\BulkExport')->menu() ?>
 </nav>
 
-<div id="content">
+<div id="bulk-export">
     <h2><?= $escape(sprintf($translate('Export #%d'), $export->id())) ?></h2>
     <ul>
         <li><?= sprintf($translate('Exporter: %s'), $export->exporter()->label()) ?></li>
