@@ -104,6 +104,15 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     public function isValid(): bool
     {
         $this->lastErrorMessage = null;
+        $outputPath = $this->getOutputFilepath();
+        $destinationDir = dirname($outputPath);
+        if (!$this->checkDestinationDir($destinationDir)) {
+            $this->lastErrorMessage = new PsrMessage(
+                'Output directory "{folder}" is not writeable.', // @translate
+                ['folder' => $destinationDir]
+            );
+            return false;
+        }
         return true;
     }
 
@@ -159,25 +168,32 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
      * @param string $dirPath Absolute path.
      * @return string|null
      */
-    protected function checkDestinationDir($dirPath)
+    protected function checkDestinationDir($dirPath): ?string
     {
-        if (!file_exists($dirPath)) {
-            $config = $this->getServiceLocator()->get('Config');
-            $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-            if (!is_writeable($basePath)) {
+        if (strpos($dirPath, '../') !== false || strpos($dirPath, '..\\') !== false) {
+            $this->logger->err(
+                'The path should not contain "../".', // @translate
+                ['folder' => $dirPath]
+            );
+            return null;
+        }
+        if (file_exists($dirPath)) {
+            if (!is_dir($dirPath) || !is_writeable($dirPath)) {
                 $this->logger->err(
                     'The destination folder "{folder}" is not writeable.', // @translate
-                    ['folder' => $basePath]
+                    ['folder' => $dirPath]
                 );
                 return null;
             }
-            @mkdir($dirPath, 0755, true);
-        } elseif (!is_dir($dirPath) || !is_writeable($dirPath)) {
-            $this->logger->err(
-                'The destination folder "{folder}" is not writeable.', // @translate
-                ['folder' => $basePath . '/' . $dirPath]
-            );
-            return null;
+        } else {
+            $result = @mkdir($dirPath, 0775, true);
+            if (!$result) {
+                $this->logger->err(
+                    'The destination folder "{folder}" is not writeable.', // @translate
+                    ['folder' => $dirPath]
+                );
+                return null;
+            }
         }
         return $dirPath;
     }
@@ -193,11 +209,13 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
 
     protected function getOutputFilepath(): string
     {
-        $translator = $this->services->get('MvcTranslator');
+        static $outputFilepath;
 
-        $config = $this->services->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $destinationDir = $basePath . '/bulk_export';
+        if (is_string($outputFilepath)) {
+            return $outputFilepath;
+        }
+
+        $translator = $this->services->get('MvcTranslator');
 
         // Prepare placeholders.
         $label = $this->getParam('exporter_label', '');
@@ -221,6 +239,30 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             '{userid}' => $userId,
             '{username}' => $userName,
         ];
+
+        $config = $this->services->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $destinationDir = $basePath . '/bulk_export';
+
+        // The check is done during isValid().
+        $dir = null;
+        $formatDirPath = $this->getParam('dirpath');
+        $hasFormatDirPath = !empty($formatDirPath);
+        if ($hasFormatDirPath) {
+            $dir = str_replace(array_keys($placeholders), array_values($placeholders), $formatDirPath);
+            $dir = trim(rtrim($dir, '/\\ '));
+            if (mb_substr($dir, 0, 1) !== '/') {
+                $dir = OMEKA_PATH . '/' . $dir;
+            }
+            if ($dir && $dir !== '/' && $dir !== '\\') {
+                $destinationDir = $dir;
+            } else {
+                $this->logger->warn(
+                    'The specified dir path "{path}" is invalid. Using default one.', // @translate
+                    ['path' => $formatDirPath]
+                );
+            }
+        }
 
         $formatFilename = $this->getParam('filename');
         $hasFormatFilename = !empty($formatFilename);
@@ -278,8 +320,15 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
 
     protected function saveFile(): self
     {
+        $config = $this->services->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $destinationDir = $basePath . '/bulk_export';
+
+        // When this is the default dir, store only the partial filename.
         $outputFilepath = $this->getOutputFilepath();
-        $filename = basename($outputFilepath);
+        $filename = mb_strpos($outputFilepath, $destinationDir) === 0
+            ? mb_substr($outputFilepath, mb_strlen($destinationDir) + 1)
+            : $outputFilepath;
 
         try {
             $result = copy($this->filepath, $outputFilepath);

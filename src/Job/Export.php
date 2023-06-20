@@ -37,6 +37,18 @@ class Export extends AbstractJob
         $this->api()->update('bulk_exports', $export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
         $writer = $this->getWriter();
 
+        // Save the label of the exporter, if needed (to create filename, etc.).
+        // Should be prepared befoer checking validity.
+        if ($writer instanceof Parametrizable) {
+            $params = $writer->getParams();
+            $params['exporter_label'] = $export->exporter()->label();
+            $params['export_started'] = $export->started();
+            $writer->setParams($params);
+            $siteSlug = $writer->getParam('site_slug');
+        } else {
+            $siteSlug = null;
+        }
+
         if (!$writer->isValid()) {
             throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                 'Export error: {error}', // @translate
@@ -49,17 +61,6 @@ class Export extends AbstractJob
             ->setJob($this);
 
         $this->logger->log(Logger::NOTICE, 'Export started'); // @translate
-
-        // Save the label of the exporter, if needed (to create filename, etc.).
-        if ($writer instanceof Parametrizable) {
-            $params = $writer->getParams();
-            $params['exporter_label'] = $export->exporter()->label();
-            $params['export_started'] = $export->started();
-            $writer->setParams($params);
-            $siteSlug = $writer->getParam('site_slug');
-        } else {
-            $siteSlug = null;
-        }
 
         // TODO Remove checking routes in Omeka v3.1.
         // Avoid a fatal error with background job when there is no route.
@@ -93,15 +94,27 @@ class Export extends AbstractJob
         $data = [
             'o:filename' => $params['filename'],
         ];
-        $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true]);
-
-        $services = $this->getServiceLocator();
-        $config = $services->get('Config');
-        $baseFiles = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $baseUrl = $config['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
+        $export = $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true])->getContent();
+        $filename = $export->filename(true);
+        if (!$filename) {
+            return;
+        }
+        $fileUrl = $export->fileUrl();
+        $filesize = $export->filesize();
+        if (!$fileUrl) {
+            $this->logger->notice(
+                'The export is available locally as specified (size: {size} bytes).', // @translate
+                ['size' => $filesize]
+            );
+            return;
+        }
         $this->logger->notice(
-            'The export is available at {url} (size: {size} bytes).', // @translate
-            ['url' => $baseUrl . '/bulk_export/' . $params['filename'], 'size' => filesize($baseFiles . '/bulk_export/' .$params['filename'])]
+            'The export is available at <a href="{href}" download="download">{filename}</a> (size: {size} bytes).', // @translate
+            [
+                'href' => $fileUrl,
+                'filename' => basename($filename),
+                'size' => $filesize,
+            ]
         );
     }
 

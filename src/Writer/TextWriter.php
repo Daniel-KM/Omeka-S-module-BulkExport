@@ -13,6 +13,7 @@ class TextWriter extends AbstractFieldsWriter
     protected $paramsFormClass = TextWriterConfigForm::class;
 
     protected $configKeys = [
+        'dirpath',
         'filename',
         'format_fields',
         'format_generic',
@@ -27,6 +28,7 @@ class TextWriter extends AbstractFieldsWriter
     ];
 
     protected $paramsKeys = [
+        'dirpath',
         'filename',
         'format_fields',
         'format_generic',

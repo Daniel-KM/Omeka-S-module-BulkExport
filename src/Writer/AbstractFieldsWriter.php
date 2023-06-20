@@ -5,7 +5,6 @@ namespace BulkExport\Writer;
 use BulkExport\Traits\ListTermsTrait;
 use BulkExport\Traits\MetadataToStringTrait;
 use BulkExport\Traits\ResourceFieldsTrait;
-use Log\Stdlib\PsrMessage;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 abstract class AbstractFieldsWriter extends AbstractWriter
@@ -22,6 +21,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     const SQL_LIMIT = 100;
 
     protected $configKeys = [
+        'dirpath',
         'filename',
         'format_fields',
         'format_generic',
@@ -37,6 +37,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     ];
 
     protected $paramsKeys = [
+        'dirpath',
         'filename',
         'format_fields',
         'format_generic',
@@ -51,6 +52,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     ];
 
     protected $options = [
+        'dirpath' => null,
         'filename' => null,
         'resource_type' => null,
         'resource_types' => [],
@@ -98,11 +100,6 @@ abstract class AbstractFieldsWriter extends AbstractWriter
      * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
-
-    public function isValid(): bool
-    {
-        return true;
-    }
 
     public function process(): self
     {
