@@ -264,7 +264,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             }
         }
 
-        $formatFilename = $this->getParam('filename');
+        $formatFilename = $this->getParam('filebase');
         $hasFormatFilename = !empty($formatFilename);
 
         $formatFilename = $formatFilename

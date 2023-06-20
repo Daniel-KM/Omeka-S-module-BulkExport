@@ -14,7 +14,7 @@ class TextWriter extends AbstractFieldsWriter
 
     protected $configKeys = [
         'dirpath',
-        'filename',
+        'filebase',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -29,7 +29,7 @@ class TextWriter extends AbstractFieldsWriter
 
     protected $paramsKeys = [
         'dirpath',
-        'filename',
+        'filebase',
         'format_fields',
         'format_generic',
         'format_resource',

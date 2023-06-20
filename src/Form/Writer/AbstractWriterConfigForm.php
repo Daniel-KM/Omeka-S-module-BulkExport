@@ -55,8 +55,9 @@ abstract class AbstractWriterConfigForm extends Form
                     'placeholder' => 'files/bulk_export/{date}',
                 ],
             ])
+            // Don't use "file" or "filename" because the name is already used.
             ->add([
-                'name' => 'filename',
+                'name' => 'filebase',
                 'type' => Element\Text::class,
                 'options' => [
                     'element_group' => 'export',
@@ -64,7 +65,7 @@ abstract class AbstractWriterConfigForm extends Form
                     'info' => 'This setting allows to store the file always with the same name, generally for server tasks. The existing file will be overridden. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}.', // @translate
                 ],
                 'attributes' => [
-                    'id' => 'filename',
+                    'id' => 'filebase',
                     'placeholder' => '{label]-{date}-{time}',
                 ],
             ])

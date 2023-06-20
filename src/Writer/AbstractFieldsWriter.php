@@ -22,7 +22,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     protected $configKeys = [
         'dirpath',
-        'filename',
+        'filebase',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -38,7 +38,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     protected $paramsKeys = [
         'dirpath',
-        'filename',
+        'filebase',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -53,7 +53,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     protected $options = [
         'dirpath' => null,
-        'filename' => null,
+        'filebase' => null,
         'resource_type' => null,
         'resource_types' => [],
         'metadata' => [],
