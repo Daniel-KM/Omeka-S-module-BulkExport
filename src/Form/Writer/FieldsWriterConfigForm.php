@@ -20,6 +20,7 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
     {
         return $this
             ->appendBase()
+            ->appendFile()
             ->appendFormats()
             ->appendResourceTypesSelect()
             ->appendMetadataSelect()

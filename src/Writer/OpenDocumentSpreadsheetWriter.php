@@ -17,6 +17,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $configKeys = [
         'separator',
+        'filename',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -30,6 +31,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
 
     protected $paramsKeys = [
         'separator',
+        'filename',
         'format_fields',
         'format_generic',
         'format_resource',

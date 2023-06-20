@@ -38,4 +38,25 @@ abstract class AbstractWriterConfigForm extends Form
         ;
         return $this;
     }
+
+    protected function appendFile(): self
+    {
+        $this
+            ->add([
+                'name' => 'filename',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Filename', // @translate
+                    'info' => 'This setting allows to store the file always with the same name, generally for server tasks. The existing file will be overridden. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'filename',
+                    'placeholder' => '{label]-{date}-{time}',
+                ],
+            ])
+        ;
+
+        return $this;
+    }
 }

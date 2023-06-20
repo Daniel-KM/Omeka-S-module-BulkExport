@@ -193,23 +193,63 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
 
     protected function getOutputFilepath(): string
     {
-        $config = $this->getServiceLocator()->get('Config');
+        $translator = $this->services->get('MvcTranslator');
+
+        $config = $this->services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
         $destinationDir = $basePath . '/bulk_export';
 
-        $exporterLabel = $this->getParam('exporter_label', '');
-        $base = $this->slugify($exporterLabel);
-        $base = $base ? preg_replace('/_+/', '_', $base) . '-' : '';
-        $date = $this->getParam('export_started', new \DateTime())->format('Ymd-His');
+        // Prepare placeholders.
+        $label = $this->getParam('exporter_label', '');
+        $label = $this->slugify($label);
+        $label = preg_replace('/_+/', '_', $label);
+        $exporter = str_replace(['bulkexport', 'writer', '\\'], '', strtolower(get_class($this)));
+        $date = (new \DateTime())->format('Ymd');
+        $time = (new \DateTime())->format('His');
+        /** @var \Omeka\Entity\User $user */
+        $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
+        $userId = $user ? $user->getId() : 0;
+        $userName = $user
+            ? ($this->slugify($user->getName()) ?: $translator->translate('unknown')) // @ŧranslate
+            : $translator->translate('anonymous'); // @ŧranslate
+
+        $placeholders = [
+            '{label}' => $label,
+            '{exporter}' => $exporter,
+            '{date}' => $date,
+            '{time}' => $time,
+            '{userid}' => $userId,
+            '{username}' => $userName,
+        ];
+
+        $formatFilename = $this->getParam('filename');
+        $hasFormatFilename = !empty($formatFilename);
+
+        $formatFilename = $formatFilename
+            ?: ($label ? '{label}-{date}-{time}' : '{exporter}-{date}-{time}');
         $extension = $this->getExtension();
 
-        // Avoid issue on very big base.
-        $outputFilepath = null;
-        $i = 0;
-        do {
-            $filename = sprintf('%s%s%s.%s', $base, $date, $i ? '-' . $i : '', $extension);
-            $outputFilepath = $destinationDir . '/' . $filename;
-        } while (++$i && file_exists($outputFilepath));
+        $base = str_replace(array_keys($placeholders), array_values($placeholders), $formatFilename);
+        if (!$base) {
+            $base = $translator->translate('no-name'); // @translate
+        }
+
+        // Remove remaining characters in all cases for security and simplicity.
+        $base = $this->slugify($base, true);
+
+        // When the filename is specified, no check for overwrite is done.
+        // In other cases, avoid to override existing files.
+        if ($hasFormatFilename) {
+            $outputFilepath = $destinationDir . '/' . $base . '.' . $extension;
+        } else {
+            // Append an index when needed to avoid issue on very big base.
+            $outputFilepath = null;
+            $i = 0;
+            do {
+                $filename = sprintf('%s%s.%s', $base, $i ? '-' . $i : '', $extension);
+                $outputFilepath = $destinationDir . '/' . $filename;
+            } while (++$i && file_exists($outputFilepath));
+        }
 
         return $outputFilepath;
     }
@@ -219,7 +259,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
      *
      * @see \Omeka\Api\Adapter\SiteSlugTrait::slugify()
      */
-    protected function slugify(string $input): string
+    protected function slugify(string $input, bool $keepCase = false): string
     {
         if (extension_loaded('intl')) {
             $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
@@ -229,8 +269,8 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         } else {
             $slug = $input;
         }
-        $slug = mb_strtolower($slug, 'UTF-8');
-        $slug = preg_replace('/[^a-z0-9-]+/u', '_', $slug);
+        $slug = $keepCase ? $slug : mb_strtolower($slug, 'UTF-8');
+        $slug = preg_replace('/[^a-zA-Z0-9-]+/u', '_', $slug);
         $slug = preg_replace('/-{2,}/', '_', $slug);
         $slug = preg_replace('/-*$/', '', $slug);
         return $slug;

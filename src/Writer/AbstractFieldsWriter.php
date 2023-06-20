@@ -22,6 +22,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     const SQL_LIMIT = 100;
 
     protected $configKeys = [
+        'filename',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -36,6 +37,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     ];
 
     protected $paramsKeys = [
+        'filename',
         'format_fields',
         'format_generic',
         'format_resource',
@@ -49,6 +51,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     ];
 
     protected $options = [
+        'filename' => null,
         'resource_type' => null,
         'resource_types' => [],
         'metadata' => [],

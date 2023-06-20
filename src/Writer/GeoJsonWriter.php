@@ -11,7 +11,6 @@ class GeoJsonWriter extends AbstractFieldsJsonWriter
     protected $outputIsObject = true;
 
     /**
-     *
      * @var \BulkExport\Formatter\GeoJson
      */
     protected $geojsonFormatter;
