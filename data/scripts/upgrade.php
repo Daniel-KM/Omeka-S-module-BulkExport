@@ -141,3 +141,10 @@ if (version_compare($oldVersion, '3.4.19', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare($oldVersion, '3.4.21', '<')) {
+    $message = new Message(
+        'It is now possible to export into a specific directory with a specific filename.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
