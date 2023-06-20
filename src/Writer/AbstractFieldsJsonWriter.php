@@ -42,13 +42,13 @@ abstract class AbstractFieldsJsonWriter extends AbstractFieldsWriter
      */
     protected $outputIsObject = false;
 
-    public function process(): WriterInterface
+    public function process(): self
     {
         $this->options += $this->defaultOptions;
         return parent::process();
     }
 
-    protected function initializeOutput(): WriterInterface
+    protected function initializeOutput(): self
     {
         parent::initializeOutput();
 
@@ -71,7 +71,7 @@ abstract class AbstractFieldsJsonWriter extends AbstractFieldsWriter
         return $this;
     }
 
-    protected function finalizeOutput(): WriterInterface
+    protected function finalizeOutput(): self
     {
         if ($this->hasError
             || $this->outputIsFull
@@ -132,7 +132,7 @@ abstract class AbstractFieldsJsonWriter extends AbstractFieldsWriter
         return parent::finalizeOutput();
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         // Just return a single value for single valued key, else an array,
         // mainly for property.

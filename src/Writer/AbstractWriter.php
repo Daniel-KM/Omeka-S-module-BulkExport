@@ -88,6 +88,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     public function __construct(ServiceLocatorInterface $services)
     {
         $this->setServiceLocator($services);
+        $this->logger = $services->get('Omeka\Logger');
     }
 
     public function getLabel(): string
@@ -111,13 +112,13 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $this->lastErrorMessage;
     }
 
-    public function setLogger(Logger $logger): WriterInterface
+    public function setLogger(Logger $logger): self
     {
         $this->logger = $logger;
         return $this;
     }
 
-    public function setJob(Job $job): WriterInterface
+    public function setJob(Job $job): self
     {
         $this->job = $job;
         return $this;
@@ -150,7 +151,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $this;
     }
 
-    abstract public function process(): WriterInterface;
+    abstract public function process(): self;
 
     /**
      * Check or create the destination folder.
@@ -181,7 +182,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $dirPath;
     }
 
-    protected function prepareTempFile()
+    protected function prepareTempFile(): self
     {
         // TODO Use Omeka factory for temp files.
         $config = $this->getServiceLocator()->get('Config');
@@ -235,7 +236,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $slug;
     }
 
-    protected function saveFile()
+    protected function saveFile(): self
     {
         $outputFilepath = $this->getOutputFilepath();
         $filename = basename($outputFilepath);
@@ -268,7 +269,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
      * @param string $jsonResourceType
      * @return string|null
      */
-    protected function mapResourceTypeToEntity($jsonResourceType)
+    protected function mapResourceTypeToEntity($jsonResourceType): ?string
     {
         $mapping = [
             // Core.
@@ -293,7 +294,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $mapping[$jsonResourceType] ?? null;
     }
 
-    protected function mapResourceTypeToApiResource($jsonResourceType)
+    protected function mapResourceTypeToApiResource($jsonResourceType): ?string
     {
         $mapping = [
             // Core.
@@ -318,7 +319,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $mapping[$jsonResourceType] ?? null;
     }
 
-    protected function mapResourceTypeToText($jsonResourceType)
+    protected function mapResourceTypeToText($jsonResourceType): ?string
     {
         $mapping = [
             // Core.
@@ -343,7 +344,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $mapping[$jsonResourceType] ?? null;
     }
 
-    protected function mapResourceTypeToTable($jsonResourceType)
+    protected function mapResourceTypeToTable($jsonResourceType): ?string
     {
         $mapping = [
             // Core.
@@ -368,7 +369,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $mapping[$jsonResourceType] ?? null;
     }
 
-    protected function mapRepresentationToResourceType(AbstractRepresentation $representation)
+    protected function mapRepresentationToResourceType(AbstractRepresentation $representation): ?string
     {
         $class = get_class($representation);
         $mapping = [
@@ -394,7 +395,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         return $mapping[$class] ?? null;
     }
 
-    protected function mapRepresentationToResourceTypeText(AbstractRepresentation $representation)
+    protected function mapRepresentationToResourceTypeText(AbstractRepresentation $representation): ?string
     {
         $class = get_class($representation);
         $mapping = [

@@ -98,20 +98,10 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     public function isValid(): bool
     {
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $destinationDir = $basePath . DIRECTORY_SEPARATOR . 'bulk_export';
-        if (!$this->checkDestinationDir($destinationDir)) {
-            $this->lastErrorMessage = new PsrMessage(
-                'Output directory "{folder}" is not writeable.', // @translate
-                ['folder' => $destinationDir]
-            );
-            return false;
-        }
-        return parent::isValid();
+        return true;
     }
 
-    public function process(): WriterInterface
+    public function process(): self
     {
         $this->translator = $this->getServiceLocator()->get('MvcTranslator');
 
@@ -158,7 +148,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $this;
     }
 
-    protected function initializeParams()
+    protected function initializeParams(): self
     {
         // Merge params for simplicity.
         $this->options = $this->getParams() + $this->options;
@@ -178,7 +168,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $this;
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         return $this;
     }
@@ -186,16 +176,15 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     /**
      * @param array $fields If fields contains arrays, this method should manage
      * them.
-     * @return self
      */
-    abstract protected function writeFields(array $fields);
+    abstract protected function writeFields(array $fields): self;
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): self
     {
         return $this;
     }
 
-    protected function appendResources()
+    protected function appendResources(): self
     {
         $this->stats['process'] = [];
         $this->stats['totals'] = $this->countResources();
@@ -225,7 +214,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $this;
     }
 
-    protected function appendResourcesForResourceType($resourceType)
+    protected function appendResourcesForResourceType($resourceType): self
     {
         $apiResource = $this->mapResourceTypeToApiResource($resourceType);
         $resourceText = $this->mapResourceTypeToText($resourceType);
@@ -333,7 +322,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $this;
     }
 
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = [];
         $removeEmptyFields = !$this->options['empty_fields'];

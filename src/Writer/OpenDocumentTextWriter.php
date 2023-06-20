@@ -29,13 +29,13 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
         return parent::isValid();
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         $this->initializeOpenDocumentText();
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): self
     {
         $objWriter = PhpWord\IOFactory::createWriter($this->openDocument, 'ODText');
         $objWriter->save($this->filepath);

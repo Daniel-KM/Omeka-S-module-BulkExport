@@ -36,7 +36,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
      */
     protected $spreadsheetType;
 
-    protected function initializeParams()
+    protected function initializeParams(): self
     {
         $this->options = $this->spreadsheetOptions + $this->options;
         $separator = $this->getParam('separator', '');
@@ -51,7 +51,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
         return parent::initializeParams();
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         switch ($this->spreadsheetType) {
             case Type::CSV:
@@ -73,7 +73,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
         return $this;
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         $row = WriterEntityFactory::createRowFromArray($fields);
         $this->spreadsheetWriter
@@ -81,13 +81,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): self
     {
         $this->spreadsheetWriter->close();
         return $this;
     }
 
-    protected function getDataResource(AbstractResourceEntityRepresentation $resource)
+    protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = [];
 

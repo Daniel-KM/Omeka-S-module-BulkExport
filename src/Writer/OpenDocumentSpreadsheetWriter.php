@@ -68,7 +68,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         return parent::isValid();
     }
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         $config = $this->getServiceLocator()->get('Config');
         $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();

@@ -16,7 +16,7 @@ class GeoJsonWriter extends AbstractFieldsJsonWriter
      */
     protected $geojsonFormatter;
 
-    public function process(): WriterInterface
+    public function process(): self
     {
         $this->options += $this->defaultOptions;
 

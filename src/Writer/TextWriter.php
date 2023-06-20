@@ -43,7 +43,7 @@ class TextWriter extends AbstractFieldsWriter
      */
     protected $handle;
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         $this->handle = fopen($this->filepath, 'w+');
         if ($this->handle) {
@@ -59,7 +59,7 @@ class TextWriter extends AbstractFieldsWriter
         return $this;
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         foreach ($fields as $fieldName => $fieldValues) {
             if (!is_array($fieldValues)) {
@@ -77,7 +77,7 @@ class TextWriter extends AbstractFieldsWriter
         return $this;
     }
 
-    protected function finalizeOutput()
+    protected function finalizeOutput(): self
     {
         if (!$this->handle) {
             $this->hasError = true;

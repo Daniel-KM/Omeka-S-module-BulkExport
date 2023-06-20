@@ -60,7 +60,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
 
     protected $spreadsheetType = Type::CSV;
 
-    protected function initializeOutput()
+    protected function initializeOutput(): self
     {
         parent::initializeOutput();
 

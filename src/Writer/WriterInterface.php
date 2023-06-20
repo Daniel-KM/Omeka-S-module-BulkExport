@@ -3,7 +3,6 @@
 namespace BulkExport\Writer;
 
 use Laminas\Log\Logger;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Omeka\Job\AbstractJob as Job;
 
 /**
@@ -14,11 +13,6 @@ use Omeka\Job\AbstractJob as Job;
  */
 interface WriterInterface
 {
-    /**
-     * Writer constructor.
-     */
-    public function __construct(ServiceLocatorInterface $services);
-
     public function getLabel(): string;
 
     /**
@@ -26,9 +20,9 @@ interface WriterInterface
      */
     public function getExtension(): ?string;
 
-    public function setLogger(Logger $logger): WriterInterface;
+    public function setLogger(Logger $logger): self;
 
-    public function setJob(Job $job): WriterInterface;
+    public function setJob(Job $job): self;
 
     /**
      * Check if the params of the writer are valid, for example the filepath.
@@ -43,5 +37,5 @@ interface WriterInterface
     /**
      * Process the export.
      */
-    public function process(): WriterInterface;
+    public function process(): self;
 }
