@@ -48,7 +48,7 @@ abstract class AbstractWriterConfigForm extends Form
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Directory', // @translate
-                    'info' => 'This setting allows to store the file in the specified location. It should be writeable by the web server. It may be relative to Omeka root. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}".', // @translate
+                    'info' => 'This setting allows to store the file in the specified location. It should be writeable by the web server. It may be relative to Omeka root. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}", "{random}".', // @translate
                 ],
                 'attributes' => [
                     'id' => 'dirpath',
@@ -62,7 +62,7 @@ abstract class AbstractWriterConfigForm extends Form
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Filename', // @translate
-                    'info' => 'This setting allows to store the file always with the same name, generally for server tasks. The existing file will be overridden. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}.', // @translate
+                    'info' => 'This setting allows to store the file always with the same name, generally for server tasks. The existing file will be overridden. Available placeholders are: "{label}", "{exporter}", "{date}", "{time}", "{userid}", "{username}", "{random}".', // @translate
                 ],
                 'attributes' => [
                     'id' => 'filebase',

@@ -238,6 +238,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             '{time}' => $time,
             '{userid}' => $userId,
             '{username}' => $userName,
+            '{random}' => substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(48))), 0, 6),
         ];
 
         $config = $this->services->get('Config');
