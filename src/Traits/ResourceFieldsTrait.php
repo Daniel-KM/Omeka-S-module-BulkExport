@@ -27,7 +27,7 @@ trait ResourceFieldsTrait
      * @param array $listFieldsToExclude Fields to exclude
      * @return self
      */
-    protected function prepareFieldNames(array $listFieldNames = null, array $listFieldsToExclude = null)
+    protected function prepareFieldNames(array $listFieldNames = null, array $listFieldsToExclude = null): self
     {
         if (is_array($this->fieldNames)) {
             return $this;
@@ -149,7 +149,7 @@ trait ResourceFieldsTrait
         return $listFieldNames;
     }
 
-    protected function prepareFieldLabels(bool $useFirstTemplateProperty = false)
+    protected function prepareFieldLabels(bool $useFirstTemplateProperty = false): self
     {
         if (is_array($this->fieldLabels)) {
             return $this;
@@ -237,7 +237,7 @@ trait ResourceFieldsTrait
      * @param string $jsonResourceType Or api resource type.
      * @return string|null
      */
-    protected function mapResourceTypeToEntity($jsonResourceType)
+    protected function mapResourceTypeToEntity($jsonResourceType): ?string
     {
         $mapping = [
             // Core.

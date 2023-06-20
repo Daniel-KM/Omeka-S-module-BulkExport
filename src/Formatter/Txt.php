@@ -28,7 +28,7 @@ class Txt extends AbstractFieldsFormatter
         return $dataResource;
     }
 
-    protected function initializeOutput(): FormatterInterface
+    protected function initializeOutput(): self
     {
         parent::initializeOutput();
         // Prepend the utf-8 bom.
@@ -38,7 +38,7 @@ class Txt extends AbstractFieldsFormatter
         return $this;
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         foreach ($fields as $fieldName => $fieldValues) {
             if (!is_array($fieldValues)) {

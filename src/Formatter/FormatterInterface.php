@@ -48,5 +48,5 @@ interface FormatterInterface
      * - site_slug (string): slug of a site for url of resources when needed.
      * @return self
      */
-    public function format($resources, $output = null, array $options = []): FormatterInterface;
+    public function format($resources, $output = null, array $options = []): self;
 }

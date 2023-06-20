@@ -18,16 +18,16 @@ class Json extends AbstractFormatter
         'flags' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_PARTIAL_OUTPUT_ON_ERROR,
     ];
 
-    protected function process(): void
+    protected function process(): self
     {
         if ($this->isSingle) {
             $this->processSingle();
-            return;
+            return $this;
         }
 
         if ($this->isId && count($this->resourceIds) > $this->maxDirectJsonEncode) {
             $this->processByOne();
-            return;
+            return $this;
         }
 
         if ($this->isId) {
@@ -44,7 +44,7 @@ class Json extends AbstractFormatter
             }
             $this->content = rtrim($this->content, ",\n") . "\n]";
             $this->toOutput();
-            return;
+            return $this;
         }
 
         // Resources are already available.
@@ -56,19 +56,21 @@ class Json extends AbstractFormatter
         }
         $this->content = rtrim($this->content, ",\n") . "\n]";
         $this->toOutput();
+        return $this;
     }
 
-    protected function processSingle(): void
+    protected function processSingle(): self
     {
         $this->content = $this->getDataResource($this->resource);
         $this->toOutput();
+        return $this;
     }
 
-    protected function processByOne(): void
+    protected function processByOne(): self
     {
         $this->initializeOutput();
         if ($this->hasError) {
-            return;
+            return $this;
         }
 
         fwrite($this->handle, "[\n");
@@ -90,6 +92,7 @@ class Json extends AbstractFormatter
         fwrite($this->handle, ']');
 
         $this->finalizeOutput();
+        return $this;
     }
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): string

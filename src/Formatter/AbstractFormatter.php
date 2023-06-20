@@ -211,7 +211,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $response;
     }
 
-    public function format($resources, $output = null, array $options = []): FormatterInterface
+    public function format($resources, $output = null, array $options = []): self
     {
         $this->reset();
 
@@ -334,7 +334,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
-    protected function reset(): FormatterInterface
+    protected function reset(): self
     {
         $this->resources = [];
         $this->resourceIds = [];
@@ -355,9 +355,9 @@ abstract class AbstractFormatter implements FormatterInterface
     /**
      * Save the content to the handle.
      */
-    abstract protected function process(): void;
+    abstract protected function process(): self;
 
-    protected function initializeOutput(): FormatterInterface
+    protected function initializeOutput(): self
     {
         $file = $this->isOutput ? $this->output : 'php://temp';
 
@@ -372,7 +372,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this;
     }
 
-    protected function finalizeOutput(): FormatterInterface
+    protected function finalizeOutput(): self
     {
         if (!$this->handle) {
             $this->hasError = true;
@@ -392,7 +392,7 @@ abstract class AbstractFormatter implements FormatterInterface
      * Write the content into output when it is not filled with the formatter.
      * The content is removed.
      */
-    protected function toOutput(): FormatterInterface
+    protected function toOutput(): self
     {
         if (!$this->isOutput || $this->hasError) {
             return $this;

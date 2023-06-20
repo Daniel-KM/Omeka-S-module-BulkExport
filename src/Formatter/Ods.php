@@ -14,7 +14,7 @@ class Ods extends AbstractSpreadsheetFormatter
     ];
     protected $spreadsheetType = Type::ODS;
 
-    public function format($resources, $output = null, array $options = []): FormatterInterface
+    public function format($resources, $output = null, array $options = []): self
     {
         if (!extension_loaded('zip') || !extension_loaded('xml')) {
             $this->logger->err(
@@ -38,7 +38,7 @@ class Ods extends AbstractSpreadsheetFormatter
         return parent::format($resources, $output, $options);
     }
 
-    protected function initializeOutput(): FormatterInterface
+    protected function initializeOutput(): self
     {
         $tempDir = $this->services->get('Config')['temp_dir'] ?: sys_get_temp_dir();
         $this->filepath = $this->isOutput
@@ -63,7 +63,7 @@ class Ods extends AbstractSpreadsheetFormatter
         return $this;
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         $row = WriterEntityFactory::createRowFromArray($fields);
         $this->spreadsheetWriter
@@ -71,7 +71,7 @@ class Ods extends AbstractSpreadsheetFormatter
         return $this;
     }
 
-    protected function finalizeOutput(): FormatterInterface
+    protected function finalizeOutput(): self
     {
         $this->spreadsheetWriter
             ->close();

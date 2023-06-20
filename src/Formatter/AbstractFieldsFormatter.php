@@ -31,24 +31,24 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
      */
     protected $prependFieldNames = false;
 
-    public function format($resources, $output = null, array $options = []): FormatterInterface
+    public function format($resources, $output = null, array $options = []): self
     {
         return parent::format($resources, $output, $options + $this->defaultOptionsFields);
     }
 
-    protected function process(): void
+    protected function process(): self
     {
         $this
             ->prepareFieldNames($this->options['metadata'], $this->options['metadata_exclude']);
 
         if (!count($this->fieldNames)) {
             $this->logger->warn('No metadata are used in any resources.'); // @translate
-            return;
+            return $this;
         }
 
         $this->initializeOutput();
         if ($this->hasError) {
-            return;
+            return $this;
         }
 
         if ($this->prependFieldNames) {
@@ -89,6 +89,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         }
 
         $this->finalizeOutput();
+        return $this;
     }
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
@@ -117,7 +118,6 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
     /**
      * @param array $fields If fields contains arrays, this method should manage
      * them.
-     * @return self
      */
-    abstract protected function writeFields(array $fields);
+    abstract protected function writeFields(array $fields): self;
 }

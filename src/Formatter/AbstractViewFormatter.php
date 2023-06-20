@@ -24,11 +24,11 @@ abstract class AbstractViewFormatter extends AbstractFormatter
      */
     protected $converter;
 
-    protected function process(): void
+    protected function process(): self
     {
         $this->initializeOutput();
         if ($this->hasError) {
-            return;
+            return $this;
         }
 
         $viewHelpers = $this->services->get('ViewHelperManager');
@@ -67,11 +67,13 @@ abstract class AbstractViewFormatter extends AbstractFormatter
         }
 
         $this->finalizeOutput();
+        return $this;
     }
 
-    protected function writeResource(AbstractResourceEntityRepresentation $resource, $index): void
+    protected function writeResource(AbstractResourceEntityRepresentation $resource, $index): self
     {
         $conv = $this->converter;
         fwrite($this->handle, $conv($resource, $index));
+        return $this;
     }
 }

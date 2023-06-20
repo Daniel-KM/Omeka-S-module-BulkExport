@@ -39,7 +39,7 @@ abstract class AbstractFieldsJsonFormatter extends AbstractFieldsFormatter
      */
     protected $outputIsFull = false;
 
-    protected function initializeOutput(): FormatterInterface
+    protected function initializeOutput(): self
     {
         parent::initializeOutput();
         if (!$this->hasError
@@ -51,7 +51,7 @@ abstract class AbstractFieldsJsonFormatter extends AbstractFieldsFormatter
         return $this;
     }
 
-    protected function finalizeOutput(): FormatterInterface
+    protected function finalizeOutput(): self
     {
         if ($this->hasError
             || $this->outputIsFull
@@ -105,7 +105,7 @@ abstract class AbstractFieldsJsonFormatter extends AbstractFieldsFormatter
         return parent::finalizeOutput();
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         // Just return a single value for single valued key, else an array,
         // mainly for property.

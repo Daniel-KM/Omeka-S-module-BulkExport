@@ -15,7 +15,7 @@ class Csv extends AbstractSpreadsheetFormatter
         'escape' => '\\',
     ];
 
-    protected function initializeOutput(): FormatterInterface
+    protected function initializeOutput(): self
     {
         parent::initializeOutput();
         // Prepend the utf-8 bom.
@@ -25,7 +25,7 @@ class Csv extends AbstractSpreadsheetFormatter
         return $this;
     }
 
-    protected function writeFields(array $fields)
+    protected function writeFields(array $fields): self
     {
         fputcsv($this->handle, $fields, $this->options['delimiter'], $this->options['enclosure'], $this->options['escape']);
         return $this;

@@ -31,7 +31,7 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
      */
     protected $filepath;
 
-    public function format($resources, $output = null, array $options = []): FormatterInterface
+    public function format($resources, $output = null, array $options = []): self
     {
         $options += $this->defaultOptionsSpreadsheet;
         $separator = $options['separator'];

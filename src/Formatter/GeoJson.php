@@ -41,26 +41,26 @@ class GeoJson extends AbstractFieldsJsonFormatter
         'Accept-Encoding' => 'gzip, deflate',
     ];
 
-    public function format($resources, $output = null, array $options = []): FormatterInterface
+    public function format($resources, $output = null, array $options = []): self
     {
         // Use omeka http client instead of the simple static client.
         $this->httpClient = $this->services->get('Omeka\HttpClient');
         return parent::format($resources, $output, $options + $this->defaultOptions);
     }
 
-    protected function process(): void
+    protected function process(): self
     {
         $this
             ->prepareFieldNames($this->options['metadata'], $this->options['metadata_exclude']);
 
         if (!count($this->fieldNames)) {
             $this->logger->warn('No metadata are used in any resources.'); // @translate
-            return;
+            return $this;
         }
 
         $this->initializeOutput();
         if ($this->hasError) {
-            return;
+            return $this;
         }
 
         $entityManager = $this->services->get('Omeka\EntityManager');
@@ -117,6 +117,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
         fwrite($this->handle, "\n" . '}');
 
         $this->finalizeOutput();
+        return $this;
     }
 
     /**
