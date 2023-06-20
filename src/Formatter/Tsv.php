@@ -8,9 +8,7 @@ class Tsv extends Csv
 {
     protected $label = 'tsv';
     protected $extension = 'tsv';
-    protected $responseHeaders = [
-        'Content-type' => 'text/tab-separated-values',
-    ];
+    protected $mediaType = 'text/tab-separated-values';
 
     protected $defaultOptions = [
         'delimiter' => "\t",

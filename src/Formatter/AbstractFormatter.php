@@ -31,9 +31,9 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $extension;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $responseHeaders = [];
+    protected $mediaType;
 
     /**
      * @var array
@@ -150,9 +150,9 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this->extension;
     }
 
-    public function getResponseHeaders(): array
+    public function getMediaType(): string
     {
-        return $this->responseHeaders;
+        return $this->mediaType;
     }
 
     public function getContent()
@@ -194,6 +194,7 @@ abstract class AbstractFormatter implements FormatterInterface
         /** @var \Laminas\Http\Headers $headers */
         $headers = $response
             ->getHeaders()
+            ->addHeaderLine('Content-Type: ' . $this->getMediaType())
             ->addHeaderLine('Content-Disposition: attachment; filename=' . $filename)
             // This is the strlen as bytes, not as character.
             ->addHeaderLine('Content-length: ' . strlen($content))
@@ -203,10 +204,6 @@ abstract class AbstractFormatter implements FormatterInterface
             ->addHeaderLine('Cache-Control: max-age=0')
             ->addHeaderLine('Expires: 0')
             ->addHeaderLine('Pragma: public');
-        foreach ($this->getResponseHeaders() as $key => $value) {
-            $headers
-                ->addHeaderLine($key, $value);
-        }
 
         return $response;
     }

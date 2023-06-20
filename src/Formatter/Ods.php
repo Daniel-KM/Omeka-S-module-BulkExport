@@ -9,9 +9,8 @@ class Ods extends AbstractSpreadsheetFormatter
 {
     protected $label = 'ods';
     protected $extension = 'ods';
-    protected $responseHeaders = [
-        'Content-type' => 'application/vnd.oasis.opendocument.spreadsheet',
-    ];
+    protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
+
     protected $spreadsheetType = Type::ODS;
 
     public function format($resources, $output = null, array $options = []): self

@@ -20,9 +20,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
 {
     protected $label = 'geojson';
     protected $extension = 'geojson';
-    protected $responseHeaders = [
-        'Content-type' => 'application/geo+json',
-    ];
+    protected $mediaType = 'application/geo+json';
+
     protected $outputSingleAsMultiple = true;
     protected $outputIsObject = true;
     protected $outputIsFull = true;

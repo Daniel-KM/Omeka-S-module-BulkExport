@@ -6,7 +6,5 @@ class TemplateTxt extends AbstractViewFormatter
 {
     protected $label = 'list';
     protected $extension = 'list.txt';
-    protected $responseHeaders = [
-        'Content-type' => 'text/plain',
-    ];
+    protected $mediaType = 'text/plain';
 }

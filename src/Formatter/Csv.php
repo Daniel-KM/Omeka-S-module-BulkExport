@@ -6,9 +6,8 @@ class Csv extends AbstractSpreadsheetFormatter
 {
     protected $label = 'csv';
     protected $extension = 'csv';
-    protected $responseHeaders = [
-        'Content-type' => 'text/csv',
-    ];
+    protected $mediaType = 'text/csv';
+
     protected $defaultOptions = [
         'delimiter' => ',',
         'enclosure' => '"',

@@ -11,9 +11,7 @@ class Odt extends AbstractFieldsFormatter
 
     protected $label = 'odt';
     protected $extension = 'odt';
-    protected $responseHeaders = [
-        'Content-type' => 'application/vnd.oasis.opendocument.text',
-    ];
+    protected $mediaType = 'application/vnd.oasis.opendocument.text';
 
     /**
      * @var string

@@ -11,9 +11,8 @@ class Json extends AbstractFormatter
 
     protected $label = 'json';
     protected $extension = 'json';
-    protected $responseHeaders = [
-        'Content-type' => 'application/json',
-    ];
+    protected $mediaType = 'application/json';
+
     protected $defaultOptions = [
         'flags' => JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS | JSON_PARTIAL_OUTPUT_ON_ERROR,
     ];

@@ -8,9 +8,7 @@ class Txt extends AbstractFieldsFormatter
 {
     protected $label = 'txt';
     protected $extension = 'txt';
-    protected $responseHeaders = [
-        'Content-type' => 'text/plain',
-    ];
+    protected $mediaType = 'text/plain';
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {

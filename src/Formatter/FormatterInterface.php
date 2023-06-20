@@ -15,11 +15,9 @@ interface FormatterInterface
     public function getExtension(): string;
 
     /**
-     * Specific headers for the response, generally including `Content-Type`.
-     *
-     * @return array
+     * The media type of the format, used to set the `Content-Type` in response.
      */
-    public function getResponseHeaders(): array;
+    public function getMediaType(): string;
 
     /**
      * Get the formatted resources.
