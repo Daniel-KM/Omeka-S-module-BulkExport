@@ -1,27 +1,16 @@
 <?php declare(strict_types=1);
-namespace BulkExport\Formatter;
 
-use Laminas\ServiceManager\ServiceLocatorInterface;
+namespace BulkExport\Formatter;
 
 interface FormatterInterface
 {
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return self
-     */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator): FormatterInterface;
-
-    /**
      * Get the name of the output format.
-     *
-     * @return string
      */
     public function getLabel(): string;
 
     /**
      * Return the extension to use for the output filename.
-     *
-     * @return string
      */
     public function getExtension(): string;
 
@@ -42,8 +31,6 @@ interface FormatterInterface
 
     /**
      * Get the formatted resources as a response.
-     *
-     * @return \Laminas\Http\PhpEnvironment\Response.
      */
     public function getResponse(): \Laminas\Http\PhpEnvironment\Response;
 

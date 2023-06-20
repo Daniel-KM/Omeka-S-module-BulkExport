@@ -135,15 +135,9 @@ abstract class AbstractFormatter implements FormatterInterface
      */
     protected $handle = null;
 
-    public function setServiceLocator(ServiceLocatorInterface $services): FormatterInterface
+    public function __construct(ServiceLocatorInterface $services)
     {
         $this->services = $services;
-        return $this;
-    }
-
-    protected function getServiceLocator(): ServiceLocatorInterface
-    {
-        return $this->services;
     }
 
     public function getLabel(): string

@@ -46,7 +46,7 @@ trait ListTermsTrait
         }
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
             ->select(
@@ -77,7 +77,7 @@ trait ListTermsTrait
         }
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
             ->select(
@@ -116,7 +116,7 @@ trait ListTermsTrait
         ];
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
 
         // List only properties that are used.
         // TODO Limit with the query (via adapter).
@@ -177,7 +177,7 @@ trait ListTermsTrait
         }
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
             ->select(
@@ -205,7 +205,7 @@ trait ListTermsTrait
         }
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
             ->select(
@@ -236,7 +236,7 @@ trait ListTermsTrait
         }
 
         /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->getServiceLocator()->get('Omeka\Connection');
+        $connection = $this->services->get('Omeka\Connection');
         $qb = $connection->createQueryBuilder();
         $qb
             ->select(

@@ -13,9 +13,8 @@ trait OpenDocumentTextTemplateTrait
 
     protected function initializeOpenDocumentText()
     {
-        $services = $this->getServiceLocator();
-        $settings = $services->get('Omeka\Settings');
-        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
+        $settings = $this->services->get('Omeka\Settings');
+        $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
         $user = $user ? $user->getName() : $this->translator->translate('Anonymous'); // @translate
         $languageCode = $this->translator->getDelegatedTranslator()->getLocale();
         $languageCode = str_replace('_', '-', $languageCode);

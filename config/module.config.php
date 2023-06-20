@@ -368,16 +368,16 @@ return [
     // TODO Rename the key "fomatters" as "exporters" or genericize.
     'formatters' => [
         'factories' => [
-            Formatter\Csv::class => Service\Formatter\FormatterFactory::class,
-            Formatter\GeoJson::class => Service\Formatter\FormatterFactory::class,
-            Formatter\Json::class => Service\Formatter\FormatterFactory::class,
-            Formatter\JsonLd::class => Service\Formatter\FormatterFactory::class,
-            Formatter\JsonTable::class => Service\Formatter\FormatterFactory::class,
-            Formatter\Ods::class => Service\Formatter\FormatterFactory::class,
-            Formatter\Odt::class => Service\Formatter\FormatterFactory::class,
-            Formatter\TemplateTxt::class => Service\Formatter\FormatterFactory::class,
-            Formatter\Tsv::class => Service\Formatter\FormatterFactory::class,
-            Formatter\Txt::class => Service\Formatter\FormatterFactory::class,
+            Formatter\Csv::class => Service\PluginManagerFactory::class,
+            Formatter\GeoJson::class => Service\PluginManagerFactory::class,
+            Formatter\Json::class => Service\PluginManagerFactory::class,
+            Formatter\JsonLd::class => Service\PluginManagerFactory::class,
+            Formatter\JsonTable::class => Service\PluginManagerFactory::class,
+            Formatter\Ods::class => Service\PluginManagerFactory::class,
+            Formatter\Odt::class => Service\PluginManagerFactory::class,
+            Formatter\TemplateTxt::class => Service\PluginManagerFactory::class,
+            Formatter\Tsv::class => Service\PluginManagerFactory::class,
+            Formatter\Txt::class => Service\PluginManagerFactory::class,
         ],
         'aliases' => [
             'csv' => Formatter\Csv::class,

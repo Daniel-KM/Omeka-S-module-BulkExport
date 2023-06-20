@@ -2,6 +2,8 @@
 
 namespace BulkExport\Formatter;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
+
 class Tsv extends Csv
 {
     protected $label = 'tsv';
@@ -16,8 +18,9 @@ class Tsv extends Csv
         'escape' => 0,
     ];
 
-    public function __construct()
+    public function __construct(ServiceLocatorInterface $services)
     {
+        parent::__construct($services);
         $this->defaultOptions['enclosure'] = chr(0);
         $this->defaultOptions['escape'] = chr(0);
     }

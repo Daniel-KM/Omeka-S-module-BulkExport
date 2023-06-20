@@ -383,6 +383,6 @@ trait MetadataToStringTrait
     {
         static $status;
         return $status
-            ?? $status = $this->getServiceLocator()->get('Omeka\Status')->isAdminRequest();
+            ?? $status = $this->services->get('Omeka\Status')->isAdminRequest();
     }
 }
