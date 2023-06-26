@@ -45,11 +45,11 @@ class Module extends AbstractModule
         $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
 
         $acl
-            // Anybody can read stream output.
+            // Anybody can read stream output from api-local or views.
             ->allow(
                 null,
                 ['BulkExport\Controller\Output'],
-                ['browse', 'show']
+                ['index', 'browse', 'show']
             )
 
             // Admin part.

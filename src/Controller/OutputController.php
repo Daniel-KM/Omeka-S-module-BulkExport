@@ -7,17 +7,25 @@ use Log\Stdlib\PsrMessage;
 
 class OutputController extends AbstractActionController
 {
+    public function indexAction()
+    {
+        // Via api-local.
+        return $this->output();
+    }
+
     public function browseAction()
     {
-        return $this->output(false);
+        // Via admin or public resource view for browse list of resources.
+        return $this->output();
     }
 
     public function showAction()
     {
-        return $this->output(true);
+        // Via admin or public resource view for show resource.
+        return $this->output();
     }
 
-    protected function output($isShow)
+    protected function output()
     {
         $params = $this->params();
 
@@ -36,6 +44,7 @@ class OutputController extends AbstractActionController
         $isAdmin = !$isSiteRequest;
 
         // This is the direct output, so always limited by the configured limit.
+        // TODO Limit with pagination (but here without pagination).
         $settings = $this->settings();
         if ($isAdmin) {
             $resourceLimit = $settings->get('bulkexport_limit');
@@ -55,8 +64,16 @@ class OutputController extends AbstractActionController
             ])) {
                 // TODO It may be an item set.
                 $resourceType = 'resource';
+            } elseif ($resourceType === 'Omeka\Controller\ApiLocal') {
+                $resourceName = $params->fromRoute('resource');
+                $resourceType = array_search($resourceName, $resourceTypesToNames);
+                if (!$resourceType) {
+                    throw new \Omeka\Mvc\Exception\NotFoundException(
+                        $this->translate('Unsupported resource type to export via api.') // @translate
+                    );
+                }
             } else {
-                // Support module Clean url.
+                // Support module CleanUrl, that kept original route in forward.
                 $resourceTypeClean = $params->fromRoute('forward');
                 if (!$resourceTypeClean || empty(\BulkExport\Formatter\AbstractFormatter::RESOURCES[$resourceTypeClean['__CONTROLLER__']])) {
                     throw new \Omeka\Mvc\Exception\NotFoundException(
