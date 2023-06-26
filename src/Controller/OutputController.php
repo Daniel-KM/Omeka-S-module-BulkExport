@@ -9,7 +9,7 @@ class OutputController extends AbstractActionController
 {
     public function indexAction()
     {
-        // Via api-local.
+        // Via api or api-local.
         return $this->output();
     }
 
@@ -64,7 +64,9 @@ class OutputController extends AbstractActionController
             ])) {
                 // TODO It may be an item set.
                 $resourceType = 'resource';
-            } elseif ($resourceType === 'Omeka\Controller\ApiLocal') {
+            } elseif ($resourceType === 'Omeka\Controller\ApiLocal'
+                || $resourceType === 'Omeka\Controller\Api'
+            ) {
                 $resourceName = $params->fromRoute('resource');
                 $resourceType = array_search($resourceName, $resourceTypesToNames);
                 if (!$resourceType) {
