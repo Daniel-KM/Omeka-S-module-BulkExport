@@ -71,13 +71,16 @@ return [
             'BulkExport\Controller\Admin\Exporter' => Controller\Admin\ExporterController::class,
             'BulkExport\Controller\Output' => Controller\OutputController::class,
         ],
+        'factories' => [
+            'BulkExport\Controller\Api' => Controller\ApiController::class,
+        ],
         // The aliases simplify the routing, the url assembly and allows to support module Clean url.
         'aliases' => [
             // Api (examples: /api/items.ods, /api/item/151.odt).
             // ApiLocal (examples: /api-local/items.ods, /api-local/item/151.odt).
             // In the Omeka routes, the controller of the Api is already built,
             // so create a fake alias.
-            'BulkExport\Controller\Omeka\Controller\Api' => Controller\OutputController::class,
+            'BulkExport\Controller\Omeka\Controller\Api' => Controller\ApiController::class,
             'BulkExport\Controller\Omeka\Controller\ApiLocal' => Controller\OutputController::class,
             // Views (examples: /admin/item.ods, /s/fr/151.ods).
             'BulkExport\Controller\Item' => Controller\OutputController::class,
@@ -290,7 +293,7 @@ return [
                 ],
             ],
             'api' => [
-                //  The controller of the api is defined statically.
+                // The controller of the api is defined statically.
                 // 'controller' => 'Omeka\Controller\Api',
                 'child_routes' => [
                     'default' => [
