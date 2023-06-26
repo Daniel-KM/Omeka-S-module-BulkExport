@@ -147,6 +147,9 @@ abstract class AbstractFormatter implements FormatterInterface
     public function __construct(ServiceLocatorInterface $services)
     {
         $this->services = $services;
+        $this->api = $this->services->get('Omeka\ApiManager');
+        $this->logger = $this->services->get('Omeka\Logger');
+        $this->translator = $this->services->get('MvcTranslator');
     }
 
     public function getLabel(): string
@@ -221,11 +224,6 @@ abstract class AbstractFormatter implements FormatterInterface
     public function format($resources, $output = null, array $options = []): self
     {
         $this->reset();
-
-        // The api is almost always required.
-        $this->api = $this->services->get('Omeka\ApiManager');
-        $this->logger = $this->services->get('Omeka\Logger');
-        $this->translator = $this->services->get('MvcTranslator');
 
         $options += [
             'resource_type' => null,
