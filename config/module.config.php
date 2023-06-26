@@ -397,6 +397,7 @@ return [
             'bulkexport_limit' => 1000,
             'bulkexport_formatters' => [
                 'csv',
+                // 'geojson',
                 // 'json',
                 'json-ld',
                 'json-table',

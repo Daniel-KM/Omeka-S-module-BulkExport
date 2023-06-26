@@ -12,7 +12,6 @@ namespace BulkExport\Formatter;
  */
 abstract class AbstractFieldsJsonFormatter extends AbstractFieldsFormatter
 {
-    protected $extension = 'json';
     protected $mediaType = 'application/json';
 
     protected $defaultOptions = [
