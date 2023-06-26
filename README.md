@@ -6,18 +6,26 @@ Bulk Export (module for Omeka S)
 > than the previous repository.__
 
 [Bulk Export] is a generic export module for [Omeka S] that provides common
-output formats (json, xml, spreadsheet, text), both for admin and public sides.
-It is easily extensible by other modules.
+output formats (json, xml, spreadsheet, text), both for admin, public and api
+sides. It is easily extensible by other modules.
 
-By default, it adds exporters in the resource browse view and in the resource
-show view. It can be added anywhere else in the theme with a simple helper.
+Just add an extension to the resource browse, resource show pages or api pages,
+for example `/admin/item.ods`, `/s/fr/151.odt`, `/api/items.tsv`, or `/api-local/item/151.table.json`.
+
+For complex requests, numerous resources, or slow output, for example the `geojson`
+that requires calls to remote https://geonames.org, you can use a specific page
+in the admin board.
+
+All outputs can be configured in admin settings and in site settings.
+
+The list of available output can be added to resource browse view and in
+resource show view via a resource page block or via an event.
 
 Internally, it allows to manage output formats, that are responsible for
 exporting metadata into a file, a stream or as a string.
 
-As an example, this module defines a sample writer that exports all resources as
-a spreadsheet, that can be imported automatically by [Bulk Import]. Other known
-modules that provides output: [Bibliography].
+You may use module [Bibliography] to add old bibliographic formats (`bibtex`,
+`csl`, `ris`).
 
 
 Installation
@@ -25,10 +33,8 @@ Installation
 
 This module requires the module [Log] and the optional module [Generic].
 
-The module [Blocks Disposition] can be used to add it in the public sites.
-
-**Important**: If you use the module [CSVImport] in parallel, you should apply
-[this patch] or use [this version].
+For Omeka S v3, the module [Blocks Disposition] can be used to add it in the
+public sites. This is useless for Omeka S v4.
 
 See general end user documentation for [installing a module].
 
@@ -50,14 +56,15 @@ composer install --no-dev
 Quick start
 -----------
 
-### Automatic list
+### Automatic list of available outputs
 
-The list is added automatically in the admin resource browse pages and in the
-resource show pages. The list of exporters is configurable in the settings. This
-is the same for the sites: use the site settings and eventually the blocks
-disposition config to display the list of exporters.
+The list of available outputs is added automatically in the admin resource
+browse pages and in the resource show pages. The list of exporters is
+configurable in the settings. This is the same for the sites: use the site
+settings and eventually the blocks disposition settings (for Omeka S < v4) to
+display the list of  exporters. For Omeka S v4, use the resource page blocks.
 
-### Helper
+### View helper
 
 The view helper `$this->bulkExport($resourcesOrIdsOrQuery, $options)` can be
 used anywhere else.
@@ -65,30 +72,26 @@ used anywhere else.
 ### Manual creation of export urls
 
 The export is available directly as `/s/my-site/item/{id}.ods`, or any other
-extension (tsv, csv, json, json-ld, list.txt, txt, odt, ods), or the one of other
-modules, in particular [Bibliography]. This feature is compatible with the module
-[Clean Url].
+extension (`csv`, `tsv`, `ods`, `json`, `jsonld`, `geojson`, `list.txt`, `txt`,
+`odt`), or the one of other modules, in particular [Bibliography]. This feature
+is compatible with the module [Clean Url].
 
-The export is available through the api endpoint too with the module [Api Info]
-at `/api/infos/item/{id}.ods`, or any other extension.
+The export is available through the api endpoint too at `/api/items/{id}.ods`
+(or any other extension) or with the local api endpoint too at `/api-local/items.ods`.
 
-So you can create urls manually or with the routes of the modules ('site/resource-output'
-and 'site/resource-output-id').
+It is available with the module [Api Info] too (deprecated) at `/api/infos/items/{id}.ods`.
+
+Routes can be create manually or with the routes of the module: `site/resource-output`,
+`site/resource-output-id`, `admin/resource-output`, `admin/resource-output-id`,
+`api/default/output`, `api-local/default/output`.
 
 ### Heavy export
 
-The limit of resources to output is specified in the settings. To output more
-resources, you need to use the bulk export process, that will create the output
-in a file via a background job.
-
-First, choose a writer and config it. Finally, process the export.
-
-
-Development
------------
-
-To create a new writer, take your inspiration on the existing `SpreadsheetWriter`
-or the other ones.
+The limit to the number of resources to output in a single call is specified in
+the settings. To output more resources or for complex or slow formats, you need
+to use the bulk export process, that will create the output in a file via a
+background job: just config a writer for default params, then use it and process
+the export.
 
 
 Notes
@@ -109,6 +112,7 @@ TODO
 - [x] Rights on exports.
 - [x] Deletion of old exports.
 - [ ] Make any size output real time (streamable).
+- [ ] For api, allow to pass settings like in module [Api Info].
 
 
 Warning
@@ -168,9 +172,6 @@ by [Biblibre].
 
 [Bulk Export]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport
 [Omeka S]: https://omeka.org/s
-[Bulk Import]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkImport
-[Omeka Classic]: https://omeka.org/classic
-[Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [Bibliography]: https://gitlab.com/Daniel-KM/Omeka-S-module-Bibliography
 [Blocks Disposition]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlocksDisposition
 [Clean Url]: https://gitlab.com/Daniel-KM/Omeka-S-module-CleanUrl
@@ -178,16 +179,15 @@ by [Biblibre].
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
-[CSV Import]: https://github.com/omeka-s-modules/CSVImport
 [Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
-[this patch]: https://github.com/omeka-s-modules/CSVImport/pull/182
-[this version]: https://github.com/Daniel-KM/Omeka-S-module-CSVImport
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
 [OSI]: http://opensource.org
 [MIT]: https://github.com/sandywalker/webui-popover/blob/master/LICENSE.txt
+[Omeka Classic]: https://omeka.org/classic
+[Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [BibLibre]: https://github.com/BibLibre
 [GitLab]: https://gitlab.com/Daniel-KM
 [Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
