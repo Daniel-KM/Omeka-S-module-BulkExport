@@ -318,8 +318,18 @@ return [
                 ],
             ],
             'api-local' => [
-                //  The controller of the api is defined statically.
-                // 'controller' => 'Omeka\Controller\ApiLocal',
+                // The controller of the api is defined statically.
+                // The type and the options are added for compatibility with Omeka S < v4.1,
+                // in particular to avoid an issue during upgrade.
+                'type' => \Laminas\Router\Http\Literal::class,
+                'options' => [
+                    'route' => '/api-local',
+                    /*
+                    'defaults' => [
+                        'controller' => 'Omeka\Controller\ApiLocal',
+                    ],
+                    */
+                ],
                 'child_routes' => [
                     'default' => [
                         'may_terminate' => true,
