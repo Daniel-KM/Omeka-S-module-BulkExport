@@ -148,3 +148,10 @@ if (version_compare($oldVersion, '3.4.21', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare($oldVersion, '3.4.22', '<')) {
+    $message = new Message(
+        'It is now possible to export via the api endpoint: just add an extension to it, like for admin or site view, for example "/api/items.ods" or "/api-local/items/151.odt".' // @translate
+    );
+    $messenger->addSuccess($message);
+}
