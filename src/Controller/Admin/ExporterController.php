@@ -252,7 +252,7 @@ class ExporterController extends AbstractActionController
                         // TODO Make all writers parametrizable.
                         // @see \BulkExport\Controller\OutputController::output().
                         $exportData['o-bulk:writer_params']['site_slug'] = null;
-                        $exportData['o-bulk:writer_params']['is_admin_request'] = true;
+                        $exportData['o-bulk:writer_params']['is_site_request'] = false;
 
                         $response = $this->api()->create('bulk_exports', $exportData);
                         if (!$response) {

@@ -47,7 +47,8 @@ trait ResourceFieldsTrait
             $usedProperties = array_diff($this->fieldNames, $listFieldNames);
         } else {
             $hasProperties = true;
-            if (!empty($this->options['is_admin_request'])) {
+            // Admin or api request.
+            if (empty($this->options['is_site_request'])) {
                 $this->fieldNames = [
                     'o:id',
                     'url',
