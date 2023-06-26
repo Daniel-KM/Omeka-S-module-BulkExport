@@ -8,6 +8,15 @@ use Log\Stdlib\PsrMessage;
 
 abstract class AbstractFormatter implements FormatterInterface
 {
+    // The list of managed resources should be managed by the FormatterManager.
+    const RESOURCES = [
+        'item' => 'items',
+        'media' => 'media',
+        'item-set' => 'item_sets',
+        'resource' => 'resources',
+        'annotation' => 'annotations',
+    ];
+
     /**
      * Limit for the loop to avoid heavy sql requests.
      *
@@ -167,7 +176,7 @@ abstract class AbstractFormatter implements FormatterInterface
         return $this->content;
     }
 
-    public function getResponse(string $resourceType = 'resources'): HttpResponse
+    public function getResponse(): HttpResponse
     {
         $content = $this->getContent();
         if ($content === false) {
@@ -182,6 +191,7 @@ abstract class AbstractFormatter implements FormatterInterface
             $content = (string) file_get_contents($this->output);
         }
 
+        $resourceType = $this->options['resource_type'] ?? 'resources';
         $id = $this->isSingle ? $this->resource->id() : null;
         $filename = $this->getFilename($resourceType, $this->getExtension(), $id);
 
@@ -217,14 +227,6 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->logger = $this->services->get('Omeka\Logger');
         $this->translator = $this->services->get('MvcTranslator');
 
-        $resourceNames = [
-            'items',
-            'item_sets',
-            'media',
-            'resources',
-            'annotations',
-        ];
-
         $options += [
             'resource_type' => null,
             'metadata' => [],
@@ -235,7 +237,7 @@ abstract class AbstractFormatter implements FormatterInterface
         ];
         $hasLimit = $options['limit'] > 0;
 
-        if (!empty($options['resource_type']) && in_array($options['resource_type'], $resourceNames)) {
+        if (!empty($options['resource_type']) && in_array($options['resource_type'], self::RESOURCES)) {
             $this->resourceType = $options['resource_type'];
         }
         $options['resource_types'] = empty($this->resourceType)

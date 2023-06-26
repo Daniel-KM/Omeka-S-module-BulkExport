@@ -45,16 +45,9 @@ class OutputController extends AbstractActionController
         }
         $resourceLimit = (int) $resourceLimit ?: 1000;
 
-        $resourceTypesToNames = [
-            'item' => 'items',
-            'item-set' => 'item_sets',
-            'media' => 'media',
-            'resource' => 'resources',
-            'annotation' => 'annotations',
-        ];
         $resourceType = $params->fromRoute('__CONTROLLER__');
         // Support common modules.
-        if (empty($resourceTypesToNames[$resourceType])) {
+        if (empty(\BulkExport\Formatter\AbstractFormatter::RESOURCES[$resourceType])) {
             if (in_array($resourceType, [
                 'AdvancedSearch\Controller\IndexController',
                 'AdvancedSearch\Controller\SearchController',
@@ -65,7 +58,7 @@ class OutputController extends AbstractActionController
             } else {
                 // Support module Clean url.
                 $resourceTypeClean = $params->fromRoute('forward');
-                if (!$resourceTypeClean || empty($resourceTypesToNames[$resourceTypeClean['__CONTROLLER__']])) {
+                if (!$resourceTypeClean || empty(\BulkExport\Formatter\AbstractFormatter::RESOURCES[$resourceTypeClean['__CONTROLLER__']])) {
                     throw new \Omeka\Mvc\Exception\NotFoundException(
                         $this->translate('Unsupported resource type to export.') // @translate
                     );
@@ -73,7 +66,7 @@ class OutputController extends AbstractActionController
                 $resourceType = $resourceTypeClean['__CONTROLLER__'];
             }
         }
-        $resourceName = $resourceTypesToNames[$resourceType];
+        $resourceName = \BulkExport\Formatter\AbstractFormatter::RESOURCES[$resourceType];
 
         // Check the id in the route first to manage the direct route.
         $id = $params->fromRoute('id');
