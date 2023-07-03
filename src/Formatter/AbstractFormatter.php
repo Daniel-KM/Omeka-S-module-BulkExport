@@ -278,7 +278,7 @@ abstract class AbstractFormatter implements FormatterInterface
                     if ($this->isId) {
                         $this->resourceIds = array_values(array_unique(array_filter(array_map('intval', $resources))));
                         if ($hasLimit) {
-                            $this->resourceIds = array_slice($this->resourceIds, 0, $options['limit']);
+                            $this->resourceIds = array_slice($this->resourceIds, 0, (int) $options['limit']);
                         }
                     } else {
                         $this->isQuery = true;
