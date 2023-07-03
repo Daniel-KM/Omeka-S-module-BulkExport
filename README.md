@@ -10,7 +10,8 @@ output formats (json, xml, spreadsheet, text), both for admin, public and api
 sides. It is easily extensible by other modules.
 
 Just add an extension to the resource browse, resource show pages or api pages,
-for example `/admin/item.ods`, `/s/fr/151.odt`, `/api/items.tsv`, or `/api-local/item/151.table.json`.
+for example `/admin/item.ods`, `/s/fr/151.odt`, `/api/items.tsv`, or `/api-local/item/151.table.json`
+(integration of the old feature from module [Api Info]).
 
 For complex requests, numerous resources, or slow output, for example the `geojson`
 that requires calls to remote https://geonames.org, you can use a specific page
@@ -77,13 +78,13 @@ extension (`csv`, `tsv`, `ods`, `json`, `jsonld`, `geojson`, `list.txt`, `txt`,
 is compatible with the module [Clean Url].
 
 The export is available through the api endpoint too at `/api/items/{id}.ods`
-(or any other extension) or with the local api endpoint too at `/api-local/items.ods`.
+(or any other extension).
 
 It is available with the module [Api Info] too (deprecated) at `/api/infos/items/{id}.ods`.
 
 Routes can be create manually or with the routes of the module: `site/resource-output`,
 `site/resource-output-id`, `admin/resource-output`, `admin/resource-output-id`,
-`api/default/output`, `api-local/default/output`.
+`api/default/output`.
 
 ### Heavy export
 
@@ -113,6 +114,7 @@ TODO
 - [x] Deletion of old exports.
 - [ ] Make any size output real time (streamable).
 - [ ] For api, allow to pass settings like in module [Api Info].
+- [ ] Use request header "Accept" like .extension.
 
 
 Warning
