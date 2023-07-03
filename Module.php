@@ -45,11 +45,18 @@ class Module extends AbstractModule
         $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
 
         $acl
-            // Anybody can read stream output from api, local api  or views.
+            // Anybody can read stream output from api, local api or views.
             ->allow(
                 null,
                 ['BulkExport\Controller\Output'],
                 ['index', 'browse', 'show']
+            )
+            ->allow(
+                null,
+                [
+                    'BulkExport\Controller\Omeka\Controller\Api',
+                    'BulkExport\Controller\Omeka\Controller\ApiLocal',
+                ]
             )
 
             // Admin part.

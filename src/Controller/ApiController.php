@@ -6,6 +6,9 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Omeka\View\Model\ApiJsonModel;
 
+/**
+ * @todo Use request header "Accept".
+ */
 class ApiController extends \Omeka\Controller\ApiController
 {
     use ExporterTrait;
@@ -20,56 +23,93 @@ class ApiController extends \Omeka\Controller\ApiController
 
     public function get($id)
     {
-        $response = parent::get($id);
-        return $this->outputResourcesFromApiJsonModel($response);
+        $apiJsonModel = parent::get($id);
+        return $this->outputResourcesFromApiJsonModel($apiJsonModel);
     }
 
     public function getList()
     {
-        $response = parent::getList();
+        // The route requires an id to build the header links (/api[/:resource[/:id]].:format).
+        // So instead a copy of parent method, add a fake id before processing
+        // and replace them after.
+        $this->getEvent()->getRouteMatch()->setParam('id', '__OMK_BEX__');
+
+        $apiJsonModel = parent::getList();
 
         // Manage special resource "api_resources".
-        if (!$response instanceof ApiJsonModel) {
+        if (!$apiJsonModel instanceof ApiJsonModel) {
             return $this->returnError(
                 $this->translate('Resource type not allowed for export for now'), // @translate
                 Response::STATUS_CODE_405
             );
         }
 
-        return $this->outputResourcesFromApiJsonModel($response);
+        // Append the links: get omeka response early.
+        /** @var \Laminas\Http\Headers $headers */
+        $headers = $this->getResponse()->getHeaders();
+
+        // This is the response of the controller now ($this->getResponse()).
+        $response = $this->outputResourcesFromApiJsonModel($apiJsonModel);
+
+        // Update the output headers in all cases, even for error.
+        $outputHeaders = $response->getHeaders();
+        $link = $headers->get('Link');
+        if ($link) {
+            $outputHeaders->addHeaderLine(str_replace('/__OMK_BEX__', '', $link->toString()));
+        }
+        $total = $headers->get('Omeka-S-Total-Results');
+        if ($total) {
+            $outputHeaders->addHeader($total);
+        }
+
+        if ($response instanceof \Laminas\View\Model\JsonModel) {
+            return $response;
+        }
+
+        // In api, return data inline.
+        $disposition = $outputHeaders->get('Content-Disposition');
+        if ($disposition) {
+            $outputHeaders->removeHeader($disposition);
+        }
+        $outputHeaders->addHeaderLine('Content-Disposition: inline');
+
+        return $response;
     }
 
     public function create($data, $fileData = [])
     {
-        $response = parent::create($data, $fileData);
-        return $this->outputResourcesFromApiJsonModel($response);
+        $apiJsonModel = parent::create($data, $fileData);
+        return $this->outputResourcesFromApiJsonModel($apiJsonModel);
     }
 
     public function update($id, $data)
     {
-        $response = parent::update($id, $data);
-        return $this->outputResourcesFromApiJsonModel($response);
+        $apiJsonModel = parent::update($id, $data);
+        return $this->outputResourcesFromApiJsonModel($apiJsonModel);
     }
 
     public function patch($id, $data)
     {
-        $response = parent::patch($id, $data);
-        return $this->outputResourcesFromApiJsonModel($response);
+        $apiJsonModel = parent::patch($id, $data);
+        return $this->outputResourcesFromApiJsonModel($apiJsonModel);
     }
 
     public function delete($id)
     {
-        $response = parent::delete($id);
-        return $this->outputResourcesFromApiJsonModel($response);
+        $apiJsonModel = parent::delete($id);
+        return $this->outputResourcesFromApiJsonModel($apiJsonModel);
     }
 
-    protected function outputResourcesFromApiJsonModel(ApiJsonModel $response)
+    /**
+     * @return \Laminas\View\Model\JsonModel|\Laminas\Http\PhpEnvironment\Response
+     */
+    protected function outputResourcesFromApiJsonModel(ApiJsonModel $apiJsonModel)
     {
         /**
          * @var \Omeka\Api\Response $apiResponse
          * @var \Omeka\Entity\Resource $resource
          */
-        $apiResponse = $response->getApiResponse();
+        $apiResponse = $apiJsonModel->getApiResponse();
 
         $resourceName = $apiResponse->getRequest()->getResource();
         //  TODO The check agains the list of managed resources should be managed by the FormatterManager.
@@ -82,7 +122,10 @@ class ApiController extends \Omeka\Controller\ApiController
 
         // May be a single or multiple resources.
         $resources = $apiResponse->getContent();
-        return $this->output($resources, $resourceName);
+
+        // Store the response directly in the controller.
+        $this->response = $this->output($resources, $resourceName);
+        return $this->response;
     }
 
     /**

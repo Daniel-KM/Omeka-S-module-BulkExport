@@ -2,7 +2,7 @@
 
 namespace BulkExport;
 
-return [
+$conf = [
     'service_manager' => [
         'factories' => [
             Formatter\Manager::class => Service\FormatterManagerFactory::class,
@@ -72,16 +72,15 @@ return [
             'BulkExport\Controller\Output' => Controller\OutputController::class,
         ],
         'factories' => [
-            'BulkExport\Controller\Api' => Controller\ApiController::class,
-        ],
-        // The aliases simplify the routing, the url assembly and allows to support module Clean url.
-        'aliases' => [
             // Api (examples: /api/items.ods, /api/item/151.odt).
             // ApiLocal (examples: /api-local/items.ods, /api-local/item/151.odt).
             // In the Omeka routes, the controller of the Api is already built,
             // so create a fake alias.
-            'BulkExport\Controller\Omeka\Controller\Api' => Controller\ApiController::class,
-            'BulkExport\Controller\Omeka\Controller\ApiLocal' => Controller\OutputController::class,
+            'BulkExport\Controller\Omeka\Controller\Api' => Service\Controller\ApiControllerFactory::class,
+            'BulkExport\Controller\Omeka\Controller\ApiLocal' => Service\Controller\ApiControllerFactory::class,
+        ],
+        // The aliases simplify the routing, the url assembly and allows to support module Clean url.
+        'aliases' => [
             // Views (examples: /admin/item.ods, /s/fr/151.ods).
             'BulkExport\Controller\Item' => Controller\OutputController::class,
             'BulkExport\Controller\ItemSet' => Controller\OutputController::class,
@@ -308,8 +307,8 @@ return [
                                         'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
                                     ],
                                     'defaults' => [
+                                        // Don't set default action: it is a rest route.
                                         '__NAMESPACE__' => 'BulkExport\Controller',
-                                        'action' => 'index',
                                     ],
                                 ],
                             ],
@@ -321,15 +320,6 @@ return [
                 // The controller of the api is defined statically.
                 // The type and the options are added for compatibility with Omeka S < v4.1,
                 // in particular to avoid an issue during upgrade.
-                'type' => \Laminas\Router\Http\Literal::class,
-                'options' => [
-                    'route' => '/api-local',
-                    /*
-                    'defaults' => [
-                        'controller' => 'Omeka\Controller\ApiLocal',
-                    ],
-                    */
-                ],
                 'child_routes' => [
                     'default' => [
                         'may_terminate' => true,
@@ -343,8 +333,8 @@ return [
                                         'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
                                     ],
                                     'defaults' => [
+                                        // Don't set default action: it is a rest route.
                                         '__NAMESPACE__' => 'BulkExport\Controller',
-                                        'action' => 'index',
                                     ],
                                 ],
                             ],
@@ -529,3 +519,25 @@ return [
         ],
     ],
 ];
+
+// For compatibility with Omeka S < v4.1, add the route for api-local even
+// without controller. It avoids an issue during upgrade.
+if (version_compare(\Omeka\Module::VERSION, '4.1', '<')) {
+    $conf['router']['routes']['api-local']['type'] = \Laminas\Router\Http\Literal::class;
+    $conf['router']['routes']['api-local']['options'] = [
+        'route' => '/api-local',
+        'defaults' => [
+            'controller' => 'Omeka\Controller\ApiLocal',
+        ],
+    ];
+    $conf['router']['routes']['api-local']['may_terminate'] = true;
+    $conf['router']['routes']['api-local']['child_routes']['default']['type'] = \Laminas\Router\Http\Segment::class;
+    $conf['router']['routes']['api-local']['child_routes']['default']['options'] = [
+        'route' => '[/:resource[/:id]]',
+        'constraints' => [
+            'resource' => '[a-zA-Z0-9_-]+',
+        ],
+    ];
+}
+
+return $conf;
