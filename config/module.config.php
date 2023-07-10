@@ -47,13 +47,13 @@ $conf = [
         'invokables' => [
             Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
             Form\ExporterStartForm::class => Form\ExporterStartForm::class,
-            Form\SettingsFieldset::class => Form\SettingsFieldset::class,
-            Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
             Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,
             Form\Writer\SpreadsheetWriterConfigForm::class => Form\Writer\SpreadsheetWriterConfigForm::class,
         ],
         'factories' => [
             Form\ExporterForm::class => Service\Form\ExporterFormFactory::class,
+            Form\SettingsFieldset::class => Service\Form\SettingsFieldsetFactory::class,
+            Form\SiteSettingsFieldset::class => Service\Form\SiteSettingsFieldsetFactory::class,
         ],
     ],
     'resource_page_block_layouts' => [
