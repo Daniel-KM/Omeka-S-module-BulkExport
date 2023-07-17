@@ -11,7 +11,7 @@ trait OpenDocumentTextTemplateTrait
      */
     protected $openDocument;
 
-    protected function initializeOpenDocumentText(): \BulkExport\Formatter\AbstractFieldsFormatter
+    protected function initializeOpenDocumentText(): self
     {
         $settings = $this->services->get('Omeka\Settings');
         $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
@@ -71,7 +71,7 @@ trait OpenDocumentTextTemplateTrait
         return $this;
     }
 
-    protected function writeFields(array $fields): \BulkExport\Formatter\AbstractFieldsFormatter
+    protected function writeFields(array $fields): self
     {
         $section = $this->openDocument->addSection(['breakType' => 'continuous']);
         foreach ($fields as $fieldName => $fieldValues) {

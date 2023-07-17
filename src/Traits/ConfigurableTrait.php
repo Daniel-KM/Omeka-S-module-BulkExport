@@ -13,7 +13,7 @@ trait ConfigurableTrait
      * @param array|\ArrayObject $config
      * @return self
      */
-    public function setConfig($config)
+    public function setConfig($config): self
     {
         $this->config = $config;
         return $this;

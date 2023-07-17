@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 namespace BulkExport\Interfaces;
 
 use Laminas\Form\Form;
@@ -9,7 +10,7 @@ interface Parametrizable
      * @param array|\Traversable $config
      * @return self
      */
-    public function setParams($params);
+    public function setParams($params): self;
 
     /**
      * @return array|\Traversable

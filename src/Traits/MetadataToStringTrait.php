@@ -31,7 +31,7 @@ trait MetadataToStringTrait
      * @return array Always an array, even for single metadata. The caller knows
      * what to do with it.
      */
-    protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = [])
+    protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = []): self
     {
         static $customVocabBaseTypes;
 
@@ -319,7 +319,7 @@ trait MetadataToStringTrait
      * @param AbstractResourceRepresentation[] $resources
      * @return array
      */
-    protected function extractResourceIds(array $resources)
+    protected function extractResourceIds(array $resources): array
     {
         return array_map(function ($v) {
             return $v->id();
@@ -333,7 +333,7 @@ trait MetadataToStringTrait
      * @param string $metadata The full metadata, with a term.
      * @return array
      */
-    protected function extractFirstValueOfResources(array $resources, $metadata)
+    protected function extractFirstValueOfResources(array $resources, $metadata): array
     {
         $result = [];
         $term = trim(substr($metadata, strpos($metadata, '[') + 1), '[] ');
@@ -352,7 +352,7 @@ trait MetadataToStringTrait
         return $result;
     }
 
-    protected function labelResource(AbstractRepresentation $representation)
+    protected function labelResource(AbstractRepresentation $representation): string
     {
         $class = get_class($representation);
         $mapping = [
