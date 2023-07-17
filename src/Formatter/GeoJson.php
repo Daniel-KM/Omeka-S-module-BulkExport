@@ -66,6 +66,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
 
         $geonamesUrlToResourceIds = [];
 
+        $appendId = in_array('o:id', $this->fieldNames);
+
         if ($this->isId) {
             foreach (array_chunk($this->resourceIds, self::SQL_LIMIT) as $idsChunk) {
                 foreach ($idsChunk as $resourceId) {
@@ -104,7 +106,11 @@ class GeoJson extends AbstractFieldsJsonFormatter
             if ($geonamesRdf) {
                 $geoJson = $this->geonamesRdfToGeoJson($geonamesRdf);
                 if ($geoJson) {
-                    $geoJson['properties']['o:id'] = $resourceIds;
+                    if ($appendId) {
+                        $geoJson['properties']['o:id'] = $resourceIds;
+                    } else {
+                        $geoJson['properties']['total'] = count($resourceIds);
+                    }
                     $geoJsons[] = $geoJson;
                 }
             }
