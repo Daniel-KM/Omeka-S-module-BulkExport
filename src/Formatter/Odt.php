@@ -54,4 +54,13 @@ class Odt extends AbstractFieldsFormatter
         }
         return $this;
     }
+
+    /**
+     * For compatibility with php 7.4, the method is called indirectly.
+     */
+    protected function writeFields(array $fields): self
+    {
+        $this->_writeFields($fields);
+        return $this;
+    }
 }

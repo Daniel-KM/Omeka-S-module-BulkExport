@@ -41,4 +41,13 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
         $objWriter->save($this->filepath);
         return $this;
     }
+
+    /**
+     * For compatibility with php 7.4, the method is called indirectly.
+     */
+    protected function writeFields(array $fields): self
+    {
+        $this->_writeFields($fields);
+        return $this;
+    }
 }
