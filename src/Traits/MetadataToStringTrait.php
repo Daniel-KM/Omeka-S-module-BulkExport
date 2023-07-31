@@ -31,7 +31,7 @@ trait MetadataToStringTrait
      * @return array Always an array, even for single metadata. The caller knows
      * what to do with it.
      */
-    protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = []): self
+    protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = []): array
     {
         static $customVocabBaseTypes;
 
