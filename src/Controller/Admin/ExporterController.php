@@ -223,6 +223,12 @@ class ExporterController extends AbstractActionController
         $formsCallbacks = $this->getStartFormsCallbacks($exporter);
         $formCallback = reset($formsCallbacks);
 
+        $asTask = $exporter->configOption('exporter', 'as_task');
+        if ($asTask) {
+            $message = new PsrMessage('This export will be stored to be run as a task.'); // @translate
+            $this->messenger()->addWarning($message);
+        }
+
         $next = null;
         if ($this->getRequest()->isPost()) {
             // Current form.
@@ -255,7 +261,7 @@ class ExporterController extends AbstractActionController
                     case 'writer':
                         $writer->handleParamsForm($form);
                         $session->comment = trim((string) $data['comment']);
-                        $session->useBackground = (bool) ($data['use_background']);
+                        $session->useBackground = !empty($data['use_background']);
                         $session->writer = $writer->getParams();
                         if (!$writer->isValid()) {
                             $this->messenger()->addError($writer->getLastErrorMessage());
@@ -294,6 +300,16 @@ class ExporterController extends AbstractActionController
 
                         /** @var \BulkExport\Api\Representation\ExportRepresentation $export */
                         $export = $response->getContent();
+
+                        // Don't run job if it is configured as a task.
+                        if ($asTask) {
+                            $message = new PsrMessage(
+                                'The export #{bulk_export} was stored for future use.', // @translate
+                                ['bulk_export' => $export->id()]
+                            );
+                            $this->messenger()->addSuccess($message);
+                            return $this->redirect()->toRoute('admin/bulk-export', []);
+                        }
 
                         $useBackground = $session->useBackground;
 
@@ -426,6 +442,7 @@ class ExporterController extends AbstractActionController
                     'value' => 'confirm',
                 ],
             ]);
+            // Submit is in the fieldset.
             return $startForm;
         };
 

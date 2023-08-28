@@ -22,6 +22,9 @@ interface WriterInterface
 
     public function setLogger(Logger $logger): self;
 
+    /**
+     * @deprecated
+     */
     public function setJob(Job $job): self;
 
     /**

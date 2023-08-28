@@ -14,9 +14,9 @@ use Omeka\Job\AbstractJob;
 class Export extends AbstractJob
 {
     /**
-     * @var ExportRepresentation
+     * @var \Omeka\Api\Manager
      */
-    protected $export;
+    protected $api;
 
     /**
      * @var \Laminas\Log\Logger
@@ -24,40 +24,107 @@ class Export extends AbstractJob
     protected $logger;
 
     /**
-     * @var \Omeka\Api\Manager
+     * @var \BulkExport\Api\Representation\ExportRepresentation
      */
-    protected $api;
+    protected $export;
+
+    /**
+     * @var \BulkExport\Api\Representation\ExporterRepresentation
+     */
+    protected $exporter;
+
+    /**
+     * @var \BulkExport\Writer\WriterInterface
+     */
+    protected $writer;
 
     public function perform(): void
     {
-        // Init logger and export.
-        $this->getLogger();
+        $services = $this->getServiceLocator();
+        $this->api = $services->get('Omeka\ApiManager');
+        $this->logger = $services->get('Omeka\Logger');
 
-        $export = $this->getExport();
-        $this->api()->update('bulk_exports', $export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
-        $writer = $this->getWriter();
+        $bulkExportId = $this->getArg('bulk_export_id');
+        if (!$bulkExportId) {
+            $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
+            $this->logger->err(
+                'Export record id is not set.', // @translate
+            );
+            return;
+        }
+
+        $this->export = $this->api->search('bulk_exports', ['id' => $bulkExportId, 'limit' => 1])->getContent();
+        if (!count($this->export)) {
+            $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
+            $this->logger->err(
+                'Export record id #{id} does not exist.', // @translate
+                ['id' => $bulkExportId]
+            );
+            return;
+        }
+
+        $this->export = reset($this->export);
+        $this->exporter = $this->export->exporter();
+
+        $processAsTask = $this->exporter->configOption('exporter', 'as_task');
+        if ($processAsTask) {
+            /** @var \Doctrine\ORM\EntityManager $entityManager */
+            $entityManager = $services->get('Omeka\EntityManager');
+            // jsonSerialize() keeps sub keys as unserialized objects.
+            $newExport = $this->export->jsonSerialize();
+            $newExport = array_diff_key($newExport, array_flip(['@id', 'o:id', 'o:job']));
+            $newExport['o-bulk:exporter'] = $entityManager->getReference(\BulkExport\Entity\Exporter::class, $this->exporter->id());
+            $newExport['o:owner'] = $services->get('Omeka\AuthenticationService')->getIdentity();
+            $this->export = $this->api->create('bulk_exports', $newExport)->getContent();
+        }
+
+        $referenceId = new \Laminas\Log\Processor\ReferenceId();
+        $referenceId->setReferenceId('bulk/export/' . $this->export->id());
+        $this->logger->addProcessor($referenceId);
+
+        if ($processAsTask) {
+            $this->logger->notice(
+                'Export as task based on export #{export_id}.', // @translate
+                ['export_id' => $bulkExportId]
+            );
+        }
+
+        // Make compatible with EasyAdmin tasks, that may use a fake job.
+        if ($this->job->getId()) {
+            $this->api->update('bulk_exports', $this->export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
+        }
+
+        $this->writer = $this->getWriter();
+        if (!$this->writer) {
+            $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
+            $this->logger->err(
+                'Writer "{writer}" is not available.', // @translate
+                ['writer' => $this->exporter->writerClass()]
+            );
+            return;
+        }
 
         // Save the label of the exporter, if needed (to create filename, etc.).
         // Should be prepared befoer checking validity.
-        if ($writer instanceof Parametrizable) {
-            $params = $writer->getParams();
-            $params['export_id'] = $export->id();
-            $params['exporter_label'] = $export->exporter()->label();
-            $params['export_started'] = $export->started();
-            $writer->setParams($params);
-            $siteSlug = $writer->getParam('site_slug');
+        if ($this->writer instanceof Parametrizable) {
+            $params = $this->writer->getParams();
+            $params['export_id'] = $this->export->id();
+            $params['exporter_label'] = $this->exporter->label();
+            $params['export_started'] = $this->export->started();
+            $this->writer->setParams($params);
+            $siteSlug = $this->writer->getParam('site_slug');
         } else {
             $siteSlug = null;
         }
 
-        if (!$writer->isValid()) {
+        if (!$this->writer->isValid()) {
             throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                 'Export error: {error}', // @translate
-                ['error' => $writer->getLastErrorMessage()]
+                ['error' => $this->writer->getLastErrorMessage()]
             ));
         }
 
-        $writer
+        $this->writer
             ->setLogger($this->logger)
             ->setJob($this);
 
@@ -68,9 +135,9 @@ class Export extends AbstractJob
         $this->prepareRouteMatchAndSiteSettings($siteSlug);
         $this->prepareServerUrl();
 
-        $writer->process();
+        $this->writer->process();
 
-        $this->saveFilename($export, $writer);
+        $this->saveFilename();
 
         $this->logger->notice('Export completed'); // @translate
     }
@@ -81,34 +148,34 @@ class Export extends AbstractJob
      * @param ExportRepresentation $export
      * @param WriterInterface $writer
      */
-    protected function saveFilename(ExportRepresentation $export, WriterInterface $writer): void
+    protected function saveFilename(): self
     {
-        if (!($writer instanceof Parametrizable)) {
-            return;
+        if (!($this->writer instanceof Parametrizable)) {
+            return $this;
         }
 
-        $params = $writer->getParams();
+        $params = $this->writer->getParams();
         if (empty($params['filename'])) {
-            return;
+            return $this;
         }
 
         $data = [
             'o:filename' => $params['filename'],
         ];
-        $export = $this->api()->update('bulk_exports', $export->id(), $data, [], ['isPartial' => true])->getContent();
-        $filename = $export->filename(true);
+        $this->export = $this->api->update('bulk_exports', $this->export->id(), $data, [], ['isPartial' => true])->getContent();
+        $filename = $this->export->filename(true);
         if (!$filename) {
-            return;
+            return $this;
         }
 
-        $fileUrl = $export->fileUrl();
-        $filesize = $export->filesize();
+        $fileUrl = $this->export->fileUrl();
+        $filesize = $this->export->filesize();
         if (!$fileUrl) {
             $this->logger->notice(
                 'The export is available locally as specified (size: {size} bytes).', // @translate
                 ['size' => $filesize]
             );
-            return;
+            return $this;
         }
 
         $this->logger->notice(
@@ -118,81 +185,25 @@ class Export extends AbstractJob
                 'size' => $filesize,
             ]
         );
+
+        return $this;
     }
 
-    /**
-     * Get the logger for the bulk process (the Omeka one, with reference id).
-     *
-     * @return \Laminas\Log\Logger
-     */
-    protected function getLogger()
-    {
-        if ($this->logger) {
-            return $this->logger;
-        }
-        $this->logger = $this->getServiceLocator()->get('Omeka\Logger');
-        $referenceId = new \Laminas\Log\Processor\ReferenceId();
-        $referenceId->setReferenceId('bulk/export/' . $this->getExport()->id());
-        $this->logger->addProcessor($referenceId);
-        return $this->logger;
-    }
-
-    /**
-     * @return \Omeka\Api\Manager
-     */
-    protected function api()
-    {
-        if (!$this->api) {
-            $this->api = $this->getServiceLocator()->get('Omeka\ApiManager');
-        }
-        return $this->api;
-    }
-
-    /**
-     * @return \BulkExport\Api\Representation\ExportRepresentation|null
-     */
-    protected function getExport()
-    {
-        if ($this->export) {
-            return $this->export;
-        }
-
-        $id = $this->getArg('bulk_export_id');
-        if ($id) {
-            $content = $this->api()->search('bulk_exports', ['id' => $id, 'limit' => 1])->getContent();
-            $this->export = is_array($content) && count($content) ? reset($content) : null;
-        }
-
-        if (empty($this->export)) {
-            // TODO Avoid the useless trace in the log for jobs.
-            throw new \Omeka\Job\Exception\InvalidArgumentException('Export record does not exist'); // @translate
-        }
-
-        return $this->export;
-    }
-
-    /**
-     * @throws \Omeka\Job\Exception\InvalidArgumentException
-     * @return \BulkExport\Writer\WriterInterface
-     */
-    protected function getWriter()
+    protected function getWriter(): ?\BulkExport\Writer\WriterInterface
     {
         $services = $this->getServiceLocator();
-        $export = $this->getExport();
-        $exporter = $export->exporter();
-        $writerClass = $exporter->writerClass();
+        $writerClass = $this->exporter->writerClass();
         $writerManager = $services->get(WriterManager::class);
         if (!$writerManager->has($writerClass)) {
-            throw new \Omeka\Job\Exception\InvalidArgumentException((string) new PsrMessage(
-                'Writer "{writer}" is not available.', // @translate
-                ['writer' => $writerClass]
-            ));
+            return null;
         }
         $writer = $writerManager->get($writerClass);
         $writer->setServiceLocator($services);
-        if ($writer instanceof Configurable && $writer instanceof Parametrizable) {
-            $writer->setConfig($exporter->writerConfig());
-            $writer->setParams($export->writerParams());
+        if ($writer instanceof Configurable) {
+            $writer->setConfig($this->exporter->writerConfig());
+        }
+        if ($writer instanceof Parametrizable) {
+            $writer->setParams($this->export->writerParams());
         }
         return $writer;
     }
@@ -211,20 +222,20 @@ class Export extends AbstractJob
 
         if ($siteSlug) {
             try {
-                $site = $this->api()->read('sites', ['slug' => $siteSlug])->getContent();
+                $site = $this->api->read('sites', ['slug' => $siteSlug])->getContent();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
             }
         } else {
             $defaultSiteId = $services->get('Omeka\Settings')->get('default_site');
             try {
-                $site = $this->api()->read('sites', ['id' => $defaultSiteId])->getContent();
+                $site = $this->api->read('sites', ['id' => $defaultSiteId])->getContent();
                 $siteSlug = $site->slug();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
             }
         }
 
         if (empty($site)) {
-            $site = $this->api()->search('sites', ['limit' => 1])->getContent();
+            $site = $this->api->search('sites', ['limit' => 1])->getContent();
             $site = $site ? reset($site) : null;
             $siteSlug = $site ? $site->slug() : '***';
         }

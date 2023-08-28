@@ -4,6 +4,8 @@
  * @var \BulkExport\Api\Representation\ExporterRepresentation $exporter
  * @var \BulkExport\Form\ExporterForm $form
  * @var array $exportArgs
+ * @var string $step
+ * @var array $steps
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -16,6 +18,7 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'Bulk
 
 $form->prepare();
 
+/** @var \Laminas\Form\Element\Submit $submit */
 $submit = $form->get('form_submit')->get('submit');
 $submit->setAttribute('form', $form->getAttribute('id'));
 $form->get('form_submit')->remove('submit');
@@ -24,7 +27,7 @@ $form->get('form_submit')->remove('submit');
 <?= $this->pageTitle($translate('Export'), 1, $translate('Bulk export')) ?>
 
 <div id="bulk-export">
-    <h3><?= $escape(sprintf($translate('Exporter: %s'), $exporter->label())) ?></h3>
+    <h3><?= $escape($exporter->label()) ?></h3>
     <?php if (isset($exportArgs)): ?>
     <?php $comment = $exportArgs['comment']; ?>
     <?php unset($exportArgs['comment']); ?>
@@ -41,5 +44,9 @@ $form->get('form_submit')->remove('submit');
 </div>
 
 <div id="page-actions">
+    <?php if ($step === 'confirm' && $exporter->configOption('exporter', 'as_task')): ?>
+    <?= $this->formSubmit($submit->setLabel($translate('Store export'))) ?>
+    <?php else: ?>
     <?= $this->formSubmit($submit) ?>
+    <?php endif; ?>
 </div>

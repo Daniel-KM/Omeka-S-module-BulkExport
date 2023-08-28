@@ -39,7 +39,39 @@ class ExporterForm extends Form
                 'attributes' => [
                     'id' => 'o-bulk-writer-class',
                 ],
+            ])
+
+            ->add([
+                'name' => 'o:config',
+                'type' => Fieldset::class,
+                'options' => [
+                    'label' => 'Other params', // @translate
+                ],
             ]);
+
+        $fieldset = $this->get('o:config');
+        $fieldset
+            ->add([
+                'name' => 'exporter',
+                'type' => Fieldset::class,
+                'options' => [
+                    'label' => 'Exporter', // @translate
+                ],
+            ]);
+        $subFieldset = $fieldset->get('exporter');
+        $subFieldset
+            ->add([
+                'name' => 'as_task',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'label' => 'Store exporter as a task', // @translate
+                    'info' => 'Allows to store a job to run it via command line or a cron task (see module EasyAdmin).', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'as_task',
+                ],
+            ])
+        ;
 
         $this
             ->add([
