@@ -5,12 +5,10 @@
  */
 
 $plugins = $this->getHelperPluginManager();
-$translate = $plugins->get('translate');
-$escape = $plugins->get('escapeHtml');
-$hyperlink = $plugins->get('hyperlink');
 $url = $plugins->get('url');
-
-$urlBase = $url('top') . 'files/bulk_export/';
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
 ?>
 
 <?php $this->trigger('view.browse.before'); ?>
@@ -31,7 +29,7 @@ $urlBase = $url('top') . 'files/bulk_export/';
             $status = $translate($export->statusLabel());
             $owner = $export->owner();
             $filename = $export->filename();
-            $fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : '';
+            $fileUrl = $filename && $export->isCompleted() ? $export->fileUrl() : '';
             $exporter = $export->exporter();
             $userIsAllowedDelete = $exporter->userIsAllowed('delete');
             ?>

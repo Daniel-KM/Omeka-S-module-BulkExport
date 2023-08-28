@@ -335,8 +335,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         );
 
         $this->logger->notice(
-            'End export of {total} {resource_type}.', // @translate
-            ['total' => $statistics['total'], 'resource_type' => $resourceText]
+            'End export of {resource_type}.', // @translate
+            ['resource_type' => $resourceText]
         );
 
         return $this;

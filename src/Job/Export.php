@@ -100,6 +100,7 @@ class Export extends AbstractJob
         if (!$filename) {
             return;
         }
+
         $fileUrl = $export->fileUrl();
         $filesize = $export->filesize();
         if (!$fileUrl) {
@@ -109,8 +110,9 @@ class Export extends AbstractJob
             );
             return;
         }
+
         $this->logger->notice(
-            'The export is available at <a href="{href}" download="download">{filename}</a> (size: {size} bytes).', // @translate
+            'The export is available at <a href="{href}" download="{filename}">{filename}</a> (size: {size} bytes).', // @translate
             [
                 'href' => $fileUrl,
                 'filename' => basename($filename),

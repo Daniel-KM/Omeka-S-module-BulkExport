@@ -260,6 +260,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $label = $this->slugify($label);
         $label = preg_replace('/_+/', '_', $label);
         $exporter = str_replace(['bulkexport', 'writer', '\\'], '', strtolower(get_class($this)));
+        $exportId = $this->getExport() ? $this->getExport()->id() : '0';
         $date = (new \DateTime())->format('Ymd');
         $time = (new \DateTime())->format('His');
         /** @var \Omeka\Entity\User $user */
@@ -272,6 +273,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $placeholders = [
             '{label}' => $label,
             '{exporter}' => $exporter,
+            '{exportid}' => $exportId,
             '{date}' => $date,
             '{time}' => $time,
             '{userid}' => $userId,

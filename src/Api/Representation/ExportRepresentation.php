@@ -89,7 +89,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
     /**
      * Get the url where data are stored.
      *
-     * May be null when there is no file or when the stored outside for "files/".
+     * May be null when there is no file or when stored outside for "files/".
      */
     public function fileUrl(): ?string
     {
