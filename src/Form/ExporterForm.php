@@ -30,7 +30,7 @@ class ExporterForm extends Form
                 ],
             ])
             ->add([
-                'name' => 'o-bulk:writer_class',
+                'name' => 'o-bulk:writer',
                 'type' => Element\Select::class,
                 'options' => [
                     'label' => 'Writer', // @translate

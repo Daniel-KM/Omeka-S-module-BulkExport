@@ -4,22 +4,24 @@ CREATE TABLE `bulk_export` (
     `owner_id` INT DEFAULT NULL,
     `job_id` INT DEFAULT NULL,
     `comment` VARCHAR(190) DEFAULT NULL,
-    `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
-    `filename` VARCHAR(255) DEFAULT NULL,
+    `params` LONGTEXT NOT NULL COMMENT '(DC2Type:json)',
+    `filename` VARCHAR(760) DEFAULT NULL,
     INDEX IDX_625A30FDB4523DE5 (`exporter_id`),
     INDEX IDX_625A30FD7E3C61F9 (`owner_id`),
     UNIQUE INDEX UNIQ_625A30FDBE04EA9 (`job_id`),
     PRIMARY KEY(`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
 CREATE TABLE `bulk_exporter` (
     `id` INT AUTO_INCREMENT NOT NULL,
     `owner_id` INT DEFAULT NULL,
-    `label` VARCHAR(190) DEFAULT NULL,
-    `writer_class` VARCHAR(190) DEFAULT NULL,
-    `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
+     `label` VARCHAR(190) NOT NULL,
+    `writer` VARCHAR(190) NOT NULL,
+    `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)',
     INDEX IDX_6093500B7E3C61F9 (`owner_id`),
     PRIMARY KEY(`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+
 ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDB4523DE5 FOREIGN KEY (`exporter_id`) REFERENCES `bulk_exporter` (`id`) ON DELETE SET NULL;
 ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FD7E3C61F9 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
 ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDBE04EA9 FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE SET NULL;

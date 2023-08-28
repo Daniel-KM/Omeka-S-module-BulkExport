@@ -15,14 +15,19 @@ use Omeka\Entity\User;
 class Export extends AbstractEntity
 {
     /**
+     * @var int
+     *
      * @Id
-     * @Column(type="integer")
+     * @Column(
+     *     type="integer"
+     * )
      * @GeneratedValue
      */
     protected $id;
 
     /**
      * @var Exporter
+     *
      * @ManyToOne(
      *     targetEntity=Exporter::class,
      *     inversedBy="exports",
@@ -37,6 +42,7 @@ class Export extends AbstractEntity
 
     /**
      * @var User
+     *
      * @ManyToOne(
      *     targetEntity=\Omeka\Entity\User::class
      * )
@@ -49,6 +55,7 @@ class Export extends AbstractEntity
 
     /**
      * @var Job
+     *
      * @OneToOne(
      *     targetEntity=\Omeka\Entity\Job::class
      * )
@@ -61,6 +68,7 @@ class Export extends AbstractEntity
 
     /**
      * @var string
+     *
      * @Column(
      *     type="string",
      *     nullable=true,
@@ -71,18 +79,20 @@ class Export extends AbstractEntity
 
     /**
      * @var array
+     *
      * @Column(
      *     type="json",
-     *     nullable=true
+     *     nullable=false
      * )
      */
-    protected $writerParams;
+    protected $params;
 
     /**
      * @var string
+     *
      * @Column(
      *     type="string",
-     *     length=255,
+     *     length=760,
      *     nullable=true
      * )
      */
@@ -99,7 +109,7 @@ class Export extends AbstractEntity
         return $this;
     }
 
-    public function getExporter(): \BulkExport\Entity\Exporter
+    public function getExporter(): Exporter
     {
         return $this->exporter;
     }
@@ -110,7 +120,7 @@ class Export extends AbstractEntity
         return $this;
     }
 
-    public function getOwner(): ?\Omeka\Entity\User
+    public function getOwner(): ?User
     {
         return $this->owner;
     }
@@ -126,9 +136,9 @@ class Export extends AbstractEntity
         return $this->job;
     }
 
-    public function setComment(?string $comment): self
+    public function setComment($comment): self
     {
-        $this->comment = $comment;
+        $this->comment = (string) $comment ?: null;
         return $this;
     }
 
@@ -138,17 +148,17 @@ class Export extends AbstractEntity
     }
 
     /**
-     * @param array|\Traversable $writerParams
+     * @param array|\Traversable $params
      */
-    public function setWriterParams($writerParams): self
+    public function setParams(array $params): self
     {
-        $this->writerParams = $writerParams;
+        $this->params = $params;
         return $this;
     }
 
-    public function getWriterParams(): ?array
+    public function getParams(): array
     {
-        return $this->writerParams;
+        return $this->params;
     }
 
     public function setFilename(?string $filename): self

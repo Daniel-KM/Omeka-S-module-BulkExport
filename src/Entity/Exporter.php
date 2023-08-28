@@ -15,14 +15,19 @@ use Omeka\Entity\User;
 class Exporter extends AbstractEntity
 {
     /**
+     * @var int
+     *
      * @Id
-     * @Column(type="integer")
+     * @Column(
+     *     type="integer"
+     * )
      * @GeneratedValue
      */
     protected $id;
 
     /**
      * @var User
+     *
      * @ManyToOne(
      *     targetEntity=\Omeka\Entity\User::class
      * )
@@ -35,9 +40,10 @@ class Exporter extends AbstractEntity
 
     /**
      * @var string
+     *
      * @Column(
      *     type="string",
-     *     nullable=true,
+     *     nullable=false,
      *     length=190
      * )
      */
@@ -45,24 +51,28 @@ class Exporter extends AbstractEntity
 
     /**
      * @var string
+     *
      * @Column(
      *     type="string",
-     *     nullable=true,
+     *     nullable=false,
      *     length=190
      * )
      */
-    protected $writerClass;
+    protected $writer;
 
     /**
      * @var array
+     *
      * @Column(
      *     type="json",
-     *     nullable=true
+     *      nullable=false
      * )
      */
-    protected $writerConfig;
+    protected $config;
 
     /**
+     * @var Export[]|ArrayCollection
+     *
      * @OneToMany(
      *     targetEntity=Export::class,
      *     mappedBy="exporter",
@@ -94,44 +104,41 @@ class Exporter extends AbstractEntity
         return $this->owner;
     }
 
-    public function setLabel(?string $label): self
+    public function setLabel(string $label): self
     {
         $this->label = $label;
         return $this;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function setWriterClass(?string $writerClass): self
+    public function setWriter(string $writer): self
     {
-        $this->writerClass = $writerClass;
+        $this->writer = $writer;
         return $this;
     }
 
-    public function getWriterClass(): ?string
+    public function getWriter(): string
     {
-        return $this->writerClass;
+        return $this->writer;
     }
 
-    /**
-     * @param array|\Traversable $writerConfig
-     */
-    public function setWriterConfig($writerConfig): self
+    public function setConfig($config): self
     {
-        $this->writerConfig = $writerConfig;
+        $this->config = $config;
         return $this;
     }
 
-    public function getWriterConfig(): ?array
+    public function getConfig(): ?array
     {
-        return $this->writerConfig;
+        return $this->config;
     }
 
     /**
-     * @return Export[]
+     * @return Export[]|ArrayCollection
      */
     public function getExports(): ArrayCollection
     {

@@ -4,9 +4,20 @@ namespace BulkExport\Api\Representation;
 
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 use Omeka\Api\Representation\JobRepresentation;
+use Omeka\Api\Representation\UserRepresentation;
 
 class ExportRepresentation extends AbstractEntityRepresentation
 {
+    public function getControllerName()
+    {
+        return 'export';
+    }
+
+    public function getJsonLdType()
+    {
+        return 'o-bulk:Export';
+    }
+
     public function getJsonLd()
     {
         $exporter = $this->exporter();
@@ -22,18 +33,8 @@ class ExportRepresentation extends AbstractEntityRepresentation
             'o:started' => $this->started(),
             'o:ended' => $this->ended(),
             'o:filename' => $this->filename(),
-            'o-bulk:writer_params' => $this->writerParams(),
+            'o:params' => $this->params(),
         ];
-    }
-
-    public function getControllerName()
-    {
-        return 'export';
-    }
-
-    public function getJsonLdType()
-    {
-        return 'o-bulk:Export';
     }
 
     public function exporter(): ?ExporterRepresentation
@@ -44,7 +45,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
             : null;
     }
 
-    public function owner(): ?\Omeka\Api\Representation\UserRepresentation
+    public function owner(): ?UserRepresentation
     {
         $user = $this->resource->getOwner();
         return $user
@@ -60,9 +61,9 @@ class ExportRepresentation extends AbstractEntityRepresentation
             : null;
     }
 
-    public function comment(): string
+    public function comment(): ?string
     {
-        return (string) $this->resource->getComment();
+        return $this->resource->getComment();
     }
 
     /**
@@ -123,9 +124,15 @@ class ExportRepresentation extends AbstractEntityRepresentation
             : null;
     }
 
+    public function params(): array
+    {
+        return $this->resource->getParams();
+    }
+
     public function writerParams(): array
     {
-        return $this->resource->getWriterParams() ?: [];
+        $parameters = $this->params();
+        return $parameters['writer'] ?? [];
     }
 
     public function status(): string

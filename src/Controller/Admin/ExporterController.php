@@ -45,6 +45,8 @@ class ExporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
+                $data = $form->getData();
+                unset($data['csrf'], $data['form_submit'], $data['current_form']);
                 if (!isset($data['o:label']) || (string) $data['o:label'] === '') {
                     $data['o:label'] = $this->translate('[No label]'); // @translate
                 }
@@ -57,10 +59,10 @@ class ExporterController extends AbstractActionController
 
                 if (!$response) {
                     $this->messenger()->addError('Save of exporter failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export'], true);
                 } else {
                     $this->messenger()->addSuccess('Exporter successfully saved'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
+                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export', 'action' => 'browse'], true);
                 }
             } else {
                 $this->messenger()->addFormErrors($form);
@@ -103,11 +105,10 @@ class ExporterController extends AbstractActionController
                 $response = $this->api($form)->delete('bulk_exporters', $id);
                 if ($response) {
                     $this->messenger()->addSuccess('Exporter successfully deleted'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 } else {
                     $this->messenger()->addError('Delete of exporter failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 }
+                return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
             } else {
                 $this->messenger()->addFormErrors($form);
             }
@@ -121,6 +122,7 @@ class ExporterController extends AbstractActionController
 
     public function configureWriterAction()
     {
+        /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         $id = (int) $this->params()->fromRoute('id');
         $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
 
@@ -130,8 +132,10 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
         }
 
+        /** @var \BulkExport\Writer\WriterInterface $writer */
         $writer = $exporter->writer();
         $form = $this->getForm($writer->getConfigFormClass());
+        $form->setAttribute('id', 'form-exporter-writer');
         $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
         $form->setData($writerConfig);
 
@@ -142,6 +146,9 @@ class ExporterController extends AbstractActionController
         $form->get('form_submit')->add([
             'name' => 'submit',
             'type' => Element\Submit::class,
+            'options' => [
+                'label' => 'Save',
+            ],
             'attributes' => [
                 'value' => 'Save', // @translate
                 'id' => 'submitbutton',
@@ -152,17 +159,16 @@ class ExporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $writer->handleConfigForm($form);
-                $data['writer_config'] = $writer->getConfig();
-                $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
-
+                $currentData = $exporter->getJsonLd();
+                $currentData['o:config']['writer'] = $writer->handleConfigForm($form)->getConfig();
+                $update = ['o:config' => $currentData['o:config']];
+                $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $update, [], ['isPartial' => true]);
                 if ($response) {
                     $this->messenger()->addSuccess('Writer configuration saved'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 } else {
                     $this->messenger()->addError('Save of writer configuration failed'); // @translate
-                    return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 }
+                return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
             } else {
                 $this->messenger()->addFormErrors($form);
             }
@@ -195,7 +201,13 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
         }
 
+        /** @var \BulkExport\Writer\WriterInterface $writer */
         $writer = $exporter->writer();
+        if (!$writer) {
+            $message = new PsrMessage('Writer "{writer}" does not exist', ['writer' => $exporter->writerClass()]); // @translate
+            $this->messenger()->addError($message);
+            return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
+        }
 
         /** @var \Laminas\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
@@ -218,7 +230,7 @@ class ExporterController extends AbstractActionController
 
             // Avoid an issue if the user reloads the page.
             if (!isset($formsCallbacks[$currentForm])) {
-                $message = new PsrMessage('The page was reloaded, but params are lost. Restart the import.'); // @translate
+                $message = new PsrMessage('The page was reloaded, but params are lost. Restart the export.'); // @translate
                 $this->messenger()->addError($message);
                 return $this->redirect()->toRoute('admin/bulk-export');
             }
@@ -260,15 +272,20 @@ class ExporterController extends AbstractActionController
                         $exportData['o-bulk:comment'] = trim((string) $session['comment']) ?: null;
                         $exportData['o-bulk:exporter'] = $exporter->getResource();
                         if ($writer instanceof Parametrizable) {
-                            $exportData['o-bulk:writer_params'] = $writer->getParams();
+                            $writerParams = $writer->getParams();
+                        } else {
+                            $writerParams = [];
                         }
 
                         // Add some default params.
                         // TODO Make all writers parametrizable.
                         // @see \BulkExport\Controller\OutputController::output().
-                        $exportData['o-bulk:writer_params']['site_slug'] = null;
-                        $exportData['o-bulk:writer_params']['is_site_request'] = false;
+                        $writerParams['site_slug'] = null;
+                        $writerParams['is_site_request'] = false;
 
+                        $exportData['o:params'] = [
+                            'writer' => $writerParams,
+                        ];
                         $response = $this->api()->create('bulk_exports', $exportData);
                         if (!$response) {
                             $this->messenger()->addError('Save of export failed'); // @translate

@@ -15,8 +15,8 @@ class ExportAdapter extends AbstractEntityAdapter
 {
     protected $sortFields = [
         'id' => 'id',
-        'exporter_id' => 'exporterId',
-        'owner_id' => 'ownerId',
+        'exporter_id' => 'exporter',
+        'owner_id' => 'owner',
         'job_id' => 'job',
         'comment' => 'comment',
         'filename' => 'filename',
@@ -28,7 +28,7 @@ class ExportAdapter extends AbstractEntityAdapter
         'owner' => 'owner',
         'job' => 'job',
         'comment' => 'comment',
-        'writer_params' => 'writerParams',
+        'params' => 'params',
         'filename' => 'filename',
     ];
 

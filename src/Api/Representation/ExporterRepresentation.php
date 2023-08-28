@@ -23,6 +23,11 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return 'exporter';
     }
 
+    public function getJsonLdType()
+    {
+        return 'o-bulk:Exporter';
+    }
+
     public function getJsonLd()
     {
         $owner = $this->owner();
@@ -30,14 +35,14 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             'o:id' => $this->id(),
             'o:owner' => $owner ? $owner->getReference() : null,
             'o:label' => $this->label(),
-            'o-bulk:writer_class' => $this->writerClass(),
-            'o-bulk:writer_config' => $this->writerConfig(),
+            'o-bulk:writer' => $this->writerClass(),
+            'o:config' => $this->config(),
         ];
     }
 
-    public function getJsonLdType()
+    public function getResource(): \BulkExport\Entity\Exporter
     {
-        return 'o-bulk:Exporter';
+        return $this->resource;
     }
 
     public function owner(): ?\Omeka\Api\Representation\UserRepresentation
@@ -50,17 +55,35 @@ class ExporterRepresentation extends AbstractEntityRepresentation
 
     public function label(): string
     {
-        return (string) $this->resource->getLabel();
+        return $this->resource->getLabel();
+    }
+
+    public function config(): array
+    {
+        return $this->resource->getConfig();
+    }
+
+    public function configOption(string $part, $key)
+    {
+        $conf = $this->resource->getConfig();
+        return $conf[$part][$key] ?? null;
     }
 
     public function writerClass(): ?string
     {
-        return $this->resource->getWriterClass();
+        return $this->resource->getWriter();
+    }
+
+    public function exporterConfig(): array
+    {
+        $conf = $this->config();
+        return $conf['exporter'] ?? [];
     }
 
     public function writerConfig(): array
     {
-        return $this->resource->getWriterConfig() ?: [];
+        $conf = $this->config();
+        return $conf['writer'] ?? [];
     }
 
     public function writer(): ?\BulkExport\Writer\WriterInterface
@@ -78,6 +101,9 @@ class ExporterRepresentation extends AbstractEntityRepresentation
                 $this->writer->setConfig($config);
             }
         }
+
+        $logger = $this->getServiceLocator()->get('Omeka\Logger');
+        $this->writer->setLogger($logger);
 
         return $this->writer;
     }
@@ -102,10 +128,5 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             ],
             ['force_canonical' => $canonical]
         );
-    }
-
-    public function getResource(): \BulkExport\Entity\Exporter
-    {
-        return $this->resource;
     }
 }
