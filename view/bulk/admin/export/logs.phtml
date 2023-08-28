@@ -99,6 +99,13 @@ $severityNames = [
 
     <?= $this->pagination(); ?>
 
+    <?php if ($export->isInProgress()): ?>
+    <p>
+        <?= $hyperlink($translate('Attempt to stop job'),
+            $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'stop', 'id' => $export->id()], true)) ?>
+    <p>
+    <?php endif; ?>
+
     <p>
         <?= $hyperlink(sprintf($translate('Manage logs')),
             $this->url('admin/log/default', [], ['query' => ['reference' => 'bulk/export/' . $export->id()]])) ?>

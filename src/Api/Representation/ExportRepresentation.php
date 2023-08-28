@@ -164,6 +164,16 @@ class ExportRepresentation extends AbstractEntityRepresentation
         return $job && $job->status() === \Omeka\Entity\Job::STATUS_COMPLETED;
     }
 
+    public function isStoppable(): bool
+    {
+        $job = $this->job();
+        return $job && in_array($job->status(), [
+            \Omeka\Entity\Job::STATUS_STARTING,
+            // \Omeka\Entity\Job::STATUS_STOPPING,
+            \Omeka\Entity\Job::STATUS_IN_PROGRESS,
+        ]);
+    }
+
     public function logCount(): int
     {
         $job = $this->job();

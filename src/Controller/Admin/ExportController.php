@@ -5,6 +5,7 @@ namespace BulkExport\Controller\Admin;
 use Laminas\Log\Logger;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
+use Log\Stdlib\PsrMessage;
 
 class ExportController extends AbstractActionController
 {
@@ -96,6 +97,34 @@ class ExportController extends AbstractActionController
             ['action' => 'browse'],
             true
         );
+    }
+
+    public function stopAction()
+    {
+        $id = $this->params()->fromRoute('id');
+
+        /** @var \BulkExport\Api\Representation\ExportRepresentation $export */
+        $export = $this->api()->searchOne('bulk_exports', ['id' => $id])->getContent();
+        if (!$export) {
+            $this->messenger()->addWarning(new PsrMessage(
+                'The export process #{export} does not exists.', // @translate
+                ['export' => $id]
+            ));
+        } elseif ($export->isStoppable()) {
+            $job = $export->job();
+            $this->jobDispatcher()->stop($job->id());
+            $this->messenger()->addSuccess(new PsrMessage(
+                'Attempting to stop the export process #{export}.', // @translate
+                ['export' => $id]
+            ));
+        } else {
+            $this->messenger()->addWarning(new PsrMessage(
+                'The process #{export} cannot be stopped.', // @translate
+                ['export' => $id]
+            ));
+        }
+
+        return $this->redirect()->toRoute(null, ['action' => 'logs'], true);
     }
 
     public function logsAction()
