@@ -71,16 +71,12 @@ class ExportAdapter extends AbstractEntityAdapter
 
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {
             $userAlias = $this->createAlias();
-            $qb->innerJoin(
-                'omeka_root.owner',
-                $userAlias
-            );
-            $qb->andWhere(
-                $qb->eq(
-                    'omeka_root.id',
+            $qb
+                ->innerJoin('omeka_root.owner', $userAlias)
+                ->andWhere($expr->eq(
+                    'omeka_root.owner',
                     $this->createNamedParameter($qb, $query['owner_id'])
-                )
-            );
+                ));
         }
     }
 
