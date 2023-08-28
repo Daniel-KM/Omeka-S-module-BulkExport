@@ -45,6 +45,7 @@ $conf = [
     ],
     'form_elements' => [
         'invokables' => [
+            Form\Element\OptionalRadio::class => Form\Element\OptionalRadio::class,
             Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
             Form\ExporterStartForm::class => Form\ExporterStartForm::class,
             Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,
