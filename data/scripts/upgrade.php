@@ -155,3 +155,57 @@ if (version_compare($oldVersion, '3.4.23', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare($oldVersion, '3.4.27', '<')) {
+    $sqls = <<<'SQL'
+ALTER TABLE `bulk_exporter`
+    CHANGE `label` `label` VARCHAR(190) NOT NULL AFTER `owner_id`,
+    CHANGE `writer_class` `writer` VARCHAR(190) NOT NULL AFTER `label`,
+    CHANGE `writer_config` `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `writer`
+;
+ALTER TABLE `bulk_export`
+    CHANGE `writer_params` `params` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `comment`,
+    CHANGE `filename` `filename` VARCHAR(760) DEFAULT NULL AFTER `params`
+;
+
+UPDATE `bulk_exporter`
+SET
+    `config` = CONCAT('{"writer":', `config`, '}')
+WHERE `config` IS NOT NULL;
+UPDATE `bulk_export`
+SET
+    `params` = CONCAT('{"writer":', `params`, '}')
+WHERE `params` IS NOT NULL;
+
+UPDATE `bulk_exporter`
+SET
+    `config` =
+        REPLACE(
+        REPLACE(
+        `config`,
+        "properties_small", "properties_max_5000"),
+        "properties_large", "properties_min_5000");
+UPDATE `bulk_export`
+SET
+    `params` =
+        REPLACE(
+        REPLACE(
+        `params`,
+        "properties_small", "properties_max_5000"),
+        "properties_large", "properties_min_5000");
+
+SQL;
+    foreach (array_filter(explode(";\n", $sqls)) as $sql) {
+        $connection->executeStatement($sql);
+    }
+
+    $message = new Message(
+        'It is now possible to store an exporter as a task.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new Message(
+        'It is now possible to do an incremental export.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
