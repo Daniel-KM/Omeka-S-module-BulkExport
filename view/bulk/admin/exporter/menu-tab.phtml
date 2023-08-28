@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExporterRepresentation $exporter
+ * @var string $current
+ */
+
+use BulkExport\Interfaces\Configurable as ConfigurableExport;
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+
+$writer = $exporter->writer();
+
+$nav = [
+    'exporter' => $translate('Exporter'),
+];
+if ($current !== 'exporter') {
+    $replace = [
+        '<li class="active">' => '<li>',
+        'href="#exporter"' => 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'edit', 'id' => $exporter->id()]) . '"',
+    ];
+}
+if ($writer && ($writer instanceof ConfigurableExport)) {
+    $nav['writer'] = $translate('Writer');
+    if ($current === 'writer') {
+        $replace['<li><a href="#writer"'] = '<li class="active"><a href="#writer"';
+    } else {
+        $replace['href="#writer"'] = 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()]) . '"';
+    }
+}
+?>
+
+<?= str_replace(array_keys($replace), array_values($replace), $this->sectionNav($nav)) ?>

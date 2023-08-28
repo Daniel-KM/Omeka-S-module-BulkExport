@@ -22,6 +22,8 @@ $form->get('form_submit')->remove('submit');
 
 <?= $this->pageTitle($exporter->label(), 1, $translate('Bulk export')) ?>
 
+<?= $this->partial('bulk/admin/exporter/menu-tab', ['exporter' => $exporter, 'current' => 'exporter']) ?>
+
 <div id="bulk-export">
     <h2><?= $escape($translate('Edit exporter')) ?></h2>
     <?= $this->form()->openTag($form) ?>
