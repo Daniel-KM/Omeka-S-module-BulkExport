@@ -34,6 +34,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata_exclude',
         // Keep query in the config to simplify regular export.
         'query',
+        'include_deleted',
     ];
 
     protected $paramsKeys = [
@@ -49,6 +50,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $options = [
@@ -67,6 +69,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'only_first' => false,
         'empty_fields' => false,
         'query' => [],
+        'include_deleted' => null,
     ];
 
     /**
@@ -158,6 +161,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             $this->options['query'] = $query;
         }
 
+        $this->includeDeleted = $this->hasHistoryLog ? $this->options['include_deleted'] : null;
+
         return $this;
     }
 
@@ -198,6 +203,9 @@ abstract class AbstractFieldsWriter extends AbstractWriter
                 break;
             }
             $this->appendResourcesForResourceType($resourceType);
+            if ($this->includeDeleted) {
+                $this->appendResourcesDeletedForResourceType($resourceType);
+            }
         }
 
         $this->logger->notice(
@@ -313,6 +321,93 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         return $this;
     }
 
+    protected function appendResourcesDeletedForResourceType($resourceType): self
+    {
+        if (!in_array('o:id', $this->fieldNames)) {
+            $this->logger->warn(
+                'The deleted resources cannot be output when the internal id is not included in the list of fields.' // @translate
+            );
+            return $this;
+        }
+
+        $apiResource = $this->mapResourceTypeToApiResource($resourceType);
+        $resourceText = $this->mapResourceTypeToText($resourceType);
+
+        $this->stats['process'][$resourceType] = $this->stats['process'][$resourceType] ?? [];
+        $this->stats['process'][$resourceType]['total'] = $this->stats['process'][$resourceType]['total'] ?? $this->stats['totals'][$resourceType];
+        $this->stats['process'][$resourceType]['processed'] = $this->stats['process'][$resourceType]['processed'] ?? 0;
+        $this->stats['process'][$resourceType]['succeed'] = $this->stats['process'][$resourceType]['succeed'] ?? 0;
+        $this->stats['process'][$resourceType]['skipped'] = $this->stats['process'][$resourceType]['skipped'] ?? 0;
+        $statistics = &$this->stats['process'][$resourceType];
+
+        $this->logger->notice(
+            'Starting export of deleted {resource_type}.', // @translate
+            ['resource_type' => $resourceText]
+        );
+
+        // Avoid an issue when the query contains a page: there should not be
+        // pagination at this point. Page and limit cannot be mixed.
+        // @see \Omeka\Api\Adapter\AbstractEntityAdapter::limitQuery().
+        unset($this->options['query']['page']);
+        unset($this->options['query']['per_page']);
+
+        $deleted = 0;
+
+        $offset = 0;
+        do {
+            if ($this->job->shouldStop()) {
+                $this->jobIsStopped = true;
+                $this->logger->warn(
+                    'The job "Export" was stopped: {processed}/{total} resources processed.', // @translate
+                    ['processed' => $statistics['processed'], 'total' => $statistics['total']]
+                );
+                break;
+            }
+
+            // Return only deleted resource ids when only id is needed.
+            // Of course, if "o:id" is not in the field list, this process is useless.
+            $response = $this->api
+                // Some modules manage some arguments, so keep initialize.
+                ->search('history_events', ['entity_name' => $apiResource, 'operation' => 'delete', 'limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['returnScalar' => 'entityId', 'finalize' => false]);
+
+            // TODO Check other resources (user…).
+            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
+            $resourceIds = $response->getContent();
+            if (!count($resourceIds)) {
+                break;
+            }
+
+            foreach ($resourceIds as $resourceId) {
+                $dataResource = [
+                    'o:id' => [$resourceId],
+                    'operation' => ['delete'],
+                ];
+                $dataResource = array_intersect_key($dataResource, array_flip($this->fieldNames));
+                $this
+                    ->writeFields($dataResource);
+                ++$statistics['succeed'];
+                ++$deleted;
+                // Processed = $offset + $key.
+                ++$statistics['processed'];
+            }
+            $offset += self::SQL_LIMIT;
+        } while (true);
+
+        if ($deleted) {
+            $this->logger->notice(
+                'End export of {total} deleted {resource_type}.', // @translate
+                ['total' => $deleted, 'resource_type' => $resourceText]
+            );
+        } else {
+            $this->logger->notice(
+                'No deleted resource exported for {resource_type}.', // @translate
+                ['resource_type' => $resourceText]
+            );
+        }
+
+        return $this;
+    }
+
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = [];
@@ -338,6 +433,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     /**
      * Get all resource ids to be processed by resource type.
+     *
+     * @todo Append deleted resources (but for now only used by geojson).
      */
     protected function getResourceIdsByType(): array
     {
@@ -358,13 +455,25 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         $result = [];
 
         $query = ['limit' => 0] + $this->options['query'];
+
+        if ($this->includeDeleted) {
+            $queryDelete = $query + [
+                'operation' => 'delete',
+                'distinct_entities' => 'last',
+            ];
+        }
+
         foreach ($this->options['resource_types'] as $resourceType) {
             $resource = $this->mapResourceTypeToApiResource($resourceType);
             $result[$resourceType] = $resource
                 // Some modules manage some arguments, so keep initialize.
                 ? $this->api->search($resource, $query, ['finalize' => false])->getTotalResults()
                 : 0;
+            if ($this->includeDeleted) {
+                $result[$resourceType] += $this->api->search('history_events', $queryDelete , ['finalize' => false])->getTotalResults();
+            }
         }
+
         return $result;
     }
 }

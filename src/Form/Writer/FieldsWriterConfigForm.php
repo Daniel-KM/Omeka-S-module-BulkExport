@@ -25,6 +25,7 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
             ->appendResourceTypesSelect()
             ->appendMetadataSelect()
             ->appendResourceQuery()
+            ->appendHistoryLogDeleted()
         ;
     }
 

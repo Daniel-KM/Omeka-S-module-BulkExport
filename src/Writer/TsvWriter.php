@@ -29,6 +29,7 @@ class TsvWriter extends CsvWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $paramsKeys = [
@@ -45,6 +46,7 @@ class TsvWriter extends CsvWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     public function handleParamsForm(Form $form)

@@ -25,6 +25,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $paramsKeys = [
@@ -40,6 +41,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     /**

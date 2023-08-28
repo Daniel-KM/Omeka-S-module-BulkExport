@@ -28,6 +28,8 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'resource_types',
         'metadata',
         'metadata_exclude',
+        'query',
+        'include_deleted',
     ];
 
     protected $paramsKeys = [
@@ -44,6 +46,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $spreadsheetType = Type::ODS;

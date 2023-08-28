@@ -86,6 +86,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $hasHistoryLog = false;
 
     /**
+     * @var null|string
+     */
+    protected $includeDeleted;
+
+    /**
      * @var string|null
      */
     protected $lastErrorMessage;

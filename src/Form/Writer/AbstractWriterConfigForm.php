@@ -2,6 +2,7 @@
 
 namespace BulkExport\Form\Writer;
 
+use BulkExport\Form\Element as BulkExportElement;
 use Laminas\Form\Element;
 use Laminas\Form\Form;
 
@@ -71,6 +72,28 @@ abstract class AbstractWriterConfigForm extends Form
             ])
         ;
 
+        return $this;
+    }
+
+    protected function appendHistoryLogDeleted(): self
+    {
+        $this
+            ->add([
+                'name' => 'include_deleted',
+                'type' => BulkExportElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Include deleted resources according to date (require module HistoryLog, query unsupported)', // @translate
+                    'value_options' => [
+                        '' => 'No', // @translate
+                        'id' => 'Id only', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'include_deleted',
+                    'value' => '',
+                ],
+            ])
+        ;
         return $this;
     }
 }

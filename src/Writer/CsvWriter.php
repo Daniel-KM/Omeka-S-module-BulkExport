@@ -41,6 +41,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $paramsKeys = [
@@ -60,6 +61,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'include_deleted',
     ];
 
     protected $spreadsheetType = Type::CSV;
