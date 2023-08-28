@@ -13,12 +13,13 @@ class ExporterDeleteForm extends Form
         parent::init();
 
         $this
+            ->setAttribute('id', 'form-bulk-exporter')
             ->add([
-                'name' => 'exporter_submit',
-                'type' => Fieldset::class,
-            ]);
+                    'name' => 'form_submit',
+                    'type' => Fieldset::class,
+                ]);
 
-        $fieldset = $this->get('exporter_submit');
+        $fieldset = $this->get('form_submit');
         $fieldset
             ->add([
                 'name' => 'submit',

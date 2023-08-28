@@ -6,18 +6,24 @@
  * @var array $exportArgs
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters bulk-exports edit');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
 $form->prepare();
+
+$submit = $form->get('form_submit')->get('submit');
+$submit->setAttribute('form', $form->getAttribute('id'));
+$form->get('form_submit')->remove('submit');
 ?>
 
-<?= $this->pageTitle($translate('Start export'), 1, $translate('Bulk export')) ?>
+<?= $this->pageTitle($translate('Export'), 1, $translate('Bulk export')) ?>
 
 <div id="bulk-export">
-    <h2><?= $escape($translate('Start export')) ?></h2>
     <h3><?= $escape(sprintf($translate('Exporter: %s'), $exporter->label())) ?></h3>
     <?php if (isset($exportArgs)): ?>
     <?php $comment = $exportArgs['comment']; ?>
@@ -26,14 +32,14 @@ $form->prepare();
     <h3><?= $escape($translate('Parameters')) ?></h3>
     <h4><?= $escape($translate('Writer')) ?></h4>
     <div class="value">
-        <pre><?php
-            echo $escape(json_encode($exportArgs['writer'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-        ?></pre>
+        <pre><?= $escape(json_encode($exportArgs['writer'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?></pre>
     </div>
     <?php endif; ?>
-    <?php
-    echo $this->form()->openTag($form);
-    echo $this->formCollection($form);
-    echo $this->form()->closeTag();
-    ?>
+    <?= $this->form()->openTag($form) ?>
+    <?= $this->formCollection($form) ?>
+    <?= $this->form()->closeTag() ?>
+</div>
+
+<div id="page-actions">
+    <?= $this->formSubmit($submit) ?>
 </div>

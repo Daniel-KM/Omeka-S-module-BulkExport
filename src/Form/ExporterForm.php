@@ -18,6 +18,7 @@ class ExporterForm extends Form
         parent::init();
 
         $this
+            ->setAttribute('id', 'form-bulk-exporter')
             ->add([
                 'name' => 'o:label',
                 'type' => Element\Text::class,
@@ -42,11 +43,11 @@ class ExporterForm extends Form
 
         $this
             ->add([
-                'name' => 'exporter_submit',
+                'name' => 'form_submit',
                 'type' => Fieldset::class,
             ]);
 
-        $fieldset = $this->get('exporter_submit');
+        $fieldset = $this->get('form_submit');
         $fieldset
             ->add([
                 'name' => 'submit',

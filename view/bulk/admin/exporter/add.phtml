@@ -4,21 +4,30 @@
  * @var \BulkExport\Form\ExporterForm $form
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters edit');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
 $form->prepare();
+
+$submit = $form->get('form_submit')->get('submit');
+$submit->setAttribute('form', $form->getAttribute('id'));
+$form->get('form_submit')->remove('submit');
 ?>
 
-<?= $this->pageTitle($translate('Create new exporter'), 1, $translate('Bulk Export')) ?>
+<?= $this->pageTitle($translate('Exporter'), 1, $translate('Bulk Export')) ?>
 
 <div id="bulk-export">
     <h2><?= $escape($translate('Create new exporter')) ?></h2>
-    <?php
-    echo $this->form()->openTag($form);
-    echo $this->formCollection($form);
-    echo $this->form()->closeTag();
-    ?>
+    <?= $this->form()->openTag($form) ?>
+    <?= $this->formCollection($form) ?>
+    <?= $this->form()->closeTag() ?>
+</div>
+
+<div id="page-actions">
+    <?= $this->formSubmit($submit) ?>
 </div>

@@ -44,7 +44,6 @@ class ExportController extends AbstractActionController
         $exports = $response->getContent();
 
         return new ViewModel([
-            'resources' => $exports,
             'exports' => $exports,
             // 'formDeleteSelected' => $formDeleteSelected,
             // 'formDeleteAll' => $formDeleteAll,
@@ -92,11 +91,7 @@ class ExportController extends AbstractActionController
                 $this->messenger()->addFormErrors($form);
             }
         }
-        return $this->redirect()->toRoute(
-            'admin/bulk-export',
-            ['action' => 'browse'],
-            true
-        );
+        return $this->redirect()->toRoute(null, ['action' => 'browse'], true);
     }
 
     public function stopAction()
@@ -151,7 +146,6 @@ class ExportController extends AbstractActionController
 
         return new ViewModel([
             'export' => $export,
-            'resource' => $export,
             'logs' => $logs,
             'severity' => $severity,
         ]);

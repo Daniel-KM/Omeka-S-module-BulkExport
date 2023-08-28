@@ -1,12 +1,12 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var \BulkExport\Api\Representation\ExportRepresentation[] $resources
  * @var \BulkExport\Api\Representation\ExportRepresentation[] $exports
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exports browse');
 $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
@@ -14,11 +14,17 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 
 <?= $this->pageTitle($translate('Exports'), 1, $translate('Bulk export')) ?>
 
-<h2><?= $escape($translate('Exports')) ?></h2>
+<div id="bulk-export">
+    <h2><?= $escape($translate('Exports')) ?></h2>
 
-<?php if (count($exports)): ?>
-    <?= $this->pagination() ?>
-    <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
-<?php else: ?>
-    <p><?= $escape($translate('No exports yet.')) ?></p>
-<?php endif; ?>
+    <?php if (count($exports)): ?>
+        <?= $this->pagination() ?>
+        <?php $this->trigger('view.browse.before'); ?>
+        <?= $this->partial('bulk/admin/export/export-table', ['exports' => $exports]) ?>
+        <?php $this->trigger('view.browse.after'); ?>
+    <?php else: ?>
+        <div class="no-resources">
+            <p><?= $escape($translate('No exports yet.')) ?></p>
+        </div>
+    <?php endif; ?>
+</div>

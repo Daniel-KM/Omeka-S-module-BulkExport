@@ -112,10 +112,9 @@ class Export extends AbstractJob
         }
 
         $this->logger->notice(
-            'The export is available at <a href="{href}" download="{filename}">{filename}</a> (size: {size} bytes).', // @translate
+            'The export is available at {link} (size: {size} bytes).', // @translate
             [
-                'href' => $fileUrl,
-                'filename' => basename($filename),
+                'link' => sprintf('<a href="%1$s" download="%2$s">%2$s</a>', $fileUrl, basename($filename)),
                 'size' => $filesize,
             ]
         );
@@ -158,7 +157,7 @@ class Export extends AbstractJob
             return $this->export;
         }
 
-        $id = $this->getArg('export_id');
+        $id = $this->getArg('bulk_export_id');
         if ($id) {
             $content = $this->api()->search('bulk_exports', ['id' => $id, 'limit' => 1])->getContent();
             $this->export = is_array($content) && count($content) ? reset($content) : null;

@@ -11,12 +11,13 @@ class ExporterStartForm extends Form
     public function init()
     {
         $this
+            ->setAttribute('id', 'form-bulk-exporter')
             ->add([
-                'name' => 'start_submit',
+                'name' => 'form_submit',
                 'type' => Fieldset::class,
             ]);
 
-        $fieldset = $this->get('start_submit');
+        $fieldset = $this->get('form_submit');
 
         $fieldset
             ->add([

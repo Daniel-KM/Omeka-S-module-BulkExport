@@ -26,18 +26,18 @@ class ExporterController extends AbstractActionController
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        /** @var \BulkExport\Api\Representation\ExporterRepresentation $entity */
-        $entity = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
+        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
 
-        if ($id && !$entity) {
+        if ($id && !$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
         }
 
         $form = $this->getForm(ExporterForm::class);
-        if ($entity) {
-            $data = $entity->getJsonLd();
+        if ($exporter) {
+            $data = $exporter->getJsonLd();
             $form->setData($data);
         }
 
@@ -48,18 +48,18 @@ class ExporterController extends AbstractActionController
                 if (!isset($data['o:label']) || (string) $data['o:label'] === '') {
                     $data['o:label'] = $this->translate('[No label]'); // @translate
                 }
-                if ($entity) {
-                    $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
-                } else {
+                if (!$exporter) {
                     $data['o:owner'] = $this->identity();
                     $response = $this->api($form)->create('bulk_exporters', $data);
+                } else {
+                    $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
                 }
 
-                if ($response) {
-                    $this->messenger()->addSuccess('Exporter successfully saved'); // @translate
+                if (!$response) {
+                    $this->messenger()->addError('Save of exporter failed'); // @translate
                     return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 } else {
-                    $this->messenger()->addError('Save of exporter failed'); // @translate
+                    $this->messenger()->addSuccess('Exporter successfully saved'); // @translate
                     return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
                 }
             } else {
@@ -68,16 +68,18 @@ class ExporterController extends AbstractActionController
         }
 
         return new ViewModel([
+            'exporter' => $exporter,
             'form' => $form,
         ]);
     }
 
     public function deleteAction()
     {
+        /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
 
-        if (!$entity) {
+        if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
@@ -92,7 +94,7 @@ class ExporterController extends AbstractActionController
         }
 
         $form = $this->getForm(ExporterDeleteForm::class);
-        $form->setData($entity->getJsonLd());
+        $form->setData($exporter->getJsonLd());
 
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
@@ -112,7 +114,7 @@ class ExporterController extends AbstractActionController
         }
 
         return new ViewModel([
-            'entity' => $entity,
+            'exporter' => $exporter,
             'form' => $form,
         ]);
     }
@@ -120,24 +122,24 @@ class ExporterController extends AbstractActionController
     public function configureWriterAction()
     {
         $id = (int) $this->params()->fromRoute('id');
-        $entity = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
 
-        if (!$entity) {
+        if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk-export/default', ['controller' => 'bulk-export']);
         }
 
-        $writer = $entity->writer();
+        $writer = $exporter->writer();
         $form = $this->getForm($writer->getConfigFormClass());
         $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
         $form->setData($writerConfig);
 
         $form->add([
-            'name' => 'exporter_submit',
+            'name' => 'form_submit',
             'type' => Fieldset::class,
         ]);
-        $form->get('exporter_submit')->add([
+        $form->get('form_submit')->add([
             'name' => 'submit',
             'type' => Element\Submit::class,
             'attributes' => [
@@ -167,13 +169,18 @@ class ExporterController extends AbstractActionController
         }
 
         return new ViewModel([
+            'exporter' => $exporter,
             'writer' => $writer,
             'form' => $form,
         ]);
     }
 
     /**
+     * Process a bulk export by step: writer and confirm.
+     *
      * @todo Simplify code of this three steps process.
+     * @todo Move to ExportController.
+     *
      * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
      */
     public function startAction()
@@ -192,7 +199,7 @@ class ExporterController extends AbstractActionController
 
         /** @var \Laminas\Session\SessionManager $sessionManager */
         $sessionManager = Container::getDefaultManager();
-        $session = new Container('ExporterStartForm', $sessionManager);
+        $session = new Container('BulkExport', $sessionManager);
 
         if (!$this->getRequest()->isPost()) {
             $session->exchangeArray([]);
@@ -208,20 +215,28 @@ class ExporterController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             // Current form.
             $currentForm = $this->getRequest()->getPost('current_form');
+
+            // Avoid an issue if the user reloads the page.
+            if (!isset($formsCallbacks[$currentForm])) {
+                $message = new PsrMessage('The page was reloaded, but params are lost. Restart the import.'); // @translate
+                $this->messenger()->addError($message);
+                return $this->redirect()->toRoute('admin/bulk-export');
+            }
+
             $form = call_user_func($formsCallbacks[$currentForm]);
 
             // Make certain to merge the files info if any!
             $request = $this->getRequest();
-            $data = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $request->getFiles()->toArray()
-            );
+            $postData = $request->getPost()->toArray();
+            $postFiles = $request->getFiles()->toArray();
+            $data = array_merge_recursive($postData, $postFiles);
 
             // Pass data to form.
             $form->setData($data);
             if ($form->isValid()) {
                 // Execute file filters.
                 $data = $form->getData();
+                unset($data['csrf'], $data['form_submit'], $data['current_form']);
                 $session->{$currentForm} = $data;
                 switch ($currentForm) {
                     default:
@@ -234,12 +249,12 @@ class ExporterController extends AbstractActionController
                             $this->messenger()->addError($writer->getLastErrorMessage());
                             $next = 'writer';
                         } else {
-                            $next = 'start';
+                            $next = 'confirm';
                         }
                         $formCallback = $formsCallbacks[$next];
                         break;
 
-                    case 'start':
+                    case 'confirm':
                         $exportData = [];
                         $exportData['o:owner'] = $this->identity();
                         $exportData['o-bulk:comment'] = trim((string) $session['comment']) ?: null;
@@ -269,7 +284,7 @@ class ExporterController extends AbstractActionController
                         $session->exchangeArray([]);
 
                         $args = [
-                            'export_id' => $export->id(),
+                            'bulk_export_id' => $export->id(),
                         ];
 
                         /** @var \Omeka\Job\Dispatcher $dispatcher */
@@ -318,11 +333,18 @@ class ExporterController extends AbstractActionController
             $form = call_user_func($formCallback);
         }
 
+        if ($form instanceof \Laminas\Http\PhpEnvironment\Response) {
+            return $form;
+        }
+
         $view = new ViewModel([
             'exporter' => $exporter,
             'form' => $form,
+            'step' => $next ?? 'writer',
+            'steps' => array_keys(array_filter($formsCallbacks)),
         ]);
-        if ($next === 'start') {
+
+        if ($next === 'confirm') {
             $exportArgs = [];
             $exportArgs['comment'] = $session['comment'];
             $exportArgs['writer'] = $session['writer'];
@@ -331,11 +353,16 @@ class ExporterController extends AbstractActionController
             unset($exportArgs['writer']['export_id']);
             unset($exportArgs['writer']['exporter_label']);
             unset($exportArgs['writer']['export_started']);
-            $view->setVariable('exportArgs', $exportArgs);
+            $view
+                ->setVariable('exportArgs', $exportArgs);
         }
+
         return $view;
     }
 
+    /**
+     * @todo Replace by a standard multi-steps form without callback.
+     */
     protected function getStartFormsCallbacks(ExporterRepresentation $exporter)
     {
         $controller = $this;
@@ -344,7 +371,7 @@ class ExporterController extends AbstractActionController
         $writer = $exporter->writer();
         if ($writer instanceof Parametrizable) {
             /* @return \Laminas\Form\Form */
-            $formsCallbacks['writer'] = function () use ($writer, $controller) {
+            $formsCallbacks['writer'] = function () use ($writer, $exporter, $controller) {
                 $writerForm = $controller->getForm($writer->getParamsFormClass());
                 $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
                 $writerForm->setData($writerConfig);
@@ -357,10 +384,10 @@ class ExporterController extends AbstractActionController
                     ],
                 ]);
                 $writerForm->add([
-                    'name' => 'writer_submit',
+                    'name' => 'form_submit',
                     'type' => Fieldset::class,
                 ]);
-                $writerForm->get('writer_submit')->add([
+                $writerForm->get('form_submit')->add([
                     'name' => 'submit',
                     'type' => Element\Submit::class,
                     'attributes' => [
@@ -373,13 +400,13 @@ class ExporterController extends AbstractActionController
         }
 
         /* @return \Laminas\Form\Form */
-        $formsCallbacks['start'] = function () use ($controller) {
+        $formsCallbacks['confirm'] = function () use ($exporter, $controller) {
             $startForm = $controller->getForm(ExporterStartForm::class);
             $startForm->add([
                 'name' => 'current_form',
                 'type' => Element\Hidden::class,
                 'attributes' => [
-                    'value' => 'start',
+                    'value' => 'confirm',
                 ],
             ]);
             return $startForm;

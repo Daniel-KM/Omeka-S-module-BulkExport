@@ -7,13 +7,13 @@
 use BulkExport\Interfaces\Configurable as ConfigurableExport;
 
 $plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
 $translate = $plugins->get('translate');
 $escape = $plugins->get('escapeHtml');
 $hyperlink = $plugins->get('hyperlink');
 ?>
 
 <h2><?= $escape($translate('Available exporters')) ?></h2>
-<?= $hyperlink($translate('Add an exporter'), $this->url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'])) ?>
 
 <?php if (count($exporters)): ?>
 
@@ -32,7 +32,7 @@ $hyperlink = $plugins->get('hyperlink');
         ?>
         <tr>
             <td>
-                <?= $hyperlink($exporter->label(), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])) ?>
+                <?= $hyperlink($exporter->label(), $url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'start', 'id' => $exporter->id()])) ?>
                 <ul class="actions">
                     <li><?= $exporter->link('', 'start', [
                         'class' => 'fas fa-cloud-download-alt o-icon-',
@@ -49,7 +49,7 @@ $hyperlink = $plugins->get('hyperlink');
                         'class' => 'o-icon-delete',
                         'title' => $translate('Delete'),
                     ]) /*
-                    echo $this->hyperlink('', '#', [
+                    echo $hyperlink('', '#', [
                         'data-sidebar-selector' => '#sidebar',
                         'data-sidebar-content-url' => $exporter->url('delete-confirm'),
                         'class' => 'o-icon-delete sidebar-content',
@@ -60,9 +60,9 @@ $hyperlink = $plugins->get('hyperlink');
             </td>
             <td>
                 <?php $writer = $exporter->writer(); ?>
-                <?= $writer ? $writer->getLabel() : null ?>
+                <?= $writer ? $escape($writer->getLabel()) : null ?>
                 <?php if ($writer instanceof ConfigurableExport): ?>
-                    (<?= $hyperlink($translate('Configure'), $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
+                    (<?= $hyperlink($translate('Configure'), $url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
                 <?php endif; ?>
             </td>
         </tr>

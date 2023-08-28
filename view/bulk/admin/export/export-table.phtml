@@ -6,26 +6,23 @@
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
+$i18n = $plugins->get('i18n');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
 ?>
 
-<?php $this->trigger('view.browse.before'); ?>
-
 <table class="tablesaw" data-tablesaw-mode="stack">
     <thead>
         <tr>
-            <th><?= $escape($translate('Comment')) ?></th>
+            <th><?= $escape($translate('Label / Comment')) ?></th>
             <th><?= $escape($translate('Status')) ?></th>
-            <th><?= $escape($translate('Started')) ?></th>
-            <th><?= $escape($translate('Completed')) ?></th>
-            <th><?= $escape($translate('Owner')) ?></th>
+            <th><?= $escape($translate('Process')) ?></th>
+            <th><?= $escape($translate('User')) ?></th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($exports as $export): ?>
-            <?php
+        <?php foreach ($exports as $export):
             $status = $translate($export->statusLabel());
             $owner = $export->owner();
             $filename = $export->filename();
@@ -33,57 +30,64 @@ $hyperlink = $plugins->get('hyperlink');
             $exporter = $export->exporter();
             $userIsAllowedDelete = $exporter->userIsAllowed('delete');
             ?>
-            <tr>
-                <td>
-                    <?php $comment = $export->comment() ?>
-                    <?php if ($comment): ?>
-                    <?= $comment ?>
-                    <span class="bulk-label-sub"><?= $exporter ? $exporter->label() : '' ?></span>
-                    <?php else: ?>
-                    <?= $exporter ? $exporter->label() : $translate('[Unknown]') ?>
+        <tr>
+            <td>
+                <?php $comment = $export->comment() ?>
+                <?php if ($comment): ?>
+                <?= $comment ?>
+                <span class="bulk-label-sub"><?= $exporter ? $escape($exporter->label()) : '' ?></span>
+                <?php else: ?>
+                <?= $exporter ? $escape($exporter->label()) : $translate('[Unknown]') ?>
+                <?php endif; ?>
+                <ul class="actions">
+                    <?php if ($fileUrl): ?>
+                    <li><?= $hyperlink('', $fileUrl, [
+                        'class' => 'fas fa-cloud-download-alt o-icon-',
+                        'title' => $translate('Get file'), // @translate
+                        'download' => '',
+                    ]) ?></li>
                     <?php endif; ?>
-                    <ul class="actions">
-                        <?php if ($fileUrl): ?>
-                        <li><?= $hyperlink('', $fileUrl, [
-                            'class' => 'fas fa-cloud-download-alt o-icon-',
-                            'title' => $translate('Get file'), // @translate
-                            'download' => '',
-                        ]) ?></li>
-                        <?php endif; ?>
-                        <?php if ($export->isInProgress()): ?>
-                        <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
-                            'class' => 'fas fa-times-circle o-icon-',
-                            'title' => $translate('Stop'), // @translate
-                        ]) ?></li>
-                        <?php endif; ?>
-                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'show', 'id' => $export->id()]), [
-                            'class' => 'fas fa-cogs o-icon-',
-                            'title' => $translate('See params'),
-                        ]) ?></li>
-                        <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]), [
-                            'class' => 'fas fa-list o-icon-',
-                            'title' => $translate('See logs'),
-                        ]) ?></li>
-                    <?php if ($userIsAllowedDelete): ?>
-                    <li><?= $hyperlink('', '#', [
-                            'data-sidebar-selector' => '#sidebar',
-                            'data-sidebar-content-url' => $export->url('delete-confirm'),
-                            'class' => 'o-icon-delete sidebar-content',
-                            'title' => $translate('Delete'),
-                        ]) ?></li>
+                    <?php if ($export->isInProgress()): ?>
+                    <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
+                        'class' => 'fas fa-times-circle o-icon-',
+                        'title' => $translate('Stop'), // @translate
+                    ]) ?></li>
                     <?php endif; ?>
-                    </ul>
-                </td>
-                <td><?= $fileUrl ? $hyperlink($status, $fileUrl) : $status ?></td>
-                <td><?= $export->started() ? $export->started()->format('Y-m-d H:i:s') : '' ?></td>
-                <td><?= $export->ended() ? $export->ended()->format('Y-m-d H:i:s') : '' ?></td>
-                <td><?= $owner ? $hyperlink($owner->name(), $owner->adminUrl()) : $translate('[no owner]') ?></td>
-            </tr>
+                    <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'show', 'id' => $export->id()]), [
+                        'class' => 'fas fa-cogs o-icon-',
+                        'title' => $translate('See params'),
+                    ]) ?></li>
+                    <li><?= $hyperlink('', $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]), [
+                        'class' => 'fas fa-list o-icon-',
+                        'title' => $translate('See logs'),
+                    ]) ?></li>
+                <?php if ($userIsAllowedDelete): ?>
+                <li><?= $hyperlink('', '#', [
+                        'data-sidebar-selector' => '#sidebar',
+                        'data-sidebar-content-url' => $export->url('delete-confirm'),
+                        'class' => 'o-icon-delete sidebar-content',
+                        'title' => $translate('Delete'),
+                    ]) ?></li>
+                <?php endif; ?>
+                </ul>
+            </td>
+            <td><?= $fileUrl ? $hyperlink($status, $fileUrl) : $status ?></td>
+            <td class="process">
+                <?php if (!$export->started()): ?>
+                <?php // Nothing. ?>
+                <?php elseif ($export->started()): ?>
+                <span class="process-do started"><?= sprintf($translate('Start: %s'), $i18n->dateFormat($export->started(), 'medium', 'short')) ?></span>
+                    <?php if ($export->ended()): ?>
+                <br/>
+                <span class="process-do ended"><?= sprintf($translate('End: %s'), $i18n->dateFormat($export->ended(), 'medium', 'short')) ?></span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
+            <td><?= $owner ? $hyperlink($owner->name(), $owner->adminUrl()) : '' ?></td>
+        </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
-
-<?php $this->trigger('view.browse.after'); ?>
 
 <?php if (!$exports) return; ?>
 

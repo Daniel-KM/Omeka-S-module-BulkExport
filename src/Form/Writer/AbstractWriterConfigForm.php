@@ -11,6 +11,7 @@ abstract class AbstractWriterConfigForm extends Form
     protected function appendBase(): self
     {
         $this
+            ->setAttribute('id', 'form-bulk-exporter')
             ->add([
                 'name' => 'comment',
                 'type' => Element\Textarea::class,

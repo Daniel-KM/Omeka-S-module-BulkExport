@@ -7,18 +7,15 @@
  */
 
 $plugins = $this->getHelperPluginManager();
-$translate = $plugins->get('translate');
 $escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
-$url = $plugins->get('url');
-
-$urlBase = $url('top') . 'files/bulk_export/';
 
 $comment = $export->comment();
 $status = $translate($export->statusLabel());
 $owner = $export->owner();
 $filename = $export->filename();
-$fileUrl = $filename && $export->isCompleted() ? $urlBase . $filename : '';
+$fileUrl = $filename && $export->isCompleted() ? $export->fileUrl() : '';
 $exporter = $export->exporter();
  ?>
 
@@ -55,7 +52,7 @@ $exporter = $export->exporter();
     </div>
     <div class="meta-group">
         <h4><?= $escape($translate('Logs')) ?></h4>
-        <?= $hyperlink($translate('See logs'), $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])) ?>
+        <div class="value"><?= $hyperlink($translate('See logs'), $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()])) ?></div>
     </div>
 
     <?php $this->trigger('view.details', ['entity' => $resource]); ?>

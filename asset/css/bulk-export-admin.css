@@ -17,4 +17,8 @@
     .bulk-label-sub:before {
         content: '  ';
     }
+
+    .bulk-exports.browse table td.process .tablesaw-cell-content {
+        display: block;
+    }
 }

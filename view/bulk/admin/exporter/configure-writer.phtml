@@ -1,27 +1,36 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ExporterRepresentation $exporter
  * @var \BulkExport\Writer\WriterInterface $writer
  * @var \Laminas\Form\Form $form
  */
 
-$translate = $this->plugin('translate');
-$escape = $this->plugin('escapeHtml');
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters edit');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
 $form->prepare();
+
+$submit = $form->get('form_submit')->get('submit');
+$submit->setAttribute('form', $form->getAttribute('id'));
+$form->get('form_submit')->remove('submit');
 ?>
 
-<?= $this->pageTitle($translate('Configure writer'), 1, $translate('Bulk export')) ?>
+<?= $this->pageTitle($exporter->label(), 1, $translate('Bulk import')) ?>
 
 <div id="bulk-export">
-    <h2><?= $escape($translate('Configure writer')) ?></h2>
     <h3><?= $escape(sprintf($translate('Writer: %s'), $writer->getLabel())) ?></h3>
     <p><?= $escape($translate('Fill the default values of the writer.')) ?></p>
-    <?php
-    echo $this->form()->openTag($form);
-    echo $this->formCollection($form);
-    echo $this->form()->closeTag();
-    ?>
+    <?= $this->form()->openTag($form) ?>
+    <?= $this->formCollection($form) ?>
+    <?= $this->form()->closeTag() ?>
+</div>
+
+<div id="page-actions">
+    <?= $this->formSubmit($submit) ?>
 </div>
