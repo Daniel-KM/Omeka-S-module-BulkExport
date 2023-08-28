@@ -96,15 +96,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
      */
     protected $prependFieldNames = false;
 
-    /**
-     * @var \Laminas\Mvc\I18n\Translator
-     */
-    protected $translator;
-
     public function process(): self
     {
-        $this->translator = $this->getServiceLocator()->get('MvcTranslator');
-
         $this
             ->initializeParams()
             ->prepareTempFile()
@@ -224,12 +217,10 @@ abstract class AbstractFieldsWriter extends AbstractWriter
          * @var \Doctrine\DBAL\Connection $connection
          * @var \Doctrine\ORM\EntityRepository $repository
          * @var \Omeka\Api\Adapter\ItemAdapter $adapter
-         * @var \Omeka\Api\Manager $api
          */
         $services = $this->getServiceLocator();
         $entityManager = $services->get('Omeka\EntityManager');
         $adapter = $services->get('Omeka\ApiAdapterManager')->get($apiResource);
-        $api = $services->get('Omeka\ApiManager');
 
         $this->stats['process'][$resourceType] = [];
         $this->stats['process'][$resourceType]['total'] = $this->stats['totals'][$resourceType];
@@ -260,7 +251,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
                 break;
             }
 
-            $response = $api
+            $response = $this->api
                 // Some modules manage some arguments, so keep initialize.
                 ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['finalize' => false]);
 
@@ -351,13 +342,12 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     protected function getResourceIdsByType(): array
     {
         /** @var \Omeka\Api\Manager $api */
-        $api = $this->getServiceLocator()->get('Omeka\ApiManager');
         $result = [];
         foreach ($this->options['resource_types'] as $resourceType) {
             $resource = $this->mapResourceTypeToApiResource($resourceType);
             $result[$resourceType] = $resource
                 // Some modules manage some arguments, so keep initialize.
-                ? $api->search($resource, $this->options['query'], ['returnScalar' => 'id'])->getContent()
+                ? $this->api->search($resource, $this->options['query'], ['returnScalar' => 'id'])->getContent()
                 : [];
         }
         return $result;
@@ -365,14 +355,14 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     protected function countResources(): array
     {
-        /** @var \Omeka\Api\Manager $api */
-        $api = $this->getServiceLocator()->get('Omeka\ApiManager');
         $result = [];
+
+        $query = ['limit' => 0] + $this->options['query'];
         foreach ($this->options['resource_types'] as $resourceType) {
             $resource = $this->mapResourceTypeToApiResource($resourceType);
             $result[$resourceType] = $resource
                 // Some modules manage some arguments, so keep initialize.
-                ? $api->search($resource, ['limit' => 0] + $this->options['query'], ['finalize' => false])->getTotalResults()
+                ? $this->api->search($resource, $query, ['finalize' => false])->getTotalResults()
                 : 0;
         }
         return $result;

@@ -31,9 +31,19 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $extension;
 
     /**
-     * @var Logger
+     * @var \Omeka\Api\Manager
+     */
+    protected $api;
+
+    /**
+     * @var \Laminas\Log\Logger
      */
     protected $logger;
+
+    /**
+     * @var \Laminas\Mvc\I18n\Translator
+     */
+    protected $translator;
 
     /**
      * @var Job
@@ -66,6 +76,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $paramsKeys = [];
 
     /**
+     * @var string
+     */
+    protected $filepath;
+
+    /**
      * @var string|null
      */
     protected $lastErrorMessage;
@@ -76,19 +91,14 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $totalEntries;
 
     /**
-     * @var string
-     */
-    protected $filepath;
-
-    /**
      * Writer constructor.
-     *
-     * @param ServiceLocatorInterface $serviceLocator
      */
     public function __construct(ServiceLocatorInterface $services)
     {
         $this->setServiceLocator($services);
+        $this->api = $services->get('Omeka\ApiManager');
         $this->logger = $services->get('Omeka\Logger');
+        $this->translator = $services->get('MvcTranslator');
     }
 
     public function getLabel(): string
@@ -215,10 +225,8 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             return $outputFilepath;
         }
 
-        $translator = $this->services->get('MvcTranslator');
-
         // Prepare placeholders.
-        $label = $this->getParam('exporter_label', '');
+        $label = $this->getParam('exporter_label') ?? '';
         $label = $this->slugify($label);
         $label = preg_replace('/_+/', '_', $label);
         $exporter = str_replace(['bulkexport', 'writer', '\\'], '', strtolower(get_class($this)));
@@ -228,8 +236,8 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
         $userId = $user ? $user->getId() : 0;
         $userName = $user
-            ? ($this->slugify($user->getName()) ?: $translator->translate('unknown')) // @ŧranslate
-            : $translator->translate('anonymous'); // @ŧranslate
+            ? ($this->slugify($user->getName()) ?: $this->translator->translate('unknown')) // @ŧranslate
+            : $this->translator->translate('anonymous'); // @ŧranslate
 
         $placeholders = [
             '{label}' => $label,
@@ -274,7 +282,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
 
         $base = str_replace(array_keys($placeholders), array_values($placeholders), $formatFilename);
         if (!$base) {
-            $base = $translator->translate('no-name'); // @translate
+            $base = $this->stranslator->translate('no-name'); // @translate
         }
 
         // Remove remaining characters in all cases for security and simplicity.

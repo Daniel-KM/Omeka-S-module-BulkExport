@@ -61,7 +61,7 @@ class Module extends AbstractModule
 
             // Admin part.
             // Any back-end roles can export via background job.
-            // User < editor can only edit own exporters.
+            // User lower than editor can only edit own exporters.
             // Editor and admins can edit all of them.
             // TODO Rights on exports and deletion.
             ->allow(

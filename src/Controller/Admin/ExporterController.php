@@ -276,7 +276,7 @@ class ExporterController extends AbstractActionController
                             $job = $useBackground
                                 ? $dispatcher->dispatch(JobExport::class, $args)
                                 : $dispatcher->dispatch(JobExport::class, $args, $export->getServiceLocator()->get(\Omeka\Job\DispatchStrategy\Synchronous::class));
-                            $urlHelper = $this->url();
+                            $urlPlugin = $this->url();
                             $message = $useBackground
                                 ? 'Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while.' // @translate
                                 : 'Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}).'; // @translate
@@ -285,13 +285,13 @@ class ExporterController extends AbstractActionController
                                 [
                                     'link_open_job' => sprintf(
                                         '<a href="%s">',
-                                        htmlspecialchars($urlHelper->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()]))
+                                        htmlspecialchars($urlPlugin->fromRoute('admin/id', ['controller' => 'job', 'id' => $job->getId()]))
                                     ),
                                     'jobId' => $job->getId(),
                                     'link_close' => '</a>',
                                     'link_open_log' => sprintf(
                                         '<a href="%s">',
-                                        htmlspecialchars($urlHelper->fromRoute('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]))
+                                        htmlspecialchars($urlPlugin->fromRoute('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $export->id()]))
                                     ),
                                 ]
                             );
