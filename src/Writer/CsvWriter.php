@@ -41,6 +41,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 
@@ -61,6 +62,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 

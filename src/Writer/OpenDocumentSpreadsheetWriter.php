@@ -29,6 +29,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 
@@ -46,6 +47,7 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 

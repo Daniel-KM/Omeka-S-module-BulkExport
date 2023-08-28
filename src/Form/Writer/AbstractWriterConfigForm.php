@@ -71,7 +71,25 @@ abstract class AbstractWriterConfigForm extends Form
                 ],
             ])
         ;
+        return $this;
+    }
 
+    protected function appendIncremental(): self
+    {
+        $this
+            ->add([
+                'name' => 'incremental',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'label' => 'Incremental since last successful export', // @translate
+                    'info' => 'Only new and updated resources since last completed export with the same exporter and user will be output.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'incremental',
+                    'checked' => false,
+                ],
+            ])
+        ;
         return $this;
     }
 

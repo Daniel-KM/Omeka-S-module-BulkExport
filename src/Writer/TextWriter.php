@@ -25,6 +25,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 
@@ -41,6 +42,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 

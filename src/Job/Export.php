@@ -41,6 +41,7 @@ class Export extends AbstractJob
         // Should be prepared befoer checking validity.
         if ($writer instanceof Parametrizable) {
             $params = $writer->getParams();
+            $params['export_id'] = $export->id();
             $params['exporter_label'] = $export->exporter()->label();
             $params['export_started'] = $export->started();
             $writer->setParams($params);

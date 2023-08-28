@@ -52,21 +52,27 @@ class ExportAdapter extends AbstractEntityAdapter
         $expr = $qb->expr();
 
         if (isset($query['exporter_id'])) {
-            $qb->andWhere(
-                $expr->eq(
-                    'omeka_root.exporter',
-                    $this->createNamedParameter($qb, $query['exporter_id'])
-                )
-            );
+            $qb->andWhere($expr->eq(
+                'omeka_root.exporter',
+                $this->createNamedParameter($qb, $query['exporter_id'])
+            ));
         }
 
         if (isset($query['job_id'])) {
-            $qb->andWhere(
-                $expr->eq(
-                    'omeka_root.job',
-                    $this->createNamedParameter($qb, $query['job_id'])
-                )
-            );
+            $qb->andWhere($expr->eq(
+                'omeka_root.job',
+                $this->createNamedParameter($qb, $query['job_id'])
+            ));
+        }
+
+        if (isset($query['job_status'])) {
+            $jobAlias = $this->createAlias();
+            $qb
+                ->innerJoin('omeka_root.job', $jobAlias)
+                ->andWhere($expr->eq(
+                    "$jobAlias.status",
+                    $this->createNamedParameter($qb, $query['job_status'])
+                ));
         }
 
         if (isset($query['owner_id']) && is_numeric($query['owner_id'])) {

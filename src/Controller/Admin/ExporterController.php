@@ -259,6 +259,8 @@ class ExporterController extends AbstractActionController
                             $this->messenger()->addError('Save of export failed'); // @translate
                             break;
                         }
+
+                        /** @var \BulkExport\Api\Representation\ExportRepresentation $export */
                         $export = $response->getContent();
 
                         $useBackground = $session->useBackground;
@@ -326,6 +328,9 @@ class ExporterController extends AbstractActionController
             $exportArgs['writer'] = $session['writer'];
             // For security purpose.
             unset($exportArgs['writer']['filename']);
+            unset($exportArgs['writer']['export_id']);
+            unset($exportArgs['writer']['exporter_label']);
+            unset($exportArgs['writer']['export_started']);
             $view->setVariable('exportArgs', $exportArgs);
         }
         return $view;

@@ -2,6 +2,7 @@
 
 namespace BulkExport\Writer;
 
+use BulkExport\Api\Representation\ExportRepresentation;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Traits\ConfigurableTrait;
@@ -73,7 +74,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     /**
      * var array
      */
-    protected $paramsKeys = [];
+    protected $paramsKeys = [
+        'export_id',
+        'exporter_label',
+        'export_started',
+    ];
 
     /**
      * @var string
@@ -181,7 +186,16 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     {
         $this->lastErrorMessage = null;
         $values = $form->getData();
-        $params = array_intersect_key($values, array_flip($this->paramsKeys));
+        // Include default values in params, but store them only during process.
+        $params = [];
+        if (isset($values['export_id'])) {
+            $params = [
+                'export_id' => $values['export_id'],
+                'exporter_label' => $values['exporter_label'] ?? null,
+                'export_started' => $values['export_started'] ?? null
+            ];
+        }
+        $params += array_intersect_key($values, array_flip($this->paramsKeys));
         $this->setParams($params);
         return $this;
     }
@@ -376,6 +390,29 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $params['filename'] = $filename;
         $this->setParams($params);
         return $this;
+    }
+
+    protected function getExport(): ?ExportRepresentation
+    {
+        static $export = false;
+
+        if ($export !== false) {
+            return $export;
+        }
+
+        $exportId = $this->params['export_id'] ?? null;
+        if (!$exportId) {
+            $export = null;
+            return null;
+        }
+
+        try {
+            $export = $this->api->read('bulk_exports', $exportId)->getContent();
+        } catch (\Exception $e) {
+            $export  = null;
+        }
+
+        return $export;
     }
 
     /**

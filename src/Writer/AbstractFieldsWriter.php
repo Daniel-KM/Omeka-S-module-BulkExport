@@ -2,6 +2,7 @@
 
 namespace BulkExport\Writer;
 
+use BulkExport\Api\Representation\ExportRepresentation;
 use BulkExport\Traits\ListTermsTrait;
 use BulkExport\Traits\MetadataToStringTrait;
 use BulkExport\Traits\ResourceFieldsTrait;
@@ -34,6 +35,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata_exclude',
         // Keep query in the config to simplify regular export.
         'query',
+        'incremental',
         'include_deleted',
     ];
 
@@ -50,10 +52,14 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata',
         'metadata_exclude',
         'query',
+        'incremental',
         'include_deleted',
     ];
 
     protected $options = [
+        'export_id' => null,
+        'exporter_label' => null,
+        'export_started' => null,
         'dirpath' => null,
         'filebase' => null,
         'resource_type' => null,
@@ -69,6 +75,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'only_first' => false,
         'empty_fields' => false,
         'query' => [],
+        'incremental' => false,
         'include_deleted' => null,
     ];
 
@@ -153,7 +160,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             $this->options['format_resource_property'] = null;
         }
 
-        $query = $this->options['query'];
+        $query = $this->options['query'] ?? [];
         if (!is_array($query)) {
             $queryArray = [];
             parse_str((string) $query, $queryArray);
@@ -162,6 +169,20 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         }
 
         $this->includeDeleted = $this->hasHistoryLog ? $this->options['include_deleted'] : null;
+
+        if ($this->options['incremental']) {
+            $previousExport = $this->getPreviousExport();
+            if ($previousExport) {
+                // Use a standard query for compatibility.
+                // TODO Some resources may have been added during job, so don't add them in incremental export twice.
+                // TODO Remove one second because this is "greater than", not equal?
+                // It is not possible to search on "created" and "modified":
+                // this is a "and", but a "or" is needed.
+                // $query['created_after'] = $previousExport->job()->started()->format('Y-m-d\TH:i:s');
+                $query['modified_after'] = $previousExport->job()->started()->format('Y-m-d\TH:i:s');
+                $this->options['query'] = $query;
+            }
+        }
 
         return $this;
     }
@@ -475,5 +496,47 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         }
 
         return $result;
+    }
+
+    protected function getPreviousExport(): ?ExportRepresentation
+    {
+        $export = $this->getExport();
+        if (!$export) {
+            return null;
+        }
+
+        $exporter = $export->exporter();
+        if (!$exporter) {
+            return null;
+        }
+
+        $job = $export->job();
+        if (!$job) {
+            return null;
+        }
+
+        $user = $job->owner();
+        if (!$user) {
+            return null;
+        }
+
+        try {
+            // By construction, the current job is not completed, so get first
+            // similar export.
+            $previousExports = $this->api->search('bulk_exports', [
+                'exporter_id' => $exporter->id(),
+                'owner_id' => $user->id(),
+                'job_status' => \Omeka\Entity\Job::STATUS_COMPLETED,
+                'sort_by' => 'id',
+                'sort_order' => 'DESC',
+                'limit' => 1,
+            ])->getContent();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return count($previousExports)
+            ? reset($previousExports)
+            : null;
     }
 }
