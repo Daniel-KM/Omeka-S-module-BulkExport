@@ -71,6 +71,16 @@ class ExporterForm extends Form
                     'id' => 'as_task',
                 ],
             ])
+            ->add([
+                'name' => 'notify_end',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'label' => 'Notify by email when finished', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'notify_end',
+                ],
+            ])
         ;
 
         $this

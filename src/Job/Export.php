@@ -140,6 +140,11 @@ class Export extends AbstractJob
         $this->saveFilename();
 
         $this->logger->notice('Export completed'); // @translate
+
+        $notify = (bool) $this->exporter->configOption('exporter', 'notify_end');
+        if ($notify) {
+            $this->notifyJobEnd();
+        }
     }
 
     /**
@@ -272,6 +277,60 @@ class Export extends AbstractJob
         if (!$serverUrl->getHost()) {
             $serverUrl->setHost('http://localhost');
         }
+        return $this;
+    }
+
+    protected function notifyJobEnd(): self
+    {
+        $owner = $this->job->getOwner();
+        if (!$owner) {
+            $this->logger->log(Logger::ERR, 'No owner to notify end of process.'); // @translate
+            return $this;
+        }
+
+        /**
+         * @var \Omeka\Stdlib\Mailer $mailer
+         */
+        $services = $this->getServiceLocator();
+        $mailer = $services->get('Omeka\Mailer');
+        $urlPlugin = $services->get('ControllerPluginManager')->get('url');
+        $to = $owner->getEmail();
+        $jobId = (int) $this->job->getId();
+        $subject = new PsrMessage(
+            '[Omeka Bulk Export] #{job_id}', // @translate
+            ['job_id' => $jobId]
+        );
+        $body = new PsrMessage(
+            'Export ended (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}).', // @translate
+            [
+                'link_open_job' => sprintf(
+                    '<a href="%s">',
+                    htmlspecialchars($urlPlugin->fromRoute('admin/id', ['controller' => 'job', 'id' => $jobId], ['force_canonical' => true]))
+                ),
+                'jobId' => $jobId,
+                'link_close' => '</a>',
+                'link_open_log' => sprintf(
+                    '<a href="%s">',
+                    htmlspecialchars($urlPlugin->fromRoute('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $this->export->id()], ['force_canonical' => true]))
+                ),
+            ]
+        );
+        $body->setEscapeHtml(false);
+
+        $message = $mailer->createMessage();
+        $message
+            ->setSubject($subject)
+            ->setBody((string) $body)
+            ->addTo($to);
+
+        try {
+            $mailer->send($message);
+        } catch (\Exception $e) {
+            $this->logger->log(Logger::ERR, new \Omeka\Stdlib\Message(
+                'Error when sending email to notify end of process.' // @translate
+            ));
+        }
+
         return $this;
     }
 }
