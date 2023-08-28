@@ -81,6 +81,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $filepath;
 
     /**
+     * @var bool
+     */
+    protected $hasHistoryLog = false;
+
+    /**
      * @var string|null
      */
     protected $lastErrorMessage;
@@ -99,6 +104,12 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $this->api = $services->get('Omeka\ApiManager');
         $this->logger = $services->get('Omeka\Logger');
         $this->translator = $services->get('MvcTranslator');
+
+        /** @var \Omeka\Module\Manager $moduleManager */
+        $moduleManager = $this->getServiceLocator()->get('Omeka\ModuleManager');
+        $module = $moduleManager->getModule('HistoryLog');
+        $this->hasHistoryLog = $module
+            && $module->getState() === \Omeka\Module\Manager::STATE_ACTIVE;
     }
 
     public function getLabel(): string

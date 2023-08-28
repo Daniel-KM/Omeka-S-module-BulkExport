@@ -322,6 +322,8 @@ trait ResourceFieldsTrait
             'o:asset',
             'url',
             'resource_type',
+            // Module History Log.
+            'operation',
         ];
         return in_array($fieldName, $singles);
     }

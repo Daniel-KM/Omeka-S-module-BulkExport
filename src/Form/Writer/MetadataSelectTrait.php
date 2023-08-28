@@ -85,8 +85,12 @@ trait MetadataSelectTrait
                     'o:is_public' => 'Visibility public/private', // @translate
                     // For item set.
                     'o:is_open' => 'Openness', // @translate
+                    // For all resources.
                     'properties' => 'All used properties', // @translate
                     'properties_small' => 'All used properties less than 5000 characters', // @translate
+                    // Modules.
+                    // 'o-history-log:event' => 'History log events (module History Log)',
+                    'operation' => 'History log last operation (create, update, delete or undelete)',
                 ],
             ],
             'o:item_set' => [
