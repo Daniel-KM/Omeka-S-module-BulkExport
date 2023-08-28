@@ -80,6 +80,31 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     ];
 
     /**
+     * @var bool
+     */
+    protected $hasError = false;
+
+    /**
+     * @var array
+     */
+    protected $historyLastOperations;
+
+    /**
+     * @var array
+     */
+    protected $historyQueryDelete;
+
+    /**
+     * @var bool
+     */
+    protected $jobIsStopped = false;
+
+    /**
+     * @var bool
+     */
+    protected $prependFieldNames = false;
+
+    /**
      * Json resource types.
      *
      * @var array
@@ -90,21 +115,6 @@ abstract class AbstractFieldsWriter extends AbstractWriter
      * @var array
      */
     protected $stats;
-
-    /**
-     * @var bool
-     */
-    protected $jobIsStopped = false;
-
-    /**
-     * @var bool
-     */
-    protected $hasError = false;
-
-    /**
-     * @var bool
-     */
-    protected $prependFieldNames = false;
 
     public function process(): self
     {
@@ -143,6 +153,12 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             ['number' => count($this->fieldNames)]
         );
 
+        if ($this->hasHistoryLog
+            && (in_array('operation', $this->fieldNames) || $this->includeDeleted)
+        ) {
+            $this->prepareLastOperations();
+        }
+
         $this->appendResources();
 
         $this
@@ -160,6 +176,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             $this->options['format_resource_property'] = null;
         }
 
+        // TODO Don't remove limit/offset/page/per_page early?
         $query = $this->options['query'] ?? [];
         if (!is_array($query)) {
             $queryArray = [];
@@ -238,7 +255,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
     protected function appendResourcesForResourceType($resourceType): self
     {
-        $apiResource = $this->mapResourceTypeToApiResource($resourceType);
+        $resourceName = $this->mapResourceTypeToApiResource($resourceType);
         $resourceText = $this->mapResourceTypeToText($resourceType);
 
         /**
@@ -249,7 +266,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
          */
         $services = $this->getServiceLocator();
         $entityManager = $services->get('Omeka\EntityManager');
-        $adapter = $services->get('Omeka\ApiAdapterManager')->get($apiResource);
+        $adapter = $services->get('Omeka\ApiAdapterManager')->get($resourceName);
 
         $this->stats['process'][$resourceType] = [];
         $this->stats['process'][$resourceType]['total'] = $this->stats['totals'][$resourceType];
@@ -282,7 +299,10 @@ abstract class AbstractFieldsWriter extends AbstractWriter
 
             $response = $this->api
                 // Some modules manage some arguments, so keep initialize.
-                ->search($apiResource, ['limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['finalize' => false]);
+                ->search($resourceName, [
+                    'limit' => self::SQL_LIMIT,
+                    'offset' => $offset,
+                ] + $this->options['query'], ['finalize' => false]);
 
             // TODO Check other resources (user…).
             /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
@@ -351,7 +371,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             return $this;
         }
 
-        $apiResource = $this->mapResourceTypeToApiResource($resourceType);
+        $resourceName = $this->mapResourceTypeToApiResource($resourceType);
         $resourceText = $this->mapResourceTypeToText($resourceType);
 
         $this->stats['process'][$resourceType] = $this->stats['process'][$resourceType] ?? [];
@@ -366,53 +386,20 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             ['resource_type' => $resourceText]
         );
 
-        // Avoid an issue when the query contains a page: there should not be
-        // pagination at this point. Page and limit cannot be mixed.
-        // @see \Omeka\Api\Adapter\AbstractEntityAdapter::limitQuery().
-        unset($this->options['query']['page']);
-        unset($this->options['query']['per_page']);
-
         $deleted = 0;
 
-        $offset = 0;
-        do {
-            if ($this->job->shouldStop()) {
-                $this->jobIsStopped = true;
-                $this->logger->warn(
-                    'The job "Export" was stopped: {processed}/{total} resources processed.', // @translate
-                    ['processed' => $statistics['processed'], 'total' => $statistics['total']]
-                );
-                break;
-            }
-
-            // Return only deleted resource ids when only id is needed.
-            // Of course, if "o:id" is not in the field list, this process is useless.
-            $response = $this->api
-                // Some modules manage some arguments, so keep initialize.
-                ->search('history_events', ['entity_name' => $apiResource, 'operation' => 'delete', 'limit' => self::SQL_LIMIT, 'offset' => $offset] + $this->options['query'], ['returnScalar' => 'entityId', 'finalize' => false]);
-
-            // TODO Check other resources (user…).
-            /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources */
-            $resourceIds = $response->getContent();
-            if (!count($resourceIds)) {
-                break;
-            }
-
-            foreach ($resourceIds as $resourceId) {
-                $dataResource = [
-                    'o:id' => [$resourceId],
-                    'operation' => ['delete'],
-                ];
-                $dataResource = array_intersect_key($dataResource, array_flip($this->fieldNames));
-                $this
-                    ->writeFields($dataResource);
-                ++$statistics['succeed'];
-                ++$deleted;
-                // Processed = $offset + $key.
-                ++$statistics['processed'];
-            }
-            $offset += self::SQL_LIMIT;
-        } while (true);
+        foreach (array_keys($this->historyLastOperations[$resourceName], 'delete') as $resourceId) {
+            $dataResource = [
+                'o:id' => [$resourceId],
+                'operation' => ['delete'],
+            ];
+            $dataResource = array_intersect_key($dataResource, array_flip($this->fieldNames));
+            $this
+                ->writeFields($dataResource);
+            ++$statistics['succeed'];
+            ++$deleted;
+            ++$statistics['processed'];
+        }
 
         if ($deleted) {
             $this->logger->notice(
@@ -475,27 +462,131 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     {
         $result = [];
 
-        $query = ['limit' => 0] + $this->options['query'];
+        $query = $this->options['query'];
+        unset($query['limit'], $query['offset'], $query['page'], $query['per_page']);
 
         if ($this->includeDeleted) {
-            $queryDelete = $query + [
-                'operation' => 'delete',
-                'distinct_entities' => 'last',
-            ];
+            $this->prepareLastOperations();
         }
 
         foreach ($this->options['resource_types'] as $resourceType) {
-            $resource = $this->mapResourceTypeToApiResource($resourceType);
-            $result[$resourceType] = $resource
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            $result[$resourceType] = $resourceName
                 // Some modules manage some arguments, so keep initialize.
-                ? $this->api->search($resource, $query, ['finalize' => false])->getTotalResults()
+                ? $this->api->search($resourceName, $query, ['finalize' => false])->getTotalResults()
                 : 0;
             if ($this->includeDeleted) {
-                $result[$resourceType] += $this->api->search('history_events', $queryDelete , ['finalize' => false])->getTotalResults();
+                $result[$resourceType] += count(array_keys($this->historyLastOperations[$resourceName], 'delete'));
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Store history log last operations one time for performance.
+     */
+    protected function prepareLastOperations(): self
+    {
+        if (is_array($this->historyLastOperations)) {
+            return $this;
+        }
+
+        if (!in_array('operation', $this->fieldNames) && !$this->includeDeleted) {
+            foreach ($this->options['resource_types'] as $resourceType) {
+                $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+                $this->historyLastOperations[$resourceName] = [];
+            }
+            return $this;
+        }
+
+        $query = $this->options['query'];
+        unset($query['limit'], $query['offset'], $query['page'], $query['per_page']);
+
+        if ($this->includeDeleted) {
+            $this->prepareQueryDelete();
+        }
+
+        foreach ($this->options['resource_types'] as $resourceType) {
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            if (in_array('operation', $this->fieldNames)) {
+                $ids = $resourceName
+                    ? $this->api->search($resourceName, $query, ['returnScalar' => 'id'])->getContent()
+                    : [];
+            } else {
+                $ids = [];
+            }
+            if ($this->includeDeleted) {
+                $ids += $this->api->search('history_events', [
+                    'entity_name' => $resourceName,
+                ] + $this->historyQueryDelete, ['returnScalar' => 'entityId'])->getContent();
+            }
+            if ($ids) {
+                $entityIds = $this->api->search('history_events', [
+                    'entity_name' => $resourceName,
+                    'entity_id' => $ids,
+                    'distinct_entities' => 'last',
+                ], ['returnScalar' => 'entityId'])->getContent();;
+                $operations = $this->api->search('history_events', [
+                    'entity_name' => $resourceName,
+                    'entity_id' => $ids,
+                    'distinct_entities' => 'last',
+                ], ['returnScalar' => 'operation'])->getContent();;
+                $this->historyLastOperations[$resourceName] = array_combine($entityIds, $operations);
+            } else {
+                $this->historyLastOperations[$resourceName] = [];
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prepare the query to get deleted resources.
+     *
+     * Only id and date are supported in the query for now.
+     *
+     * @todo Move into module HistoryLog and create a filter.
+     */
+    protected function prepareQueryDelete(): self
+    {
+        if (is_array($this->historyQueryDelete)) {
+            return $this->historyQueryDelete;
+        }
+
+        $query = $this->options['query'];
+        unset($query['limit'], $query['offset'], $query['page'], $query['per_page']);
+
+        $this->historyQueryDelete = [
+            'operation' => 'delete',
+            'distinct_entities' => 'last',
+        ];
+
+        // Some supported fields require module Advanced Search.
+        $supportedQueryEntityFields = [
+            'id' => 'entity_id',
+            'created' => 'created',
+            'created_before' => 'created_before',
+            'created_after' => 'created_after',
+            'created_before_on' => 'created_before_on',
+            'created_after_on' => 'created_after_on',
+            'created_until' => 'created_until',
+            'created_since' => 'created_since',
+            // History logs are not modifiable.
+            'modified' => 'created',
+            'modified_before' => 'created_before',
+            'modified_before_on' => 'created_before_on',
+            'modified_after' => 'created_after',
+            'modified_after_on' => 'created_after_on',
+            'modified_until' => 'created_until',
+            'modified_since' => 'created_since',
+        ];
+
+        foreach (array_intersect_key($query, $supportedQueryEntityFields) as $field => $data) {
+            $this->historyQueryDelete[$supportedQueryEntityFields[$field]] = $data;
+        }
+
+        return $this;
     }
 
     protected function getPreviousExport(): ?ExportRepresentation
@@ -532,11 +623,21 @@ abstract class AbstractFieldsWriter extends AbstractWriter
                 'limit' => 1,
             ])->getContent();
         } catch (\Exception $e) {
+            $this->logger->err($e);
             return null;
         }
 
-        return count($previousExports)
-            ? reset($previousExports)
-            : null;
+        if (!count($previousExports)) {
+            return null;
+        }
+
+        $previousExport = reset($previousExports);
+
+        $this->logger->notice(
+            'Previous completed export by user {username} with exporter "{exporter_label}" is #{export_id} on {date}.', // @translate
+            ['username' => $user->name(), 'exporter_label' => $exporter->label(), 'export_id' => $previousExport->id(), 'date' => $previousExport->started()]
+        );
+
+        return $previousExport;
     }
 }

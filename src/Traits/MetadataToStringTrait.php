@@ -194,31 +194,13 @@ trait MetadataToStringTrait
                 if (!$this->hasHistoryLog) {
                     return [];
                 }
-                /** @var \HistoryLog\Api\Representation\HistoryEventRepresentation $event */
-                $event = $this->api->search('history_events', [
-                    'entity_name' => $resource->resourceName(),
-                    'entity_id' => $resource->id(),
-                    // "distinct_entities" can be used, but only one resource is
-                    // processed, so use id.
-                    // 'distinct_entities' => 'last',
-                    // Probably "created" is better, but "id" and "created"
-                    // should be the same.
-                    'sort_by' => 'id',
-                    'sort_order' => 'DESC',
-                    'limit' => 1,
-                ])->getContent();
-                if (!$event) {
-                    return [];
-                }
-                $event = reset($event);
-                $lastOperation = $event->operation();
-                // TODO Clarify last operation import and export for create/update.
+                $lastOperation = $this->historyLastOperations[$resource->resourceName()][$resource->id()] ?? null;
                 if ($lastOperation === 'import') {
                     $lastOperation = 'create';
                 } elseif ($lastOperation === 'export') {
                     $lastOperation = 'update';
                 }
-                return [$lastOperation];
+                return $lastOperation ? [$lastOperation] : [];
 
             // All properties for all resources.
             default:
