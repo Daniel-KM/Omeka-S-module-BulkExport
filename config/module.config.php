@@ -479,10 +479,10 @@ $conf = [
                 'o:resource_class',
                 'o:owner',
                 'o:is_public',
-                'properties_small',
+                'properties_max_5000',
             ],
             'bulkexport_metadata_exclude' => [
-                'properties_large',
+                'properties_min_5000',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',
