@@ -1,17 +1,20 @@
 <?php declare(strict_types=1);
+
 return [
     'owner' => null,
     'label' => 'CSV', // @translate
-    'writerClass' => \BulkExport\Writer\CsvWriter::class,
-    'writerConfig' => [
-        'delimiter' => ',',
-        'enclosure' => '"',
-        'escape' => '\\',
-        'separator' => ' | ',
-        'resource_types' => [
-            'o:Item',
+    'writer' => \BulkExport\Writer\CsvWriter::class,
+    'config' => [
+        'writer' => [
+            'delimiter' => ',',
+            'enclosure' => '"',
+            'escape' => '\\',
+            'separator' => ' | ',
+            'resource_types' => [
+                'o:Item',
+            ],
+            'metadata' => null,
+            'query' => '',
         ],
-        'metadata' => null,
-        'query' => '',
     ],
 ];

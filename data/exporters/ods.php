@@ -1,14 +1,17 @@
 <?php declare(strict_types=1);
+
 return [
     'owner' => null,
     'label' => 'OpenDocument spreadsheet (ods)', // @translate
-    'writerClass' => \BulkExport\Writer\OpenDocumentSpreadsheetWriter::class,
-    'writerConfig' => [
-        'separator' => ' | ',
-        'resource_types' => [
-            'o:Item',
+    'writer' => \BulkExport\Writer\OpenDocumentSpreadsheetWriter::class,
+    'config' => [
+        'writer' => [
+            'separator' => ' | ',
+            'resource_types' => [
+                'o:Item',
+            ],
+            'metadata' => null,
+            'query' => '',
         ],
-        'metadata' => null,
-        'query' => '',
     ],
 ];
