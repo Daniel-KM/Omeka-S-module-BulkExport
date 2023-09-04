@@ -158,6 +158,15 @@ if (version_compare($oldVersion, '3.4.23', '<')) {
 
 if (version_compare($oldVersion, '3.4.27', '<')) {
     $sqls = <<<'SQL'
+UPDATE `bulk_exporter`
+SET
+    `writer_config` = '{}'
+WHERE `writer_config` IS NULL OR `writer_config` = "";
+UPDATE `bulk_export`
+SET
+    `writer_params` = '{}'
+WHERE `writer_params` IS NULL OR `writer_params` = "";
+
 ALTER TABLE `bulk_exporter`
     CHANGE `label` `label` VARCHAR(190) NOT NULL AFTER `owner_id`,
     CHANGE `writer_class` `writer` VARCHAR(190) NOT NULL AFTER `label`,
