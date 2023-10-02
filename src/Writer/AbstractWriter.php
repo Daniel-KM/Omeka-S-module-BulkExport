@@ -273,12 +273,15 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $placeholders = [
             '{label}' => $label,
             '{exporter}' => $exporter,
-            '{exportid}' => $exportId,
+            '{export_id}' => $exportId,
             '{date}' => $date,
             '{time}' => $time,
-            '{userid}' => $userId,
+            '{user_id}' => $userId,
             '{username}' => $userName,
             '{random}' => substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(48))), 0, 6),
+            // Deprecated.
+            '{exportid}' => $exportId,
+            '{userid}' => $userId,
         ];
 
         $config = $this->services->get('Config');
