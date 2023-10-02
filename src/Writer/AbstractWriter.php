@@ -192,7 +192,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             $params = [
                 'export_id' => $values['export_id'],
                 'exporter_label' => $values['exporter_label'] ?? null,
-                'export_started' => $values['export_started'] ?? null
+                'export_started' => $values['export_started'] ?? null,
             ];
         }
         $params += array_intersect_key($values, array_flip($this->paramsKeys));
@@ -414,7 +414,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         try {
             $export = $this->api->read('bulk_exports', $exportId)->getContent();
         } catch (\Exception $e) {
-            $export  = null;
+            $export = null;
         }
 
         return $export;

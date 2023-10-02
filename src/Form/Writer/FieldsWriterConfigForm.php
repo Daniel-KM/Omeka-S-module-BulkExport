@@ -9,7 +9,7 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
     use ResourceQueryTrait;
     use ResourceTypesSelectTrait;
 
-    public function init()
+    public function init(): void
     {
         $this
             ->setAttribute('id', 'form-bulk-importer')

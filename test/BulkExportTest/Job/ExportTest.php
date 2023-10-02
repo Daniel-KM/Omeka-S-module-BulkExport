@@ -200,7 +200,7 @@ SQL;
     {
         $filepath = $this->basepath . $filepath;
         $filebase = substr($filepath, 0, -4);
-        list($resourceType, $index) = $options;
+        [$resourceType, $index] = $options;
 
         $resource = $resources[$resourceType][$index];
         $resourceId = $resource->id();
@@ -246,7 +246,7 @@ SQL;
 
         $filepath = $this->basepath . $filepath;
         // $filebase = substr($filepath, 0, -4);
-        list($resourceType, $index) = $options;
+        [$resourceType, $index] = $options;
 
         $resource = $resources[$resourceType][$index];
         $resourceId = $resource->id();

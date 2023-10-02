@@ -526,12 +526,12 @@ abstract class AbstractFieldsWriter extends AbstractWriter
                     'entity_name' => $resourceName,
                     'entity_id' => $ids,
                     'distinct_entities' => 'last',
-                ], ['returnScalar' => 'entityId'])->getContent();;
+                ], ['returnScalar' => 'entityId'])->getContent();
                 $operations = $this->api->search('history_events', [
                     'entity_name' => $resourceName,
                     'entity_id' => $ids,
                     'distinct_entities' => 'last',
-                ], ['returnScalar' => 'operation'])->getContent();;
+                ], ['returnScalar' => 'operation'])->getContent();
                 $this->historyLastOperations[$resourceName] = array_combine($entityIds, $operations);
             } else {
                 $this->historyLastOperations[$resourceName] = [];

@@ -103,7 +103,7 @@ abstract class AbstractFieldsJsonWriter extends AbstractFieldsWriter
 
         // When file length = 1, nothing was written, except "[".
         if ($pos === 1) {
-            fwrite($this->handle,  $this->outputIsObject ? '}' : ']');
+            fwrite($this->handle, $this->outputIsObject ? '}' : ']');
             fclose($this->handle);
             return parent::finalizeOutput();
         }
@@ -136,7 +136,7 @@ abstract class AbstractFieldsJsonWriter extends AbstractFieldsWriter
     {
         // Just return a single value for single valued key, else an array,
         // mainly for property.
-        foreach ($fields as $key=> &$value) {
+        foreach ($fields as $key => &$value) {
             if ($this->isSingleField($key)) {
                 $value = reset($value);
             }

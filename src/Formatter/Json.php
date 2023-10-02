@@ -85,7 +85,7 @@ class Json extends AbstractFormatter
             // TODO In the case the user asks something forbidden, there will be one trailing comma. See json-table.
             $append = $revertedIndex ? ',' : '';
             $jsonResource = $this->getDataResource($resource);
-            fwrite($this->handle, $jsonResource. $append . "\n");
+            fwrite($this->handle, $jsonResource . $append . "\n");
         }
 
         fwrite($this->handle, ']');

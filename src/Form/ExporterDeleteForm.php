@@ -8,7 +8,7 @@ use Laminas\Form\Form;
 
 class ExporterDeleteForm extends Form
 {
-    public function init()
+    public function init(): void
     {
         parent::init();
 

@@ -13,7 +13,7 @@ class ExporterForm extends Form
      */
     protected $writerOptions = [];
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

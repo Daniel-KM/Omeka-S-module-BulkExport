@@ -228,7 +228,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
                     $value = $countries[$value];
                 }
             }
-            $result[$key]  = $value;
+            $result[$key] = $value;
         }
 
         $json = [

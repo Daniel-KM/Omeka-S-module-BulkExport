@@ -6,7 +6,7 @@ use Laminas\Form\Element;
 
 class SpreadsheetWriterConfigForm extends FieldsWriterConfigForm
 {
-    public function init()
+    public function init(): void
     {
         $this
             ->add([

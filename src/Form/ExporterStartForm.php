@@ -8,7 +8,7 @@ use Laminas\Form\Form;
 
 class ExporterStartForm extends Form
 {
-    public function init()
+    public function init(): void
     {
         $this
             ->setAttribute('id', 'form-bulk-exporter')

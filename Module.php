@@ -341,7 +341,7 @@ class Module extends AbstractModule
                     'name' => 'bulkexport_metadata_exclude',
                     'required' => false,
                 ]);
-            return;
+        return;
     }
 
     public function handleSiteSettingsFilters(Event $event): void

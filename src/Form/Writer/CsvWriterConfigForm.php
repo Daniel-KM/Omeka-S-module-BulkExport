@@ -6,7 +6,7 @@ use Laminas\Form\Element;
 
 class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
 {
-    public function init()
+    public function init(): void
     {
         $this
             ->setAttribute('id', 'form-bulk-exporter')
