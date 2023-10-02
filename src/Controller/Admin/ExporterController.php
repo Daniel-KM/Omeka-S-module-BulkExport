@@ -37,8 +37,8 @@ class ExporterController extends AbstractActionController
 
         $form = $this->getForm(ExporterForm::class);
         if ($exporter) {
-            $data = $exporter->getJsonLd();
-            $form->setData($data);
+            $currentData = $exporter->getJsonLd();
+            $form->setData($currentData);
         }
 
         if ($this->getRequest()->isPost()) {
@@ -54,6 +54,9 @@ class ExporterController extends AbstractActionController
                     $data['o:owner'] = $this->identity();
                     $response = $this->api($form)->create('bulk_exporters', $data);
                 } else {
+                    $oConfig = array_replace(['exporter' => [], 'writer' => []], $currentData['o:config']);
+                    $oConfig['exporter'] = $data['o:config']['exporter'] ?? [];
+                    $data['o:config'] = $oConfig;
                     $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
                 }
 
