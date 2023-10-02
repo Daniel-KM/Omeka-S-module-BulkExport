@@ -35,17 +35,16 @@ trait ResourceFieldsTrait
 
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
         $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
-
         $this->options['resource_types'] = $this->options['resource_types'] ?: [];
 
         if ($listFieldNames) {
             $this->fieldNames = $listFieldNames;
             $this->fieldNames = $this->managePropertiesList($listFieldNames);
-            $hasProperties = in_array('properties', $listFieldNames)
-                || in_array('properties_max_1000', $listFieldNames)
+            $hasPropertiesMinMax = in_array('properties_max_1000', $listFieldNames)
                 || in_array('properties_min_1000', $listFieldNames)
                 || in_array('properties_max_5000', $listFieldNames)
                 || in_array('properties_min_5000', $listFieldNames);
+            $hasProperties = in_array('properties', $listFieldNames) || $hasPropertiesMinMax;
             $usedProperties = array_diff($this->fieldNames, $listFieldNames);
         } else {
             $hasProperties = true;
@@ -92,6 +91,7 @@ trait ResourceFieldsTrait
                         break;
                 }
             }
+            $hasPropertiesMinMax = true;
             $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000]));
             $this->fieldNames = array_merge($this->fieldNames, $usedProperties);
         }
@@ -116,9 +116,9 @@ trait ResourceFieldsTrait
         }
 
         $missingProperties = array_diff($unlimitedUsedProperties, $usedProperties);
-        if (count($missingProperties)) {
+        if ($hasPropertiesMinMax && count($missingProperties)) {
             $this->logger->warn(
-                'Some properties are not exported because they contain more or less than 5000 characters: {properties}.', // @translate
+                'Some properties are not exported because they contain more or less than 1000 or 5000 characters: {properties}.', // @translate
                 ['properties' => $missingProperties]
             );
         }
