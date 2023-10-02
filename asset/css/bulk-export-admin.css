@@ -8,6 +8,7 @@
         content:"";
     }
 
+    .bulk-as-task,
     .bulk-label-sub {
         font-style: italic;
         opacity: .5;

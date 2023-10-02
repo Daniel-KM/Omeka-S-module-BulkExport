@@ -40,6 +40,9 @@ $hyperlink = $plugins->get('hyperlink');
                 <?= $exporter ? $escape($exporter->label()) : $translate('[Unknown]') ?>
                 <?php endif; ?>
                 <ul class="actions">
+                    <?php if ($exporter->exporterConfig()['as_task'] ?? false): ?>
+                    <li><span class="bulk-as-task"><?= $translate('as task') ?></span></li>
+                    <?php endif; ?>
                     <?php if ($fileUrl): ?>
                     <li><?= $hyperlink('', $fileUrl, [
                         'class' => 'fas fa-cloud-download-alt o-icon-',
