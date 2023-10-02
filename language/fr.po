@@ -267,30 +267,34 @@ msgstr "Libellé / commentaire"
 msgid "Process"
 msgstr "Traitement"
 
-#: view/bulk/admin/export/export-table.phtml:46
+#: view/bulk/admin/export/export-table.phtml:44
+msgid "task"
+msgstr "tâche"
+
+#: view/bulk/admin/export/export-table.phtml:49
 #: view/bulk/admin/export/show-details.phtml:30
 msgid "Get file"
 msgstr "Fichier"
 
-#: view/bulk/admin/export/export-table.phtml:53
+#: view/bulk/admin/export/export-table.phtml:56
 msgid "Stop"
 msgstr "Arrêter"
 
-#: view/bulk/admin/export/export-table.phtml:58
+#: view/bulk/admin/export/export-table.phtml:61
 msgid "See params"
 msgstr "Voir les paramêtres"
 
-#: view/bulk/admin/export/export-table.phtml:62
+#: view/bulk/admin/export/export-table.phtml:65
 #: view/bulk/admin/export/show-details.phtml:55
 msgid "See logs"
 msgstr "Voir les journaux"
 
-#: view/bulk/admin/export/export-table.phtml:79
+#: view/bulk/admin/export/export-table.phtml:82
 #, php-format
 msgid "Start: %s"
 msgstr "Démarrage : %s"
 
-#: view/bulk/admin/export/export-table.phtml:82
+#: view/bulk/admin/export/export-table.phtml:85
 #, php-format
 msgid "End: %s"
 msgstr "Terminé : %s"
@@ -538,11 +542,11 @@ msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:121
 msgid ""
-"Some properties are not exported because they contain more or less than 5000 "
-"characters: {properties}."
+"Some properties are not exported because they contain more or less than 1000 "
+"or 5000 characters: {properties}."
 msgstr ""
 "Certaines propriétés n’ont pas été exportées car elles contiennent plus ou "
-"moins de 5000 caractères : {properties}."
+"moins de 1000 ou 5000 caractères : {properties}."
 
 #: src/Traits/ResourceFieldsTrait.php:232
 #, php-format
@@ -1136,7 +1140,7 @@ msgstr "export"
 
 #: src/Controller/Admin/ExportController.php:88
 msgid "Export successfully deleted"
-msgstr "Suppression de l’exporteur réussie"
+msgstr "Suppression de l’export réussie"
 
 #: src/Controller/Admin/ExportController.php:105
 msgid "The export process #{export} does not exists."
@@ -1151,63 +1155,63 @@ msgid "The process #{export} cannot be stopped."
 msgstr "Le traitement #{export} ne peut pas être arrêté."
 
 #: src/Controller/Admin/ExporterController.php:33
-#: src/Controller/Admin/ExporterController.php:87
-#: src/Controller/Admin/ExporterController.php:132
-#: src/Controller/Admin/ExporterController.php:201
+#: src/Controller/Admin/ExporterController.php:90
+#: src/Controller/Admin/ExporterController.php:135
+#: src/Controller/Admin/ExporterController.php:204
 msgid "exporter_id"
 msgstr "exporter_id"
 
-#: src/Controller/Admin/ExporterController.php:61
+#: src/Controller/Admin/ExporterController.php:64
 msgid "Save of exporter failed"
 msgstr "Échec de l’enregistrement de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:66
+#: src/Controller/Admin/ExporterController.php:69
 msgid "Exporter successfully saved"
 msgstr "Exporteur sauvegardé"
 
-#: src/Controller/Admin/ExporterController.php:96
+#: src/Controller/Admin/ExporterController.php:99
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr "L’exporteur ne peut pas être supprimé : des exports l’utilisent."
 
-#: src/Controller/Admin/ExporterController.php:109
+#: src/Controller/Admin/ExporterController.php:112
 msgid "Exporter successfully deleted"
 msgstr "Suppression de l’exporteur réussie"
 
-#: src/Controller/Admin/ExporterController.php:111
+#: src/Controller/Admin/ExporterController.php:114
 msgid "Delete of exporter failed"
 msgstr "Échec de la suppression de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:169
+#: src/Controller/Admin/ExporterController.php:172
 msgid "Writer configuration saved"
 msgstr "Configuration du scripteur enregistrée"
 
-#: src/Controller/Admin/ExporterController.php:171
+#: src/Controller/Admin/ExporterController.php:174
 msgid "Save of writer configuration failed"
 msgstr "Échec de l’enregistrement de la configuration"
 
-#: src/Controller/Admin/ExporterController.php:209
+#: src/Controller/Admin/ExporterController.php:212
 msgid "writer"
 msgstr "scripteur"
 
-#: src/Controller/Admin/ExporterController.php:230
+#: src/Controller/Admin/ExporterController.php:233
 msgid "This export will be stored to be run as a task."
 msgstr "Cet export sera enregistré pour être lancé en tant que tâche."
 
-#: src/Controller/Admin/ExporterController.php:241
+#: src/Controller/Admin/ExporterController.php:244
 msgid "The page was reloaded, but params are lost. Restart the export."
 msgstr ""
 "La page a été rechargée, mais les paramètres ont été perdus. Relancer "
 "l’export."
 
-#: src/Controller/Admin/ExporterController.php:299
+#: src/Controller/Admin/ExporterController.php:302
 msgid "Save of export failed"
 msgstr "Échec de l’enregistrement de la ressource"
 
-#: src/Controller/Admin/ExporterController.php:309
+#: src/Controller/Admin/ExporterController.php:312
 msgid "The export #{bulk_export} was stored for future use."
 msgstr "L’export #{bulk_export} a été enregistré pour une utilisation future."
 
-#: src/Controller/Admin/ExporterController.php:333
+#: src/Controller/Admin/ExporterController.php:336
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
@@ -1215,7 +1219,7 @@ msgstr ""
 "Export lancé en arrière-plan (tâche {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}journaux{link_close}). Cela peut prendre un moment."
 
-#: src/Controller/Admin/ExporterController.php:334
+#: src/Controller/Admin/ExporterController.php:337
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
@@ -1223,11 +1227,11 @@ msgstr ""
 "Export lancé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "journaux{link_close})."
 
-#: src/Controller/Admin/ExporterController.php:353
+#: src/Controller/Admin/ExporterController.php:356
 msgid "Export start failed"
 msgstr "Échec du lancement de l’export"
 
-#: src/Controller/Admin/ExporterController.php:429
+#: src/Controller/Admin/ExporterController.php:432
 msgid "Continue"
 msgstr "Continuer"
 

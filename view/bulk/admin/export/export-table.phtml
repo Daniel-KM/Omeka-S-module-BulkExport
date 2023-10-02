@@ -41,7 +41,7 @@ $hyperlink = $plugins->get('hyperlink');
                 <?php endif; ?>
                 <ul class="actions">
                     <?php if ($exporter->exporterConfig()['as_task'] ?? false): ?>
-                    <li><span class="bulk-as-task"><?= $translate('as task') ?></span></li>
+                    <li><span class="bulk-as-task"><?= $translate('task') ?></span></li>
                     <?php endif; ?>
                     <?php if ($fileUrl): ?>
                     <li><?= $hyperlink('', $fileUrl, [
