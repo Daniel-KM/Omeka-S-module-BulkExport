@@ -48,7 +48,7 @@ $hyperlink = $plugins->get('hyperlink');
                     ]) ?></li>
                     <?php endif; ?>
                     <?php if ($export->isInProgress()): ?>
-                    <li><?= $hyperlink('', $url('admin/id', ['controller' => 'job', 'action' => 'stop', 'id' => $export->job()->id()]), [
+                    <li><?= $hyperlink('', $url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'stop', 'id' => $export->id()]), [
                         'class' => 'fas fa-times-circle o-icon-',
                         'title' => $translate('Stop'), // @translate
                     ]) ?></li>
