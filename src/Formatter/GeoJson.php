@@ -218,7 +218,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
                 continue;
             }
             $value = $this->valueFromXPath($xpath, $queries);
-            if ($value && $key === 'region') {
+            if ($value !== null && $key === 'region') {
                 $countries[$value] = null;
                 // For the region/country, get the name instead of the uri.
                 $regionDom = $this->geonamesRdf($value . 'about.rdf');
