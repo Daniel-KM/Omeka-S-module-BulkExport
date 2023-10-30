@@ -182,7 +182,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
      * @see https://www.geonames.org/ontology/ontology_v3.3.rdf
      * @see https://datatracker.ietf.org/doc/html/rfc7946
      */
-    protected function geonamesRdfToGeoJson(DOMDocument $dom): array
+    protected function geonamesRdfToGeoJson(DOMDocument $dom): ?array
     {
         // Allow to store parent countries names to avoid second level requests.
         static $countries = [];
@@ -229,6 +229,15 @@ class GeoJson extends AbstractFieldsJsonFormatter
                 }
             }
             $result[$key] = $value;
+        }
+
+        // Warning: location "Earth" is 0/0.
+        if ($result['latitude'] === null || $result['longitude'] === null) {
+            $this->logger->err(
+                'There is no coordinates for url "{url}" (name: {name}).', // @translate
+                ['url' => $result['uri'], 'name' => $result['name']]
+            );
+            return null;
         }
 
         $json = [
