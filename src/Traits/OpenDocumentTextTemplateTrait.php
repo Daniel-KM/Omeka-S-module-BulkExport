@@ -75,6 +75,7 @@ trait OpenDocumentTextTemplateTrait
     {
         $section = $this->openDocument->addSection(['breakType' => 'continuous']);
         foreach ($fields as $fieldName => $fieldValues) {
+            // TODO Manage html and xml values.
             if (!is_array($fieldValues)) {
                 $fieldValues = [$fieldValues];
             }
@@ -86,10 +87,15 @@ trait OpenDocumentTextTemplateTrait
                 if (is_int($fieldValue)) {
                     $fieldValue = strval($fieldValue);
                 }
-                if (is_string($fieldValue) && (str_contains($fieldValue, '&') || str_contains($fieldValue, '<'))) {
-                    $patterns = array('/&/', '/</');
-                    $replacements = array('&amp;', '&lt;');
-                    $fieldValue = preg_replace($patterns, $replacements, $fieldValue);
+                if (is_string($fieldValue)
+                    && (strpos($fieldValue, '&') !== false || strpos($fieldValue, '<') !== false || strpos($fieldValue, '>') !== false)
+                ) {
+                    $replace = [
+                        '&' => '&amp;',
+                        '<' => '&lt;',
+                        '>' => '&gt;',
+                    ];
+                    $fieldValue = str_replace(array_keys($replace), array_values($replace), $fieldValue);
                 }
                 $fieldValue = strip_tags((string) $fieldValue);
                 if (mb_strlen($fieldValue) < 1000) {

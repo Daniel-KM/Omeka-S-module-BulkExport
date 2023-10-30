@@ -374,11 +374,11 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         $resourceName = $this->mapResourceTypeToApiResource($resourceType);
         $resourceText = $this->mapResourceTypeToText($resourceType);
 
-        $this->stats['process'][$resourceType] = $this->stats['process'][$resourceType] ?? [];
-        $this->stats['process'][$resourceType]['total'] = $this->stats['process'][$resourceType]['total'] ?? $this->stats['totals'][$resourceType];
-        $this->stats['process'][$resourceType]['processed'] = $this->stats['process'][$resourceType]['processed'] ?? 0;
-        $this->stats['process'][$resourceType]['succeed'] = $this->stats['process'][$resourceType]['succeed'] ?? 0;
-        $this->stats['process'][$resourceType]['skipped'] = $this->stats['process'][$resourceType]['skipped'] ?? 0;
+        $this->stats['process'][$resourceType] ??= [];
+        $this->stats['process'][$resourceType]['total'] ??= $this->stats['totals'][$resourceType];
+        $this->stats['process'][$resourceType]['processed'] ??= 0;
+        $this->stats['process'][$resourceType]['succeed'] ??= 0;
+        $this->stats['process'][$resourceType]['skipped'] ??= 0;
         $statistics = &$this->stats['process'][$resourceType];
 
         $this->logger->notice(

@@ -102,7 +102,7 @@ class ExportRepresentation extends AbstractEntityRepresentation
         // Relative are inside "files/bulk_export/".
         $config = $this->services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        if (mb_strpos($filepath, $basePath) !== 0) {
+        if (mb_strpos($filepath, $basePath . '/') !== 0) {
             return null;
         }
 
