@@ -72,15 +72,15 @@ trait ResourceFieldsTrait
                         $this->fieldNames[] = 'o:is_open';
                         break;
                     case 'o:Item':
-                        $this->fieldNames[] = 'o:item_set[o:id]';
-                        $this->fieldNames[] = 'o:item_set[dcterms:title]';
-                        $this->fieldNames[] = 'o:media[o:id]';
-                        $this->fieldNames[] = 'o:media[file]';
+                        $this->fieldNames[] = 'o:item_set/o:id';
+                        $this->fieldNames[] = 'o:item_set/dcterms:title';
+                        $this->fieldNames[] = 'o:media/o:id';
+                        $this->fieldNames[] = 'o:media/file';
                         break;
                     case 'o:Media':
-                        $this->fieldNames[] = 'o:item[o:id]';
-                        $this->fieldNames[] = 'o:item[dcterms:identifier]';
-                        $this->fieldNames[] = 'o:item[dcterms:title]';
+                        $this->fieldNames[] = 'o:item/o:id';
+                        $this->fieldNames[] = 'o:item/dcterms:identifier';
+                        $this->fieldNames[] = 'o:item/dcterms:title';
                         break;
                     case 'oa:Annotation':
                         $this->fieldNames[] = 'o:resource[o:id]';
@@ -98,10 +98,10 @@ trait ResourceFieldsTrait
 
         if ($hasProperties && in_array('oa:Annotation', $this->options['resource_types'])) {
             foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationBody::class]])) as $property) {
-                $this->fieldNames[] = 'oa:hasBody[' . $property . ']';
+                $this->fieldNames[] = 'oa:hasBody/' . $property;
             }
             foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationTarget::class]])) as $property) {
-                $this->fieldNames[] = 'oa:hasTarget[' . $property . ']';
+                $this->fieldNames[] = 'oa:hasTarget/' . $property;
             }
         }
 
@@ -182,23 +182,23 @@ trait ResourceFieldsTrait
                 'o:is_public' => $this->translator->translate('Is public'), // @translate
                 'o:is_open' => $this->translator->translate('Is open'), // @translate
                 'o:resource' => $this->translator->translate('Resource'), // @translate
-                'o:resource[o:id]' => $this->translator->translate('Resource id'), // @translate
-                'o:resource[dcterms:identifier]' => $this->translator->translate('Resource identifier'), // @translate
-                'o:resource[dcterms:title]' => $this->translator->translate('Resource title'), // @translate
+                'o:resource/o:id' => $this->translator->translate('Resource id'), // @translate
+                'o:resource/dcterms:identifier' => $this->translator->translate('Resource identifier'), // @translate
+                'o:resource/dcterms:title' => $this->translator->translate('Resource title'), // @translate
                 'o:item_set' => $this->translator->translate('Item set'), // @translate
-                'o:item_set[o:id]' => $this->translator->translate('Item set id'), // @translate
-                'o:item_set[dcterms:title]' => $this->translator->translate('Item set'), // @translate
+                'o:item_set/o:id' => $this->translator->translate('Item set id'), // @translate
+                'o:item_set/dcterms:title' => $this->translator->translate('Item set'), // @translate
                 'o:item' => $this->translator->translate('Item'), // @translate
-                'o:item[o:id]' => $this->translator->translate('Item id'), // @translate
-                'o:item[dcterms:identifier]' => $this->translator->translate('Item identifier'), // @translate
-                'o:item[dcterms:title]' => $this->translator->translate('Item title'), // @translate
+                'o:item/o:id' => $this->translator->translate('Item id'), // @translate
+                'o:item/dcterms:identifier' => $this->translator->translate('Item identifier'), // @translate
+                'o:item/dcterms:title' => $this->translator->translate('Item title'), // @translate
                 'o:media' => $this->translator->translate('Media'), // @translate
-                'o:media[o:id]' => $this->translator->translate('Media id'), // @translate
-                'o:media[file]' => $this->translator->translate('Media file'), // @translate
-                'o:media[source]' => $this->translator->translate('Media source'), // @translate
-                'o:media[media_type]' => $this->translator->translate('File media type'), // @translate,
-                'o:media[size]' => $this->translator->translate('File size'), // @translate,
-                'o:media[original_url]' => $this->translator->translate('Original file url'), // @translate,
+                'o:media/o:id' => $this->translator->translate('Media id'), // @translate
+                'o:media/file' => $this->translator->translate('Media file'), // @translate
+                'o:media/o:source' => $this->translator->translate('Media source'), // @translate
+                'o:media/o:media_type' => $this->translator->translate('File media type'), // @translate,
+                'o:media/o:size' => $this->translator->translate('File size'), // @translate,
+                'o:media/original_url' => $this->translator->translate('Original file url'), // @translate,
                 'o:asset' => $this->translator->translate('Asset'), // @translate
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
                 'url' => $this->translator->translate('Url'), // @translate,
@@ -300,23 +300,23 @@ trait ResourceFieldsTrait
             'o:is_open',
             /*
             'o:resource',
-            'o:resource[o:id]',
-            'o:resource[dcterms:identifier]',
-            'o:resource[dcterms:title]',
+            'o:resource/o:id',
+            'o:resource/dcterms:identifier',
+            'o:resource/dcterms:title',
             'o:item_set',
-            'o:item_set[o:id]',
-            'o:item_set[dcterms:title]',
+            'o:item_set/o:id',
+            'o:item_set/dcterms:title',
             'o:item',
-            'o:item[o:id]',
-            'o:item[dcterms:identifier]',
-            'o:item[dcterms:title]',
+            'o:item/o:id',
+            'o:item/dcterms:identifier',
+            'o:item/dcterms:title',
             'o:media',
-            'o:media[o:id]',
-            'o:media[file]',
-            'o:media[source]',
-            'o:media[media_type]',
-            'o:media[size]',
-            'o:media[original_url]',
+            'o:media/o:id',
+            'o:media/file',
+            'o:media/o:source',
+            'o:media/o:media_type',
+            'o:media/o:size',
+            'o:media/original_url',
             'o:annotation',
             */
             'o:asset',

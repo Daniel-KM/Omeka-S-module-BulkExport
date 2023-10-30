@@ -72,32 +72,32 @@ trait MetadataToStringTrait
                 return method_exists($resource, 'isOpen')
                     ? $resource->isOpen() ? ['true'] : ['false']
                     : [];
-            case 'o:owner[o:id]':
+            case 'o:owner/o:id':
                 $owner = $resource->owner();
                 return $owner ? [$owner->id()] : [''];
             case 'o:owner':
-            case 'o:owner[o:email]':
+            case 'o:owner/o:email':
                 $owner = $resource->owner();
                 return $owner ? [$owner->email()] : [''];
 
             // Item set for item.
-            case 'o:item_set[o:id]':
+            case 'o:item_set/o:id':
                 return $resource->resourceName() === 'items'
                     ? $this->extractResourceIds($resource->itemSets())
                     : [];
-            case 'o:item_set[dcterms:identifier]':
-            case 'o:item_set[dcterms:title]':
+            case 'o:item_set/dcterms:identifier':
+            case 'o:item_set/dcterms:title':
                 return $resource->resourceName() === 'items'
                     ? $this->extractFirstValueOfResources($resource->itemSets(), $metadata)
                     : [];
 
             // Media for item.
-            case 'o:media[o:id]':
+            case 'o:media/o:id':
                 return $resource->resourceName() === 'items'
                     ? $this->extractResourceIds($resource->media())
                     : [];
-            case 'o:media[file]':
-            case 'o:media[url]':
+            case 'o:media/file':
+            case 'o:media/url':
                 $result = [];
                 if ($resource->resourceName() === 'items') {
                     /** @var \Omeka\Api\Representation\MediaRepresentation $media */
@@ -114,7 +114,7 @@ trait MetadataToStringTrait
                     }
                 }
                 return $result;
-            case 'o:media[source]':
+            case 'o:media/o:source':
                 $result = [];
                 if ($resource->resourceName() === 'items') {
                     /** @var \Omeka\Api\Representation\MediaRepresentation $media */
@@ -131,37 +131,37 @@ trait MetadataToStringTrait
                     }
                 }
                 return $result;
-            case 'o:media[dcterms:identifier]':
-            case 'o:media[dcterms:title]':
+            case 'o:media/dcterms:identifier':
+            case 'o:media/dcterms:title':
                 return $resource->resourceName() === 'items'
                     ? $this->extractFirstValueOfResources($resource->media(), $metadata)
                     : [];
-            case 'o:media[media_type]':
+            case 'o:media/o:media_type':
                 return $resource->resourceName() === 'media'
                     ? $resource->mediaType()
                     : [];
-            case 'o:media[size]':
+            case 'o:media/o:size':
                 return $resource->resourceName() === 'media'
                     ? $resource->size()
                     : [];
-            case 'o:media[original_url]':
+            case 'o:media/original_url':
                 return $resource->resourceName() === 'media'
                     ? $resource->originalUrl()
                     : [];
 
             // Item for media.
-            case 'o:item[o:id]':
+            case 'o:item/o:id':
                 return $resource->resourceName() === 'media'
                     ? [$resource->item()->id()]
                     : [];
-            case 'o:item[dcterms:identifier]':
-            case 'o:item[dcterms:title]':
+            case 'o:item/dcterms:identifier':
+            case 'o:item/dcterms:title':
                 return $resource->resourceName() === 'media'
                     ? $this->extractFirstValueOfResources([$resource->item()], $metadata)
                     : [];
 
             // Resources for annotation (target).
-            case 'o:resource[o:id]':
+            case 'o:resource/o:id':
                 /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource*/
                 $resourceIds = [];
                 foreach ($resource->targets() as $target) {
@@ -170,8 +170,8 @@ trait MetadataToStringTrait
                     }
                 }
                 return array_values(array_unique($resourceIds));
-            case 'o:resource[dcterms:identifier]':
-            case 'o:resource[dcterms:title]':
+            case 'o:resource/dcterms:identifier':
+            case 'o:resource/dcterms:title':
                 /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource*/
                 $resourceValues = [];
                 foreach ($resource->targets() as $target) {
@@ -180,11 +180,11 @@ trait MetadataToStringTrait
                 return array_values(array_unique($resourceValues));
 
             // Bodies and targets of annotations.
-            case strpos($metadata, 'oa:hasBody[') === 0:
+            case strpos($metadata, 'oa:hasBody/') === 0:
                 return $resource->resourceName() === 'annotations'
                     ? $this->extractFirstValueOfResources($resource->bodies(), $metadata)
                     : [];
-            case strpos($metadata, 'oa:hasTarget[') === 0:
+            case strpos($metadata, 'oa:hasTarget/') === 0:
                 return $resource->resourceName() === 'annotations'
                     ? $this->extractFirstValueOfResources($resource->targets(), $metadata)
                     : [];
