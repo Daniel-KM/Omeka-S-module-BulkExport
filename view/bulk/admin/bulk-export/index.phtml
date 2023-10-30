@@ -18,7 +18,7 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css',
 <?= $this->pageTitle($translate('Bulk export'), 1, $translate('Bulk export')) ?>
 
 <div id="page-actions">
-    <?php if ($this->userIsAllowed(\BulkImport\Api\Adapter\ImporterAdapter::class, 'create')): ?>
+    <?php if ($this->userIsAllowed(\BulkExport\Api\Adapter\ExporterAdapter::class, 'create')): ?>
     <?= $hyperlink($translate('Add an exporter'), $url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'], true), ['class' => 'button']) ?>
     <?php endif; ?>
     <?php if (!empty($exports)): ?>
