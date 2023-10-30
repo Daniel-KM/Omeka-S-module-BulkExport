@@ -218,3 +218,120 @@ SQL;
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare($oldVersion, '3.4.29', '<')) {
+    // TODO Fix upgrade for annotation body and target (but not yet used anyway).
+    $sql = <<<'SQL'
+UPDATE `bulk_export`
+SET
+    `params` =
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+            `params`,
+
+            '"o:item[o:id]"',
+            '"o:item/o:id"'
+        ),
+            '"o:item[dcterms:identifier]"',
+            '"o:item/dcterms:identifier"'
+        ),
+            '"o:item[dcterms:title]"',
+            '"o:item/dcterms:title"'
+        ),
+
+            '"o:item_set[o:id]"',
+            '"o:item_set/o:id"'
+        ),
+            '"o:item_set[dcterms:identifier]"',
+            '"o:item_set/dcterms:identifier"'
+        ),
+            '"o:item_set[dcterms:title]"',
+            '"o:item_set/dcterms:title"'
+        ),
+
+            '"o:media[o:id]"',
+            '"o:media/o:id"'
+        ),
+            '"o:media[file]"',
+            '"o:media/file"'
+        ),
+            '"o:media[source]"',
+            '"o:media/o:source"'
+        ),
+            '"o:media[dcterms:identifier]"',
+            '"o:media/dcterms:identifier"'
+        ),
+            '"o:media[dcterms:title]"',
+            '"o:media/dcterms:title"'
+        ),
+            '"o:media[url]"',
+            '"o:media/url"'
+        ),
+            '"o:media[media_type]"',
+            '"o:media/o:media_type"'
+        ),
+            '"o:media[size]"',
+            '"o:media/o:size"'
+        ),
+            '"o:media[original_url]"',
+            '"o:media/original_url"'
+        ),
+
+            '"o:resource[o:id]"',
+            '"o:resource/o:id"'
+        ),
+            '"o:resource[dcterms:identifier]"',
+            '"o:resource/dcterms:identifier"'
+        ),
+            '"o:resource[dcterms:title]"',
+            '"o:resource/dcterms:title"'
+        ),
+
+            '"o:owner[o:id]"',
+            '"o:owner/o:id"'
+        ),
+            '"o:owner[o:email]"',
+            '"o:owner/o:email"'
+        ),
+
+            '"oa:hasBody[',
+            '"oa:hasBody/'
+        ),
+            '"oa:hasTarget[',
+            '"oa:hasTarget/'
+        )
+    ;
+SQL;
+    $connection->executeStatement($sql);
+
+    $replace = [
+        '`bulk_export`' => '`bulk_exporter`',
+        '`params`' => '`config`',
+    ];
+    $connection->executeStatement(str_replace(array_keys($replace), array_values($replace), $sql));
+
+    $message = new Message(
+        'The config of exporters has been upgraded to a new format. You may check them if you use a complex config.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
