@@ -324,9 +324,11 @@ class GeoJson extends AbstractFieldsJsonFormatter
 
     protected function fetchUrl($url): ?string
     {
+        static $retries = [];
+
         // TODO Should we reset cookies each time?
         $this->httpClient
-            ->reset()
+            // ->reset()
             ->setUri($url)
             ->setHeaders($this->httpHeadersQuery);
 
@@ -337,6 +339,23 @@ class GeoJson extends AbstractFieldsJsonFormatter
             $response = $this->httpClient->send();
             error_reporting($errorLevel);
         } catch (\Laminas\Http\Client\Exception\ExceptionInterface $e) {
+            error_reporting($errorLevel);
+            if (!in_array($url, $retries)) {
+                // Retrying after 1 minute.
+                $this->logger->warn(
+                    'Connection error when fetching url "{url}": {exception}. Retrying in one minute.', // @translate
+                    ['url' => $url, 'exception' => $e]
+                );
+                sleep(60);
+                $retries[] = $url;
+                return $this->fetchUrl($url);
+            }
+            $this->logger->err(
+                'Connection error when fetching url "{url}": {exception}', // @translate
+                ['url' => $url, 'exception' => $e]
+            );
+            return null;
+        } catch (\Exception $e) {
             error_reporting($errorLevel);
             $this->logger->err(
                 'Connection error when fetching url "{url}": {exception}', // @translate
