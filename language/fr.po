@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 00:00+0000\n"
-"PO-Revision-Date: 2023-10-02 00:00+0000\n"
+"POT-Creation-Date: 2023-10-30 00:00+0000\n"
+"PO-Revision-Date: 2023-10-30 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -493,6 +493,14 @@ msgstr ""
 msgid "It is now possible to do an incremental export."
 msgstr "Il est désormais possible de réaliser un export incrémental."
 
+#: data/scripts/upgrade.php:334
+msgid ""
+"The config of exporters has been upgraded to a new format. You may check "
+"them if you use a complex config."
+msgstr ""
+"La configuration des exporteurs a été mis à jour dans un nouveau format. "
+"Vous pouvez les vérifiez pour les configurations complexes."
+
 #: data/exporters/ods.php:5
 msgid "OpenDocument spreadsheet (ods)"
 msgstr "Tableur OpenDocument (ods)"
@@ -533,7 +541,7 @@ msgstr "Fichiers d’arguments manquants (%s)."
 msgid "Bibliography from %s"
 msgstr "Bibliographie de %s"
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:91
+#: src/Traits/OpenDocumentTextTemplateTrait.php:105
 msgid ""
 "Skipped field \"{fieldname}\" of resource: it contains more than 1000 "
 "characters."
@@ -1259,27 +1267,39 @@ msgstr ""
 msgid "No metadata are used in any resources."
 msgstr "Aucune métadonnée n’est utilisée dans les ressources."
 
-#: src/Formatter/GeoJson.php:172
+#: src/Formatter/GeoJson.php:180
 msgid "The geonames uri \"{url}\" is invalid."
 msgstr "L’uri geonames « {url} » est incorrecte."
 
-#: src/Formatter/GeoJson.php:298
+#: src/Formatter/GeoJson.php:245
+msgid "There is no coordinates for url \"{url}\" (name: {name})."
+msgstr "Il n’y a pas de coordonnées pour l’url « {url} » (nom : {name})."
+
+#: src/Formatter/GeoJson.php:316
 msgid "Output is not xml for url \"{url}\"."
 msgstr "La sortie n’est pas du xml pour l’url « {url} »."
 
-#: src/Formatter/GeoJson.php:306
+#: src/Formatter/GeoJson.php:324
 msgid "Output is not a valid xml for url \"{url}\"."
 msgstr "La sortie n’est pas du xml valide pour l’url « {url} »."
 
-#: src/Formatter/GeoJson.php:332
+#: src/Formatter/GeoJson.php:354
+msgid ""
+"Connection error when fetching url \"{url}\": {exception}. Retrying in one "
+"minute."
+msgstr ""
+"Erreur de connexion pour l’url « {url} » : {exception}. Nouvelle tentative "
+"dans une minute."
+
+#: src/Formatter/GeoJson.php:362 src/Formatter/GeoJson.php:369
 msgid "Connection error when fetching url \"{url}\": {exception}"
-msgstr "Erreur de connexion pour l’url « {url} » : « {exception} »"
+msgstr "Erreur de connexion pour l’url « {url} » : {exception}"
 
-#: src/Formatter/GeoJson.php:340
+#: src/Formatter/GeoJson.php:377
 msgid "Connection issue when fetching url \"{url}\": {msg}"
-msgstr "Erreur de connexion pour l’url « {url} » : « {msg} »"
+msgstr "Erreur de connexion pour l’url « {url} » : {msg}"
 
-#: src/Formatter/GeoJson.php:349
+#: src/Formatter/GeoJson.php:386
 msgid "Output is empty for url \"{url}\"."
 msgstr "La sortie est vide pour l’url « {url} »."
 
