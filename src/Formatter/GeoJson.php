@@ -40,6 +40,13 @@ class GeoJson extends AbstractFieldsJsonFormatter
         'Accept-Encoding' => 'gzip, deflate',
     ];
 
+    /**
+     * Current resource id, used to improve messages.
+     *
+     * @var int
+     */
+    protected $currentResourceId;
+
     public function format($resources, $output = null, array $options = []): self
     {
         // Use omeka http client instead of the simple static client.
@@ -68,6 +75,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
 
         $geoJsons = [];
         foreach ($geonamesUrlToResourceIds as $url => $resourceIds) {
+            $this->currentResourceId = reset($resourceIds);
             $geonamesRdf = $this->geonamesRdf($url);
             if ($geonamesRdf) {
                 $geoJson = $this->geonamesRdfToGeoJson($geonamesRdf);
@@ -242,8 +250,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
         // Warning: location "Earth" is 0/0.
         if ($result['latitude'] === null || $result['longitude'] === null) {
             $this->logger->err(
-                'There is no coordinates for url "{url}" (name: {name}).', // @translate
-                ['url' => $result['uri'], 'name' => $result['name']]
+                'There is no coordinates for url "{url}" (name: {name}), used in resource #{resource_id}.', // @translate
+                ['url' => $result['uri'], 'name' => $result['name'], 'resource_id' => $this->currentResourceId]
             );
             return null;
         }
@@ -313,16 +321,16 @@ class GeoJson extends AbstractFieldsJsonFormatter
             $doc->loadXML($xml);
         } catch (\Exception $e) {
             $this->logger->err(
-                'Output is not xml for url "{url}".', // @translate
-                ['url' => $url]
+                'Output is not xml for url "{url}" (resource #{resource_id}).', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId]
             );
             return null;
         }
 
         if (!$doc) {
             $this->logger->err(
-                'Output is not a valid xml for url "{url}".', // @translate
-                ['url' => $url]
+                'Output is not a valid xml for url "{url}" (resource #{resource_id}).', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId]
             );
             return null;
         }
@@ -351,31 +359,31 @@ class GeoJson extends AbstractFieldsJsonFormatter
             if (!in_array($url, $retries)) {
                 // Retrying after 1 minute.
                 $this->logger->warn(
-                    'Connection error when fetching url "{url}": {exception}. Retrying in one minute.', // @translate
-                    ['url' => $url, 'exception' => $e]
+                    'Connection error when fetching url "{url}" (resource #{resource_id}): {exception}. Retrying in one minute.', // @translate
+                    ['url' => $url, 'resource_id' => $this->currentResourceId, 'exception' => $e]
                 );
                 sleep(60);
                 $retries[] = $url;
                 return $this->fetchUrl($url);
             }
             $this->logger->err(
-                'Connection error when fetching url "{url}": {exception}', // @translate
-                ['url' => $url, 'exception' => $e]
+                'Connection error when fetching url "{url}" (resource #{resource_id}): {exception}', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId, 'exception' => $e]
             );
             return null;
         } catch (\Exception $e) {
             error_reporting($errorLevel);
             $this->logger->err(
-                'Connection error when fetching url "{url}": {exception}', // @translate
-                ['url' => $url, 'exception' => $e]
+                'Connection error when fetching url "{url}" (resource #{resource_id}): {exception}', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId, 'exception' => $e]
             );
             return null;
         }
 
         if (!$response->isSuccess()) {
             $this->logger->err(
-                'Connection issue when fetching url "{url}": {msg}', // @translate
-                ['url' => $url, 'msg' => $response->getReasonPhrase()]
+                'Connection issue when fetching url "{url}" (resource #{resource_id}): {msg}', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId, 'msg' => $response->getReasonPhrase()]
             );
             return null;
         }
@@ -383,8 +391,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
         $string = $response->getBody();
         if (!strlen($string)) {
             $this->logger->warn(
-                'Output is empty for url "{url}".', // @translate
-                ['url' => $url]
+                'Output is empty for url "{url}" (resource #{resource_id}).', // @translate
+                ['url' => $url, 'resource_id' => $this->currentResourceId]
             );
         }
 
