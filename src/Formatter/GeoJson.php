@@ -268,14 +268,11 @@ class GeoJson extends AbstractFieldsJsonFormatter
                     'id' => $result['uri'],
                 ],
                 // Use "Region" instead of "region" for compatibility with Drupal.
-                'Region' => $result['region'],
+                // For countries, the name is the region.
+                'Region' => $result['region'] ?? $result['name'],
                 'name' => $result['name'],
             ],
         ];
-
-        if (!$result['region']) {
-            unset($json['properties']['Region']);
-        }
 
         return $json;
     }
