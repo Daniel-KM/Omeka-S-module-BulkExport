@@ -301,9 +301,16 @@ class GeoJson extends AbstractFieldsJsonFormatter
 
     /**
      * Get geonames xml data from the rdf url.
+     *
+     * The username from ValueSuggest is appended, possibly to allow more
+     * requests.
+     * @see \ValueSuggest\Suggester\Geonames\GeonamesSuggest::getSuggestions()
      */
     protected function geonamesRdf(string $url): ?DOMDocument
     {
+        // Append the username.
+        $url .= '&username=kdlinfo';
+
         $xml = $this->fetchUrl($url);
         if (!$xml) {
             return null;
