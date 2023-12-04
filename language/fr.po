@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-30 00:00+0000\n"
-"PO-Revision-Date: 2023-10-30 00:00+0000\n"
+"POT-Creation-Date: 2023-12-04 00:00+0000\n"
+"PO-Revision-Date: 2023-12-04 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -517,7 +517,7 @@ msgstr "Texte OpenDocument (odt)"
 msgid "TSV (tab-separated values)"
 msgstr "TSV (tab-separated values)"
 
-#: Module.php:139 Module.php:451
+#: Module.php:139 Module.php:461
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
 
@@ -527,7 +527,7 @@ msgid ""
 msgstr ""
 "Ce module requiert le module « {module} », version {version} ou supérieure."
 
-#: Module.php:462
+#: Module.php:472
 msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
@@ -1263,45 +1263,66 @@ msgstr ""
 "Pour réaliser un export dans le format \"{format}\", les extensions php "
 "\"zip\" et xml\" sont nécessaires."
 
-#: src/Formatter/GeoJson.php:56 src/Formatter/AbstractFieldsFormatter.php:45
+#: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:45
 msgid "No metadata are used in any resources."
 msgstr "Aucune métadonnée n’est utilisée dans les ressources."
 
-#: src/Formatter/GeoJson.php:180
+#: src/Formatter/GeoJson.php:188
 msgid "The geonames uri \"{url}\" is invalid."
 msgstr "L’uri geonames « {url} » est incorrecte."
 
-#: src/Formatter/GeoJson.php:245
-msgid "There is no coordinates for url \"{url}\" (name: {name})."
-msgstr "Il n’y a pas de coordonnées pour l’url « {url} » (nom : {name})."
-
-#: src/Formatter/GeoJson.php:316
-msgid "Output is not xml for url \"{url}\"."
-msgstr "La sortie n’est pas du xml pour l’url « {url} »."
-
-#: src/Formatter/GeoJson.php:324
-msgid "Output is not a valid xml for url \"{url}\"."
-msgstr "La sortie n’est pas du xml valide pour l’url « {url} »."
-
-#: src/Formatter/GeoJson.php:354
+#: src/Formatter/GeoJson.php:253
 msgid ""
-"Connection error when fetching url \"{url}\": {exception}. Retrying in one "
-"minute."
+"There is no coordinates for url \"{url}\" (name: {name}), used in resource "
+"#{resource_id}."
 msgstr ""
-"Erreur de connexion pour l’url « {url} » : {exception}. Nouvelle tentative "
-"dans une minute."
+"Il n’y a pas de coordonnées pour l’url « {url} » (nom : {name}) (ressource "
+"#{resource_id})."
 
-#: src/Formatter/GeoJson.php:362 src/Formatter/GeoJson.php:369
-msgid "Connection error when fetching url \"{url}\": {exception}"
-msgstr "Erreur de connexion pour l’url « {url} » : {exception}"
+#: src/Formatter/GeoJson.php:328
+msgid "Output is not xml for url \"{url}\" (resource #{resource_id})."
+msgstr ""
+"La sortie n’est pas du xml pour l’url « {url} » (ressource #{resource_id})."
 
-#: src/Formatter/GeoJson.php:377
-msgid "Connection issue when fetching url \"{url}\": {msg}"
-msgstr "Erreur de connexion pour l’url « {url} » : {msg}"
+#: src/Formatter/GeoJson.php:336
+msgid "Output is not a valid xml for url \"{url}\" (resource #{resource_id})."
+msgstr ""
+"La sortie n’est pas du xml valide pour l’url « {url} » (ressource "
+"#{resource_id})."
 
-#: src/Formatter/GeoJson.php:386
-msgid "Output is empty for url \"{url}\"."
-msgstr "La sortie est vide pour l’url « {url} »."
+#: src/Formatter/GeoJson.php:367
+msgid ""
+"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
+"{exception}. Retrying in one minute."
+msgstr ""
+"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
+"{exception}. Nouvelle tentative dans une minute."
+
+#: src/Formatter/GeoJson.php:378
+msgid ""
+"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
+"{exception}. Retrying in ten minutes."
+msgstr ""
+"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
+"{exception}. Nouvelle tentative dans dix minutes."
+
+#: src/Formatter/GeoJson.php:386 src/Formatter/GeoJson.php:393
+msgid ""
+"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
+"{exception}"
+msgstr ""
+"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
+"{exception}"
+
+#: src/Formatter/GeoJson.php:401
+msgid ""
+"Connection issue when fetching url \"{url}\" (resource #{resource_id}): {msg}"
+msgstr ""
+"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {msg}"
+
+#: src/Formatter/GeoJson.php:410
+msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
+msgstr "La sortie est vide pour l’url « {url} » (ressource #{resource_id})."
 
 #: config/module.config.php:369
 msgid "Dashboard"
