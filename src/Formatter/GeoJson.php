@@ -338,6 +338,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
     protected function fetchUrl($url): ?string
     {
         static $retries = [];
+        static $longRetries = [];
 
         // TODO Should we reset cookies each time?
         $this->httpClient
@@ -361,6 +362,17 @@ class GeoJson extends AbstractFieldsJsonFormatter
                 );
                 sleep(60);
                 $retries[] = $url;
+                return $this->fetchUrl($url);
+            }
+            if (!in_array($url, $longRetries)) {
+                // Retrying after 10 minutes, resetting cookies.
+                $this->httpClient->reset();
+                $this->logger->warn(
+                    'Connection error when fetching url "{url}" (resource #{resource_id}): {exception}. Retrying in ten minutes.', // @translate
+                    ['url' => $url, 'resource_id' => $this->currentResourceId, 'exception' => $e]
+                );
+                sleep(600);
+                $longRetries[] = $url;
                 return $this->fetchUrl($url);
             }
             $this->logger->err(
