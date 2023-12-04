@@ -149,7 +149,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
 
     public function getLastErrorMessage(): ?string
     {
-        return $this->lastErrorMessage;
+        return isset($this->lastErrorMessage) ? (string) $this->lastErrorMessage : null;
     }
 
     public function setLogger(Logger $logger): self
