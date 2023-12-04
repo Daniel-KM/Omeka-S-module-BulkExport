@@ -35,7 +35,7 @@ class BulkExport extends AbstractHelper
         $api = $plugins->get('api');
         $translate = $plugins->get('translate');
 
-        $isAdmin = empty($options['site']) && $plugins->get('status')->isAdminRequest();
+        $isAdmin = $plugins->get('status')->isAdminRequest();
 
         // Some options are not options, but added only to set their order.
         $options += [

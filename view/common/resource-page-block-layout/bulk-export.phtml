@@ -5,9 +5,11 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
 $bulkExport = $plugins->get('bulkExport');
 ?>
 
 <?= $bulkExport($resource, [
+    'heading' => $translate('Export'), // @translate
     'divclass' => 'block resource-block block-bulk-export',
 ]) ?>

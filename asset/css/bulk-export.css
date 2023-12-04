@@ -4,7 +4,7 @@
     }
     .browse .bulk-export .exporters {
         display: inline-block;
-        padding-left: 6px;
+        padding-left: 0;
     }
     .browse .sidebar .bulk-export .exporters,
     .show .bulk-export .exporters {
@@ -16,5 +16,6 @@
     }
     .bulk-export .exporters li:not(:last-child)::after {
         content: ' · ';
+        padding-right: 6px;
     }
 }

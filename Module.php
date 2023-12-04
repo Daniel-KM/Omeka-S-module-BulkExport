@@ -274,12 +274,12 @@ class Module extends AbstractModule
             $sharedEventManager->attach(
                 $controller,
                 'view.show.sidebar',
-                [$this, 'handleViewShowAfter']
+                [$this, 'handleViewShowAfterAdmin']
             );
             $sharedEventManager->attach(
                 $controller,
                 'view.details',
-                [$this, 'handleViewShowAfter']
+                [$this, 'handleViewShowAfterAdmin']
             );
             $sharedEventManager->attach(
                 $controller,
@@ -371,8 +371,18 @@ class Module extends AbstractModule
         $resource = $vars->offsetGet('resource');
         echo $view->bulkExport($resource, [
             'site' => $vars->offsetGet('site'),
-            'exporters' => $view->bulkExporters(),
-            'resourceType' => $resource->getControllerName(),
+            'heading' => $view->translate('Export'), // @translate
+        ]);
+    }
+
+    public function handleViewShowAfterAdmin(Event $event): void
+    {
+        $view = $event->getTarget();
+        $vars = $view->vars();
+        $resource = $vars->offsetGet('resource');
+        echo $view->bulkExport($resource, [
+            'heading' => $view->translate('Export'), // @translate
+            'divclass' => 'meta-group',
         ]);
     }
 
