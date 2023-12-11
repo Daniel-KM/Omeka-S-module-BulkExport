@@ -482,6 +482,7 @@ $conf = [
                 'properties_max_5000',
             ],
             'bulkexport_metadata_exclude' => [
+                'bibo:content',
                 'properties_min_5000',
                 'extracttext:extracted_text',
             ],
