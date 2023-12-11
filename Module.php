@@ -66,8 +66,7 @@ class Module extends AbstractModule
             // TODO Rights on exports and deletion.
             ->allow(
                 $backendRoles,
-                ['BulkExport\Controller\Admin\BulkExport'],
-                ['browse', 'index']
+                ['BulkExport\Controller\Admin\BulkExport']
             )
             ->allow(
                 $backendRoles,
