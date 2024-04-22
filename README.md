@@ -32,12 +32,12 @@ You may use module [Bibliography] to add old bibliographic formats (`bibtex`,
 Installation
 ------------
 
-This module requires the module [Log] and the optional module [Generic].
+See general end user documentation for [installing a module].
+
+This module requires the module [Common], that should be installed first.
 
 For Omeka S v3, the module [Blocks Disposition] can be used to add it in the
 public sites. This is useless for Omeka S v4.
-
-See general end user documentation for [installing a module].
 
 * From the zip
 
@@ -107,6 +107,7 @@ Notes
 TODO
 ----
 
+- [ ] Integrate the new feature api output for Omeka S v4.1.
 - [ ] Remove Writers and factorize with Formatters.
 - [ ] Select resources like in the module ebook.
 - [ ] For spreadsheet, add an option (by default in admin) to set headers with the datatype and the language (so multiple headers for the same property).
@@ -166,7 +167,7 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019-2023 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2019-2024 (see [Daniel-KM] on GitLab)
 
 This module was initially inspired by the [Omeka Classic] [Export plugin], built
 by [Biblibre].
@@ -177,10 +178,10 @@ by [Biblibre].
 [Bibliography]: https://gitlab.com/Daniel-KM/Omeka-S-module-Bibliography
 [Blocks Disposition]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlocksDisposition
 [Clean Url]: https://gitlab.com/Daniel-KM/Omeka-S-module-CleanUrl
-[Generic]: https://gitlab.com/Daniel-KM/Omeka-S-module-Generic
+[Common]: https://gitlab.com/Daniel-KM/Omeka-S-module-Common
 [Log]: https://gitlab.com/Daniel-KM/Omeka-S-module-Log
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
-[Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
+[installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
