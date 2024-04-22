@@ -1,7 +1,7 @@
 {
     "require": {
         "openspout/openspout": "^3.7",
-        "phpoffice/phpword": "^1.1"
+        "phpoffice/phpword": "^1.2"
     },
     "replace": {
         "doctrine/inflector": "*",
