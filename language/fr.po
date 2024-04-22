@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-04 00:00+0000\n"
-"PO-Revision-Date: 2023-12-04 00:00+0000\n"
+"POT-Creation-Date: 2024-04-22 00:00+0000\n"
+"PO-Revision-Date: 2024-04-22 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: Module.php:230
+#: Module.php:207
 msgid "WARNING:"
 msgstr "ATTENTION :"
 
-#: Module.php:236
+#: Module.php:213
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr "Tous les exports seront supprimés (dossier « {folder} »)."
 
-#: Module.php:242
+#: Module.php:219
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
@@ -61,49 +61,6 @@ msgid ""
 msgstr ""
 "Une requête ne peut pas être utilisée pour exporter des « ressources » avant "
 "Omeka S v4.1 : indiquer le type de ressources ou utiliser une liste d'ids."
-
-#: src/Generic/AbstractModule.php:80 src/Generic/AbstractModule.php:88
-#: src/Generic/AbstractModule.php:890
-#, php-format
-msgid "This module requires the module \"%s\"."
-msgstr "Ce module requiert le module \"%s\"."
-
-#: src/Generic/AbstractModule.php:93
-#, php-format
-msgid "This module requires modules \"%s\"."
-msgstr "Ce module requiert les modules \"%s\"."
-
-#: src/Generic/AbstractModule.php:101
-msgid "This module has resources that cannot be installed."
-msgstr "Ce module a des ressources qui ne peuvent pas être installées."
-
-#: src/Generic/AbstractModule.php:108
-msgid ""
-"This module cannot install its tables, because they exist already. Try to "
-"remove them first."
-msgstr ""
-"Ce module ne peut pas installer ses tables car elles existent déjà. Essayez "
-"de les supprimer manuellement."
-
-#: src/Generic/AbstractModule.php:398
-#, php-format
-msgid "The module removed tables \"%s\" from a previous broken install."
-msgstr ""
-"Le module a supprimé les tables « %s » depuis une installation échouée."
-
-#: src/Generic/AbstractModule.php:885
-#, php-format
-msgid "This module requires the module \"%1$s\", version %2$s or above."
-msgstr "Ce module requiert le module « %1$s », version %2$s ou supérieure."
-
-#: src/Generic/AbstractModule.php:982
-#, php-format
-msgid ""
-"The module \"%s\" was automatically deactivated because the dependencies are "
-"unavailable."
-msgstr ""
-"Le module \"%s\" a été automatiquement désactivé car ses dépendances ne sont "
-"plus disponibles."
 
 #: src/Traits/OpenDocumentTextTemplateTrait.php:18
 msgid "Anonymous"
@@ -217,15 +174,15 @@ msgstr "Télécharger en texte"
 msgid "Download as %s"
 msgstr "Télécharger en %s"
 
-#: src/Writer/AbstractWriter.php:270
+#: src/Writer/AbstractWriter.php:276
 msgid "unknown"
 msgstr "inconnu"
 
-#: src/Writer/AbstractWriter.php:271
+#: src/Writer/AbstractWriter.php:277
 msgid "anonymous"
 msgstr "anonyme"
 
-#: src/Writer/AbstractWriter.php:320
+#: src/Writer/AbstractWriter.php:326
 msgid "no-name"
 msgstr "sans-nom"
 
@@ -458,7 +415,12 @@ msgstr "Exporteurs disponibles"
 msgid "Store export"
 msgstr "Enregistrer l’export"
 
-#: data/scripts/upgrade.php:140
+#: data/scripts/upgrade.php:28
+#, php-format
+msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
+
+#: data/scripts/upgrade.php:148
 msgid ""
 "It is now possible to export resources as GeoJSON for values filled via "
 "Value Suggest Geonames."
@@ -466,7 +428,7 @@ msgstr ""
 "Il est désormais possible d’exporter les ressources en GéoJSON pour les "
 "valeurs remplies avec Value Suggest Geonames."
 
-#: data/scripts/upgrade.php:147
+#: data/scripts/upgrade.php:155
 msgid ""
 "It is now possible to export into a specific directory with a specific "
 "filename."
@@ -474,7 +436,7 @@ msgstr ""
 "Il est désormais possible d’exporter dans un dossier spécifique avec un nom "
 "de fichier spécifique."
 
-#: data/scripts/upgrade.php:154
+#: data/scripts/upgrade.php:162
 msgid ""
 "It is now possible to export via the api endpoint: just add an extension to "
 "it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
@@ -484,16 +446,16 @@ msgstr ""
 "une extension comme dans la vue admin ou publique, par exemple « /api/items."
 "ods » ou « /api-local/items/151.odt » (à partir du module Api Info)."
 
-#: data/scripts/upgrade.php:212
+#: data/scripts/upgrade.php:220
 msgid "It is now possible to store an exporter as a task."
 msgstr ""
 "Il est désormais possible d’enregistrer un exporteur en tant que tâche."
 
-#: data/scripts/upgrade.php:217
+#: data/scripts/upgrade.php:225
 msgid "It is now possible to do an incremental export."
 msgstr "Il est désormais possible de réaliser un export incrémental."
 
-#: data/scripts/upgrade.php:334
+#: data/scripts/upgrade.php:342
 msgid ""
 "The config of exporters has been upgraded to a new format. You may check "
 "them if you use a complex config."
@@ -517,19 +479,9 @@ msgstr "Texte OpenDocument (odt)"
 msgid "TSV (tab-separated values)"
 msgstr "TSV (tab-separated values)"
 
-#: Module.php:139 Module.php:461
+#: Module.php:145
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
-
-#: Module.php:167
-msgid ""
-"This module requires the module \"{module}\", version {version} or above."
-msgstr ""
-"Ce module requiert le module « {module} », version {version} ou supérieure."
-
-#: Module.php:472
-msgid "The directory \"{path}\" is not writeable: {error}."
-msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
 #: test/BulkExportTest/Job/ExportTest.php:287
 #, php-format
@@ -652,7 +604,7 @@ msgstr ""
 "sont nécessaires."
 
 #: src/Writer/TextWriter.php:63 src/Writer/AbstractFieldsJsonWriter.php:59
-#: src/Formatter/AbstractFormatter.php:365 src/Formatter/Ods.php:58
+#: src/Formatter/AbstractFormatter.php:371 src/Formatter/Ods.php:58
 msgid "Unable to open output: {error}."
 msgstr "Impossible d’ouvrir la sortie : {error}."
 
@@ -680,25 +632,25 @@ msgstr ""
 msgid "Json Table"
 msgstr "Json Table"
 
-#: src/Writer/AbstractWriter.php:142
+#: src/Writer/AbstractWriter.php:148
 msgid "Output directory \"{folder}\" is not writeable."
 msgstr "Le dossier de sortie ({folder}) n’est pas inscriptible."
 
-#: src/Writer/AbstractWriter.php:215
+#: src/Writer/AbstractWriter.php:221
 msgid "The path should not contain \"../\"."
 msgstr "Le chemin ne doit pas contenir « ../ »."
 
-#: src/Writer/AbstractWriter.php:223 src/Writer/AbstractWriter.php:232
+#: src/Writer/AbstractWriter.php:229 src/Writer/AbstractWriter.php:238
 msgid "The destination folder \"{folder}\" is not writeable."
 msgstr "Le dossier de destination \"{folder}\" n’est pas inscriptible."
 
-#: src/Writer/AbstractWriter.php:305
+#: src/Writer/AbstractWriter.php:311
 msgid "The specified dir path \"{path}\" is invalid. Using default one."
 msgstr ""
 "Le chemin indiqué pour le dossier \"{path}\" est incorrect. Le chemin par "
 "défaut est utilisé."
 
-#: src/Writer/AbstractWriter.php:382
+#: src/Writer/AbstractWriter.php:388
 msgid ""
 "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
 "{exception}"
@@ -706,7 +658,7 @@ msgstr ""
 "Erreur d’enregistrement en sauvant \"{filename}\" (fichier temporaire : "
 "\"{tempfile}\") : {exception}"
 
-#: src/Writer/AbstractWriter.php:389
+#: src/Writer/AbstractWriter.php:395
 msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
 msgstr ""
 "Erreur d’export lors de l’enregistrement de \"{filename}\" (fichier "
@@ -1247,11 +1199,11 @@ msgstr "Continuer"
 msgid "Missing output format configuration"
 msgstr "La configuration du format de sortie manque"
 
-#: src/Formatter/AbstractFormatter.php:188
+#: src/Formatter/AbstractFormatter.php:194
 msgid "Unable to format resources as {format}."
 msgstr "Impossible de formater les ressources en {format}."
 
-#: src/Formatter/AbstractFormatter.php:402
+#: src/Formatter/AbstractFormatter.php:408
 msgid "Unable to save output to file: {error}."
 msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
 
@@ -1324,17 +1276,57 @@ msgstr ""
 msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
 msgstr "La sortie est vide pour l’url « {url} » (ressource #{resource_id})."
 
-#: config/module.config.php:369
+#: config/module.config.php:366
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: config/module.config.php:382
+#: config/module.config.php:379
 msgid "Past Exports"
 msgstr "Exports précédents"
 
-#: config/module.config.php:399
+#: config/module.config.php:396
 msgid "Params"
 msgstr "Paramètres"
+
+#, php-format
+#~ msgid "This module requires the module \"%s\"."
+#~ msgstr "Ce module requiert le module \"%s\"."
+
+#, php-format
+#~ msgid "This module requires modules \"%s\"."
+#~ msgstr "Ce module requiert les modules \"%s\"."
+
+#~ msgid "This module has resources that cannot be installed."
+#~ msgstr "Ce module a des ressources qui ne peuvent pas être installées."
+
+#~ msgid ""
+#~ "This module cannot install its tables, because they exist already. Try to "
+#~ "remove them first."
+#~ msgstr ""
+#~ "Ce module ne peut pas installer ses tables car elles existent déjà. "
+#~ "Essayez de les supprimer manuellement."
+
+#, php-format
+#~ msgid "The module removed tables \"%s\" from a previous broken install."
+#~ msgstr ""
+#~ "Le module a supprimé les tables « %s » depuis une installation échouée."
+
+#, php-format
+#~ msgid ""
+#~ "The module \"%s\" was automatically deactivated because the dependencies "
+#~ "are unavailable."
+#~ msgstr ""
+#~ "Le module \"%s\" a été automatiquement désactivé car ses dépendances ne "
+#~ "sont plus disponibles."
+
+#~ msgid ""
+#~ "This module requires the module \"{module}\", version {version} or above."
+#~ msgstr ""
+#~ "Ce module requiert le module « {module} », version {version} ou "
+#~ "supérieure."
+
+#~ msgid "The directory \"{path}\" is not writeable: {error}."
+#~ msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
 
 #~ msgid "Export logs"
 #~ msgstr "Journaux d’export"

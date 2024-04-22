@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-04 00:00+0000\n"
+"POT-Creation-Date: 2024-04-22 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:230
+#: Module.php:207
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:236
+#: Module.php:213
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:242
+#: Module.php:219
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -57,44 +57,6 @@ msgstr ""
 msgid ""
 "A query cannot be used to export \"resources\" before Omeka S v4.1: set the "
 "resource type or use the list of ids instead."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:80 src/Generic/AbstractModule.php:88
-#: src/Generic/AbstractModule.php:890
-#, php-format
-msgid "This module requires the module \"%s\"."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:93
-#, php-format
-msgid "This module requires modules \"%s\"."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:101
-msgid "This module has resources that cannot be installed."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:108
-msgid ""
-"This module cannot install its tables, because they exist already. Try to "
-"remove them first."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:398
-#, php-format
-msgid "The module removed tables \"%s\" from a previous broken install."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:885
-#, php-format
-msgid "This module requires the module \"%1$s\", version %2$s or above."
-msgstr ""
-
-#: src/Generic/AbstractModule.php:982
-#, php-format
-msgid ""
-"The module \"%s\" was automatically deactivated because the dependencies are "
-"unavailable."
 msgstr ""
 
 #: src/Traits/OpenDocumentTextTemplateTrait.php:18
@@ -207,15 +169,15 @@ msgstr ""
 msgid "Download as %s"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:270
+#: src/Writer/AbstractWriter.php:276
 msgid "unknown"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:271
+#: src/Writer/AbstractWriter.php:277
 msgid "anonymous"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:320
+#: src/Writer/AbstractWriter.php:326
 msgid "no-name"
 msgstr ""
 
@@ -447,34 +409,39 @@ msgstr ""
 msgid "Store export"
 msgstr ""
 
-#: data/scripts/upgrade.php:140
+#: data/scripts/upgrade.php:28
+#, php-format
+msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr ""
+
+#: data/scripts/upgrade.php:148
 msgid ""
 "It is now possible to export resources as GeoJSON for values filled via "
 "Value Suggest Geonames."
 msgstr ""
 
-#: data/scripts/upgrade.php:147
+#: data/scripts/upgrade.php:155
 msgid ""
 "It is now possible to export into a specific directory with a specific "
 "filename."
 msgstr ""
 
-#: data/scripts/upgrade.php:154
+#: data/scripts/upgrade.php:162
 msgid ""
 "It is now possible to export via the api endpoint: just add an extension to "
 "it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
 "local/items/151.odt\" (from module Api Info)."
 msgstr ""
 
-#: data/scripts/upgrade.php:212
+#: data/scripts/upgrade.php:220
 msgid "It is now possible to store an exporter as a task."
 msgstr ""
 
-#: data/scripts/upgrade.php:217
+#: data/scripts/upgrade.php:225
 msgid "It is now possible to do an incremental export."
 msgstr ""
 
-#: data/scripts/upgrade.php:334
+#: data/scripts/upgrade.php:342
 msgid ""
 "The config of exporters has been upgraded to a new format. You may check "
 "them if you use a complex config."
@@ -496,17 +463,8 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: Module.php:139 Module.php:461
+#: Module.php:145
 msgid "The directory \"{path}\" is not writeable."
-msgstr ""
-
-#: Module.php:167
-msgid ""
-"This module requires the module \"{module}\", version {version} or above."
-msgstr ""
-
-#: Module.php:472
-msgid "The directory \"{path}\" is not writeable: {error}."
 msgstr ""
 
 #: test/BulkExportTest/Job/ExportTest.php:287
@@ -616,7 +574,7 @@ msgid ""
 msgstr ""
 
 #: src/Writer/TextWriter.php:63 src/Writer/AbstractFieldsJsonWriter.php:59
-#: src/Formatter/AbstractFormatter.php:365 src/Formatter/Ods.php:58
+#: src/Formatter/AbstractFormatter.php:371 src/Formatter/Ods.php:58
 msgid "Unable to open output: {error}."
 msgstr ""
 
@@ -640,29 +598,29 @@ msgstr ""
 msgid "Json Table"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:142
+#: src/Writer/AbstractWriter.php:148
 msgid "Output directory \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:215
+#: src/Writer/AbstractWriter.php:221
 msgid "The path should not contain \"../\"."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:223 src/Writer/AbstractWriter.php:232
+#: src/Writer/AbstractWriter.php:229 src/Writer/AbstractWriter.php:238
 msgid "The destination folder \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:305
+#: src/Writer/AbstractWriter.php:311
 msgid "The specified dir path \"{path}\" is invalid. Using default one."
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:382
+#: src/Writer/AbstractWriter.php:388
 msgid ""
 "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
 "{exception}"
 msgstr ""
 
-#: src/Writer/AbstractWriter.php:389
+#: src/Writer/AbstractWriter.php:395
 msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
 msgstr ""
 
@@ -1161,11 +1119,11 @@ msgstr ""
 msgid "Missing output format configuration"
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:188
+#: src/Formatter/AbstractFormatter.php:194
 msgid "Unable to format resources as {format}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:402
+#: src/Formatter/AbstractFormatter.php:408
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -1224,14 +1182,14 @@ msgstr ""
 msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
 msgstr ""
 
-#: config/module.config.php:369
+#: config/module.config.php:366
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:382
+#: config/module.config.php:379
 msgid "Past Exports"
 msgstr ""
 
-#: config/module.config.php:399
+#: config/module.config.php:396
 msgid "Params"
 msgstr ""
