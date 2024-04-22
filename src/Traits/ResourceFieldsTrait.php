@@ -265,25 +265,6 @@ trait ResourceFieldsTrait
             'o:ApiResource' => null,
             // Modules.
             'oa:Annotation' => \Annotate\Entity\Annotation::class,
-
-            // Core.
-            'o:User' => \Omeka\Entity\User::class,
-            'o:Vocabulary' => \Omeka\Entity\Vocabulary::class,
-            'o:ResourceClass' => \Omeka\Entity\ResourceClass::class,
-            'o:ResourceTemplate' => \Omeka\Entity\ResourceTemplate::class,
-            'o:Property' => \Omeka\Entity\Property::class,
-            'o:Item' => \Omeka\Entity\Item::class,
-            'o:Media' => \Omeka\Entity\Media::class,
-            'o:ItemSet' => \Omeka\Entity\ItemSet::class,
-            'o:Module' => \Omeka\Entity\Module::class,
-            'o:Site' => \Omeka\Entity\Site::class,
-            'o:SitePage' => \Omeka\Entity\SitePage::class,
-            'o:Job' => \Omeka\Entity\Job::class,
-            'o:Resource' => \Omeka\Entity\Resource::class,
-            'o:Asset' => \Omeka\Entity\Asset::class,
-            'o:ApiResource' => null,
-            // Modules.
-            'oa:Annotation' => \Annotate\Entity\Annotation::class,
         ];
         return $mapping[$jsonResourceType] ?? null;
     }

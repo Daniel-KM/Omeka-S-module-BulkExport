@@ -2,7 +2,7 @@
 
 namespace BulkExport;
 
-use Omeka\Stdlib\Message;
+use Common\Stdlib\PsrMessage;
 
 /**
  * @var Module $this
@@ -22,6 +22,14 @@ $settings = $services->get('Omeka\Settings');
 $connection = $services->get('Omeka\Connection');
 $messenger = $plugins->get('messenger');
 $entityManager = $services->get('Omeka\EntityManager');
+
+if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.57')) {
+    $message = new \Omeka\Stdlib\Message(
+        'The module %1$s should be upgraded to version %2$s or later.', // @translate
+        'Common', '3.4.57'
+    );
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+}
 
 if (version_compare($oldVersion, '3.0.7', '<')) {
     $directory = new \RecursiveDirectoryIterator(dirname(__DIR__) . '/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
@@ -136,21 +144,21 @@ SQL;
 }
 
 if (version_compare($oldVersion, '3.4.19', '<')) {
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to export resources as GeoJSON for values filled via Value Suggest Geonames.' // @translate
     );
     $messenger->addSuccess($message);
 }
 
 if (version_compare($oldVersion, '3.4.21', '<')) {
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to export into a specific directory with a specific filename.' // @translate
     );
     $messenger->addSuccess($message);
 }
 
 if (version_compare($oldVersion, '3.4.23', '<')) {
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to export via the api endpoint: just add an extension to it, like for admin or site view, for example "/api/items.ods" or "/api-local/items/151.odt" (from module Api Info).' // @translate
     );
     $messenger->addSuccess($message);
@@ -208,12 +216,12 @@ SQL;
         $connection->executeStatement($sql);
     }
 
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to store an exporter as a task.' // @translate
     );
     $messenger->addSuccess($message);
 
-    $message = new Message(
+    $message = new PsrMessage(
         'It is now possible to do an incremental export.' // @translate
     );
     $messenger->addSuccess($message);
@@ -330,7 +338,7 @@ SQL;
     ];
     $connection->executeStatement(str_replace(array_keys($replace), array_values($replace), $sql));
 
-    $message = new Message(
+    $message = new PsrMessage(
         'The config of exporters has been upgraded to a new format. You may check them if you use a complex config.' // @translate
     );
     $messenger->addSuccess($message);

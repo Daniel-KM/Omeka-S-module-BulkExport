@@ -147,7 +147,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
     protected function geonamesRdfUrls(AbstractResourceEntityRepresentation $resource): array
     {
         $result = [];
-        $propertyTermIds = $this->getPropertiesByTerm();
+        $propertyTermIds = $this->easyMeta->propertyIds();
 
         foreach ($this->fieldNames as $fieldName) {
             // Get only properties with a uri for data type "valuesuggest:geonames:geonames".

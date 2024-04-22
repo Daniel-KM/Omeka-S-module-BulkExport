@@ -3,7 +3,7 @@
 namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 use OpenSpout\Common\Type;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 

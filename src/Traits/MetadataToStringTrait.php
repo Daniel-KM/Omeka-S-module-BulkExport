@@ -33,12 +33,6 @@ trait MetadataToStringTrait
      */
     protected function stringMetadata(AbstractResourceRepresentation $resource, $metadata, array $params = []): array
     {
-        static $customVocabBaseTypes;
-
-        if (is_null($customVocabBaseTypes)) {
-            $customVocabBaseTypes = $this->services->get('ViewHelperManager')->get('customVocabBaseType')();
-        }
-
         if (empty($params)) {
             $params = $this->options;
         } else {
@@ -214,25 +208,19 @@ trait MetadataToStringTrait
                 }
                 // Values are converted by reference.
                 foreach ($vv as &$v) {
-                    $type = $v->type();
-                    $dataTypeColon = strtok($type, ':');
-                    $baseType = $dataTypeColon === 'customvocab' ? $customVocabBaseTypes[(int) substr($type, 12)] ?? 'literal' : null;
-                    switch ($type) {
+                    $dataType = $v->type();
+                    $mainType = $this->easyMeta->dataTypeName($dataType);
+                    switch ($dataType) {
                         case 'resource':
-                        case $dataTypeColon === 'resource':
-                        case $baseType === 'resource':
+                        case $mainType === 'resource':
                             $v = $this->stringifyResource($v->valueResource(), $params);
                             break;
                         case 'uri':
-                        case $dataTypeColon === 'valuesuggest':
-                        case $dataTypeColon === 'valuesuggestall':
-                        case $baseType === 'uri':
+                        case $mainType === 'uri':
                             $v = $this->stringifyUri($v, $params);
                             break;
-                        // Module module Numeric data type.
-                        case substr($type, 0, 8) === 'numeric:':
-                            $v = (string) $v;
-                            break;
+                        // Module NumericDataType.
+                        case substr($dataType, 0, 8) === 'numeric:':
                         // Module DataTypeRdf.
                         case 'xml':
                         // Module RdfDatatype (deprecated).
@@ -394,8 +382,8 @@ trait MetadataToStringTrait
 
     protected function isAdminRequest(): bool
     {
-        static $status;
-        return $status
-            ?? $status = $this->services->get('Omeka\Status')->isAdminRequest();
+        static $isAdminRequest;
+        return $isAdminRequest
+            ?? $isAdminRequest = $this->services->get('Omeka\Status')->isAdminRequest();
     }
 }

@@ -4,7 +4,7 @@ namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\TextWriterConfigForm;
 use BulkExport\Traits\OpenDocumentTextTemplateTrait;
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 use PhpOffice\PhpWord;
 
 class OpenDocumentTextWriter extends AbstractFieldsWriter

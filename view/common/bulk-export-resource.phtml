@@ -5,5 +5,5 @@
  * @var int $index
  */
 
-echo new \Log\Stdlib\PsrMessage('{index}. {url}: {title}', ['index' => $index, 'url' => $resource->url('show', true), 'title' => $resource->displayTitle()]);
+echo new \Common\Stdlib\PsrMessage('{index}. {url}: {title}', ['index' => $index, 'url' => $resource->url('show', true), 'title' => $resource->displayTitle()]);
 echo "\n--\n\n";

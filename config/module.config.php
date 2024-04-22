@@ -39,13 +39,10 @@ $conf = [
         ],
         'factories' => [
             'bulkExporters' => Service\ViewHelper\BulkExportersFactory::class,
-            // Copy from AdvancedResourceTemplate. Copy in BulkExport, BulkEdit and BulkImport. Used in Contribute.
-            'customVocabBaseType' => Service\ViewHelper\CustomVocabBaseTypeFactory::class,
         ],
     ],
     'form_elements' => [
         'invokables' => [
-            Form\Element\OptionalRadio::class => Form\Element\OptionalRadio::class,
             Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
             Form\ExporterStartForm::class => Form\ExporterStartForm::class,
             Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,

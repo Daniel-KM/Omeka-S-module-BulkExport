@@ -7,26 +7,6 @@ trait ListTermsTrait
     /**
      * @var array
      */
-    protected $propertiesByTerm;
-
-    /**
-     * @var array
-     */
-    protected $resourceClassesByTerm;
-
-    /**
-     * @var array
-     */
-    protected $propertyLabelsByTerm;
-
-    /**
-     * @var array
-     */
-    protected $resourceClassLabelsByTerm;
-
-    /**
-     * @var array
-     */
     protected $propertyTemplateLabelsByTerm;
 
     /**
@@ -35,68 +15,6 @@ trait ListTermsTrait
      * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
-
-    /**
-     * @return array
-     */
-    protected function getPropertiesByTerm(): array
-    {
-        if ($this->propertiesByTerm) {
-            return $this->propertiesByTerm;
-        }
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->services->get('Omeka\Connection');
-        $qb = $connection->createQueryBuilder();
-        $qb
-            ->select(
-                "DISTINCT CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
-                'property.id AS id',
-                // Only the two first selects are needed, but some databases
-                // require "order by" or "group by" value to be in the select.
-                'vocabulary.id'
-            )
-            ->from('property', 'property')
-            ->innerJoin('property', 'vocabulary', 'vocabulary', 'property.vocabulary_id = vocabulary.id')
-            ->orderBy('vocabulary.id', 'asc')
-            ->addOrderBy('property.id', 'asc')
-            ->addGroupBy('property.id')
-        ;
-        $terms = $connection->executeQuery($qb)->fetchAllKeyValue();
-        $this->propertiesByTerm = array_map('intval', $terms);
-        return $this->propertiesByTerm;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getResourceClassesByTerm(): array
-    {
-        if ($this->resourceClassesByTerm) {
-            return $this->resourceClassesByTerm;
-        }
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->services->get('Omeka\Connection');
-        $qb = $connection->createQueryBuilder();
-        $qb
-            ->select(
-                "DISTINCT CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
-                'resource_class.id AS id',
-                // Only the two first selects are needed, but some databases
-                // require "order by" or "group by" value to be in the select.
-                'vocabulary.id'
-            )
-            ->from('resource_class', 'resource_class')
-            ->innerJoin('resource_class', 'vocabulary', 'vocabulary', 'resource_class.vocabulary_id = vocabulary.id')
-            ->orderBy('vocabulary.id', 'asc')
-            ->addOrderBy('resource_class.id', 'asc')
-            ->addGroupBy('resource_class.id')
-        ;
-        $terms = $connection->executeQuery($qb)->fetchAllKeyValue();
-        $this->resourceClassesByTerm = array_map('intval', $terms);
-        return $this->resourceClassesByTerm;
-    }
 
     /**
      * @todo Replace by an option to getPropertiesByTerm.
@@ -168,66 +86,11 @@ trait ListTermsTrait
     }
 
     /**
-     * @return array
-     */
-    protected function getPropertyLabelsByTerm(): array
-    {
-        if ($this->propertyLabelsByTerm) {
-            return $this->propertyLabelsByTerm;
-        }
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->services->get('Omeka\Connection');
-        $qb = $connection->createQueryBuilder();
-        $qb
-            ->select(
-                "DISTINCT CONCAT(vocabulary.prefix, ':', property.local_name) AS term",
-                'property.label AS label',
-                // Only the two first selects are needed, but some databases
-                // require "order by" or "group by" value to be in the select.
-                'vocabulary.id',
-                'property.id'
-            )
-            ->from('property', 'property')
-            ->innerJoin('property', 'vocabulary', 'vocabulary', 'property.vocabulary_id = vocabulary.id')
-            ->orderBy('vocabulary.id', 'asc')
-            ->addOrderBy('property.id', 'asc')
-            ->addGroupBy('property.id')
-        ;
-        $this->propertyLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
-        return $this->propertyLabelsByTerm;
-    }
-
-    protected function getResourceClassLabelsByTerm(): array
-    {
-        if ($this->resourceClassLabelsByTerm) {
-            return $this->resourceClassLabelsByTerm;
-        }
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->services->get('Omeka\Connection');
-        $qb = $connection->createQueryBuilder();
-        $qb
-            ->select(
-                "DISTINCT CONCAT(vocabulary.prefix, ':', resource_class.local_name) AS term",
-                'resource_class.label AS label',
-                // Only the two first selects are needed, but some databases
-                // require "order by" or "group by" value to be in the select.
-                'vocabulary.id',
-                'resource_class.id'
-            )
-            ->from('resource_class', 'resource_class')
-            ->innerJoin('resource_class', 'vocabulary', 'vocabulary', 'resource_class.vocabulary_id = vocabulary.id')
-            ->orderBy('vocabulary.id', 'asc')
-            ->addOrderBy('resource_class.id', 'asc')
-            ->addGroupBy('resource_class.id')
-        ;
-        $this->resourceClassLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
-        return $this->resourceClassLabelsByTerm;
-    }
-
-    /**
      * Only properties with a template label are returned.
+     *
+     * Warning: the same property cannot have multiple alternative labels.
+     *
+     * @todo Integrate getPropertyTemplateLabelsByTerm in Common ? Or too much specific?
      */
     protected function getPropertyTemplateLabelsByTerm(): array
     {
@@ -256,17 +119,17 @@ trait ListTermsTrait
 
     protected function translateProperty($property): string
     {
-        $labels = $this->getPropertyLabelsByTerm();
-        return isset($labels[$property])
-            ? ucfirst($this->translator->translate($labels[$property]))
+        $label = $this->easyMeta->propertyLabel($property);
+        return $label
+            ? ucfirst($this->translator->translate($label))
             : $property;
     }
 
     protected function translateResourceClass($resourceClass): string
     {
-        $labels = $this->getResourceClassLabelsByTerm();
-        return isset($labels[$resourceClass])
-            ? ucfirst($this->translator->translate($labels[$resourceClass]))
+        $label = $this->easyMeta->resourceClassLabel($resourceClass);
+        return $label
+            ? ucfirst($this->translator->translate($label))
             : $resourceClass;
     }
 

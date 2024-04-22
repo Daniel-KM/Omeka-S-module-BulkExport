@@ -2,7 +2,7 @@
 
 namespace BulkExport\Controller;
 
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 
 trait ExporterTrait
 {

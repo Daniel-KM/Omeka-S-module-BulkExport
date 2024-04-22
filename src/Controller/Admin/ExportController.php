@@ -5,7 +5,7 @@ namespace BulkExport\Controller\Admin;
 use Laminas\Log\Logger;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 
 class ExportController extends AbstractActionController
 {

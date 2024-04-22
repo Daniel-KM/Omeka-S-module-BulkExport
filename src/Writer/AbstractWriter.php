@@ -11,7 +11,7 @@ use BulkExport\Traits\ServiceLocatorAwareTrait;
 use Laminas\Form\Form;
 use Laminas\Log\Logger;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 use Omeka\Api\Representation\AbstractRepresentation;
 use Omeka\Job\AbstractJob as Job;
 
@@ -35,6 +35,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
      * @var \Omeka\Api\Manager
      */
     protected $api;
+
+    /**
+     * @var \Common\Stdlib\EasyMeta
+     */
+    protected $easyMeta;
 
     /**
      * @var \Laminas\Log\Logger
@@ -114,6 +119,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $this->api = $services->get('Omeka\ApiManager');
         $this->logger = $services->get('Omeka\Logger');
         $this->translator = $services->get('MvcTranslator');
+        $this->easyMeta = $services->get('EasyMeta');
 
         /** @var \Omeka\Module\Manager $moduleManager */
         $moduleManager = $this->getServiceLocator()->get('Omeka\ModuleManager');

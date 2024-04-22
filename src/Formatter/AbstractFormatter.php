@@ -4,7 +4,7 @@ namespace BulkExport\Formatter;
 
 use Laminas\Http\PhpEnvironment\Response as HttpResponse;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Log\Stdlib\PsrMessage;
+use Common\Stdlib\PsrMessage;
 
 abstract class AbstractFormatter implements FormatterInterface
 {
@@ -23,11 +23,6 @@ abstract class AbstractFormatter implements FormatterInterface
      * @var int
      */
     const SQL_LIMIT = 100;
-
-    /**
-     * @var \Laminas\ServiceManager\ServiceLocatorInterface
-     */
-    protected $services;
 
     /**
      * @var string
@@ -50,14 +45,24 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $defaultOptions = [];
 
     /**
+     * @var \Omeka\Api\Manager
+     */
+    protected $api;
+
+    /**
+     * @var \Common\Stdlib\EasyMeta
+     */
+    protected $easyMeta;
+
+    /**
      * @var \Laminas\Log\Logger
      */
     protected $logger;
 
     /**
-     * @var \Omeka\Api\Manager
+     * @var \Laminas\ServiceManager\ServiceLocatorInterface
      */
-    protected $api;
+    protected $services;
 
     /**
      * @var \Laminas\Mvc\I18n\Translator
@@ -150,6 +155,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->api = $this->services->get('Omeka\ApiManager');
         $this->logger = $this->services->get('Omeka\Logger');
         $this->translator = $this->services->get('MvcTranslator');
+        $this->easyMeta = $services->get('EasyMeta');
     }
 
     public function getLabel(): string
