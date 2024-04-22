@@ -43,7 +43,10 @@ trait ResourceFieldsTrait
             $hasPropertiesMinMax = in_array('properties_max_1000', $listFieldNames)
                 || in_array('properties_min_1000', $listFieldNames)
                 || in_array('properties_max_5000', $listFieldNames)
-                || in_array('properties_min_5000', $listFieldNames);
+                || in_array('properties_min_5000', $listFieldNames)
+                // Kept for bad upgrade.
+                || in_array('properties_small', $listFieldNames)
+                || in_array('properties_large', $listFieldNames);
             $hasProperties = in_array('properties', $listFieldNames) || $hasPropertiesMinMax;
             $usedProperties = array_diff($this->fieldNames, $listFieldNames);
         } else {
@@ -139,18 +142,21 @@ trait ResourceFieldsTrait
         }
         $index1000 = array_search('properties_max_1000', $listFieldNames);
         $index5000 = array_search('properties_max_5000', $listFieldNames);
-        if ($index1000 !== false || $index5000 !== false) {
+        $indexSmall = array_search('properties_small', $listFieldNames);
+        if ($index1000 !== false || $index5000 !== false || $indexSmall !== false) {
             unset($listFieldNames[$index1000]);
             unset($listFieldNames[$index5000]);
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => $index5000 ? 5000 : 1000]));
+            unset($listFieldNames[$indexSmall]);
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => ($index5000 !== false || $indexSmall !== false) ? 5000 : 1000]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
         $index1000 = array_search('properties_min_1000', $listFieldNames);
         $index5000 = array_search('properties_min_5000', $listFieldNames);
+        $indexLarge = array_search('properties_large', $listFieldNames);
         if ($index1000 !== false || $index5000 !== false) {
             unset($listFieldNames[$index1000]);
             unset($listFieldNames[$index5000]);
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => $index1000 ? 1001 : 5001]));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => $index1000 !== false ? 1001 : 5001]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
         return $listFieldNames;

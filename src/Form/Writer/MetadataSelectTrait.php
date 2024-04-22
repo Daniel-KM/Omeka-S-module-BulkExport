@@ -38,7 +38,7 @@ trait MetadataSelectTrait
                         'metadata' => [
                             'label' => 'Resource metadata', // @translate
                             'options' => [
-                                'properties_large' => 'All used properties more than 5000 characters', // @translate
+                                'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
                             ],
                         ],
                     ],
@@ -87,7 +87,8 @@ trait MetadataSelectTrait
                     'o:is_open' => 'Openness', // @translate
                     // For all resources.
                     'properties' => 'All used properties', // @translate
-                    'properties_small' => 'All used properties less than 5000 characters', // @translate
+                    'properties_max_5000' => 'All used properties less than 5000 characters', // @translate
+                    'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
                     // Modules.
                     // 'o-history-log:event' => 'History log events (module History Log)',
                     'operation' => 'History log last operation (create, update, delete or undelete)',

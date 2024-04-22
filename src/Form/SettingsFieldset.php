@@ -5,7 +5,7 @@ namespace BulkExport\Form;
 use BulkExport\Form\Writer\MetadataSelectTrait;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
-use Omeka\Form\Element\PropertySelect;
+use Omeka\Form\Element as OmekaElement;
 
 class SettingsFieldset extends Fieldset
 {
@@ -107,7 +107,7 @@ class SettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'bulkexport_format_resource_property',
-                'type' => PropertySelect::class,
+                'type' => OmekaElement\PropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Property for linked resources', // @translate

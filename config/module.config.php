@@ -507,11 +507,11 @@ $conf = [
                 'id',
                 'url',
                 'o:resource_class',
-                'properties_small',
+                'properties_max_5000',
             ],
             'bulkexport_metadata_exclude' => [
                 'o:owner',
-                'properties_large',
+                'properties_min_5000',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',
