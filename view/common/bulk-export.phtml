@@ -29,7 +29,7 @@ $this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport
     <?php endif; ?>
     <ul class="value exporters">
     <?php foreach ($exporters as $format => $name): ?>
-        <li><a download="<?= basename($urls[$format]) ?> class="exporter download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labels[$format]) ?>"><?= $name ?></a></li>
+        <li><a download="<?= $escapeAttr(strtok(basename($urls[$format]), '?')) ?>" class="exporter download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labels[$format]) ?>"><?= $name ?></a></li>
     <?php endforeach; ?>
     </ul>
 </div>
