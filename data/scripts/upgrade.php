@@ -24,6 +24,8 @@ $connection = $services->get('Omeka\Connection');
 $messenger = $plugins->get('messenger');
 $entityManager = $services->get('Omeka\EntityManager');
 
+$localConfig = include dirname(__DIR__, 2) . '/config/module.config.php';
+
 if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.58')) {
     $message = new \Omeka\Stdlib\Message(
         $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
@@ -368,4 +370,25 @@ SQL;
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
         $connection->executeStatement($sql);
     }
+}
+
+if (version_compare($oldVersion, '3.4.32', '<')) {
+    /** @var \Omeka\Settings\SiteSettings $siteSettings */
+    $siteSettings = $services->get('Omeka\Settings\Site');
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    $bulkExportViews = $localConfig['bulkexport']['site_settings']['bulkexport_views'];
+    foreach ($siteIds as $siteId) {
+        $siteSettings->setTargetId($siteId);
+        $siteSettings->set('bulkexport_views', $bulkExportViews);
+    }
+
+    $message = new PsrMessage(
+        'New resource page blocks have been added to display a button to export current resources.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'A new option has been added to display the exporters automatically in selected pages for themes that don’t manage resource page blocks. Check your site if needed.' // @translate
+    );
+    $messenger->addWarning($message);
 }
