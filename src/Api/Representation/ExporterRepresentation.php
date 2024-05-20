@@ -94,12 +94,13 @@ class ExporterRepresentation extends AbstractEntityRepresentation
 
         $writerClass = $this->writerClass();
         $manager = $this->getWriterManager();
-        if ($manager->has($writerClass)) {
-            $this->writer = $manager->get($writerClass);
-            if ($this->writer instanceof Configurable) {
-                $config = $this->writerConfig();
-                $this->writer->setConfig($config);
-            }
+        if (!$manager->has($writerClass)) {
+            return null;
+
+        $this->writer = $manager->get($writerClass);
+        if ($this->writer instanceof Configurable) {
+            $config = $this->writerConfig();
+            $this->writer->setConfig($config);
         }
 
         $logger = $this->getServiceLocator()->get('Omeka\Logger');
