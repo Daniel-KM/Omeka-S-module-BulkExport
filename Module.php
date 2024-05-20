@@ -270,7 +270,7 @@ class Module extends AbstractModule
             $sharedEventManager->attach(
                 $controller,
                 'view.browse.after',
-                [$this, 'handleViewBrowseAfter']
+                [$this, 'handleViewBrowseAfterAdmin']
             );
         }
 
@@ -352,9 +352,33 @@ class Module extends AbstractModule
 
     public function handleViewShowAfter(Event $event): void
     {
+        /**
+         * @var \Laminas\View\Renderer\PhpRenderer $view
+         * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+         */
+        $services = $this->getServiceLocator();
+        $siteSettings = $services->get('Omeka\Settings\Site');
+
+        $allowed = [
+            'item_show' => 'items',
+            'itemset_show' => 'item_sets',
+            'media_show' => 'media',
+        ];
+        $bulkExportViews = $siteSettings->get('bulkexport_views');
+        $bulkExportViews = array_intersect_key($allowed, array_fill_keys($bulkExportViews, null));
+        if (!count($bulkExportViews)) {
+            return;
+        }
+
         $view = $event->getTarget();
         $vars = $view->vars();
+
         $resource = $vars->offsetGet('resource');
+        $resourceName = $resource->resourceName();
+        if (!in_array($resourceName, $bulkExportViews)) {
+            return;
+        }
+
         echo $view->bulkExport($resource, [
             'site' => $vars->offsetGet('site'),
             'heading' => $view->translate('Export'), // @translate
@@ -374,22 +398,61 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event): void
     {
-        /** @var \Laminas\View\Renderer\PhpRenderer $view */
+        /**
+         * @var \Laminas\View\Renderer\PhpRenderer $view
+         * @var \Common\Stdlib\EasyMeta $easyMeta
+         */
+        $services = $this->getServiceLocator();
+        $siteSettings = $services->get('Omeka\Settings\Site');
+
+        $allowed = [
+            'item_browse' => 'items',
+            'itemset_browse' => 'item_sets',
+            'media_browse' => 'media',
+        ];
+        $bulkExportViews = $siteSettings->get('bulkexport_views');
+        $bulkExportViews = array_intersect_key($allowed, array_fill_keys($bulkExportViews, null));
+        if (!count($bulkExportViews)) {
+            return;
+        }
+
+        $easyMeta = $services->get('EasyMeta');
+
         $view = $event->getTarget();
         $params = $view->params();
+        $paramsRoute = $params->fromRoute();
+        $controller = $paramsRoute['__CONTROLLER'] ?? $paramsRoute['controller'] ?? null;
+        $resourceName = $easyMeta->resourceName($controller);
+        if (!in_array($resourceName, $bulkExportViews)) {
+            return;
+        }
+
         $query = $params->fromQuery() ?: [];
 
         // Set site early.
         $site = $view->currentSite();
-        if ($site) {
-            $query['site_id'] = $site->id();
-        }
+        $query['site_id'] = $site->id();
 
         // Manage exception for item-set/show early.
-        $itemSetId = (int) $params->fromRoute('item-set-id');
+        $itemSetId = $paramsRoute['item-set-id'] ?? null;
         if ($itemSetId) {
             $query['item_set_id'] = $itemSetId;
         }
+
+        // Get all resources of the result, not only the first page.
+        // There is a specific limit for the number of resources to output.
+        // For longer output, use job process for now.
+        unset($query['page'], $query['limit']);
+
+        echo $view->bulkExport($query);
+    }
+
+    public function handleViewBrowseAfterAdmin(Event $event): void
+    {
+        /** @var \Laminas\View\Renderer\PhpRenderer $view */
+        $view = $event->getTarget();
+        $params = $view->params();
+        $query = $params->fromQuery() ?: [];
 
         // Get all resources of the result, not only the first page.
         // There is a specific limit for the number of resources to output.

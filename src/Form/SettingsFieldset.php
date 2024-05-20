@@ -17,7 +17,7 @@ class SettingsFieldset extends Fieldset
     protected $label = 'Bulk Export'; // @translate
 
     protected $elementGroups = [
-        'export' => 'Export', // @translate
+        'export' => 'Bulk Export', // @translate
     ];
 
     protected $formatters = [];
@@ -40,6 +40,7 @@ class SettingsFieldset extends Fieldset
                     'min' => 0,
                 ],
             ])
+            ->addDisplayViews()
             ->add([
                 'name' => 'bulkexport_formatters',
                 'type' => Element\MultiCheckbox::class,
@@ -153,7 +154,12 @@ class SettingsFieldset extends Fieldset
         $this->appendMetadataSelect('bulkexport_metadata');
     }
 
-    public function setFormatters(array $formatters)
+    protected function addDisplayViews(): self
+    {
+        return $this;
+    }
+
+    public function setFormatters(array $formatters): self
     {
         $this->formatters = $formatters;
         return $this;
