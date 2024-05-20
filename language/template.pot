@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-22 00:00+0000\n"
+"POT-Creation-Date: 2024-05-20 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:207
+#: data/scripts/upgrade.php:31 Module.php:142
+#, php-format
+msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr ""
+
+#: Module.php:216
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:213
+#: Module.php:222
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
-#: Module.php:219
+#: Module.php:228
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -41,7 +46,7 @@ msgstr ""
 msgid "Resource type not allowed for export for now"
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:15 src/View/Helper/BulkExport.php:103
+#: src/Controller/ExporterTrait.php:15 src/View/Helper/BulkExport.php:140
 msgid "Unsupported resource type to export."
 msgstr ""
 
@@ -74,97 +79,97 @@ msgstr ""
 msgid "Digital library"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:178
+#: src/Traits/ResourceFieldsTrait.php:184
 msgid "id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:185
+#: src/Traits/ResourceFieldsTrait.php:191
 msgid "Resource id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:186
+#: src/Traits/ResourceFieldsTrait.php:192
 msgid "Resource identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:189
+#: src/Traits/ResourceFieldsTrait.php:195
 msgid "Item set id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:192
+#: src/Traits/ResourceFieldsTrait.php:198
 msgid "Item id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:193
+#: src/Traits/ResourceFieldsTrait.php:199
 msgid "Item identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:194
+#: src/Traits/ResourceFieldsTrait.php:200
 msgid "Item title"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:196
+#: src/Traits/ResourceFieldsTrait.php:202
 msgid "Media id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:197
+#: src/Traits/ResourceFieldsTrait.php:203
 msgid "Media file"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:198
+#: src/Traits/ResourceFieldsTrait.php:204
 msgid "Media source"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:199
+#: src/Traits/ResourceFieldsTrait.php:205
 msgid "File media type"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:200
+#: src/Traits/ResourceFieldsTrait.php:206
 msgid "File size"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:201
+#: src/Traits/ResourceFieldsTrait.php:207
 msgid "Original file url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:203
+#: src/Traits/ResourceFieldsTrait.php:209
 msgid "Annotation"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:204
+#: src/Traits/ResourceFieldsTrait.php:210
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:221
+#: src/Traits/ResourceFieldsTrait.php:227
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:226
+#: src/Traits/ResourceFieldsTrait.php:232
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:112
+#: src/View/Helper/BulkExport.php:149
 msgid ""
 "A query cannot be used to export \"resources\": set the resource type or use "
 "the list of ids instead."
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:131
+#: src/View/Helper/BulkExport.php:173
 #, php-format
 msgid "Unsupported resource type to export: %s."
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:179
+#: src/View/Helper/BulkExport.php:230
 #, php-format
 msgid "Download as spreadsheet %s"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:181
+#: src/View/Helper/BulkExport.php:232
 msgid "Download as text"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:182
+#: src/View/Helper/BulkExport.php:233
 #, php-format
 msgid "Download as %s"
 msgstr ""
@@ -184,6 +189,7 @@ msgstr ""
 #: view/bulk/admin/bulk-export/index.phtml:18
 #: view/bulk/admin/export/browse.phtml:15 view/bulk/admin/export/logs.phtml:49
 #: view/bulk/admin/export/show.phtml:20
+#: view/bulk/admin/exporter/configure-writer.phtml:24
 #: view/bulk/admin/exporter/delete.phtml:19
 #: view/bulk/admin/exporter/edit.phtml:23
 #: view/bulk/admin/exporter/start.phtml:27
@@ -375,10 +381,6 @@ msgstr ""
 msgid "Create new exporter"
 msgstr ""
 
-#: view/bulk/admin/exporter/configure-writer.phtml:24
-msgid "Bulk import"
-msgstr ""
-
 #: view/bulk/admin/exporter/configure-writer.phtml:29
 #, php-format
 msgid "Writer: %s"
@@ -409,42 +411,50 @@ msgstr ""
 msgid "Store export"
 msgstr ""
 
-#: data/scripts/upgrade.php:28
-#, php-format
-msgid "The module %1$s should be upgraded to version %2$s or later."
-msgstr ""
-
-#: data/scripts/upgrade.php:148
+#: data/scripts/upgrade.php:151
 msgid ""
 "It is now possible to export resources as GeoJSON for values filled via "
 "Value Suggest Geonames."
 msgstr ""
 
-#: data/scripts/upgrade.php:155
+#: data/scripts/upgrade.php:158
 msgid ""
 "It is now possible to export into a specific directory with a specific "
 "filename."
 msgstr ""
 
-#: data/scripts/upgrade.php:162
+#: data/scripts/upgrade.php:165
 msgid ""
 "It is now possible to export via the api endpoint: just add an extension to "
 "it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
 "local/items/151.odt\" (from module Api Info)."
 msgstr ""
 
-#: data/scripts/upgrade.php:220
+#: data/scripts/upgrade.php:223
 msgid "It is now possible to store an exporter as a task."
 msgstr ""
 
-#: data/scripts/upgrade.php:225
+#: data/scripts/upgrade.php:228
 msgid "It is now possible to do an incremental export."
 msgstr ""
 
-#: data/scripts/upgrade.php:342
+#: data/scripts/upgrade.php:345
 msgid ""
 "The config of exporters has been upgraded to a new format. You may check "
 "them if you use a complex config."
+msgstr ""
+
+#: data/scripts/upgrade.php:386
+msgid ""
+"New resource page blocks have been added to display a button to export "
+"current resources."
+msgstr ""
+
+#: data/scripts/upgrade.php:391
+msgid ""
+"A new option has been added to display the exporters automatically in "
+"selected pages for themes that don’t manage resource page blocks. Check your "
+"site if needed."
 msgstr ""
 
 #: data/exporters/ods.php:5
@@ -463,7 +473,7 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: Module.php:145
+#: Module.php:154
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
@@ -483,13 +493,13 @@ msgid ""
 "characters."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:121
+#: src/Traits/ResourceFieldsTrait.php:124
 msgid ""
 "Some properties are not exported because they contain more or less than 1000 "
 "or 5000 characters: {properties}."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:232
+#: src/Traits/ResourceFieldsTrait.php:238
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -691,6 +701,40 @@ msgstr ""
 msgid "Error when sending email to notify end of process."
 msgstr ""
 
+#: src/Form/SiteSettingsFieldset.php:26
+msgid "Resource pages where to display exporters automatically"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:27
+msgid ""
+"The config should be compliant with module BlocksDisposition if you use it. "
+"When the theme supports resource page blocks, it is recommended to use them."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:29
+msgid "Item / show"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:30
+msgid "Item / browse"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:31
+msgid "Item set / show"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:32
+msgid "Item set / browse"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:33
+msgid "Media / show"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:34
+msgid "Media / browse"
+msgstr ""
+
 #: src/Form/SettingsFieldset.php:35
 msgid "Maximum number of resources to export"
 msgstr ""
@@ -699,79 +743,79 @@ msgstr ""
 msgid "This setting is applied only for the direct output."
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:48
+#: src/Form/SettingsFieldset.php:49
 msgid "Formatters to display in resource pages"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:60 src/Form/Writer/FormatTrait.php:17
+#: src/Form/SettingsFieldset.php:61 src/Form/Writer/FormatTrait.php:17
 msgid "Metadata names or headers"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:62 src/Form/Writer/FormatTrait.php:19
+#: src/Form/SettingsFieldset.php:63 src/Form/Writer/FormatTrait.php:19
 msgid "Rdf names"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:63 src/Form/Writer/FormatTrait.php:20
+#: src/Form/SettingsFieldset.php:64 src/Form/Writer/FormatTrait.php:20
 msgid "Labels"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:64 src/Form/Writer/FormatTrait.php:21
+#: src/Form/SettingsFieldset.php:65 src/Form/Writer/FormatTrait.php:21
 msgid "First template alternative name"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:77 src/Form/Writer/FormatTrait.php:33
+#: src/Form/SettingsFieldset.php:78 src/Form/Writer/FormatTrait.php:33
 msgid "Format of values"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:79 src/Form/Writer/FormatTrait.php:35
+#: src/Form/SettingsFieldset.php:80 src/Form/Writer/FormatTrait.php:35
 msgid "String"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:80
+#: src/Form/SettingsFieldset.php:81
 msgid "Html (slow with some modules)"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:93 src/Form/Writer/FormatTrait.php:48
+#: src/Form/SettingsFieldset.php:94 src/Form/Writer/FormatTrait.php:48
 msgid "Format of linked resources"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:95 src/Form/Writer/FormatTrait.php:51
+#: src/Form/SettingsFieldset.php:96 src/Form/Writer/FormatTrait.php:51
 msgid "Id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:96 src/Form/Writer/FormatTrait.php:50
+#: src/Form/SettingsFieldset.php:97 src/Form/Writer/FormatTrait.php:50
 msgid "Identifier (property below)"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:97 src/Form/Writer/FormatTrait.php:52
+#: src/Form/SettingsFieldset.php:98 src/Form/Writer/FormatTrait.php:52
 msgid "Identifier or id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:98 src/Form/Writer/FormatTrait.php:55
+#: src/Form/SettingsFieldset.php:99 src/Form/Writer/FormatTrait.php:55
 msgid "Omeka url and title"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:100 src/Form/Writer/FormatTrait.php:53
+#: src/Form/SettingsFieldset.php:101 src/Form/Writer/FormatTrait.php:53
 msgid "Omeka url"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:113 src/Form/Writer/FormatTrait.php:67
+#: src/Form/SettingsFieldset.php:114 src/Form/Writer/FormatTrait.php:67
 msgid "Property for linked resources"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:129 src/Form/Writer/FormatTrait.php:82
+#: src/Form/SettingsFieldset.php:130 src/Form/Writer/FormatTrait.php:82
 msgid "Format of uri"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:131 src/Form/Writer/FormatTrait.php:84
+#: src/Form/SettingsFieldset.php:132 src/Form/Writer/FormatTrait.php:84
 msgid "Uri and label separated by a space"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:132 src/Form/Writer/FormatTrait.php:85
+#: src/Form/SettingsFieldset.php:133 src/Form/Writer/FormatTrait.php:85
 msgid "Uri only"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:133 src/Form/Writer/FormatTrait.php:86
+#: src/Form/SettingsFieldset.php:134 src/Form/Writer/FormatTrait.php:86
 msgid "Html"
 msgstr ""
 
@@ -834,14 +878,15 @@ msgid "Resource metadata"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:41
+#: src/Form/Writer/MetadataSelectTrait.php:91
 msgid "All used properties more than 5000 characters"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:76
-#: src/Form/Writer/MetadataSelectTrait.php:99
-#: src/Form/Writer/MetadataSelectTrait.php:107
-#: src/Form/Writer/MetadataSelectTrait.php:117
-#: src/Form/Writer/MetadataSelectTrait.php:125
+#: src/Form/Writer/MetadataSelectTrait.php:100
+#: src/Form/Writer/MetadataSelectTrait.php:108
+#: src/Form/Writer/MetadataSelectTrait.php:118
+#: src/Form/Writer/MetadataSelectTrait.php:126
 msgid "Internal id"
 msgstr ""
 
@@ -869,34 +914,34 @@ msgstr ""
 msgid "All used properties less than 5000 characters"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:97
+#: src/Form/Writer/MetadataSelectTrait.php:98
 msgid "Item set (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:101
-#: src/Form/Writer/MetadataSelectTrait.php:111
-#: src/Form/Writer/MetadataSelectTrait.php:119
-#: src/Form/Writer/MetadataSelectTrait.php:127
+#: src/Form/Writer/MetadataSelectTrait.php:102
+#: src/Form/Writer/MetadataSelectTrait.php:112
+#: src/Form/Writer/MetadataSelectTrait.php:120
+#: src/Form/Writer/MetadataSelectTrait.php:128
 msgid "Label (first title)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:105
+#: src/Form/Writer/MetadataSelectTrait.php:106
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:108
+#: src/Form/Writer/MetadataSelectTrait.php:109
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:109
+#: src/Form/Writer/MetadataSelectTrait.php:110
 msgid "Source url / file"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:115
+#: src/Form/Writer/MetadataSelectTrait.php:116
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:123
+#: src/Form/Writer/MetadataSelectTrait.php:124
 msgid "Resource (for annotation)"
 msgstr ""
 
@@ -1137,59 +1182,71 @@ msgstr ""
 msgid "No metadata are used in any resources."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:188
+#: src/Formatter/GeoJson.php:235
 msgid "The geonames uri \"{url}\" is invalid."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:253
+#: src/Formatter/GeoJson.php:300
 msgid ""
 "There is no coordinates for url \"{url}\" (name: {name}), used in resource "
 "#{resource_id}."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:328
+#: src/Formatter/GeoJson.php:375
 msgid "Output is not xml for url \"{url}\" (resource #{resource_id})."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:336
+#: src/Formatter/GeoJson.php:383
 msgid "Output is not a valid xml for url \"{url}\" (resource #{resource_id})."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:367
+#: src/Formatter/GeoJson.php:414
 msgid ""
 "Connection error when fetching url \"{url}\" (resource #{resource_id}): "
 "{exception}. Retrying in one minute."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:378
+#: src/Formatter/GeoJson.php:425
 msgid ""
 "Connection error when fetching url \"{url}\" (resource #{resource_id}): "
 "{exception}. Retrying in ten minutes."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:386 src/Formatter/GeoJson.php:393
+#: src/Formatter/GeoJson.php:433 src/Formatter/GeoJson.php:440
 msgid ""
 "Connection error when fetching url \"{url}\" (resource #{resource_id}): "
 "{exception}"
 msgstr ""
 
-#: src/Formatter/GeoJson.php:401
+#: src/Formatter/GeoJson.php:448
 msgid ""
 "Connection issue when fetching url \"{url}\" (resource #{resource_id}): {msg}"
 msgstr ""
 
-#: src/Formatter/GeoJson.php:410
+#: src/Formatter/GeoJson.php:457
 msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
 msgstr ""
 
-#: config/module.config.php:366
+#: src/Site/ResourcePageBlockLayout/BulkExportSearch.php:13
+msgid "Bulk export (search)"
+msgstr ""
+
+#: src/Site/ResourcePageBlockLayout/BulkExportSearchButton.php:13
+msgid "Bulk export button (search)"
+msgstr ""
+
+#: src/Site/ResourcePageBlockLayout/BulkExportButton.php:13
+msgid "Bulk export button"
+msgstr ""
+
+#: config/module.config.php:369
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:379
+#: config/module.config.php:382
 msgid "Past Exports"
 msgstr ""
 
-#: config/module.config.php:396
+#: config/module.config.php:399
 msgid "Params"
 msgstr ""

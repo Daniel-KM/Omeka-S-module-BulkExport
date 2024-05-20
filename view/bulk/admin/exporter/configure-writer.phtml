@@ -21,7 +21,7 @@ $submit->setAttribute('form', $form->getAttribute('id'));
 $form->get('form_submit')->remove('submit');
 ?>
 
-<?= $this->pageTitle($exporter->label(), 1, $translate('Bulk import')) ?>
+<?= $this->pageTitle($exporter->label(), 1, $translate('Bulk export')) ?>
 
 <?= $this->partial('bulk/admin/exporter/menu-tab', ['exporter' => $exporter, 'current' => 'writer']) ?>
 

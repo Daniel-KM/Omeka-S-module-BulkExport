@@ -24,7 +24,7 @@ class SiteSettingsFieldset extends SettingsFieldset
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Resource pages where to display exporters automatically', // @translate
-                    'info' => 'The config should be compliant with module BlocksDisposition if you use it. When the theme supports resource page blocks, It is recommended to use them.', // @translate
+                    'info' => 'The config should be compliant with module BlocksDisposition if you use it. When the theme supports resource page blocks, it is recommended to use them.', // @translate
                     'value_options' => [
                         'item_show' => 'Item / show', // @translate
                         'item_browse' => 'Item / browse', // @translate
