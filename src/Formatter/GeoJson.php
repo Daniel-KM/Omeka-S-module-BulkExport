@@ -35,7 +35,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
      * @var array
      */
     protected $httpHeadersQuery = [
-        'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/135.0',
+        'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0',
         'Content-Type' => 'application/json',
         'Accept-Encoding' => 'gzip, deflate',
     ];
@@ -69,24 +69,58 @@ class GeoJson extends AbstractFieldsJsonFormatter
             return $this;
         }
 
-        $geonamesUrlToResourceIds = $this->getAllGeoJsonUris();
+        $geonamesUrlToResourceData = $this->getAllGeoJsonUris();
 
         $appendId = in_array('o:id', $this->fieldNames);
 
         $geoJsons = [];
-        foreach ($geonamesUrlToResourceIds as $url => $resourceIds) {
-            $this->currentResourceId = reset($resourceIds);
-            $geonamesRdf = $this->geonamesRdf($url);
-            if ($geonamesRdf) {
-                $geoJson = $this->geonamesRdfToGeoJson($geonamesRdf);
-                if ($geoJson) {
-                    if ($appendId) {
-                        $geoJson['properties']['o:id'] = $resourceIds;
-                    } else {
-                        $geoJson['properties']['total'] = count($resourceIds);
+        foreach ($geonamesUrlToResourceData as $url => $geoData) {
+            if (!isset($geoData['toponym'])
+                || !isset($geoData['country'])
+                || !isset($geoData['latitude'])
+                || !isset($geoData['longitude'])
+            ) {
+                $this->currentResourceId = reset($geoData['id']);
+                $geonamesRdf = $this->geonamesRdf($url);
+                if ($geonamesRdf) {
+                    $geoJson = $this->geonamesRdfToGeoJson($geonamesRdf);
+                    if ($geoJson) {
+                        if ($appendId) {
+                            $geoJson['properties']['o:id'] = $geoData['id'];
+                        } else {
+                            $geoJson['properties']['total'] = count($geoData['id']);
+                        }
+                        $geoJsons[] = $geoJson;
                     }
-                    $geoJsons[] = $geoJson;
                 }
+            } else {
+                $geoJson = [
+                    'type' => 'Feature',
+                    'geometry' => [
+                        'type' => 'Point',
+                        /** @see https://datatracker.ietf.org/doc/html/rfc7946#section-9 : In WGS84 longitude comes first. */
+                        'coordinates' => [
+                            (float) $geoData['longitude'],
+                            (float) $geoData['latitude'],
+                        ],
+                    ],
+                    'properties' => [
+                        'provenance' => [
+                            'id' => $geoData['uri'],
+                        ],
+                        // Use "Region" instead of "region" for compatibility
+                        // with Drupal.
+                        // For countries, the name is the region.
+                        'Region' => $geoData['country'] ?? $geoData['toponym'],
+                        'name' => $geoData['toponym'],
+                    ],
+                ];
+                if ($appendId) {
+                    $geoJson['properties']['o:id'] = $geoData['id'];
+                } else {
+                    $geoJson['properties']['total'] = count($geoData['id']);
+                }
+                $geoJsons[] = $geoJson;
             }
         }
 
@@ -103,7 +137,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
     {
         $entityManager = $this->services->get('Omeka\EntityManager');
 
-        $geonamesUrlToResourceIds = [];
+        $geonamesUrlToResourceData = [];
 
         if ($this->isId) {
             foreach (array_chunk($this->resourceIds, self::SQL_LIMIT) as $idsChunk) {
@@ -114,9 +148,9 @@ class GeoJson extends AbstractFieldsJsonFormatter
                     } catch (NotFoundException $e) {
                         continue;
                     }
-                    $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
-                    foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
-                        $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resourceId;
+                    $geonamesRdfDatas = $this->geonamesRdfUrls($resource);
+                    foreach ($geonamesRdfDatas as $geonamesRdfData) {
+                        $geonamesUrlToResourceData[$geonamesRdfData['uri']]['id'][] = $resourceId;
                     }
                     unset($resource);
                 }
@@ -128,9 +162,9 @@ class GeoJson extends AbstractFieldsJsonFormatter
             // list of resources should have occured earlier.
             foreach (array_chunk($this->resources, self::SQL_LIMIT) as $idsChunk) {
                 foreach ($idsChunk as $resource) {
-                    $geonamesRdfUrls = $this->geonamesRdfUrls($resource);
-                    foreach ($geonamesRdfUrls as $geonamesRdfUrl) {
-                        $geonamesUrlToResourceIds[$geonamesRdfUrl][] = $resource->Id();
+                    $geonamesRdfDatas = $this->geonamesRdfUrls($resource);
+                    foreach ($geonamesRdfDatas as $geonamesRdfData) {
+                        $geonamesUrlToResourceData[$geonamesRdfData['uri']]['id'][] = $resource->Id();
                     }
                 }
                 // Avoid memory issue.
@@ -138,7 +172,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
             }
         }
 
-        return $geonamesUrlToResourceIds;
+        return $geonamesUrlToResourceData;
     }
 
     /**
@@ -155,22 +189,35 @@ class GeoJson extends AbstractFieldsJsonFormatter
                 continue;
             }
 
-            $values = $resource->value($fieldName, ['all' => true, 'type' => 'valuesuggest:geonames:geonames']);
-            if (!$values) {
-                continue;
-            }
-
+            // Manage data type place from module DataTypePlace.
+            $values = $resource->value($fieldName, ['all' => true, 'type' => 'place']);
             foreach ($values as $value) {
                 $uri = (string) $value->uri();
                 if (filter_var($uri, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
-                    $result[] = $uri;
+                    $data = json_decode($value->value(), true);
+                    $data['uri'] = $uri;
+                    $result[] = $data;
+                }
+            }
+
+            // Manage data type geonames from module ValueSuggest.
+            $values = $resource->value($fieldName, ['all' => true, 'type' => 'valuesuggest:geonames:geonames']);
+            foreach ($values as $value) {
+                $uri = (string) $value->uri();
+                if (filter_var($uri, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
+                    $data = [];
+                    $data['uri'] = $uri;
+                    $result[] = $data;
                 }
             }
         }
 
-        $result = array_unique($result);
-        foreach ($result as $key => $uri) {
-            $result[$key] = $this->geonamesRdfUrl($uri);
+        // array_unique() cannot be used with an array of arrays, so use
+        // serialize/unserialize.
+        // $result = array_unique($result);
+        $result = array_map('unserialize', array_unique(array_map('serialize', $result)));
+        foreach ($result as $key => $data) {
+            $result[$key]['uri'] = $this->geonamesRdfUrl($data['uri']);
         }
         $result = array_values(array_filter($result));
 
