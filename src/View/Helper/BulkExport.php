@@ -19,7 +19,8 @@ class BulkExport extends AbstractHelper
      *   Types must not be mixed. By default, use the current request query.
      * @param array $options Available options:
      * - site (SiteRepresentation): site to use for urls, instead current one.
-     * - resourceType (string): the resource type to use for controllers:
+     * - resourceType (string): the resource type to use for api and controller:
+     *   "items", "item_sets", "media", "annotations", or "resources", or
      *   "item", "item-set", "media", "annotation", or "resource".
      *   "resource" cannot be used with a query.
      * - exporters (array): the exporters to use instead of the default ones.
@@ -75,43 +76,84 @@ class BulkExport extends AbstractHelper
             $resourcesOrIdsOrQuery = [$resourcesOrIdsOrQuery];
         }
 
+        // TODO Use EasyAdmin in 3.4.58.
         $resourceTypesToNames = [
+            'annotations' => 'annotations',
+            'items' => 'items',
+            'item_sets' => 'item_sets',
+            'media' => 'media',
+            'resources' => 'resources',
+            'annotation' => 'annotations',
             'item' => 'items',
             'item-set' => 'item_sets',
+            'itemset' => 'item_sets',
             'media' => 'media',
             'resource' => 'resources',
-            'annotation' => 'annotations',
+            'annotate\controller\admin\annotation' => 'annotations',
+            'annotate\controller\admin\annotationcontroller' => 'annotations',
+            'omeka\controller\admin\item' => 'items',
+            'omeka\controller\admin\itemcontroller' => 'items',
+            'omeka\controller\admin\itemset' => 'item_sets',
+            'omeka\controller\admin\itemsetcontroller' => 'item_sets',
+            'omeka\controller\admin\media' => 'media',
+            'omeka\controller\admin\mediacontroller' => 'media',
+            'omeka\controller\admin\resource' => 'resources',
+            'omeka\controller\admin\resourcecontroller' => 'resources',
+            'annotate\controller\site\annotation' => 'annotations',
+            'annotate\controller\site\annotationcontroller' => 'annotations',
+            'omeka\controller\site\item' => 'items',
+            'omeka\controller\site\itemcontroller' => 'items',
+            'omeka\controller\site\itemset' => 'item_sets',
+            'omeka\controller\site\itemsetcontroller' => 'item_sets',
+            'omeka\controller\site\media' => 'media',
+            'omeka\controller\site\mediacontroller' => 'media',
+            'omeka\controller\site\resource' => 'resources',
+            'omeka\controller\site\resourcecontroller' => 'resources',
         ];
+
+        $options['resourceType'] = $resourceTypesToNames[$options['resourceType']] ?? null;
 
         // Prepare the query for the url.
         if ($isQuery) {
+            $params = $plugins->get('params');
             // The query is checked in the controller, not here.
             $query = is_null($resourcesOrIdsOrQuery)
-                ? $plugins->get('params')->fromQuery()
+                ? $params->fromQuery()
                 : $resourcesOrIdsOrQuery;
+
             // The output controller will throw an error in most of the cases
             // when resource is undefined, so throw error here to avoid to
             // create a wrong url.
             if (empty($options['resourceType'])) {
-                $params = $plugins->get('params');
-                $resourceType = $params->fromRoute('__CONTROLLER__');
+                $controller = $params->fromRoute('__CONTROLLER__')
+                    ?? $params->fromRoute('controller', '');
+                $resourceType = $resourceTypesToNames[strtolower($controller)] ?? null;
                 // Support module Clean url.
-                if (empty($resourceTypesToNames[$resourceType])) {
-                    $resourceType = $params->fromRoute('forward');
-                    if (!$resourceType || empty($resourceTypesToNames[$resourceType['__CONTROLLER__']])) {
+                if (!$resourceType) {
+                    $forward = $params->fromRoute('forward');
+                    if (!$forward
+                        || !is_array($forward)
+                        || empty($forward['__CONTROLLER__'])
+                        || empty($resourceTypesToNames[strtolower($forward['__CONTROLLER__'])])
+                    ) {
                         throw new \Omeka\Mvc\Exception\NotFoundException(
                             $view->translate('Unsupported resource type to export.') // @translate
                         );
                     }
-                    $resourceType = $resourceType['__CONTROLLER__'];
+                    $resourceType = $resourceTypesToNames[strtolower($forward['__CONTROLLER__'])];
                 }
                 $options['resourceType'] = $resourceType;
             }
-            if ($query && $options['resourceType'] === 'resource') {
+            if ($query && $options['resourceType'] === 'resources') {
                 throw new \Omeka\Mvc\Exception\NotFoundException(
                     $view->translate('A query cannot be used to export "resources": set the resource type or use the list of ids instead.') // @translate
                 );
             }
+
+            // Get all resources of the result, not only the first page.
+            // There is a specific limit for the number of resources to output.
+            // For longer output, use job process for now.
+            unset($query['page'], $query['limit']);
         } else {
             $firstResource = reset($resourcesOrIdsOrQuery);
             $isNumeric = is_numeric($firstResource);
@@ -145,6 +187,15 @@ class BulkExport extends AbstractHelper
             $query = ['id' => implode(',', array_values(array_unique($ids)))];
         }
 
+        $resourceControllers = [
+            'annotations' => 'annotation',
+            'items' => 'item',
+            'item_sets' => 'item-set',
+            'media' => 'media',
+            'resources' => 'resource',
+        ];
+        $resourceController = $resourceControllers[$options['resourceType']] ?? 'resource';
+
         // Prepare urls for each exporters.
         $options['urls'] = [];
         $siteSlug = $options['site'] ? $options['site']->slug() : null;
@@ -153,7 +204,7 @@ class BulkExport extends AbstractHelper
             foreach (array_keys($options['exporters']) as $format) {
                 $options['urls'][$format] = $url($route, [
                     'site-slug' => $siteSlug,
-                    'controller' => $options['resourceType'],
+                    'controller' => $resourceController,
                     'format' => $format,
                 ], [
                     'query' => $query,
@@ -165,7 +216,7 @@ class BulkExport extends AbstractHelper
             foreach (array_keys($options['exporters']) as $format) {
                 $options['urls'][$format] = $url($route, [
                     'site-slug' => $siteSlug,
-                    'controller' => $options['resourceType'],
+                    'controller' => $resourceController,
                     'format' => $format,
                     'id' => $resourceId,
                 ]);

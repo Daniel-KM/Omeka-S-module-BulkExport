@@ -374,38 +374,29 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfter(Event $event): void
     {
+        /** @var \Laminas\View\Renderer\PhpRenderer $view */
         $view = $event->getTarget();
-
-        $resourceTypes = [
-            'item' => 'item',
-            'item-set' => 'item-set',
-            'media' => 'media',
-            'annotation' => 'annotation',
-            'omeka\controller\site\item' => 'item',
-            'omeka\controller\site\itemSet' => 'item-set',
-            'omeka\controller\site\media' => 'media',
-            'annotate\controller\site\annotation' => 'annotation',
-            'omeka\controller\admin\item' => 'item',
-            'omeka\controller\admin\itemset' => 'item-set',
-            'omeka\controller\admin\media' => 'media',
-            'annotate\controller\admin\annotation' => 'annotation',
-        ];
         $params = $view->params();
-        $controller = $params->fromRoute('__CONTROLLER__') ?? $params->fromRoute('controller', '');
-        $resourceType = $resourceTypes[strtolower($controller)] ?? 'resource';
+        $query = $params->fromQuery() ?: [];
 
-        $query = $view->params()->fromQuery();
+        // Set site early.
+        $site = $view->currentSite();
+        if ($site) {
+            $query['site_id'] = $site->id();
+        }
+
+        // Manage exception for item-set/show early.
+        $itemSetId = (int) $params->fromRoute('item-set-id');
+        if ($itemSetId) {
+            $query['item_set_id'] = $itemSetId;
+        }
 
         // Get all resources of the result, not only the first page.
         // There is a specific limit for the number of resources to output.
         // For longer output, use job process for now.
         unset($query['page'], $query['limit']);
 
-        echo $view->bulkExport($query, [
-            'site' => $view->vars()->offsetGet('site'),
-            'exporters' => $view->bulkExporters(),
-            'resourceType' => $resourceType,
-        ]);
+        echo $view->bulkExport($query);
     }
 
     public function handleViewBrowseAfterSelection(Event $event): void
