@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var array $query
  *
  * @uses \BulkExport\View\Helper\BulkExport::__invoke()
  */
@@ -13,8 +13,8 @@ $bulkExport = $plugins->get('bulkExport');
 
 <details class="button-details bulk-export-details">
     <summary class="button"><span class="fas fa-cloud-download-alt"></span></summary>
-    <?= $bulkExport($resource, [
+    <?= $bulkExport($query, [
         'heading' => null,
-        'divclass' => 'block resource-block block-bulk-export',
+        'divclass' => 'block resource-block block-bulk-export block-bulk-export-search',
     ]) ?>
 </details>

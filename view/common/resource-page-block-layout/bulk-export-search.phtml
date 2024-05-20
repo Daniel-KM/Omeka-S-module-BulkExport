@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var array $query
  *
  * @uses \BulkExport\View\Helper\BulkExport::__invoke()
  */
@@ -11,7 +11,7 @@ $translate = $plugins->get('translate');
 $bulkExport = $plugins->get('bulkExport');
 ?>
 
-<?= $bulkExport($resource, [
+<?= $bulkExport($query, [
     'heading' => $translate('Export'), // @translate
-    'divclass' => 'block resource-block block-bulk-export',
+    'divclass' => 'block resource-block block-bulk-export block-bulk-export-search',
 ]) ?>

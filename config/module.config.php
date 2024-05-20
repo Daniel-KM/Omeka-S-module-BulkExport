@@ -58,6 +58,8 @@ $conf = [
         'invokables' => [
             'bulkExport' => Site\ResourcePageBlockLayout\BulkExport::class,
             'bulkExportButton' => Site\ResourcePageBlockLayout\BulkExportButton::class,
+            'bulkExportSearch' => Site\ResourcePageBlockLayout\BulkExportSearch::class,
+            'bulkExportSearchButton' => Site\ResourcePageBlockLayout\BulkExportSearchButton::class,
         ],
     ],
     'controllers' => [
