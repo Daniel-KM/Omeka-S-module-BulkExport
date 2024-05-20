@@ -1,9 +1,7 @@
 @media screen {
-    .browse .bulk-export h4 {
-        display: inline-block;
-    }
+    /* List of exporters. */
     .browse .bulk-export .exporters {
-        display: inline-block;
+        display: block;
         padding-left: 0;
     }
     .browse .sidebar .bulk-export .exporters,
@@ -16,6 +14,37 @@
     }
     .bulk-export .exporters li:not(:last-child)::after {
         content: ' · ';
-        padding-right: 6px;
+    }
+
+    /* Export button */
+
+    .bulk-export-details {
+        cursor: pointer;
+    }
+    .bulk-export-details summary {
+        display: inline-block;
+        height: 45px;
+        padding: 7.5px;
+        border: 0;
+        border-radius: 2px;
+    }
+    .bulk-export-details[open] summary,
+    .bulk-export-details summary:hover {
+        background-color: #dedede;
+    }
+    .bulk-export-details[open] > ul,
+    .bulk-export-details[open] > .bulk-export > ul {
+        display: block;
+        position: absolute;
+        z-index: 10;
+        overflow: visible;
+        cursor: auto;
+        min-height: 48px;
+        padding: 15px;
+        margin-top: 3px;
+        border: 1px solid #DCD6CA;
+        background: #EEE;
+        background-color: #FFFFFF;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2);
     }
 }

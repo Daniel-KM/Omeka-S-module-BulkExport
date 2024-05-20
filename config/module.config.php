@@ -57,6 +57,7 @@ $conf = [
     'resource_page_block_layouts' => [
         'invokables' => [
             'bulkExport' => Site\ResourcePageBlockLayout\BulkExport::class,
+            'bulkExportButton' => Site\ResourcePageBlockLayout\BulkExportButton::class,
         ],
     ],
     'controllers' => [

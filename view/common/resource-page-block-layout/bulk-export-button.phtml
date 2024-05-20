@@ -1,0 +1,18 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$bulkExport = $plugins->get('bulkExport');
+?>
+
+<details class="button-details bulk-export-details">
+    <summary class="button"><span class="fas fa-cloud-download-alt"></span></summary>
+    <?= $bulkExport($resource, [
+        'heading' => null,
+        'divclass' => 'block resource-block block-bulk-export',
+    ]) ?>
+</details>
