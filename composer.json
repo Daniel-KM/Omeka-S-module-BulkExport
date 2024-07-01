@@ -3,7 +3,7 @@
         "openspout/openspout": "^3.7",
         "phpoffice/phpword": "^1.2"
     },
-    "replace": {
+    "provide": {
         "doctrine/inflector": "*",
         "laminas/laminas-escaper": "*"
     },

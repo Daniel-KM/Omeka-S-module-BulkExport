@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b9a287ac338ed5ac223965c8b4d02fa",
+    "content-hash": "8c51e385b940ed6ce42125a2f7e686a3",
     "packages": [
         {
             "name": "openspout/openspout",
