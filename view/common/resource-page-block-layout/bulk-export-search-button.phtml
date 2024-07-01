@@ -9,10 +9,13 @@
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 $bulkExport = $plugins->get('bulkExport');
+
+$this->headScript()
+    ->appendFile($this->assetUrl('js/bulk-export.js', 'BulkExport'), 'text/javascript', ['defer' => 'defer']);
 ?>
 
 <details class="button-details bulk-export-details">
-    <summary class="button"><span class="fas fa-cloud-download-alt"></span></summary>
+    <summary class="button bulk-export-summary" title="<?= $translate('Export record') ?>" aria-label="<?= $translate('Export record') ?>" aria-expanded="false"><span class="fas fa-cloud-download-alt"></span></summary>
     <?= $bulkExport($query, [
         'heading' => null,
         'divclass' => 'block resource-block block-bulk-export block-bulk-export-search',

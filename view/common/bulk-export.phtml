@@ -20,7 +20,8 @@ $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 
-$this->headLink()->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
 ?>
 
 <div class="bulk-export <?= $divclass ?>">
