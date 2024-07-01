@@ -186,7 +186,7 @@ class Export extends AbstractJob
         $this->logger->notice(
             'The export is available at {link} (size: {size} bytes).', // @translate
             [
-                'link' => sprintf('<a href="%1$s" download="%2$s">%2$s</a>', $fileUrl, basename($filename)),
+                'link' => sprintf('<a href="%1$s" download="%2$s" target="_self">%2$s</a>', $fileUrl, basename($filename)),
                 'size' => $filesize,
             ]
         );
