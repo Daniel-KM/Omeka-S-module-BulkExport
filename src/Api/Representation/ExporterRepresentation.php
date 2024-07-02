@@ -96,6 +96,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         $manager = $this->getWriterManager();
         if (!$manager->has($writerClass)) {
             return null;
+        }
 
         $this->writer = $manager->get($writerClass);
         if ($this->writer instanceof Configurable) {
