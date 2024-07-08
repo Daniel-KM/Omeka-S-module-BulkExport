@@ -50,6 +50,11 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $api;
 
     /**
+     * @var \Omeka\DataType\Manager
+     */
+    protected $dataTypeManager;
+
+    /**
      * @var \Common\Stdlib\EasyMeta
      */
     protected $easyMeta;
@@ -68,6 +73,11 @@ abstract class AbstractFormatter implements FormatterInterface
      * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
+
+    /**
+     * @var \Laminas\View\Renderer\PhpRenderer
+     */
+    protected $viewRenderer;
 
     /**
      * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[]
@@ -156,6 +166,8 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->logger = $this->services->get('Omeka\Logger');
         $this->translator = $this->services->get('MvcTranslator');
         $this->easyMeta = $services->get('EasyMeta');
+        $this->viewRenderer = $services->get('ViewRenderer');
+        $this->dataTypeManager = $services->get('Omeka\DataTypeManager');
     }
 
     public function getLabel(): string

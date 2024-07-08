@@ -246,13 +246,13 @@ trait MetadataToStringTrait
                             break;
                         case 'html':
                         case 'rdf:HTML':
-                            $v = $v->asHtml();
+                            $v = $this->asHtmlWithoutEvent($v);
                             break;
                         case 'literal':
                         // case $baseType === 'literal':
                         default:
                             $v = $params['format_generic'] === 'html'
-                                ? $v->asHtml()
+                                ? $this->asHtmlWithoutEvent($v)
                                 : (string) $v;
                             break;
                     }
@@ -269,7 +269,7 @@ trait MetadataToStringTrait
                 $v = (string) $value->uri();
                 break;
             case 'html':
-                $v = $value->asHtml();
+                $v = $this->asHtmlWithoutEvent($value);
                 break;
             case 'uri_label':
             default:
@@ -385,5 +385,20 @@ trait MetadataToStringTrait
         static $isAdminRequest;
         return $isAdminRequest
             ?? $isAdminRequest = $this->services->get('Omeka\Status')->isAdminRequest();
+    }
+
+    /**
+     * Get a value like method asHtml() but without triggering event "rep.value.html".
+     *
+     * This is useful in particular for modules AdvancedResourceTemplate,
+     * MetadataBrowse and RedactValues.
+     *
+     * @see \Omeka\Api\Representation\ValueRepresentation::asHtml()
+     */
+    protected function asHtmlWithoutEvent(ValueRepresentation $value): string
+    {
+        return $this->dataTypeManager
+            ->get($value->type())
+            ->render($this->viewRenderer, $value);
     }
 }

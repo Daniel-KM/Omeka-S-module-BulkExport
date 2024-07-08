@@ -33,7 +33,9 @@ trait FormatTrait
                     'label' => 'Format of values', // @translate
                     'value_options' => [
                         'string' => 'String', // @translate
-                        'html' => 'Html (may contain output of modules)', // @translate
+                        'html' => 'Html', // @translate
+                        // TODO Add output for html with event for modules? Probably useless.
+                        // 'html_modules' => 'Html (with output of modules)', // @translate
                     ],
                 ],
                 'attributes' => [

@@ -37,6 +37,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
     protected $api;
 
     /**
+     * @var \Omeka\DataType\Manager
+     */
+    protected $dataTypeManager;
+
+    /**
      * @var \Common\Stdlib\EasyMeta
      */
     protected $easyMeta;
@@ -50,6 +55,11 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
      * @var \Laminas\Mvc\I18n\Translator
      */
     protected $translator;
+
+    /**
+     * @var \Laminas\View\Renderer\PhpRenderer
+     */
+    protected $viewRenderer;
 
     /**
      * @var Job
@@ -120,6 +130,8 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $this->logger = $services->get('Omeka\Logger');
         $this->translator = $services->get('MvcTranslator');
         $this->easyMeta = $services->get('EasyMeta');
+        $this->viewRenderer = $services->get('ViewRenderer');
+        $this->dataTypeManager = $services->get('Omeka\DataTypeManager');
 
         /** @var \Omeka\Module\Manager $moduleManager */
         $moduleManager = $this->getServiceLocator()->get('Omeka\ModuleManager');
