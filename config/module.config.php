@@ -518,11 +518,11 @@ $conf = [
                 'id',
                 'url',
                 'o:resource_class',
-                'properties_max_5000',
+                'properties_max_500',
             ],
             'bulkexport_metadata_exclude' => [
                 'o:owner',
-                'properties_min_5000',
+                'properties_min_500',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',

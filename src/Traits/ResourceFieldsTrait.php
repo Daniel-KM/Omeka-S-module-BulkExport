@@ -23,15 +23,48 @@ trait ResourceFieldsTrait
     protected $labelFormatFields = 'name';
 
     /**
+     * @var array
+     */
+    protected $propertySizes = [
+        'properties_max_500' => 500,
+        'properties_min_500' => 501,
+        'properties_max_1000' => 1000,
+        'properties_min_1000' => 1001,
+        'properties_max_5000' => 5000,
+        'properties_min_5000' => 5001,
+        // Kept for bad upgrade.
+        'properties_small' => 5000,
+        'properties_large' => 5001,
+    ];
+
+    protected $propertySizesMinMax = [
+        'max_size' => [
+            'properties_max_500',
+            'properties_max_1000',
+            'properties_max_5000',
+            'properties_small',
+        ],
+        'min_size' => [
+            'properties_min_500',
+            'properties_min_1000',
+            'properties_min_5000',
+            'properties_large',
+        ],
+    ];
+
+    /**
      * @param array $listFieldNames Fields to prepare instead of default list.
      * @param array $listFieldsToExclude Fields to exclude
      * @return self
      */
-    protected function prepareFieldNames(array $listFieldNames = null, array $listFieldsToExclude = null): self
+    protected function prepareFieldNames(?array $listFieldNames = null, ?array $listFieldsToExclude = null): self
     {
         if (is_array($this->fieldNames)) {
             return $this;
         }
+
+        $listFieldNames = $this->cleanListFieldNames($listFieldNames);
+        $listFieldsToExclude = $this->cleanListFieldNames($listFieldsToExclude);
 
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
         $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
@@ -40,13 +73,7 @@ trait ResourceFieldsTrait
         if ($listFieldNames) {
             $this->fieldNames = $listFieldNames;
             $this->fieldNames = $this->managePropertiesList($listFieldNames);
-            $hasPropertiesMinMax = in_array('properties_max_1000', $listFieldNames)
-                || in_array('properties_min_1000', $listFieldNames)
-                || in_array('properties_max_5000', $listFieldNames)
-                || in_array('properties_min_5000', $listFieldNames)
-                // Kept for bad upgrade.
-                || in_array('properties_small', $listFieldNames)
-                || in_array('properties_large', $listFieldNames);
+            $hasPropertiesMinMax = (bool) array_intersect(array_keys($this->propertySizes), $listFieldNames);
             $hasProperties = in_array('properties', $listFieldNames) || $hasPropertiesMinMax;
             $usedProperties = array_diff($this->fieldNames, $listFieldNames);
         } else {
@@ -94,6 +121,7 @@ trait ResourceFieldsTrait
                         break;
                 }
             }
+            // TODO Why is there a check on max size here?
             $hasPropertiesMinMax = true;
             $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000]));
             $this->fieldNames = array_merge($this->fieldNames, $usedProperties);
@@ -121,7 +149,7 @@ trait ResourceFieldsTrait
         $missingProperties = array_diff($unlimitedUsedProperties, $usedProperties);
         if ($hasPropertiesMinMax && count($missingProperties)) {
             $this->logger->warn(
-                'Some properties are not exported because they contain more or less than 1000 or 5000 characters: {properties}.', // @translate
+                'Some properties are not exported because they contain more or less than 500, 1000 or 5000 characters: {properties}.', // @translate
                 ['properties' => $missingProperties]
             );
         }
@@ -131,34 +159,69 @@ trait ResourceFieldsTrait
         return $this;
     }
 
-    protected function managePropertiesList(array $listFieldNames): array
+    protected function cleanListFieldNames(?array $listFieldNames): array
     {
+        if (!$listFieldNames) {
+            return [];
+        }
+
+        // Clean the list field names for min/max sizes.
+        $hasPropertiesMinMax = (bool) array_intersect(array_keys($this->propertySizes), $listFieldNames);
+        if ($hasPropertiesMinMax) {
+            $maxSizes = array_intersect($this->propertySizesMinMax['max_size'], $listFieldNames);
+            if (count($maxSizes) > 1) {
+                // Keep the last minimum, that is the greatest.
+                array_pop($maxSizes);
+                $listFieldNames = array_diff($listFieldNames, $maxSizes);
+            }
+            $minSizes = array_intersect($this->propertySizesMinMax['min_size'], $listFieldNames);
+            if (count($minSizes) > 1) {
+                // Keep the first maximum, that is the smallest.
+                array_shift($minSizes);
+                $listFieldNames = array_diff($listFieldNames, $minSizes);
+            }
+        }
+
+        return $listFieldNames;
+    }
+
+    protected function managePropertiesList(?array $listFieldNames): array
+    {
+        if (!$listFieldNames) {
+            return [];
+        }
+
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
+
         $index = array_search('properties', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
             $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
-        $index1000 = array_search('properties_max_1000', $listFieldNames);
-        $index5000 = array_search('properties_max_5000', $listFieldNames);
-        $indexSmall = array_search('properties_small', $listFieldNames);
-        if ($index1000 !== false || $index5000 !== false || $indexSmall !== false) {
-            unset($listFieldNames[$index1000]);
-            unset($listFieldNames[$index5000]);
-            unset($listFieldNames[$indexSmall]);
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => ($index5000 !== false || $indexSmall !== false) ? 5000 : 1000]));
+
+        $maxSizes = array_intersect($this->propertySizesMinMax['max_size'], $listFieldNames);
+        if ($maxSizes) {
+            $listFieldNames = array_diff($listFieldNames, $maxSizes);
+            $maxSize = array_pop($maxSizes);
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => $entityClasses,
+                'max_size' => $this->propertySizes[$maxSize],
+            ]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
-        $index1000 = array_search('properties_min_1000', $listFieldNames);
-        $index5000 = array_search('properties_min_5000', $listFieldNames);
-        $indexLarge = array_search('properties_large', $listFieldNames);
-        if ($index1000 !== false || $index5000 !== false) {
-            unset($listFieldNames[$index1000]);
-            unset($listFieldNames[$index5000]);
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'min_size' => $index1000 !== false ? 1001 : 5001]));
+
+        $minSizes = array_intersect($this->propertySizesMinMax['min_size'], $listFieldNames);
+        if ($minSizes) {
+            $listFieldNames = array_diff($listFieldNames, $minSizes);
+            $minSize = reset($minSizes);
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => $entityClasses,
+                'min_size' => $this->propertySizes[$minSize],
+            ]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
+
         return $listFieldNames;
     }
 

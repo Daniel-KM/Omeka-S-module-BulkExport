@@ -38,6 +38,8 @@ trait MetadataSelectTrait
                         'metadata' => [
                             'label' => 'Resource metadata', // @translate
                             'options' => [
+                                'properties_min_500' => 'All used properties more than 500 characters', // @translate
+                                'properties_min_1000' => 'All used properties more than 1000 characters', // @translate
                                 'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
                             ],
                         ],
@@ -87,6 +89,10 @@ trait MetadataSelectTrait
                     'o:is_open' => 'Openness', // @translate
                     // For all resources.
                     'properties' => 'All used properties', // @translate
+                    'properties_max_500' => 'All used properties less than 500 characters', // @translate
+                    'properties_min_500' => 'All used properties more than 500 characters', // @translate
+                    'properties_max_1000' => 'All used properties less than 1000 characters', // @translate
+                    'properties_min_1000' => 'All used properties more than 1000 characters', // @translate
                     'properties_max_5000' => 'All used properties less than 5000 characters', // @translate
                     'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
                     // Modules.
