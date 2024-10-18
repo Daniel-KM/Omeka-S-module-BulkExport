@@ -98,6 +98,8 @@ trait MetadataSelectTrait
                     // Modules.
                     // 'o-history-log:event' => 'History log events (module History Log)',
                     'operation' => 'History log last operation (create, update, delete or undelete)',
+                    // Folksonomy.
+                    'o-module-folksonomy:tag' => 'Tags (Folksonomy)', // @translate
                 ],
             ],
             'o:item_set' => [

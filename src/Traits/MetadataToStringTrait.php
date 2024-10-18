@@ -196,6 +196,16 @@ trait MetadataToStringTrait
                 }
                 return $lastOperation ? [$lastOperation] : [];
 
+            // Module Folksonomy.
+            case 'o-module-folksonomy:tag':
+                $json = $resource->jsonSerialize();
+                $tags =  empty($json['o-module-folksonomy:tag'])
+                    ? []
+                    : array_map(function ($v) {
+                        return $v->name();
+                    }, $json['o-module-folksonomy:tag']);
+                return $tags;
+
             // All properties for all resources.
             default:
                 if (empty($params['only_first'])) {

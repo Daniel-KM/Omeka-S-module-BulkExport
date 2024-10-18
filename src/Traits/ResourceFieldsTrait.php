@@ -272,6 +272,8 @@ trait ResourceFieldsTrait
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
                 'url' => $this->translator->translate('Url'), // @translate,
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
+                // Modules.
+                'o-folksonomy-tag' => $this->translator->translate('Tag'), // @translate
             ];
         }
 
@@ -334,6 +336,7 @@ trait ResourceFieldsTrait
             'o:ApiResource' => null,
             // Modules.
             'oa:Annotation' => \Annotate\Entity\Annotation::class,
+            'o-module-folksonomy:tag' => \Folksonomy\Entity\Tag::class,
         ];
         return $mapping[$jsonResourceType] ?? null;
     }
