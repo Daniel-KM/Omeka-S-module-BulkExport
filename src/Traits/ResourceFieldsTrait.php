@@ -273,7 +273,7 @@ trait ResourceFieldsTrait
                 'url' => $this->translator->translate('Url'), // @translate,
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
                 // Modules.
-                'o-folksonomy-tag' => $this->translator->translate('Tag'), // @translate
+                'o-module-folksonomy:tag' => $this->translator->translate('Tag'), // @translate
             ];
         }
 
