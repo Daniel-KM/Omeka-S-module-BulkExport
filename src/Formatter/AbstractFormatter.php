@@ -165,7 +165,7 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->api = $this->services->get('Omeka\ApiManager');
         $this->logger = $this->services->get('Omeka\Logger');
         $this->translator = $this->services->get('MvcTranslator');
-        $this->easyMeta = $services->get('EasyMeta');
+        $this->easyMeta = $services->get('Common\EasyMeta');
         $this->viewRenderer = $services->get('ViewRenderer');
         $this->dataTypeManager = $services->get('Omeka\DataTypeManager');
     }

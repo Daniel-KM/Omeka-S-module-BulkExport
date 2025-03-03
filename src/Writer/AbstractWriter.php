@@ -129,7 +129,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $this->api = $services->get('Omeka\ApiManager');
         $this->logger = $services->get('Omeka\Logger');
         $this->translator = $services->get('MvcTranslator');
-        $this->easyMeta = $services->get('EasyMeta');
+        $this->easyMeta = $services->get('Common\EasyMeta');
         $this->viewRenderer = $services->get('ViewRenderer');
         $this->dataTypeManager = $services->get('Omeka\DataTypeManager');
 
