@@ -336,31 +336,6 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
     $messenger->addSuccess($message);
 }
 
-if (version_compare($oldVersion, '3.4.31', '<')) {
-    $sqls = <<<'SQL'
-        UPDATE `bulk_exporter`
-        SET
-            `config` =
-                REPLACE(
-                REPLACE(
-                `config`,
-                "properties_small", "properties_max_5000"),
-                "properties_large", "properties_min_5000");
-        
-        UPDATE `bulk_export`
-        SET
-            `params` =
-                REPLACE(
-                REPLACE(
-                `params`,
-                "properties_small", "properties_max_5000"),
-                "properties_large", "properties_min_5000");
-        SQL;
-    foreach (array_filter(explode(";\n", $sqls)) as $sql) {
-        $connection->executeStatement($sql);
-    }
-}
-
 if (version_compare($oldVersion, '3.4.32', '<')) {
     /** @var \Omeka\Settings\SiteSettings $siteSettings */
     $siteSettings = $services->get('Omeka\Settings\Site');
@@ -381,6 +356,41 @@ if (version_compare($oldVersion, '3.4.32', '<')) {
     );
     $messenger->addWarning($message);
 }
+
+if (version_compare($oldVersion, '3.4.35', '<')) {
+    $sqls = <<<'SQL'
+        UPDATE `bulk_exporter`
+        SET
+            `config` =
+                REPLACE(
+                REPLACE(
+                `config`,
+                "properties_small", "properties_max_5000"),
+                "properties_large", "properties_min_5000")
+        ;
+        UPDATE `bulk_export`
+        SET
+            `params` =
+                REPLACE(
+                REPLACE(
+                `params`,
+                "properties_small", "properties_max_5000"),
+                "properties_large", "properties_min_5000");
+        SQL;
+    foreach (array_filter(explode(";\n", $sqls)) as $sql) {
+        try {
+            $connection->executeStatement($sql);
+        } catch (\Exception $e) {
+        }
+    }
+
+    $message = new PsrMessage(
+        'The option "divclass" was removed from blocks. Check your theme if you customized it.' // @translate
+    );
+    $messenger->addWarning($message);
+}
+
+// In all cases.
 
 if (!empty($failExporters)) {
     try {
