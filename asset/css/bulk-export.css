@@ -1,4 +1,4 @@
-@media screen {
+@media all {
     /* List of exporters. */
     .browse .bulk-export .exporters {
         display: block;

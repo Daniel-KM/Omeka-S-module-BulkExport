@@ -1,4 +1,4 @@
-@media screen {
+@media all {
     header nav .bulk-exports::before,
     header nav .bulk-exporters::before,
     .bulk-exports .subhead::before,
