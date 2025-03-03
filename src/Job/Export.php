@@ -293,7 +293,8 @@ class Export extends AbstractJob
          */
         $services = $this->getServiceLocator();
         $mailer = $services->get('Omeka\Mailer');
-        $urlPlugin = $services->get('ControllerPluginManager')->get('url');
+        // To avoid issue with background job, use the view helper.
+        $urlHelper = $services->get('ViewHelperManager')->get('url');
         $to = $owner->getEmail();
         $jobId = (int) $this->job->getId();
         $subject = new PsrMessage(
@@ -305,13 +306,13 @@ class Export extends AbstractJob
             [
                 'link_open_job' => sprintf(
                     '<a href="%s">',
-                    htmlspecialchars($urlPlugin->fromRoute('admin/id', ['controller' => 'job', 'id' => $jobId], ['force_canonical' => true]))
+                    htmlspecialchars($urlHelper('admin/id', ['controller' => 'job', 'id' => $jobId], ['force_canonical' => true]))
                 ),
                 'jobId' => $jobId,
                 'link_close' => '</a>',
                 'link_open_log' => sprintf(
                     '<a href="%s">',
-                    htmlspecialchars($urlPlugin->fromRoute('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $this->export->id()], ['force_canonical' => true]))
+                    htmlspecialchars($urlHelper('admin/bulk-export/id', ['controller' => 'export', 'action' => 'logs', 'id' => $this->export->id()], ['force_canonical' => true]))
                 ),
             ]
         );

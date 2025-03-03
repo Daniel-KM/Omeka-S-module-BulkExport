@@ -48,9 +48,9 @@ if (version_compare($oldVersion, '3.0.7', '<')) {
 
 if (version_compare($oldVersion, '3.0.8', '<')) {
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export`
-    ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
-SQL;
+        ALTER TABLE `bulk_export`
+            ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
+        SQL;
     $connection->executeStatement($sql);
 }
 
@@ -63,83 +63,80 @@ if (version_compare($oldVersion, '3.0.7', '>')
 
 if (version_compare($oldVersion, '3.0.8', '<')) {
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export`
-    ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
-SQL;
+        ALTER TABLE `bulk_export`
+            ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
+        SQL;
     $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.5', '<')) {
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDB4523DE5;
-SQL;
+        ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDB4523DE5;
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDBE04EA9;
-SQL;
+        ALTER TABLE `bulk_export` DROP FOREIGN KEY FK_625A30FDBE04EA9;
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export`
-CHANGE `exporter_id` `exporter_id` INT DEFAULT NULL,
-CHANGE `job_id` `job_id` INT DEFAULT NULL,
-CHANGE `comment` `comment` VARCHAR(190) DEFAULT NULL,
-CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
-CHANGE `filename` `filename` VARCHAR(255) DEFAULT NULL;
-SQL;
+        ALTER TABLE `bulk_export`
+        CHANGE `exporter_id` `exporter_id` INT DEFAULT NULL,
+        CHANGE `job_id` `job_id` INT DEFAULT NULL,
+        CHANGE `comment` `comment` VARCHAR(190) DEFAULT NULL,
+        CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)',
+        CHANGE `filename` `filename` VARCHAR(255) DEFAULT NULL;
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDB4523DE5 FOREIGN KEY (`exporter_id`) REFERENCES `bulk_exporter` (`id`) ON DELETE SET NULL;
-SQL;
+        ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDB4523DE5 FOREIGN KEY (`exporter_id`) REFERENCES `bulk_exporter` (`id`) ON DELETE SET NULL;
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDBE04EA9 FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE SET NULL;
-SQL;
+        ALTER TABLE `bulk_export` ADD CONSTRAINT FK_625A30FDBE04EA9 FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE SET NULL;
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_exporter`
-CHANGE `owner_id` `owner_id` INT DEFAULT NULL,
-CHANGE `label` `label` VARCHAR(190) DEFAULT NULL,
-CHANGE `writer_class` `writer_class` VARCHAR(190) DEFAULT NULL,
-CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
-SQL;
+        ALTER TABLE `bulk_exporter`
+        CHANGE `owner_id` `owner_id` INT DEFAULT NULL,
+        CHANGE `label` `label` VARCHAR(190) DEFAULT NULL,
+        CHANGE `writer_class` `writer_class` VARCHAR(190) DEFAULT NULL,
+        CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json_array)';
+        SQL;
     $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.12', '<')) {
     // @link https://www.doctrine-project.org/projects/doctrine-dbal/en/2.6/reference/types.html#array-types
     $sql = <<<'SQL'
-ALTER TABLE `bulk_export`
-CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
-SQL;
+        ALTER TABLE `bulk_export`
+        CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
+        SQL;
     $connection->executeStatement($sql);
     $sql = <<<'SQL'
-ALTER TABLE `bulk_exporter`
-CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
-SQL;
+        ALTER TABLE `bulk_exporter`
+        CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
+        SQL;
     $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.13.0', '<')) {
     $sqls = <<<'SQL'
-ALTER TABLE `bulk_export`
-    ADD `owner_id` INT DEFAULT NULL AFTER `exporter_id`,
-    CHANGE `exporter_id` `exporter_id` INT DEFAULT NULL,
-    CHANGE `job_id` `job_id` INT DEFAULT NULL AFTER `owner_id`,
-    CHANGE `comment` `comment` VARCHAR(190) DEFAULT NULL,
-    CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
-    CHANGE `filename` `filename` VARCHAR(255) DEFAULT NULL;
-
-ALTER TABLE `bulk_export`
-    ADD CONSTRAINT FK_625A30FD7E3C61F9 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
-
-CREATE INDEX IDX_625A30FD7E3C61F9 ON `bulk_export` (`owner_id`);
-
-ALTER TABLE `bulk_exporter`
-    CHANGE `owner_id` `owner_id` INT DEFAULT NULL AFTER `id`,
-    CHANGE `label` `label` VARCHAR(190) DEFAULT NULL,
-    CHANGE `writer_class` `writer_class` VARCHAR(190) DEFAULT NULL,
-    CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
-SQL;
+        ALTER TABLE `bulk_export`
+            ADD `owner_id` INT DEFAULT NULL AFTER `exporter_id`,
+            CHANGE `exporter_id` `exporter_id` INT DEFAULT NULL,
+            CHANGE `job_id` `job_id` INT DEFAULT NULL AFTER `owner_id`,
+            CHANGE `comment` `comment` VARCHAR(190) DEFAULT NULL,
+            CHANGE `writer_params` `writer_params` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)',
+            CHANGE `filename` `filename` VARCHAR(255) DEFAULT NULL;
+        ALTER TABLE `bulk_export`
+            ADD CONSTRAINT FK_625A30FD7E3C61F9 FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
+        CREATE INDEX IDX_625A30FD7E3C61F9 ON `bulk_export` (`owner_id`);
+        ALTER TABLE `bulk_exporter`
+            CHANGE `owner_id` `owner_id` INT DEFAULT NULL AFTER `id`,
+            CHANGE `label` `label` VARCHAR(190) DEFAULT NULL,
+            CHANGE `writer_class` `writer_class` VARCHAR(190) DEFAULT NULL,
+            CHANGE `writer_config` `writer_config` LONGTEXT DEFAULT NULL COMMENT '(DC2Type:json)';
+        SQL;
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
         $connection->executeStatement($sql);
     }
@@ -168,52 +165,46 @@ if (version_compare($oldVersion, '3.4.23', '<')) {
 
 if (version_compare($oldVersion, '3.4.27', '<')) {
     $sqls = <<<'SQL'
-UPDATE `bulk_exporter`
-SET
-    `writer_config` = '{}'
-WHERE `writer_config` IS NULL OR `writer_config` = "";
-UPDATE `bulk_export`
-SET
-    `writer_params` = '{}'
-WHERE `writer_params` IS NULL OR `writer_params` = "";
-
-ALTER TABLE `bulk_exporter`
-    CHANGE `label` `label` VARCHAR(190) NOT NULL AFTER `owner_id`,
-    CHANGE `writer_class` `writer` VARCHAR(190) NOT NULL AFTER `label`,
-    CHANGE `writer_config` `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `writer`
-;
-ALTER TABLE `bulk_export`
-    CHANGE `writer_params` `params` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `comment`,
-    CHANGE `filename` `filename` VARCHAR(760) DEFAULT NULL AFTER `params`
-;
-
-UPDATE `bulk_exporter`
-SET
-    `config` = CONCAT('{"writer":', `config`, '}')
-WHERE `config` IS NOT NULL;
-UPDATE `bulk_export`
-SET
-    `params` = CONCAT('{"writer":', `params`, '}')
-WHERE `params` IS NOT NULL;
-
-UPDATE `bulk_exporter`
-SET
-    `config` =
-        REPLACE(
-        REPLACE(
-        `config`,
-        "properties_small", "properties_max_5000"),
-        "properties_large", "properties_min_5000");
-UPDATE `bulk_export`
-SET
-    `params` =
-        REPLACE(
-        REPLACE(
-        `params`,
-        "properties_small", "properties_max_5000"),
-        "properties_large", "properties_min_5000");
-
-SQL;
+        UPDATE `bulk_exporter`
+            SET
+                `writer_config` = '{}'
+            WHERE `writer_config` IS NULL OR `writer_config` = "";
+        UPDATE `bulk_export`
+            SET
+                `writer_params` = '{}'
+            WHERE `writer_params` IS NULL OR `writer_params` = "";
+        ALTER TABLE `bulk_exporter`
+            CHANGE `label` `label` VARCHAR(190) NOT NULL AFTER `owner_id`,
+            CHANGE `writer_class` `writer` VARCHAR(190) NOT NULL AFTER `label`,
+            CHANGE `writer_config` `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `writer`;
+        ALTER TABLE `bulk_export`
+            CHANGE `writer_params` `params` LONGTEXT NOT NULL COMMENT '(DC2Type:json)' AFTER `comment`,
+            CHANGE `filename` `filename` VARCHAR(760) DEFAULT NULL AFTER `params`;
+        UPDATE `bulk_exporter`
+            SET
+                `config` = CONCAT('{"writer":', `config`, '}')
+            WHERE `config` IS NOT NULL;
+            UPDATE `bulk_export`
+            SET
+                `params` = CONCAT('{"writer":', `params`, '}')
+            WHERE `params` IS NOT NULL;
+        UPDATE `bulk_exporter`
+            SET
+                `config` =
+                    REPLACE(
+                    REPLACE(
+                    `config`,
+                    "properties_small", "properties_max_5000"),
+                    "properties_large", "properties_min_5000");
+        UPDATE `bulk_export`
+            SET
+                `params` =
+                    REPLACE(
+                    REPLACE(
+                    `params`,
+                    "properties_small", "properties_max_5000"),
+                    "properties_large", "properties_min_5000");
+        SQL;
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
         $connection->executeStatement($sql);
     }
@@ -232,106 +223,105 @@ SQL;
 if (version_compare($oldVersion, '3.4.29', '<')) {
     // TODO Fix upgrade for annotation body and target (but not yet used anyway).
     $sql = <<<'SQL'
-UPDATE `bulk_export`
-SET
-    `params` =
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-        REPLACE(
-            `params`,
-
-            '"o:item[o:id]"',
-            '"o:item/o:id"'
-        ),
-            '"o:item[dcterms:identifier]"',
-            '"o:item/dcterms:identifier"'
-        ),
-            '"o:item[dcterms:title]"',
-            '"o:item/dcterms:title"'
-        ),
-
-            '"o:item_set[o:id]"',
-            '"o:item_set/o:id"'
-        ),
-            '"o:item_set[dcterms:identifier]"',
-            '"o:item_set/dcterms:identifier"'
-        ),
-            '"o:item_set[dcterms:title]"',
-            '"o:item_set/dcterms:title"'
-        ),
-
-            '"o:media[o:id]"',
-            '"o:media/o:id"'
-        ),
-            '"o:media[file]"',
-            '"o:media/file"'
-        ),
-            '"o:media[source]"',
-            '"o:media/o:source"'
-        ),
-            '"o:media[dcterms:identifier]"',
-            '"o:media/dcterms:identifier"'
-        ),
-            '"o:media[dcterms:title]"',
-            '"o:media/dcterms:title"'
-        ),
-            '"o:media[url]"',
-            '"o:media/url"'
-        ),
-            '"o:media[media_type]"',
-            '"o:media/o:media_type"'
-        ),
-            '"o:media[size]"',
-            '"o:media/o:size"'
-        ),
-            '"o:media[original_url]"',
-            '"o:media/original_url"'
-        ),
-
-            '"o:resource[o:id]"',
-            '"o:resource/o:id"'
-        ),
-            '"o:resource[dcterms:identifier]"',
-            '"o:resource/dcterms:identifier"'
-        ),
-            '"o:resource[dcterms:title]"',
-            '"o:resource/dcterms:title"'
-        ),
-
-            '"o:owner[o:id]"',
-            '"o:owner/o:id"'
-        ),
-            '"o:owner[o:email]"',
-            '"o:owner/o:email"'
-        ),
-
-            '"oa:hasBody[',
-            '"oa:hasBody/'
-        ),
-            '"oa:hasTarget[',
-            '"oa:hasTarget/'
-        )
-    ;
-SQL;
+        UPDATE `bulk_export`
+        SET
+            `params` =
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                REPLACE(
+                    `params`,
+                    '"o:item[o:id]"',
+                    '"o:item/o:id"'
+                ),
+                    '"o:item[dcterms:identifier]"',
+                    '"o:item/dcterms:identifier"'
+                ),
+                    '"o:item[dcterms:title]"',
+                    '"o:item/dcterms:title"'
+                ),
+        
+                    '"o:item_set[o:id]"',
+                    '"o:item_set/o:id"'
+                ),
+                    '"o:item_set[dcterms:identifier]"',
+                    '"o:item_set/dcterms:identifier"'
+                ),
+                    '"o:item_set[dcterms:title]"',
+                    '"o:item_set/dcterms:title"'
+                ),
+        
+                    '"o:media[o:id]"',
+                    '"o:media/o:id"'
+                ),
+                    '"o:media[file]"',
+                    '"o:media/file"'
+                ),
+                    '"o:media[source]"',
+                    '"o:media/o:source"'
+                ),
+                    '"o:media[dcterms:identifier]"',
+                    '"o:media/dcterms:identifier"'
+                ),
+                    '"o:media[dcterms:title]"',
+                    '"o:media/dcterms:title"'
+                ),
+                    '"o:media[url]"',
+                    '"o:media/url"'
+                ),
+                    '"o:media[media_type]"',
+                    '"o:media/o:media_type"'
+                ),
+                    '"o:media[size]"',
+                    '"o:media/o:size"'
+                ),
+                    '"o:media[original_url]"',
+                    '"o:media/original_url"'
+                ),
+        
+                    '"o:resource[o:id]"',
+                    '"o:resource/o:id"'
+                ),
+                    '"o:resource[dcterms:identifier]"',
+                    '"o:resource/dcterms:identifier"'
+                ),
+                    '"o:resource[dcterms:title]"',
+                    '"o:resource/dcterms:title"'
+                ),
+        
+                    '"o:owner[o:id]"',
+                    '"o:owner/o:id"'
+                ),
+                    '"o:owner[o:email]"',
+                    '"o:owner/o:email"'
+                ),
+        
+                    '"oa:hasBody[',
+                    '"oa:hasBody/'
+                ),
+                    '"oa:hasTarget[',
+                    '"oa:hasTarget/'
+                )
+            ;
+        SQL;
     $connection->executeStatement($sql);
 
     $replace = [
@@ -348,24 +338,24 @@ SQL;
 
 if (version_compare($oldVersion, '3.4.31', '<')) {
     $sqls = <<<'SQL'
-UPDATE `bulk_exporter`
-SET
-    `config` =
-        REPLACE(
-        REPLACE(
-        `config`,
-        "properties_small", "properties_max_5000"),
-        "properties_large", "properties_min_5000");
-
-UPDATE `bulk_export`
-SET
-    `params` =
-        REPLACE(
-        REPLACE(
-        `params`,
-        "properties_small", "properties_max_5000"),
-        "properties_large", "properties_min_5000");
-SQL;
+        UPDATE `bulk_exporter`
+        SET
+            `config` =
+                REPLACE(
+                REPLACE(
+                `config`,
+                "properties_small", "properties_max_5000"),
+                "properties_large", "properties_min_5000");
+        
+        UPDATE `bulk_export`
+        SET
+            `params` =
+                REPLACE(
+                REPLACE(
+                `params`,
+                "properties_small", "properties_max_5000"),
+                "properties_large", "properties_min_5000");
+        SQL;
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
         $connection->executeStatement($sql);
     }

@@ -26,16 +26,22 @@ class BulkExport extends AbstractHelper
      * - exporters (array): the exporters to use instead of the default ones.
      * - heading (string): the title in the output.
      * - template (string): the template to use instead of the default one.
+     *
+     * @todo MVC exception may be throwed, but it is a view helper.
      */
     public function __invoke($resourcesOrIdsOrQuery = null, array $options = []): string
     {
+        /**
+         * @var \Omeka\View\Helper\Status $status
+         */
         $view = $this->getView();
         $plugins = $view->getHelperPluginManager();
         $url = $plugins->get('url');
         $api = $plugins->get('api');
+        $status = $plugins->get('status');
         $translate = $plugins->get('translate');
 
-        $isAdmin = $plugins->get('status')->isAdminRequest();
+        $isAdmin = $status->isAdminRequest();
 
         // Some options are not options, but added only to set their order.
         $options += [

@@ -18,7 +18,7 @@ use Omeka\Module\Exception\ModuleCannotInstallException;
 /**
  * Bulk Export.
  *
- * @copyright Daniel Berthereau, 2018-2024
+ * @copyright Daniel Berthereau, 2018-2025
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule
@@ -220,9 +220,9 @@ class Module extends AbstractModule
         $html .= '</p>';
 
         $html .= '<p>';
-        $html .= sprintf(
-            $t->translate('All bulk exports will be removed (folder "{folder}").'), // @translate
-            $basePath . '/bulk_export'
+        $html .= new PsrMessage(
+            'All bulk exports will be removed (folder "{folder}").', // @translate
+            ['folder' => $basePath . '/bulk_export']
         );
         $html .= '</p>';
 
