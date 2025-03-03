@@ -219,7 +219,7 @@ trait MetadataToStringTrait
                 // Values are converted by reference.
                 foreach ($vv as &$v) {
                     $dataType = $v->type();
-                    $mainType = $this->easyMeta->dataTypeName($dataType);
+                    $mainType = $this->easyMeta->dataTypeMain($dataType);
                     switch ($dataType) {
                         case 'resource':
                         case $mainType === 'resource':
@@ -261,9 +261,17 @@ trait MetadataToStringTrait
                         case 'literal':
                         // case $baseType === 'literal':
                         default:
-                            $v = $params['format_generic'] === 'html'
-                                ? $this->asHtmlWithoutEvent($v)
-                                : (string) $v;
+                            // The output for value resource should be managed separately.
+                            // Furthermore, it is not stringifiable as api.
+                            // Normally, no value resource here.
+                            $vr = $v->valueResource();
+                            if ($vr) {
+                                $v = $this->stringifyResource($vr, $params);
+                            } else {
+                                $v = $params['format_generic'] === 'html'
+                                    ? $this->asHtmlWithoutEvent($v)
+                                    : (string) $v;
+                            }
                             break;
                     }
                 }
