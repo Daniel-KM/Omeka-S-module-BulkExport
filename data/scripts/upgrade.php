@@ -26,6 +26,8 @@ $entityManager = $services->get('Omeka\EntityManager');
 
 $localConfig = include dirname(__DIR__, 2) . '/config/module.config.php';
 
+$failExporters = [];
+
 if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.61')) {
     $message = new \Omeka\Stdlib\Message(
         $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
@@ -37,8 +39,10 @@ if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActi
 if (version_compare($oldVersion, '3.0.7', '<')) {
     $directory = new \RecursiveDirectoryIterator(dirname(__DIR__) . '/exporters', \RecursiveDirectoryIterator::SKIP_DOTS);
     $iterator = new \RecursiveIteratorIterator($directory);
+    // The format has changed, so import them later.
+    $failExporters = [];
     foreach (array_keys($iterator) as $filepath) {
-        $this->installExporter($filepath);
+        $failExporters[] = $filepath;
     }
 }
 
@@ -53,13 +57,8 @@ SQL;
 if (version_compare($oldVersion, '3.0.7', '>')
     && version_compare($oldVersion, '3.0.12', '<')
 ) {
-    $filepaths = [
-        dirname(__DIR__) . '/exporters/txt.php',
-        dirname(__DIR__) . '/exporters/odt.php',
-    ];
-    foreach ($filepaths as $filepath) {
-        $this->installExporter($filepath);
-    }
+    $failExporters[] = dirname(__DIR__) . '/exporters/txt.php';
+    $failExporters[] = dirname(__DIR__) . '/exporters/odt.php';
 }
 
 if (version_compare($oldVersion, '3.0.8', '<')) {
@@ -391,4 +390,30 @@ if (version_compare($oldVersion, '3.4.32', '<')) {
         'A new option has been added to display the exporters automatically in selected pages for themes that don’t manage resource page blocks. Check your site if needed.' // @translate
     );
     $messenger->addWarning($message);
+}
+
+if (!empty($failExporters)) {
+    try {
+        $user = $services->get('Omeka\AuthenticationService')->getIdentity();
+        foreach (array_unique($failExporters) as $filepath) {
+            // Fail: "EntityManager is closed".
+            // $this->installExporter($filepath, true);
+            $data = include $filepath;
+            $sql = <<<'SQL'
+                INSERT INTO `bulk_exporter`
+                (`owner_id`, `label`, `writer`, `config`) VALUES
+                (:owner_id, :label, :writer, :config)
+                ON DUPLICATE KEY UPDATE
+                `owner_id` = :owner_id, `label` = :label, `writer` = :writer, `config` = :config
+                SQL;
+            $stmt = $connection->prepare($sql);
+            $stmt->bindValue('owner_id', $user->getId(), \PDO::PARAM_INT);
+            $stmt->bindValue('label', $data['label'], \PDO::PARAM_STR);
+            $stmt->bindValue('writer', $data['writer'], \PDO::PARAM_STR);
+            $stmt->bindValue('config', json_encode($data['config']), \PDO::PARAM_STR);
+            $stmt->executeStatement();
+        }
+    } catch (\Exception $e) {
+        // Nothing.
+    }
 }

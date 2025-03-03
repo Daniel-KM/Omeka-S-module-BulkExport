@@ -167,7 +167,7 @@ class Module extends AbstractModule
         }
     }
 
-    protected function installExporter($filepath): void
+    protected function installExporter($filepath, bool $skipFlush = false): void
     {
         // The resource "bulk_exporters" is not available during upgrade.
         require_once __DIR__ . '/src/Entity/Export.php';
@@ -186,7 +186,9 @@ class Module extends AbstractModule
             $entity->$method($value);
         }
         $entityManager->persist($entity);
-        $entityManager->flush();
+        if (!$skipFlush) {
+            $entityManager->flush();
+        }
     }
 
     protected function preUninstall(): void
