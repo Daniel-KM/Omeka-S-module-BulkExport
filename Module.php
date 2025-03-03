@@ -393,8 +393,8 @@ class Module extends AbstractModule
         $vars = $view->vars();
         $resource = $vars->offsetGet('resource');
         echo $view->bulkExport($resource, [
+            'template' => 'common/bulk-export-sidebar',
             'heading' => $view->translate('Export'), // @translate
-            'divclass' => 'meta-group',
         ]);
     }
 

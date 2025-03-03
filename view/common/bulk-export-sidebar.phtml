@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var mixed $resourcesOrIdsOrQuery The requested resource(s).
+ * @var string $resourceType "item", "item-set", "media", "annotation", or "resource".
+ * @var array $exporters
+ * @var array $urls
+ * @var array $labels
+ * @var string $heading
+ * @var bool $isMultiple
+ */
+
+// Fake or invisible ids or no exporters.
+if (!count($urls)) return;
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
+?>
+
+<div class="meta-group bulk-export">
+    <?php if ($heading): ?>
+    <h4><?= $escape($heading) ?></h4>
+    <?php endif; ?>
+    <ul class="value exporters">
+    <?php foreach ($exporters as $format => $name): ?>
+        <li><a class="exporter download-<?= str_replace('.', '-', $format) ?>" href="<?= $escapeAttr($urls[$format]) ?>" title="<?= $escapeAttr($labels[$format]) ?>" download="<?= $escapeAttr(strtok(basename($urls[$format]), '?')) ?>" target="_self"><?= $name ?></a></li>
+    <?php endforeach; ?>
+    </ul>
+</div>
