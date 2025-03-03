@@ -8,7 +8,6 @@
  * @var array $urls
  * @var array $labels
  * @var string $heading
- * @var string $divclass
  * @var bool $isMultiple
  */
 
@@ -24,7 +23,7 @@ $this->headLink()
     ->appendStylesheet($assetUrl('css/bulk-export.css', 'BulkExport'));
 ?>
 
-<div class="bulk-export <?= $divclass ?>">
+<div class="bulk-export">
     <?php if ($heading): ?>
     <h3><?= $escape($heading) ?></h3>
     <?php endif; ?>

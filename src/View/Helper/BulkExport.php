@@ -25,7 +25,6 @@ class BulkExport extends AbstractHelper
      *   "resource" cannot be used with a query.
      * - exporters (array): the exporters to use instead of the default ones.
      * - heading (string): the title in the output.
-     * - divclass (string): a class to add to the main div.
      * - template (string): the template to use instead of the default one.
      */
     public function __invoke($resourcesOrIdsOrQuery = null, array $options = []): string
@@ -47,7 +46,6 @@ class BulkExport extends AbstractHelper
             'urls' => [],
             'labels' => [],
             'heading' => '',
-            'divclass' => '',
             'isMultiple' => false,
             'template' => self::PARTIAL_NAME,
         ];
