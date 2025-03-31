@@ -34,7 +34,14 @@ class ApiController extends \Omeka\Controller\ApiController
         // and replace them after.
         $this->getEvent()->getRouteMatch()->setParam('id', '__OMK_BEX__');
 
-        $apiJsonModel = parent::getList();
+        try {
+            $apiJsonModel = parent::getList();
+        } catch (\Exception $e) {
+            return $this->returnError(
+                $e->getMessage(),
+                Response::STATUS_CODE_405
+            );
+        }
 
         // Manage special resource "api_resources".
         if (!$apiJsonModel instanceof ApiJsonModel) {
