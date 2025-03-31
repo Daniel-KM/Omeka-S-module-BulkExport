@@ -277,7 +277,12 @@ class Module extends AbstractModule
         }
 
         $sharedEventManager->attach(
-            'Selection\Controller\Site\GuestBoard',
+            'Selection\Controller\Site\Guest',
+            'view.browse.after',
+            [$this, 'handleViewBrowseAfterSelection']
+        );
+        $sharedEventManager->attach(
+            'Selection\Controller\Site\Selection',
             'view.browse.after',
             [$this, 'handleViewBrowseAfterSelection']
         );
