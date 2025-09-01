@@ -18,7 +18,7 @@ class ExporterForm extends Form
         parent::init();
 
         $this
-            ->setAttribute('id', 'form-bulk-exporter')
+            ->setAttribute('id', 'bulk-exporter-form')
             ->add([
                 'name' => 'o:label',
                 'type' => Element\Text::class,

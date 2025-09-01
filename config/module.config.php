@@ -348,7 +348,7 @@ $conf = [
     'translator' => [
         'translation_file_patterns' => [
             [
-                'type' => 'gettext',
+                'type' => \Laminas\I18n\Translator\Loader\Gettext::class,
                 'base_dir' => dirname(__DIR__) . '/language',
                 'pattern' => '%s.mo',
                 'text_domain' => null,
@@ -482,8 +482,8 @@ $conf = [
                 'properties_max_5000',
             ],
             'bulkexport_metadata_exclude' => [
-                'bibo:content',
                 'properties_min_5000',
+                'bibo:content',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',
@@ -523,6 +523,7 @@ $conf = [
             'bulkexport_metadata_exclude' => [
                 'o:owner',
                 'properties_min_500',
+                'bibo:content',
                 'extracttext:extracted_text',
             ],
             'bulkexport_template' => '',

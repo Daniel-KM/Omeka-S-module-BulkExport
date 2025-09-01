@@ -70,7 +70,7 @@ trait ResourceTypesSelectTrait
             'oa:Annotation' => 'Annotations', // @translate
         ];
 
-        if (!class_exists(\Annotate\Entity\Annotation::class)) {
+        if (!class_exists('Annotate\Module', false)) {
             unset($resourceTypes['oa:Annotation']);
         }
 

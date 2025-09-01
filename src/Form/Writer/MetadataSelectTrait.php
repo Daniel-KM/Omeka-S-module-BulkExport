@@ -16,8 +16,8 @@ trait MetadataSelectTrait
                     'element_group' => 'export',
                     'label' => 'Metadata', // @translate
                     'info' => 'If empty, all used properties will be returned.', // @translate
-                    'term_as_value' => true,
                     'prepend_value_options' => $this->prependMappingOptions(),
+                    'term_as_value' => true,
                 ],
                 'attributes' => [
                     'required' => false,
@@ -33,7 +33,6 @@ trait MetadataSelectTrait
                     'element_group' => 'export',
                     'label' => 'Metadata to exclude', // @translate
                     'info' => 'It is recommended to remove big fields from the list of properties, in particular extracted text.', // @translate
-                    'term_as_value' => true,
                     'prepend_value_options' => [
                         'metadata' => [
                             'label' => 'Resource metadata', // @translate
@@ -44,6 +43,7 @@ trait MetadataSelectTrait
                             ],
                         ],
                     ],
+                    'term_as_value' => true,
                 ],
                 'attributes' => [
                     'required' => false,
@@ -138,7 +138,7 @@ trait MetadataSelectTrait
             ],
         ];
 
-        if (!class_exists(\Annotate\Entity\Annotation::class)) {
+        if (!class_exists('Annotate\Module', false)) {
             unset($mapping['o:annotation']);
         }
 

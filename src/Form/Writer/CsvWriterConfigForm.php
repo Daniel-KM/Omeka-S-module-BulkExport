@@ -9,7 +9,7 @@ class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
     public function init(): void
     {
         $this
-            ->setAttribute('id', 'form-bulk-exporter')
+            ->setAttribute('id', 'bulk-exporter-form')
             ->add([
                 'name' => 'delimiter',
                 'type' => Element\Text::class,

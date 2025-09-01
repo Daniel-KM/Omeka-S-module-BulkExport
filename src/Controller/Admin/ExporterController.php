@@ -152,7 +152,7 @@ class ExporterController extends AbstractActionController
         /** @var \BulkExport\Writer\WriterInterface $writer */
         $writer = $exporter->writer();
         $form = $this->getForm($writer->getConfigFormClass());
-        $form->setAttribute('id', 'form-exporter-writer');
+        $form->setAttribute('id', 'exporter-writer-form');
         $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
         $form->setData($writerConfig);
 

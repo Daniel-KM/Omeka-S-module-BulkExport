@@ -12,7 +12,7 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
     public function init(): void
     {
         $this
-            ->setAttribute('id', 'form-bulk-importer')
+            ->setAttribute('id', 'bulk-importer-form')
             ->appends()
             ->addInputFilters();
     }

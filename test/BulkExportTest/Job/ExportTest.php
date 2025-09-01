@@ -327,6 +327,7 @@ SQL;
     protected function cleanApiResult(array $resource)
     {
         // Make the representation a pure array.
+        // TODO Don't use json_decode(json_encode()).
         $resource = json_decode(json_encode($resource), true);
 
         unset($resource['@context']);

@@ -27,6 +27,7 @@ class SettingsFieldset extends Fieldset
         $this
             ->setAttribute('id', 'bulk-export')
             ->setOption('element_groups', $this->elementGroups)
+
             ->add([
                 'name' => 'bulkexport_limit',
                 'type' => Element\Number::class,

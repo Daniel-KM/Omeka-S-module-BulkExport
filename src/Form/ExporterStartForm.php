@@ -11,7 +11,7 @@ class ExporterStartForm extends Form
     public function init(): void
     {
         $this
-            ->setAttribute('id', 'form-bulk-exporter')
+            ->setAttribute('id', 'bulk-exporter-form')
             ->add([
                 'name' => 'form_submit',
                 'type' => Fieldset::class,

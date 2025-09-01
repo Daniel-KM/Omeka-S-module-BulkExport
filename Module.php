@@ -2,7 +2,7 @@
 
 namespace BulkExport;
 
-if (!class_exists(\Common\TraitModule::class)) {
+if (!class_exists('Common\TraitModule', false)) {
     require_once dirname(__DIR__) . '/Common/TraitModule.php';
 }
 
@@ -34,102 +34,6 @@ class Module extends AbstractModule
     public function init(ModuleManager $moduleManager): void
     {
         require_once __DIR__ . '/vendor/autoload.php';
-    }
-
-    public function onBootstrap(MvcEvent $event): void
-    {
-        parent::onBootstrap($event);
-
-        /**
-         * @var \Omeka\Permissions\Acl $acl
-         * @see \Omeka\Service\AclFactory
-         */
-        $services = $this->getServiceLocator();
-        $acl = $services->get('Omeka\Acl');
-
-        $roles = $acl->getRoles();
-        $backendRoles = array_diff($roles, ['guest']);
-        $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
-
-        $acl
-            // Anybody can read stream output from api, local api or views.
-            ->allow(
-                null,
-                ['BulkExport\Controller\Output'],
-                ['index', 'browse', 'show']
-            )
-            ->allow(
-                null,
-                [
-                    'BulkExport\Controller\Omeka\Controller\Api',
-                    'BulkExport\Controller\Omeka\Controller\ApiLocal',
-                ]
-            )
-
-            // Admin part.
-            // Any back-end roles can export via background job.
-            // User lower than editor can only edit own exporters.
-            // Editor and admins can edit all of them.
-            // TODO Rights on exports and deletion.
-            ->allow(
-                $backendRoles,
-                ['BulkExport\Controller\Admin\BulkExport']
-            )
-            ->allow(
-                $backendRoles,
-                ['BulkExport\Controller\Admin\Exporter'],
-                ['add', 'start', 'edit', 'configure', 'delete']
-            )
-            ->allow(
-                $backendRoles,
-                ['BulkExport\Controller\Admin\Export'],
-                ['browse', 'index', 'show', 'logs', 'delete-confirm', 'delete']
-            )
-            ->allow(
-                $backendRoles,
-                [
-                    \BulkExport\Api\Adapter\ExporterAdapter::class,
-                    \BulkExport\Api\Adapter\ExportAdapter::class,
-                ],
-                ['search', 'read', 'create', 'update', 'delete']
-            )
-
-            ->allow(
-                $baseRoles,
-                [
-                    \BulkExport\Entity\Exporter::class,
-                    \BulkExport\Entity\Export::class,
-                ],
-                ['create']
-            )
-            ->allow(
-                $baseRoles,
-                [
-                    \BulkExport\Entity\Exporter::class,
-                    \BulkExport\Entity\Export::class,
-                ],
-                ['read', 'update', 'delete'],
-                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
-            )
-
-            ->allow(
-                ['editor'],
-                [
-                    \BulkExport\Entity\Exporter::class,
-                    \BulkExport\Entity\Export::class,
-                ],
-                ['create', 'read', 'update']
-            )
-            ->allow(
-                ['editor'],
-                [
-                    \BulkExport\Entity\Exporter::class,
-                    \BulkExport\Entity\Export::class,
-                ],
-                ['delete'],
-                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
-            )
-        ;
     }
 
     protected function preInstall(): void
@@ -231,6 +135,102 @@ class Module extends AbstractModule
         $html .= '</label>';
 
         echo $html;
+    }
+
+    public function onBootstrap(MvcEvent $event): void
+    {
+        parent::onBootstrap($event);
+
+        /**
+         * @var \Omeka\Permissions\Acl $acl
+         * @see \Omeka\Service\AclFactory
+         */
+        $services = $this->getServiceLocator();
+        $acl = $services->get('Omeka\Acl');
+
+        $roles = $acl->getRoles();
+        $backendRoles = array_diff($roles, ['guest']);
+        $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
+
+        $acl
+            // Anybody can read stream output from api, local api or views.
+            ->allow(
+                null,
+                ['BulkExport\Controller\Output'],
+                ['index', 'browse', 'show']
+            )
+            ->allow(
+                null,
+                [
+                    'BulkExport\Controller\Omeka\Controller\Api',
+                    'BulkExport\Controller\Omeka\Controller\ApiLocal',
+                ]
+            )
+
+            // Admin part.
+            // Any back-end roles can export via background job.
+            // User lower than editor can only edit own exporters.
+            // Editor and admins can edit all of them.
+            // TODO Rights on exports and deletion.
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\BulkExport']
+            )
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\Exporter'],
+                ['add', 'start', 'edit', 'configure', 'delete']
+            )
+            ->allow(
+                $backendRoles,
+                ['BulkExport\Controller\Admin\Export'],
+                ['browse', 'index', 'show', 'logs', 'delete-confirm', 'delete']
+            )
+            ->allow(
+                $backendRoles,
+                [
+                    \BulkExport\Api\Adapter\ExporterAdapter::class,
+                    \BulkExport\Api\Adapter\ExportAdapter::class,
+                ],
+                ['search', 'read', 'create', 'update', 'delete']
+            )
+
+            ->allow(
+                $baseRoles,
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['create']
+            )
+            ->allow(
+                $baseRoles,
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['read', 'update', 'delete'],
+                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
+            )
+
+            ->allow(
+                ['editor'],
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['create', 'read', 'update']
+            )
+            ->allow(
+                ['editor'],
+                [
+                    \BulkExport\Entity\Exporter::class,
+                    \BulkExport\Entity\Export::class,
+                ],
+                ['delete'],
+                new \Omeka\Permissions\Assertion\OwnsEntityAssertion
+            )
+        ;
     }
 
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void

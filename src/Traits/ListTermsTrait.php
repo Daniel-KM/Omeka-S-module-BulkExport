@@ -64,7 +64,7 @@ trait ListTermsTrait
                 ->innerJoin('value', 'resource', 'resource', 'resource.id = value.resource_id')
                 ->andWhere($expr->in('resource.resource_type', ':entity_classes'))
             ;
-            $bind['entity_classes'] = array_unique($options['entity_classes']);
+            $bind['entity_classes'] = array_values(array_unique($options['entity_classes']));
             $types['entity_classes'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
         }
 
