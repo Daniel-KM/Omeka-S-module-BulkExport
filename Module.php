@@ -40,6 +40,7 @@ class Module extends AbstractModule
     {
         $services = $this->getServiceLocator();
         $translate = $services->get('ControllerPluginManager')->get('translate');
+        $translator = $services->get('MvcTranslator');
 
         if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.72')) {
             $message = new \Omeka\Stdlib\Message(
@@ -49,9 +50,15 @@ class Module extends AbstractModule
             throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
         }
 
+        if (!$this->checkModuleActiveVersion('Log', '3.4.32')) {
+            $message = new \Common\Stdlib\PsrMessage(
+                'The module {module} should be upgraded to version {version} or later.', // @translate
+                ['module' => 'Log', 'version' => '3.4.32']
+            );
+            throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message->setTranslator($translator));
+        }
         $config = $services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $translator = $services->get('MvcTranslator');
 
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
             $message = new PsrMessage(

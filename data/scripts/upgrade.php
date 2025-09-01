@@ -18,8 +18,10 @@ use Common\Stdlib\PsrMessage;
  */
 $plugins = $services->get('ControllerPluginManager');
 $api = $plugins->get('api');
+$config = $services->get('Config');
 $settings = $services->get('Omeka\Settings');
 $translate = $plugins->get('translate');
+$translator = $services->get('MvcTranslator');
 $connection = $services->get('Omeka\Connection');
 $messenger = $plugins->get('messenger');
 $entityManager = $services->get('Omeka\EntityManager');
@@ -34,6 +36,14 @@ if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActi
         'Common', '3.4.72'
     );
     throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+}
+
+if (!$this->checkModuleActiveVersion('Log', '3.4.32')) {
+    $message = new PsrMessage(
+        'The module {module} should be upgraded to version {version} or later.', // @translate
+        ['module' => 'Log', 'version' => '3.4.32']
+    );
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message->setTranslator($translator));
 }
 
 if (version_compare($oldVersion, '3.0.7', '<')) {
