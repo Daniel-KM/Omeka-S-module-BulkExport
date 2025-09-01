@@ -2,10 +2,10 @@
 
 namespace BulkExport\Controller\Admin;
 
+use Common\Stdlib\PsrMessage;
 use Laminas\Log\Logger;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
-use Common\Stdlib\PsrMessage;
 
 class ExportController extends AbstractActionController
 {
@@ -99,7 +99,11 @@ class ExportController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
 
         /** @var \BulkExport\Api\Representation\ExportRepresentation $export */
-        $export = $this->api()->searchOne('bulk_exports', ['id' => $id])->getContent();
+        try {
+            $export = $this->api()->read('bulk_exports', ['id' => $id])->getContent();
+        } catch (\Exception $e) {
+            $export = null;
+        }
         if (!$export) {
             $this->messenger()->addWarning(new PsrMessage(
                 'The export process #{export} does not exists.', // @translate
@@ -125,7 +129,7 @@ class ExportController extends AbstractActionController
     public function logsAction()
     {
         $id = $this->params()->fromRoute('id');
-        $export = $this->api()->read('bulk_exports', $id)->getContent();
+        $export = $this->api()->read('bulk_exports', ['id' => $id])->getContent();
 
         $this->setBrowseDefaults('created');
 
@@ -135,9 +139,6 @@ class ExportController extends AbstractActionController
         $query = $this->params()->fromQuery();
         $query['reference'] = 'bulk/export/' . $id;
         $query['severity'] = '<=' . $severity;
-
-        $response = $this->api()->read('bulk_exports', $id);
-        $this->paginator($response->getTotalResults(), $page);
 
         $response = $this->api()->search('logs', $query);
         $this->paginator($response->getTotalResults(), $page);

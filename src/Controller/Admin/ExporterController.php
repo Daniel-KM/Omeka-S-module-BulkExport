@@ -9,12 +9,12 @@ use BulkExport\Form\ExporterStartForm;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Job\Export as JobExport;
+use Common\Stdlib\PsrMessage;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
-use Common\Stdlib\PsrMessage;
 
 class ExporterController extends AbstractActionController
 {
@@ -27,7 +27,11 @@ class ExporterController extends AbstractActionController
     {
         $id = (int) $this->params()->fromRoute('id');
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
-        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        try {
+            $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
+        } catch (\Exception $e) {
+            $exporter = null;
+        }
 
         if ($id && !$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
@@ -84,7 +88,11 @@ class ExporterController extends AbstractActionController
     {
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         $id = (int) $this->params()->fromRoute('id');
-        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        try {
+            $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
+        } catch (\Exception $e) {
+            $exporter = null;
+        }
 
         if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
@@ -129,7 +137,11 @@ class ExporterController extends AbstractActionController
     {
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         $id = (int) $this->params()->fromRoute('id');
-        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        try {
+            $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
+        } catch (\Exception $e) {
+            $exporter = null;
+        }
 
         if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
@@ -199,7 +211,12 @@ class ExporterController extends AbstractActionController
         $id = (int) $this->params()->fromRoute('id');
 
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
-        $exporter = ($id) ? $this->api()->searchOne('bulk_exporters', ['id' => $id])->getContent() : null;
+        try {
+            $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
+        } catch (\Exception $e) {
+            $exporter = null;
+        }
+
         if (!$exporter) {
             $message = new PsrMessage('Exporter #{exporter_id} does not exist', ['exporter_id' => $id]); // @translate
             $this->messenger()->addError($message);
