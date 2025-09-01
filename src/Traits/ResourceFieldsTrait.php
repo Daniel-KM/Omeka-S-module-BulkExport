@@ -66,7 +66,7 @@ trait ResourceFieldsTrait
         $listFieldNames = $this->cleanListFieldNames($listFieldNames);
         $listFieldsToExclude = $this->cleanListFieldNames($listFieldsToExclude);
 
-        $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
+        $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types'] ?? []);
         $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
         $this->options['resource_types'] = $this->options['resource_types'] ?: [];
 
