@@ -62,7 +62,7 @@ class ApiController extends \Omeka\Controller\ApiController
         $outputHeaders = $response->getHeaders();
         $link = $headers->get('Link');
         if ($link) {
-            $outputHeaders->addHeaderLine(str_replace('/__OMK_BEX__', '', $link->toString()));
+            $outputHeaders->addHeaderLine(strtr($link->toString(), ['/__OMK_BEX__' => '']));
         }
         $total = $headers->get('Omeka-S-Total-Results');
         if ($total) {

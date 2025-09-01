@@ -277,7 +277,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $label = $this->getParam('exporter_label') ?? '';
         $label = $this->slugify($label);
         $label = preg_replace('/_+/', '_', $label);
-        $exporter = str_replace(['bulkexport', 'writer', '\\'], '', strtolower(get_class($this)));
+        $exporter = strtr(strtolower(get_class($this)), ['bulkexport' => '', 'writer' => '', '\\' => '']);
         $exportId = $this->getExport() ? $this->getExport()->id() : '0';
         $date = (new \DateTime())->format('Ymd');
         $time = (new \DateTime())->format('His');
@@ -296,7 +296,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             '{time}' => $time,
             '{user_id}' => $userId,
             '{username}' => $userName,
-            '{random}' => substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(48))), 0, 6),
+            '{random}' => substr(strtr(base64_encode(random_bytes(128)), ['+' => '', '/' => '', '=' => '']), 0, 6),
             // Deprecated.
             '{exportid}' => $exportId,
             '{userid}' => $userId,
@@ -311,7 +311,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
         $formatDirPath = $this->getParam('dirpath');
         $hasFormatDirPath = !empty($formatDirPath);
         if ($hasFormatDirPath) {
-            $dir = str_replace(array_keys($placeholders), array_values($placeholders), $formatDirPath);
+            $dir = strtr($formatDirPath, $placeholders);
             $dir = trim(rtrim($dir, '/\\ '));
             if (mb_substr($dir, 0, 1) !== '/') {
                 $dir = OMEKA_PATH . '/' . $dir;
@@ -333,7 +333,7 @@ abstract class AbstractWriter implements WriterInterface, Configurable, Parametr
             ?: ($label ? '{label}-{date}-{time}' : '{exporter}-{date}-{time}');
         $extension = $this->getExtension();
 
-        $base = str_replace(array_keys($placeholders), array_values($placeholders), $formatFilename);
+        $base = strtr($formatFilename, $placeholders);
         if (!$base) {
             $base = $this->stranslator->translate('no-name'); // @translate
         }

@@ -328,7 +328,7 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
         '`bulk_export`' => '`bulk_exporter`',
         '`params`' => '`config`',
     ];
-    $connection->executeStatement(str_replace(array_keys($replace), array_values($replace), $sql));
+    $connection->executeStatement(strtr($sql, $replace));
 
     $message = new PsrMessage(
         'The config of exporters has been upgraded to a new format. You may check them if you use a complex config.' // @translate

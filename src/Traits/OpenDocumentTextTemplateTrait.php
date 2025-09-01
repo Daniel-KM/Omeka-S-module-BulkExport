@@ -17,7 +17,7 @@ trait OpenDocumentTextTemplateTrait
         $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
         $user = $user ? $user->getName() : $this->translator->translate('Anonymous'); // @translate
         $languageCode = $this->translator->getDelegatedTranslator()->getLocale();
-        $languageCode = str_replace('_', '-', $languageCode);
+        $languageCode = strtr($languageCode, '_', '-');
 
         $this->openDocument = new PhpWord\PhpWord();
         $this->openDocument
@@ -95,7 +95,7 @@ trait OpenDocumentTextTemplateTrait
                         '<' => '&lt;',
                         '>' => '&gt;',
                     ];
-                    $fieldValue = str_replace(array_keys($replace), array_values($replace), $fieldValue);
+                    $fieldValue = strtr($fieldValue, $replace);
                 }
                 $fieldValue = strip_tags((string) $fieldValue);
                 if (mb_strlen($fieldValue) < 1000) {

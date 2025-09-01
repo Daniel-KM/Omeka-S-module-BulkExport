@@ -31,4 +31,4 @@ if ($writer && ($writer instanceof ConfigurableExport)) {
 }
 ?>
 
-<?= str_replace(array_keys($replace), array_values($replace), $this->sectionNav($nav)) ?>
+<?= strtr($this->sectionNav($nav), $replace) ?>
