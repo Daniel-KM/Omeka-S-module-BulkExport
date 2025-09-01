@@ -56,17 +56,17 @@ class BulkExport extends AbstractHelper
             'template' => self::PARTIAL_NAME,
         ];
 
-        if (!$isAdmin && is_null($options['site'])) {
+        if (!$isAdmin && $options['site'] === null) {
             $options['site'] = $this->currentSite();
         }
 
-        if (is_null($options['exporters'])) {
+        if ($options['exporters'] === null) {
             $options['exporters'] = $plugins->get('bulkExporters')();
         }
 
         /** @see \BulkExport\Controller\OutputController::output() */
         // Default is query.
-        $isQuery = is_null($resourcesOrIdsOrQuery);
+        $isQuery = $resourcesOrIdsOrQuery === null;
         if (!$isQuery && is_array($resourcesOrIdsOrQuery)) {
             // Check all keys: this is a list of ids if all keys are numeric and
             // this is a query if at least one key is not numeric.
@@ -121,7 +121,7 @@ class BulkExport extends AbstractHelper
         if ($isQuery) {
             $params = $plugins->get('params');
             // The query is checked in the controller, not here.
-            $query = is_null($resourcesOrIdsOrQuery)
+            $query = $resourcesOrIdsOrQuery === null
                 ? $params->fromQuery()
                 : $resourcesOrIdsOrQuery;
 

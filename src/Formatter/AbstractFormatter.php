@@ -208,7 +208,7 @@ abstract class AbstractFormatter implements FormatterInterface
             ));
         }
 
-        if (is_null($content)) {
+        if ($content === null) {
             $content = (string) file_get_contents($this->output);
         }
 

@@ -242,7 +242,7 @@ trait ResourceFieldsTrait
         static $mapping;
 
         // Avoid to translate mapping each time.
-        if (is_null($mapping)) {
+        if ($mapping === null) {
             $mapping = [
                 'o:id' => $this->translator->translate('id'), // @translate,
                 'o:resource_template' => $this->translator->translate('Resource template'), // @translate

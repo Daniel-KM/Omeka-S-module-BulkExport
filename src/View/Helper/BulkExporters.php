@@ -35,7 +35,7 @@ class BulkExporters extends AbstractHelper
         static $full;
 
         if ($all) {
-            if (is_null($full)) {
+            if ($full === null) {
                 $full = [];
                 $listFormatters = array_keys($this->formatters);
                 foreach ($listFormatters as $formatter) {
@@ -45,7 +45,7 @@ class BulkExporters extends AbstractHelper
             return $full;
         }
 
-        if (is_null($availables)) {
+        if ($availables === null) {
             $availables = [];
             $plugins = $this->getView()->getHelperPluginManager();
             $status = $plugins->get('status');
