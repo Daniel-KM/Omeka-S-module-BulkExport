@@ -8,11 +8,22 @@ $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $i18n = $plugins->get('i18n');
 $escape = $plugins->get('escapeHtml');
+$jobState = $plugins->get('jobState');
+$assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
 
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/job.css', 'Log'))
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$this->headScript()
+    ->appendFile($assetUrl('js/job.js', 'Log'), 'text/javascript', ['defer' => 'defer']);
+
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exports show');
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$job = $export->job();
+$state = $jobState($job);
 
 $exporter = $export->exporter();
 ?>
@@ -21,6 +32,9 @@ $exporter = $export->exporter();
 
 <div id="page-actions">
     <?php if ($export->isInProgress()): ?>
+    <?php if ($state): ?>
+    <?= $jobState($job, ['output' => 'html', 'inline' => true]) ?>
+    <?php endif; ?>
     <?= $hyperlink($translate('Attempt to stop job'), $url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'stop', 'id' => $export->id()], true), ['class' => 'button']) ?>
     <?php endif; ?>
 </div>
@@ -36,6 +50,12 @@ $exporter = $export->exporter();
         <li><?= sprintf($translate('Owner: %s'), $export->owner() ? $hyperlink($export->owner()->name(), $export->owner()->adminUrl()) : $translate('[Unknown]')) ?></li>
         <li><?= sprintf($translate('Comment: %s'), $export->comment()) ?></li>
         <li><?= sprintf($translate('Status: %s'), $export->statusLabel()) ?></li>
+        <?php if ($state): ?>
+        <li>
+            <span><?= $translate('System state:') ?></span>
+            <?= $jobState($job, ['output' => 'html', 'include_state_label' => true, 'inline' => true]) ?>
+        </li>
+        <?php endif; ?>
         <?php if ($v = $export->started()): ?>
         <li><?= sprintf($translate('Started: %s'), $i18n->dateFormat($v, 'medium', 'medium')) ?></li>
         <?php endif; ?>

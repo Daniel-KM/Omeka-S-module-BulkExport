@@ -8,8 +8,14 @@ $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $i18n = $plugins->get('i18n');
 $escape = $plugins->get('escapeHtml');
+$jobState = $plugins->get('jobState');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
+
+$this->headLink()
+    ->appendStylesheet($this->assetUrl('css/job.css', 'Log'));
+$this->headScript()
+    ->appendFile($this->assetUrl('js/job.js', 'Log'), 'text/javascript', ['defer' => 'defer']);
 ?>
 
 <table class="tablesaw" data-tablesaw-mode="stack">
@@ -29,12 +35,14 @@ $hyperlink = $plugins->get('hyperlink');
             $fileUrl = $filename && $export->isCompleted() ? $export->fileUrl() : '';
             $exporter = $export->exporter();
             $userIsAllowedDelete = $exporter->userIsAllowed('delete');
+            $job = $export->job();
+            $stateHtml = $jobState($job, ['output' => 'html']);
             ?>
         <tr>
             <td>
                 <?php $comment = $export->comment() ?>
                 <?php if ($comment): ?>
-                <?= $comment ?>
+                <?= $escape($comment) ?>
                 <span class="bulk-label-sub"><?= $exporter ? $escape($exporter->label()) : '' ?></span>
                 <?php else: ?>
                 <?= $exporter ? $escape($exporter->label()) : $translate('[Unknown]') ?>
@@ -74,7 +82,17 @@ $hyperlink = $plugins->get('hyperlink');
                 <?php endif; ?>
                 </ul>
             </td>
-            <td><?= $fileUrl ? $hyperlink($status, $fileUrl) : $status ?></td>
+            <td>
+                <?php if ($fileUrl): ?>
+                <?= $hyperlink($status, $fileUrl) ?>
+                <?php else: ?>
+                    <?php if ($stateHtml): ?>
+                    <?= $jobState($job, ['output' => 'html', 'include_job_status' => true]) ?>
+                    <?php else: ?>
+                    <span><?= $status ?></span>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
             <td class="process">
                 <?php if (!$export->started()): ?>
                 <?php // Nothing. ?>
