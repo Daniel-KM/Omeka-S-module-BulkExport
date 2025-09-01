@@ -188,7 +188,6 @@ by [Biblibre].
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
 [OSI]: http://opensource.org
-[MIT]: https://github.com/sandywalker/webui-popover/blob/master/LICENSE.txt
 [Omeka Classic]: https://omeka.org/classic
 [Export plugin]: https://github.com/BibLibre/Omeka-plugin-Import
 [BibLibre]: https://github.com/BibLibre
