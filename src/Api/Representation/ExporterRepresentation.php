@@ -33,7 +33,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         $owner = $this->owner();
         return [
             'o:id' => $this->id(),
-            'o:owner' => $owner ? $owner->getReference() : null,
+            'o:owner' => $owner ? $owner->getReference()->jsonSerialize() : null,
             'o:label' => $this->label(),
             'o-bulk:writer' => $this->writerClass(),
             'o:config' => $this->config(),

@@ -23,15 +23,17 @@ class ExportRepresentation extends AbstractEntityRepresentation
         $exporter = $this->exporter();
         $owner = $this->owner();
         $job = $this->job();
+        $started = $this->started();
+        $ended = $this->ended();
         return [
             'o:id' => $this->id(),
-            'o-bulk:exporter' => $exporter ? $exporter->getReference() : null,
-            'o:owner' => $owner ? $owner->getReference() : null,
-            'o:job' => $job ? $job->getReference() : null,
+            'o-bulk:exporter' => $exporter ? $exporter->getReference()->jsonSerialize() : null,
+            'o:owner' => $owner ? $owner->getReference()->jsonSerialize() : null,
+            'o:job' => $job ? $job->getReference()->jsonSerialize() : null,
             'o-bulk:comment' => $this->comment(),
             'o:status' => $this->status(),
-            'o:started' => $this->started(),
-            'o:ended' => $this->ended(),
+            'o:started' => $started ? $this->getDateTime($started)->jsonSerialize() : null,
+            'o:ended' => $ended ? $this->getDateTime($ended)->jsonSerialize() : null,
             'o:filename' => $this->filename(),
             'o:params' => $this->params(),
         ];
