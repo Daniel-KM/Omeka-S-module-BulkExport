@@ -27,7 +27,8 @@ trait MetadataToStringTrait
      *   (with the property set below), "identifier_id", or id. Default is
      *   "url_title".
      * - format_resource_property: if resource hasn't this term, the id is used.
-     * - format_uri: May be "uri", "html" or "uri_label".
+     * - format_uri: May be "uri_label" (default), "uri", "html", "label_uri",
+     *   "label".
      * @return array Always an array, even for single metadata. The caller knows
      * what to do with it.
      */
@@ -292,6 +293,13 @@ trait MetadataToStringTrait
                 break;
             case 'html':
                 $v = $this->asHtmlWithoutEvent($value);
+                break;
+            case 'label':
+                $v = trim($value->value() ?? '');
+                break;
+            case 'label_uri':
+                $v = trim($value->value() ?? '');
+                $v = strlen($v) ? $v : $value->uri();
                 break;
             case 'uri_label':
             default:

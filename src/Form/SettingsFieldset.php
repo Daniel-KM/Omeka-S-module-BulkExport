@@ -156,6 +156,8 @@ class SettingsFieldset extends Fieldset
                     'value_options' => [
                         'uri_label' => 'Uri and label separated by a space', // @translate
                         'uri' => 'Uri only', // @translate
+                        'label_uri' => 'Label if any, else uri', // @translate
+                        'label' => 'Label only', // @translate
                         'html' => 'Html', // @translate
                     ],
                 ],
