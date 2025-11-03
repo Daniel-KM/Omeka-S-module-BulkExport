@@ -168,13 +168,69 @@ trait MetadataToStringTrait
             // Asset (thumbnail) for resource.
             case 'o:asset/o:id':
                 $thumbnail = $resource->thumbnail();
-                return $thumbnail ? [$thumbnail->id()] : [];
+                return $thumbnail
+                    ? [$thumbnail->id()]
+                    : [];
             case 'o:asset/o:asset_url':
                 $thumbnail = $resource->thumbnail();
-                return $thumbnail ? [$thumbnail->assetUrl()] : [];
+                return $thumbnail
+                    ? [$thumbnail->assetUrl()]
+                    : [];
             case 'o:asset/o:filename':
                 $thumbnail = $resource->thumbnail();
-                return $thumbnail ? [$thumbnail->filename()] : [];
+                return $thumbnail
+                    ? [$thumbnail->filename()]
+                    : [];
+
+            // Asset (thumbnail) or primary media for resource.
+            case '(o:asset/o:id | o:primary_media/o:id)[1]':
+                $first = $resource->thumbnail() ?? $resource->primaryMedia();
+                return $first
+                    ? [$first->id()]
+                    : [];
+            case '(o:asset/o:asset_url | o:primary_media/o:original_url)[1]';
+            case '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/large)[1]':
+            case '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/medium)[1]':
+            case '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/square)[1]':
+                $asset = $resource->thumbnail();
+                if ($asset) {
+                    return [$asset->assetUrl()];
+                }
+                $media = $resource->primaryMedia();
+                if (!$media) {
+                    return [];
+                }
+                $mediaUrlType = strtok(substr($metadata, strrpos($metadata, '/') + 1), ')');
+                if ($mediaUrlType === 'o:original_url') {
+                    return $media->hasOriginal()
+                        ? [$media->originalUrl()]
+                        : [];
+                }
+                return $media->hasThumbnails()
+                    ? [$media->thumbnaiUrl($mediaUrlType)]
+                    : [];
+            case '(o:asset/o:filename | o:primary_media/o:filename)[1]':
+            case '(o:asset/o:filename | o:primary_media/o:filename/large)[1]':
+            case '(o:asset/o:filename | o:primary_media/o:filename/medium)[1]';
+            case '(o:asset/o:filename | o:primary_media/o:filename/square)[1]':
+                $asset = $resource->thumbnail();
+                if ($asset) {
+                    return [$asset->filename()];
+                }
+                $media = $resource->primaryMedia();
+                if (!$media) {
+                    return [];
+                }
+                $mediaUrlType = strtok(substr($metadata, strrpos($metadata, '/') + 1), ')');
+                $filename = $media->filename();
+                if ($mediaUrlType === 'o:filename') {
+                    return $media->hasOriginal()
+                        ? [$filename]
+                        : [];
+                }
+                return $media->hasThumbnails()
+                    ? [substr($filename, 0, strrpos($filename, '.')) . '.jpg']
+                    : [];
 
             // Item for media.
             case 'o:item/o:id':

@@ -279,7 +279,16 @@ trait ResourceFieldsTrait
                 'o:asset' => $this->translator->translate('Asset'), // @translate
                 'o:asset/o:id' => $this->translator->translate('Asset id'), // @translate
                 'o:asset/o:asset_url' => $this->translator->translate('Asset url'), // @translate
-                'o:asset/o:filename' => $this->translator->translate('Asset filename'), // @translate
+                'o:asset/o:filename' => $this->translator->translate('Asset file name'), // @translate
+                '(o:asset/o:id | o:primary_media/o:id)[1]' => $this->translator->translate('Asset id if any, else primary media id'), // @translate
+                '(o:asset/o:asset_url | o:primary_media/o:original_url)[1]' => $this->translator->translate('Asset url if any, else primary media original url'), // @translate
+                '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/large)[1]' => $this->translator->translate('Asset url if any, else primary media large url'), // @translate
+                '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/medium)[1]' => $this->translator->translate('Asset url if any, else primary media medium url'), // @translate
+                '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/square)[1]' => $this->translator->translate('Asset url if any, else primary media square url'), // @translate
+                '(o:asset/o:filename | o:primary_media/o:filename)[1]' => $this->translator->translate('Asset file name if any, else primary media original file name'), // @translate
+                '(o:asset/o:filename | o:primary_media/o:filename/large)[1]' => $this->translator->translate('Asset file name if any, else primary media large file name'), // @translate
+                '(o:asset/o:filename | o:primary_media/o:filename/medium)[1]' => $this->translator->translate('Asset file name if any, else primary media medium file name'), // @translate
+                '(o:asset/o:filename | o:primary_media/o:filename/square)[1]' => $this->translator->translate('Asset file name if any, else primary media square file name'), // @translate
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
                 'url' => $this->translator->translate('Url'), // @translate,
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
@@ -395,6 +404,15 @@ trait ResourceFieldsTrait
             'o:asset/o:id',
             'o:asset/o:asset_url',
             'o:asset/o:filename',
+            '(o:asset/o:id | o:primary_media/o:id)[1]',
+            '(o:asset/o:asset_url | o:primary_media/o:original_url)[1]',
+            '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/large)[1]',
+            '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/medium)[1]',
+            '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/square)[1]',
+            '(o:asset/o:filename | o:primary_media/o:filename)[1]',
+            '(o:asset/o:filename | o:primary_media/o:filename/large)[1]',
+            '(o:asset/o:filename | o:primary_media/o:filename/medium)[1]',
+            '(o:asset/o:filename | o:primary_media/o:filename/square)[1]',
             'url',
             'resource_type',
             // Module History Log.

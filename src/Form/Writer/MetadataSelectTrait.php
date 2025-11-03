@@ -124,7 +124,16 @@ trait MetadataSelectTrait
                 'options' => [
                     'o:asset/o:id' => 'Asset id', // @translate
                     'o:asset/o:asset_url' => 'Asset url', // @translate
-                    'o:asset/o:filename' => 'Asset filename', // @translate
+                    'o:asset/o:filename' => 'Asset file name', // @translate
+                    '(o:asset/o:id | o:primary_media/o:id)[1]' => 'Asset id if any, else primary media id', // @translate
+                    '(o:asset/o:asset_url | o:primary_media/o:original_url)[1]' => 'Asset url if any, else primary media original url', // @translate
+                    '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/large)[1]' => 'Asset url if any, else primary media large url', // @translate
+                    '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/medium)[1]' => 'Asset url if any, else primary media medium url', // @translate
+                    '(o:asset/o:asset_url | o:primary_media/o:thumbnail_urls/square)[1]' => 'Asset url if any, else primary media square url', // @translate
+                    '(o:asset/o:filename | o:primary_media/o:filename)[1]' => 'Asset file name if any, else primary media original file name', // @translate
+                    '(o:asset/o:filename | o:primary_media/o:filename/large)[1]' => 'Asset file name if any, else primary media large file name', // @translate
+                    '(o:asset/o:filename | o:primary_media/o:filename/medium)[1]' => 'Asset file name if any, else primary media medium file name', // @translate
+                    '(o:asset/o:filename | o:primary_media/o:filename/square)[1]' => 'Asset file name if any, else primary media square file name', // @translate
                 ],
             ],
             'o:item' => [
