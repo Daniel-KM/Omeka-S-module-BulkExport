@@ -21,6 +21,7 @@ $conf = [
         'invokables' => [
             'bulk_exporters' => Api\Adapter\ExporterAdapter::class,
             'bulk_exports' => Api\Adapter\ExportAdapter::class,
+            'bulk_shapers' => Api\Adapter\ShaperAdapter::class,
         ],
     ],
     'view_manager' => [
@@ -31,6 +32,7 @@ $conf = [
             Controller\Admin\BulkExportController::class => 'bulk/admin/bulk-export',
             Controller\Admin\ExportController::class => 'bulk/admin/export',
             Controller\Admin\ExporterController::class => 'bulk/admin/exporter',
+            Controller\Admin\ShaperController::class => 'bulk/admin/shaper',
         ],
     ],
     'view_helpers' => [
@@ -45,6 +47,7 @@ $conf = [
         'invokables' => [
             Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
             Form\ExporterStartForm::class => Form\ExporterStartForm::class,
+            Form\ShaperDeleteForm::class => Form\ShaperDeleteForm::class,
             Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,
             Form\Writer\SpreadsheetWriterConfigForm::class => Form\Writer\SpreadsheetWriterConfigForm::class,
         ],
@@ -70,6 +73,7 @@ $conf = [
             'BulkExport\Controller\Admin\BulkExport' => Controller\Admin\BulkExportController::class,
             'BulkExport\Controller\Admin\Export' => Controller\Admin\ExportController::class,
             'BulkExport\Controller\Admin\Exporter' => Controller\Admin\ExporterController::class,
+            'BulkExport\Controller\Admin\Shaper' => Controller\Admin\ShaperController::class,
             'BulkExport\Controller\Output' => Controller\OutputController::class,
         ],
         'factories' => [

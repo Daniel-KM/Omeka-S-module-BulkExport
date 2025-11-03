@@ -1,10 +1,13 @@
 @media all {
     header nav .bulk-exports::before,
     header nav .bulk-exporters::before,
+    header nav .bulk-shapers::before,
     .bulk-exports .subhead::before,
     .bulk-exporters .subhead::before,
+    .bulk-shapers .subhead::before,
     .bulk-exports .no-resources:before,
-    .bulk-exporters .no-resources:before {
+    .bulk-exporters .no-resources:before,
+    .bulk-shapers .no-resources:before {
         content:"";
     }
 

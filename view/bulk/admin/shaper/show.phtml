@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation $shaper
+ */
+
+$plugins = $this->getHelperPluginManager();
+$i18n = $plugins->get('i18n');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers show');
+?>
+
+<?= $this->pageTitle(sprintf($translate('Shaper #%d'), $shaper->id()), 1, $translate('Bulk export')) ?>
+
+<div id="page-actions">
+    <?php $this->trigger('view.show.page_actions', ['resource' => $shaper]); ?>
+    <?php if ($shaper->userIsAllowed('delete')): ?>
+    <a href="#" class="delete button"><?= $translate('Delete') ?></a>
+    <?php endif; ?>
+    <?php if ($shaper->userIsAllowed('update')): ?>
+    <?= $shaper->link($translate('Edit shaper'), 'edit', ['class' => 'button']) ?>
+    <?php endif; ?>
+</div>
+
+<div id="bulk-shaper">
+    <h3><?= $escape($shaper->label()) ?></h3>
+    <ul>
+        <li><?= sprintf($translate('Owner: %s'), $shaper->owner() ? $hyperlink($shaper->owner()->name(), $shaper->owner()->adminUrl()) : $translate('[Unknown]')) ?></li>
+        <li><?= sprintf($translate('Created: %s'), $i18n->dateFormat($shaper->created(), 'medium', 'medium')) ?></li>
+        <?php if ($v = $shaper->modified()): ?>
+        <li><?= sprintf($translate('Modified: %s'), $i18n->dateFormat($v, 'medium', 'medium')) ?></li>
+        <?php endif; ?>
+    </ul>
+    <h3><?= $escape($translate('Parameters')) ?></h3>
+    <div class="value">
+        <pre><?= $escape(json_encode($shaper->config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?></pre>
+    </div>
+</div>

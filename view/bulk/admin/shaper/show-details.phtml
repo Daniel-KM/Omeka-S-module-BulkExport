@@ -1,0 +1,41 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation $shaper
+ * @var \BulkExport\Api\Representation\ShaperRepresentation $resource
+ * @var string $resourceLabel
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+
+$owner = $shaper->owner();
+ ?>
+
+<div class="resource-details">
+    <h3 class="o-title"><?= $escape($shaper->label()) ?></h3>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Owner')) ?></h4>
+        <div class="value"><?= $owner ? $hyperlink($owner->name(), $owner->adminUrl()) : $translate('[no owner]') ?></div>
+    </div>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Created')) ?></h4>
+        <div class="value"><?= $shaper->created() ? $shaper->created()->format('Y-m-d H:i:s') : '' ?></div>
+    </div>
+    <?php if ($v = $shaper->modified()): ?>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Modified')) ?></h4>
+        <div class="value"><?= $v->format('Y-m-d H:i:s') ?></div>
+    </div>
+    <?php endif; ?>
+    <div class="meta-group">
+        <h4><?= $escape($translate('Parameters')) ?></h4>
+        <div class="value">
+            <pre><?= $escape(json_encode($shaper->config(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?></pre>
+        </div>
+    </div>
+
+    <?php $this->trigger('view.details', ['entity' => $resource]); ?>
+</div>

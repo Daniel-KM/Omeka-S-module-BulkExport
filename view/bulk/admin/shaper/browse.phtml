@@ -1,0 +1,142 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation[] $shapers
+ * @var \BulkExport\Api\Representation\ShaperRepresentation[] $resources
+ * @var \Omeka\Form\ConfirmForm $formDeleteSelected
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$userIsAllowed = $plugins->get('userIsAllowed');
+
+$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers browse');
+?>
+
+<?= $this->pageTitle($translate('Shapers'), 1, $translate('Bulk export')) ?>
+
+<div id="page-actions">
+    <?php if ($userIsAllowed(\BulkExport\Api\Adapter\ShaperAdapter::class, 'create')): ?>
+    <?= $hyperlink($translate('Add new shaper'), $url(null, ['action' => 'add'], true), ['class' => 'button']) ?>
+    <?php endif; ?>
+</div>
+
+<?php if ($shapers): ?>
+
+<?php $this->trigger('view.browse.before'); ?>
+
+<form method="post" id="batch-form" class="disable-unsaved-warning">
+    <?php if ($userIsAllowed(\BulkExport\Api\Adapter\ShaperAdapter::class, 'batch_delete')): ?>
+    <div class="batch-inputs">
+        <select class="batch-actions-select" aria-label="<?= $translate('Batch actions') ?>">
+            <option value="default"><?= $translate('Batch actions') ?></option>
+            <option value="delete-selected" disabled="disabled"><?= $translate('Delete selected') ?></option>
+            <?php if ($userIsAllowed(\BulkExport\Api\Adapter\ShaperAdapter::class, 'batch_delete_all')): ?>
+            <option value="delete-all"><?= $translate('Delete all') ?></option>
+            <?php endif; ?>
+        </select>
+        <div class="batch-actions">
+            <button type="button" class="default active" disabled="disabled"><?= $translate('Go') ?></button>
+            <input type="hidden" name="query" class="batch-query" value="<?= $escapeAttr(json_encode($this->params()->fromQuery())) ?>">
+            <a class="delete button sidebar-content delete-selected" data-sidebar-selector="#sidebar-delete-selected"><?= $translate('Go') ?></a>
+            <a class="delete button sidebar-content delete-all" data-sidebar-selector="#sidebar-delete-all"><?= $translate('Go') ?></a>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?= $this->partial('bulk/admin/shaper/shaper-table') ?>
+
+</form>
+
+<?php $this->trigger('view.browse.after'); ?>
+
+<div id="sidebar" class="sidebar">
+    <?= $hyperlink('', '#', [
+        'class' => 'sidebar-close o-icon-close',
+        'title' => $translate('Close'),
+    ]) ?>
+    <div class="sidebar-content"></div>
+</div>
+
+<div id="sidebar-delete-selected" class="sidebar">
+    <?php echo $this->hyperlink('', '#', [
+        'class' => 'sidebar-close o-icon-close',
+        'title' => $translate('Close'),
+    ]); ?>
+    <div class="sidebar-content">
+        <div id="sidebar-confirm">
+            <h3><?= $translate('Delete shapers') ?></h3>
+            <p><?= $translate('Are you sure you would like to delete the selected shapers?') ?></p>
+            <p class="error"><?= sprintf(
+                $translate('%1$s: this action will permanently delete %2$s shapers and cannot be undone.'),
+                sprintf('<strong>%s</strong>', $translate('Warning')),
+                '<strong><span id="delete-selected-count"></span></strong>'
+            ) ?></p>
+            <?= $this->form($formDeleteSelected) ?>
+        </div>
+    </div>
+</div>
+
+<div id="sidebar-delete-all" class="sidebar">
+    <?= $hyperlink('', '#', [
+        'class' => 'sidebar-close o-icon-close',
+        'title' => $translate('Close'),
+    ]) ?>
+    <div class="sidebar-content">
+        <div id="sidebar-confirm">
+            <h3><?= $translate('Delete shapers') ?></h3>
+            <p><?= $translate('Are you sure you would like to delete all shapers?') ?></p>
+            <p class="error"><?= sprintf(
+                $translate('%1$s: this action will permanently delete %2$s shapers and cannot be undone.'),
+                sprintf('<strong>%s</strong>', $translate('Warning')),
+                sprintf('<strong>%s</strong>', number_format($this->pagination()->getPaginator()->getTotalCount()))
+            ); ?></p>
+            <label><input type="checkbox" name="confirm-delete-all-check"> <?= $translate('Are you sure?') ?></label>
+            <span id="delete-confirm-sr-alerts" class="sr-only" aria-live="polite" aria-atomic="true" data-active-message="<?= $translate(sprintf('%s button active.', $translate('Confirm Delete'))) ?>" data-inactive-message="<?= $translate(sprintf('%s button inactive.', $translate('Confirm Delete'))) ?>"></span>
+            <?= $this->form($this->formDeleteAll) ?>
+        </div>
+    </div>
+</div>
+
+<script>
+// Complete the batch delete form after confirmation.
+$('#confirm-delete-selected, #confirm-delete-all').on('submit', function(e) {
+    var confirmForm = $(this);
+    if ('confirm-delete-all' === this.id) {
+        confirmForm.append($('.batch-query').clone());
+    } else {
+        $('#batch-form').find('input[name="resource_ids[]"]:checked').each(function() {
+            confirmForm.append($(this).clone().prop('disabled', false).attr('type', 'hidden'));
+        });
+    }
+});
+$('.delete-all').on('click', function(e) {
+    Omeka.closeSidebar($('#sidebar-delete-selected'));
+});
+$('.delete-selected').on('click', function(e) {
+    Omeka.closeSidebar($('#sidebar-delete-all'));
+    var inputs = $('input[name="resource_ids[]"]');
+    $('#delete-selected-count').text(inputs.filter(':checked').length);
+});
+$('#sidebar-delete-all').on('click', 'input[name="confirm-delete-all-check"]', function(e) {
+    var deleteConfirmSrAlerts = $('#delete-confirm-sr-alerts');
+    var activeMessage = deleteConfirmSrAlerts.data('active-message');
+    var inactiveMessage = deleteConfirmSrAlerts.data('inactive-message');
+    deleteConfirmSrAlerts.text(this.checked ? activeMessage : inactiveMessage);
+    $('#confirm-delete-all input[type="submit"]').prop('disabled', this.checked ? false : true);
+});
+</script>
+
+<?php else: ?>
+
+<div class="no-resources">
+    <p><?= $escape($translate('No shapers yet.')) ?></p>
+</div>
+
+<?php endif; ?>

@@ -13,7 +13,12 @@ class BulkExportController extends AbstractActionController
         $response = $this->api()->search('bulk_exporters', ['sort_by' => 'label', 'sort_order' => 'asc']);
         $exporters = $response->getContent();
 
+        // Exporters.
         $this->setBrowseDefaults('label', 'asc');
+        $response = $this->api()->search('bulk_shapers', ['sort_by' => 'label', 'sort_order' => 'asc']);
+        $shapers = $response->getContent();
+
+        $this->setBrowseDefaults('date', 'asc');
 
         // Exports.
         $perPage = 25;
@@ -30,6 +35,7 @@ class BulkExportController extends AbstractActionController
 
         return new ViewModel([
             'exporters' => $exporters,
+            'shapers' => $shapers,
             'exports' => $exports,
         ]);
     }

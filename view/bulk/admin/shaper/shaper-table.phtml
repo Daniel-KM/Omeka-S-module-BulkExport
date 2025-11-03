@@ -1,0 +1,68 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation[] $shapers
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$i18n = $plugins->get('i18n');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+?>
+
+<h2><?= $escape($translate('Shapers')) ?></h2>
+
+<table class="tablesaw batch-edit" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+            <th><input type="checkbox" class="select-all" aria-label="<?= $translate('Select all') ?>"><?= $translate('Label') ?></th>
+            <th><?= $escape($translate('User')) ?></th>
+            <th><?= $escape($translate('Created')) ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($shapers as $shaper):
+            $owner = $shaper->owner();
+            $userIsAllowedUpdate = $shaper->userIsAllowed('update');
+            $userIsAllowedDelete = $shaper->userIsAllowed('delete');
+            ?>
+        <tr>
+            <td>
+                <?php if ($this->userIsAllowed(\BulkExport\Api\Adapter\ShaperAdapter::class, 'batch_update') && ($userIsAllowedUpdate || $userIsAllowedDelete)): ?>
+                <input type="checkbox" name="resource_ids[]" value="<?= $shaper->id() ?>" aria-label="<?= $translate('Select shaper') ?>">
+                <?php endif; ?>
+                <?= $shaper->linkPretty(); ?>
+                <ul class="actions">
+                    <?php $this->trigger('view.browse.actions', ['resource' => $shaper]); ?>
+                    <?php if ($userIsAllowedUpdate): ?>
+                    <li><?= $shaper->link('', 'edit', [
+                        'class' => 'o-icon-edit',
+                        'title' => $translate('Edit'),
+                    ]); ?></li>
+                    <?php endif; ?>
+                    <?php if ($userIsAllowedDelete): ?>
+                    <li><?= $hyperlink('', '#', [
+                        'data-sidebar-selector' => '#sidebar',
+                        'data-sidebar-content-url' => $shaper->url('delete-confirm'),
+                        'class' => 'o-icon-delete sidebar-content',
+                        'title' => $translate('Delete'),
+                    ]); ?></li>
+                    <?php endif; ?>
+                    <li><?= $hyperlink('', '#', [
+                        'data-sidebar-selector' => '#sidebar',
+                        'data-sidebar-content-url' => $shaper->url('show-details'),
+                        'class' => 'o-icon-more sidebar-content',
+                        'title' => $translate('Details'),
+                    ]); ?></li>
+                </ul>
+            </td>
+            <td>
+				<?= $owner ? $hyperlink($owner->name(), $owner->adminUrl()) : $translate('[no owner]') ?>
+            </td>
+            <td><?= $i18n->dateFormat($shaper->created(), 'medium', 'medium') ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

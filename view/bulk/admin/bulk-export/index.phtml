@@ -2,6 +2,7 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \BulkExport\Api\Representation\ExporterRepresentation[] $exporters
+ * @var \BulkExport\Api\Representation\ShaperRepresentation[] $shapers
  * @var \BulkExport\Api\Representation\ExportRepresentation[] $exports
  */
 
@@ -23,12 +24,17 @@ $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters bulk-export
     <?php if ($this->userIsAllowed(\BulkExport\Api\Adapter\ExporterAdapter::class, 'create')): ?>
     <?= $hyperlink($translate('Add an exporter'), $url('admin/bulk-export/default', ['controller' => 'exporter', 'action' => 'add'], true), ['class' => 'button']) ?>
     <?php endif; ?>
+    <?php if ($this->userIsAllowed(\BulkExport\Api\Adapter\ShaperAdapter::class, 'create')): ?>
+    <?= $hyperlink($translate('Add a shaper'), $url('admin/bulk-export/default', ['controller' => 'shaper', 'action' => 'add'], true), ['class' => 'button']) ?>
+    <?php endif; ?>
     <?php if (!empty($exports)): ?>
     <?= $hyperlink($translate('See all exports'), $this->url('admin/bulk-export/default', ['controller' => 'export', 'action' => 'index'], true), ['class' => 'button']) ?>
     <?php endif; ?>
 </div>
 
 <?= $this->partial('bulk/admin/exporter/exporter-table', ['exporters' => $exporters]) ?>
+
+<?= $this->partial('bulk/admin/shaper/shaper-table', ['shapers' => $shapers]) ?>
 
 <?php if (!empty($exports)): ?>
     <h2><?= $escape($translate('Last exports')) // @translate?></h2>

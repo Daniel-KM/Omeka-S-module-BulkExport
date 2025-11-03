@@ -1,0 +1,47 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation $shaper
+ * @var \BulkExport\Form\ShaperForm $form
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers edit');
+
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$form->prepare();
+
+$submit = $form->get('form_submit')->get('submit');
+$submit->setAttribute('form', $form->getAttribute('id'));
+$form->get('form_submit')->remove('submit');
+?>
+
+<?= $this->pageTitle(sprintf($translate('Shaper #%d'), $shaper->id()), 1, $translate('Bulk export')) ?>
+
+<?php $this->trigger('view.edit.before'); ?>
+
+<div id="page-actions">
+    <?php $this->trigger('view.show.page_actions', ['resource' => $shaper]); ?>
+    <?php if ($shaper->userIsAllowed('delete')): ?>
+    <a href="#" class="delete button"><?= $translate('Delete') ?></a>
+    <?php endif; ?>
+    <?= $this->cancelButton() ?>
+    <?= $this->formSubmit($submit) ?>
+</div>
+
+<div id="bulk-shaper">
+	<?php $this->trigger('view.edit.form.before', array('form' => $form)); ?>
+    <?= $this->form()->openTag($form) ?>
+    <?= $this->formCollection($form) ?>
+	<?php $this->trigger('view.edit.form.after', array('form' => $form)); ?>
+    <?= $this->form()->closeTag() ?>
+</div>
+
+<?= $this->deleteConfirm($shaper, 'shaper') ?>
+
+<?php $this->trigger('view.edit.after'); ?>

@@ -1,0 +1,28 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \BulkExport\Api\Representation\ShaperRepresentation $shaper
+ * @var \BulkExport\Form\ShaperDeleteForm $form
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+
+$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+
+$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers delete');
+
+$form->prepare();
+?>
+
+<?= $this->pageTitle($translate('Shaper'), 1, $translate('Bulk export')) ?>
+
+<div id="bulk-shaper">
+    <h2><?= $escape(sprintf($translate('Delete shaper(%s)'), $shaper->label())) ?></h2>
+    <p><?= $escape($translate('Are you sure you want to delete this shaper ?')) ?></p>
+    <?= $this->form()->openTag($form) ?>
+    <?= $this->formCollection($form) ?>
+    <?= $this->form()->closeTag() ?>
+</div>
