@@ -59,6 +59,7 @@ class ShaperConfigFieldset extends Fieldset
 
             ->appendFormats()
             ->remove('format_fields')
+            ->remove('format_fields_labels')
             ->remove('language')
 
             ->add([

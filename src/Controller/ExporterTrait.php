@@ -46,6 +46,7 @@ trait ExporterTrait
         $options['metadata'] = $settings->get('bulkexport_metadata', []);
         $options['metadata_exclude'] = $settings->get('bulkexport_metadata_exclude', []);
         $options['format_fields'] = $settings->get('bulkexport_format_fields', 'name');
+        $options['format_fields_labels'] = $settings->get('bulkexport_format_fields_labels', []);
         $options['format_generic'] = $settings->get('bulkexport_format_generic', 'string');
         $options['format_resource'] = $settings->get('bulkexport_format_resource', 'url_title');
         $options['format_resource_property'] = $settings->get('bulkexport_format_resource_property', 'dcterms:identifier');

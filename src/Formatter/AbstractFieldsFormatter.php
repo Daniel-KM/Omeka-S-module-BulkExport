@@ -18,6 +18,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
 
     protected $defaultOptionsFields = [
         'format_fields' => 'name',
+        'format_fields_labels' => [],
         'format_generic' => 'raw',
         'format_resource' => 'url_title',
         'format_resource_property' => 'dcterms:identifier',

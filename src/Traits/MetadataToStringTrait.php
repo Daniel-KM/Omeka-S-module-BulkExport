@@ -20,7 +20,8 @@ trait MetadataToStringTrait
      * or a specific key used by some formatters.
      * @param array $params Params are merged with options. Managed params are:
      * - only_first: if set, only the first value will be fetched for properties.
-     * - format_fields: "name" (default) or "label".
+     * - format_fields: "name" (default) or "label" (not used here for now).
+     * - format_fields_labels: empty array (not used here for now).
      * - format_generic: "html" or raw value.
      * - format_resource: may be "url_title", "url", "title", "id", "identifier"
      *   (with the property set below), "identifier_id", or id. Default is
