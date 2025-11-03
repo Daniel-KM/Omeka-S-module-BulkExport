@@ -91,6 +91,7 @@ trait MetadataToStringTrait
                     ? $this->extractResourceIds($resource->media())
                     : [];
             case 'o:media/file':
+            case 'o:media/filename':
             case 'o:media/url':
                 $result = [];
                 if ($resource->resourceName() === 'items') {
@@ -106,6 +107,9 @@ trait MetadataToStringTrait
                     if ($originalUrl) {
                         $result[] = $originalUrl;
                     }
+                }
+                if ($metadata === 'o:media/filename') {
+                    $result = array_map('basename', $result);
                 }
                 return $result;
             case 'o:media/o:source':
