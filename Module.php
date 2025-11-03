@@ -398,7 +398,7 @@ class Module extends AbstractModule
             'itemset_show' => 'item_sets',
             'media_show' => 'media',
         ];
-        $bulkExportViews = $siteSettings->get('bulkexport_views');
+        $bulkExportViews = $siteSettings->get('bulkexport_views') ?: [];
         $bulkExportViews = array_intersect_key($allowed, array_fill_keys($bulkExportViews, null));
         if (!count($bulkExportViews)) {
             return;
