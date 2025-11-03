@@ -137,16 +137,16 @@ trait MetadataToStringTrait
                     : [];
             case 'o:media/o:media_type':
                 return $resource->resourceName() === 'media'
-                    ? $resource->mediaType()
+                    ? [$resource->mediaType()]
                     : [];
             case 'o:media/o:size':
                 return $resource->resourceName() === 'media'
-                    ? $resource->size()
+                    ? [$resource->size()]
                     : [];
             case 'o:media/o:original_url':
             case 'o:media/original_url':
-                return $resource->resourceName() === 'media'
-                    ? $resource->originalUrl()
+                return $resource->resourceName() === 'media' && $resource->hasOriginal()
+                    ? [$resource->originalUrl()]
                     : [];
             case 'o:media/o:thumbnails_url/large':
             case 'o:media/o:thumbnails_url/medium':
