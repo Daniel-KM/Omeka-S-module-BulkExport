@@ -8,6 +8,8 @@ class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
 {
     public function appendSpecific(): self
     {
+        parent::appendSpecific();
+
         $this
             ->add([
                 'name' => 'delimiter',
