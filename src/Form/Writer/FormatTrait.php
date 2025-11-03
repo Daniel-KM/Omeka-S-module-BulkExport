@@ -2,8 +2,8 @@
 
 namespace BulkExport\Form\Writer;
 
+use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
-use Omeka\Form\Element as OmekaElement;
 
 trait FormatTrait
 {
@@ -12,7 +12,7 @@ trait FormatTrait
         $this
             ->add([
                 'name' => 'format_fields',
-                'type' => Element\Radio::class,
+                'type' => CommonElement\OptionalRadio::class,
                 'options' => [
                     'label' => 'Metadata names or headers', // @translate
                     'value_options' => [
@@ -28,7 +28,7 @@ trait FormatTrait
             ])
             ->add([
                 'name' => 'format_generic',
-                'type' => Element\Radio::class,
+                'type' => CommonElement\OptionalRadio::class,
                 'options' => [
                     'label' => 'Format of values', // @translate
                     'value_options' => [
@@ -45,7 +45,7 @@ trait FormatTrait
             ])
             ->add([
                 'name' => 'format_resource',
-                'type' => Element\Radio::class,
+                'type' => CommonElement\OptionalRadio::class,
                 'options' => [
                     'label' => 'Format of linked resources', // @translate
                     'value_options' => [
@@ -64,7 +64,7 @@ trait FormatTrait
             ])
             ->add([
                 'name' => 'format_resource_property',
-                'type' => OmekaElement\PropertySelect::class,
+                'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'label' => 'Property for linked resources', // @translate
                     'term_as_value' => true,
@@ -79,7 +79,7 @@ trait FormatTrait
             ])
             ->add([
                 'name' => 'format_uri',
-                'type' => Element\Radio::class,
+                'type' => CommonElement\OptionalRadio::class,
                 'options' => [
                     'label' => 'Format of uri', // @translate
                     'value_options' => [
@@ -103,33 +103,6 @@ trait FormatTrait
                 'attributes' => [
                     'id' => 'language',
                 ],
-            ])
-        ;
-        return $this;
-    }
-
-    protected function addInputFilterFormats()
-    {
-        $this->getInputFilter()
-            ->add([
-                'name' => 'format_fields',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'format_generic',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'format_resource',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'format_resource_property',
-                'required' => false,
-            ])
-            ->add([
-                'name' => 'format_uri',
-                'required' => false,
             ])
         ;
         return $this;

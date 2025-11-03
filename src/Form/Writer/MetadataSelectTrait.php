@@ -2,7 +2,7 @@
 
 namespace BulkExport\Form\Writer;
 
-use Omeka\Form\Element as OmekaElement;
+use Common\Form\Element as CommonElement;
 
 trait MetadataSelectTrait
 {
@@ -11,7 +11,7 @@ trait MetadataSelectTrait
         $this
             ->add([
                 'name' => $name,
-                'type' => OmekaElement\PropertySelect::class,
+                'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Metadata', // @translate
@@ -20,6 +20,7 @@ trait MetadataSelectTrait
                     'term_as_value' => true,
                 ],
                 'attributes' => [
+                    'id' => $name,
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',
@@ -28,7 +29,7 @@ trait MetadataSelectTrait
             ])
             ->add([
                 'name' => $name . '_exclude',
-                'type' => OmekaElement\PropertySelect::class,
+                'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Metadata to exclude', // @translate
@@ -46,25 +47,12 @@ trait MetadataSelectTrait
                     'term_as_value' => true,
                 ],
                 'attributes' => [
+                    'id' => $name . '_exclude',
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more metadata…', // @translate
                 ],
-            ]);
-        return $this;
-    }
-
-    protected function addInputFilterMetadata($name = 'metadata')
-    {
-        $this->getInputFilter()
-            ->add([
-                'name' => $name,
-                'required' => false,
-            ])
-            ->add([
-                'name' => $name . '_exclude',
-                'required' => false,
             ]);
         return $this;
     }

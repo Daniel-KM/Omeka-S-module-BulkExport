@@ -6,10 +6,9 @@ use Laminas\Form\Element;
 
 class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
 {
-    public function init(): void
+    public function appendSpecific(): self
     {
         $this
-            ->setAttribute('id', 'bulk-exporter-form')
             ->add([
                 'name' => 'delimiter',
                 'type' => Element\Text::class,
@@ -43,7 +42,6 @@ class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
                     'value' => '\\',
                 ],
             ]);
-
-        parent::init();
+        return $this;
     }
 }

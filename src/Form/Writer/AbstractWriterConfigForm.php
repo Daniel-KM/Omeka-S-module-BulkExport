@@ -25,16 +25,30 @@ abstract class AbstractWriterConfigForm extends Form
                     'placeholder' => 'Optional comment for future reference.', // @translate
                 ],
             ])
+        ;
+        return $this;
+    }
+
+    protected function appendHistoryLogDeleted(): self
+    {
+        if (!class_exists('HistoryLog\Module', false)) {
+            return $this;
+        }
+
+        $this
             ->add([
-                'name' => 'use_background',
-                'type' => Element\Checkbox::class,
+                'name' => 'include_deleted',
+                'type' => CommonElement\OptionalRadio::class,
                 'options' => [
-                    'label' => 'Use a background job', // @translate
-                    'info' => 'For complex formats or numerous resources, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
+                    'label' => 'Include deleted resources according to date (require module HistoryLog, query unsupported)', // @translate
+                    'value_options' => [
+                        '' => 'No', // @translate
+                        'id' => 'Id only', // @translate
+                    ],
                 ],
                 'attributes' => [
-                    'id' => 'use_background',
-                    'checked' => true,
+                    'id' => 'include_deleted',
+                    'value' => '',
                 ],
             ])
         ;
@@ -94,22 +108,19 @@ abstract class AbstractWriterConfigForm extends Form
         return $this;
     }
 
-    protected function appendHistoryLogDeleted(): self
+    protected function appendLast(): self
     {
         $this
             ->add([
-                'name' => 'include_deleted',
-                'type' => CommonElement\OptionalRadio::class,
+                'name' => 'use_background',
+                'type' => Element\Checkbox::class,
                 'options' => [
-                    'label' => 'Include deleted resources according to date (require module HistoryLog, query unsupported)', // @translate
-                    'value_options' => [
-                        '' => 'No', // @translate
-                        'id' => 'Id only', // @translate
-                    ],
+                    'label' => 'Use a background job', // @translate
+                    'info' => 'For complex formats or numerous resources, the process may require more than 30 seconds, that is the default duration of web server before error.', // @translate
                 ],
                 'attributes' => [
-                    'id' => 'include_deleted',
-                    'value' => '',
+                    'id' => 'use_background',
+                    'checked' => true,
                 ],
             ])
         ;

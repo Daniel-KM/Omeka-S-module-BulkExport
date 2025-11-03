@@ -6,7 +6,7 @@ use Laminas\Form\Element;
 
 class SpreadsheetWriterConfigForm extends FieldsWriterConfigForm
 {
-    public function init(): void
+    public function appendSpecific(): self
     {
         $this
             ->add([
@@ -23,7 +23,6 @@ It is recommended to use a character that is never used, like "|", or a random s
                 ],
             ])
         ;
-
-        parent::init();
+        return $this;
     }
 }

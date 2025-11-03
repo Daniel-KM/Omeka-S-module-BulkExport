@@ -41,7 +41,11 @@ class SettingsFieldset extends Fieldset
                     'min' => 0,
                 ],
             ])
+
             ->addDisplayViews()
+
+            ->appendMetadataSelect('bulkexport_metadata')
+
             ->add([
                 'name' => 'bulkexport_formatters',
                 'type' => Element\MultiCheckbox::class,
@@ -152,7 +156,6 @@ class SettingsFieldset extends Fieldset
                 ],
             ])
         ;
-        $this->appendMetadataSelect('bulkexport_metadata');
     }
 
     protected function addDisplayViews(): self

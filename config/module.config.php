@@ -456,6 +456,20 @@ $conf = [
     'bulkexport' => [
         'settings' => [
             'bulkexport_limit' => 1000,
+            'bulkexport_metadata' => [
+                'o:id',
+                'o:resource_template',
+                'o:resource_class',
+                'o:owner',
+                'o:is_public',
+                'properties_max_5000',
+            ],
+            'bulkexport_metadata_exclude' => [
+                'properties_min_5000',
+                'bibo:content',
+                'extracttext:extracted_text',
+            ],
+            'bulkexport_template' => '',
             'bulkexport_formatters' => [
                 'csv',
                 // 'geojson',
@@ -473,20 +487,6 @@ $conf = [
             'bulkexport_format_resource' => 'id',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
-            'bulkexport_metadata' => [
-                'o:id',
-                'o:resource_template',
-                'o:resource_class',
-                'o:owner',
-                'o:is_public',
-                'properties_max_5000',
-            ],
-            'bulkexport_metadata_exclude' => [
-                'properties_min_5000',
-                'bibo:content',
-                'extracttext:extracted_text',
-            ],
-            'bulkexport_template' => '',
         ],
         'site_settings' => [
             'bulkexport_limit' => 1000,
@@ -498,6 +498,19 @@ $conf = [
                 // 'media_show',
                 // 'media_browse',
             ],
+            'bulkexport_metadata' => [
+                'id',
+                'url',
+                'o:resource_class',
+                'properties_max_500',
+            ],
+            'bulkexport_metadata_exclude' => [
+                'o:owner',
+                'properties_min_500',
+                'bibo:content',
+                'extracttext:extracted_text',
+            ],
+            'bulkexport_template' => '',
             'bulkexport_formatters' => [
                 'csv',
                 // 'json',
@@ -514,19 +527,6 @@ $conf = [
             'bulkexport_format_resource' => 'id',
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
-            'bulkexport_metadata' => [
-                'id',
-                'url',
-                'o:resource_class',
-                'properties_max_500',
-            ],
-            'bulkexport_metadata_exclude' => [
-                'o:owner',
-                'properties_min_500',
-                'bibo:content',
-                'extracttext:extracted_text',
-            ],
-            'bulkexport_template' => '',
         ],
     ],
 ];

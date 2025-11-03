@@ -13,30 +13,22 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
     {
         $this
             ->setAttribute('id', 'bulk-importer-form')
-            ->appends()
-            ->addInputFilters();
-    }
 
-    protected function appends(): self
-    {
-        return $this
             ->appendBase()
-            ->appendFile()
-            ->appendFormats()
             ->appendResourceTypesSelect()
-            ->appendMetadataSelect()
             ->appendResourceQuery()
-            ->appendIncremental()
+            ->appendMetadataSelect()
             ->appendHistoryLogDeleted()
+            ->appendFormats()
+            ->appendSpecific()
+            ->appendFile()
+            ->appendIncremental()
+            ->appendLast()
         ;
-    }
+     }
 
-    protected function addInputFilters(): self
-    {
-        return $this
-            ->addInputFilterFormats()
-            ->addInputFilterResourceTypes()
-            ->addInputFilterMetadata()
-        ;
+     protected function appendSpecific(): self
+     {
+        return $this;
     }
 }

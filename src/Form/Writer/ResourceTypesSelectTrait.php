@@ -2,7 +2,7 @@
 
 namespace BulkExport\Form\Writer;
 
-use Laminas\Form\Element;
+use Common\Form\Element as CommonElement;
 
 trait ResourceTypesSelectTrait
 {
@@ -11,7 +11,7 @@ trait ResourceTypesSelectTrait
         $this
             ->add([
                 'name' => 'resource_types',
-                'type' => Element\Select::class,
+                'type' => CommonElement\OptionalSelect::class,
                 'options' => [
                     'label' => 'Resource types', // @translate
                     'info' => 'When multiple types are selected, a column is automatically added to identify it.', // @translate
@@ -27,17 +27,6 @@ trait ResourceTypesSelectTrait
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more resource type…', // @translate
                 ],
-            ]);
-        return $this;
-    }
-
-    protected function addInputFilterResourceTypes()
-    {
-        $inputFilter = $this->getInputFilter();
-        $inputFilter
-            ->add([
-                'name' => 'resource_types',
-                'required' => false,
             ]);
         return $this;
     }
