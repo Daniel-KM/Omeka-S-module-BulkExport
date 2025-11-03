@@ -116,6 +116,7 @@ TODO
 - [ ] Make any size output real time (streamable).
 - [ ] For api, allow to pass settings like in module [Api Info].
 - [ ] Use request header "Accept" like .extension.
+- [ ] The browse view may be like the Menu view, so all edits can be done in one page.
 
 
 Warning
