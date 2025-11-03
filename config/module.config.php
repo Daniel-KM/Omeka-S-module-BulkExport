@@ -473,6 +473,7 @@ $conf = [
                 'bibo:content',
                 'extracttext:extracted_text',
             ],
+            'bulkexport_metadata_shapers' => [],
             'bulkexport_template' => '',
             'bulkexport_formatters' => [
                 'csv',
@@ -514,6 +515,7 @@ $conf = [
                 'bibo:content',
                 'extracttext:extracted_text',
             ],
+            'bulkexport_metadata_shapers' => [],
             'bulkexport_template' => '',
             'bulkexport_formatters' => [
                 'csv',

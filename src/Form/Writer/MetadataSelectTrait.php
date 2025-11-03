@@ -3,6 +3,7 @@
 namespace BulkExport\Form\Writer;
 
 use Common\Form\Element as CommonElement;
+use Omeka\Form\Element as OmekaElement;
 
 trait MetadataSelectTrait
 {
@@ -53,7 +54,26 @@ trait MetadataSelectTrait
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more metadata…', // @translate
                 ],
-            ]);
+            ])
+            ->add([
+                'name' => $name . '_shapers',
+                'type' => OmekaElement\ArrayTextarea::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Specific shapers by metadata', // @translate
+                    'info' => 'Shapers are defined in the page "Shapers" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, "=" and the identifier or label of the shaper.', // @translate
+                    'as_key_value' => true,
+                ],
+                'attributes' => [
+                    'id' => $name . '_shaper',
+                    'rows' => '10',
+                    'placeholder' => <<<'TXT'
+                        dcterms:creator = Person
+                        dcterms:date = Year only
+                        TXT, // @translate
+                ],
+            ])
+        ;
         return $this;
     }
 
@@ -63,6 +83,7 @@ trait MetadataSelectTrait
             'metadata' => [
                 'label' => 'Resource metadata', // @translate
                 'options' => [
+                    'specific' => 'Specific fields below', // @translate
                     'o:id' => 'Internal id', // @translate
                     'url' => 'Resource url', // @translate
                     // The resource type is the @type, but it may be the api

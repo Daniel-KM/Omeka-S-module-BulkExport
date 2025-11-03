@@ -2,9 +2,16 @@
 
 namespace BulkExport\Form;
 
+use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
 
+/**
+ * Adapted:
+ * @see \BulkEdit\Form\BulkEditFieldset
+ * @see \BulkExport\Form\ShaperConfigFieldset
+ * @see \SearchSolr\Form\Admin\SolrMapForm
+ */
 class ShaperConfigFieldset extends Fieldset
 {
     use Writer\FormatTrait;
@@ -28,6 +35,11 @@ class ShaperConfigFieldset extends Fieldset
                 ],
             ])
 
+            /** @see \SearchSolr\Form\Admin\SolrMapForm */
+
+            // TODO Filters.
+
+            /* // The separator cannot be set for now, since there is no way to make it different for each cell.
             ->add([
                 'name' => 'separator',
                 'type' => Element\Text::class,
@@ -43,9 +55,52 @@ class ShaperConfigFieldset extends Fieldset
                     'value' => '|',
                 ],
             ])
+            */
 
             ->appendFormats()
+            ->remove('format_fields')
             ->remove('language')
+
+            ->add([
+                'name' => 'normalization',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'label' => 'Cleaning and normalization', // @translate
+                    'info' => 'The cleaning is processed in the following order.', // @translate'
+                    'value_options' => [
+                        'html_escaped' => 'Escape html', // @translate
+                        'strip_tags' => 'Strip tags', // @translate
+                        'lowercase' => 'Lower case', // @translate
+                        'uppercase' => 'Upper case', // @translate
+                        'ucfirst' => 'Upper case first character', // @translate
+                        'remove_diacritics' => 'Remove diacritics', // @translate
+                        'alphanumeric' => 'Alphanumeric only', // @translate
+                        'alphabetic' => 'Alphabetic only', // @translate
+                        'max_length' => 'Max length', // @translate
+                        'integer' => 'Number', // @translate
+                        'year' => 'Year', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'normalization',
+                    'value' => [
+                    ],
+                    // Is used with all values.
+                    // 'data-formatter' => 'text',
+                ],
+            ])
+            ->add([
+                'name' => 'max_length',
+                'type' => CommonElement\OptionalNumber::class,
+                'options' => [
+                    'label' => 'Max length', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'max_length',
+                    // Setting for normalization "max_length" only.
+                    'data-normalization' => 'max_length',
+                ],
+            ])
         ;
     }
 }

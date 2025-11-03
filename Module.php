@@ -340,6 +340,10 @@ class Module extends AbstractModule
                 ->add([
                     'name' => 'bulkexport_metadata_exclude',
                     'required' => false,
+                ])
+                ->add([
+                    'name' => 'bulkexport_metadata_shapers',
+                    'required' => false,
                 ]);
         return;
     }
@@ -360,6 +364,10 @@ class Module extends AbstractModule
             ])
             ->add([
                 'name' => 'bulkexport_metadata_exclude',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata_shapers',
                 'required' => false,
             ]);
     }

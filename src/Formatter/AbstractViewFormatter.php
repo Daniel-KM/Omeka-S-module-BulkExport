@@ -2,10 +2,13 @@
 
 namespace BulkExport\Formatter;
 
+use BulkExport\Traits\ShaperTrait;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 abstract class AbstractViewFormatter extends AbstractFormatter
 {
+    use ShaperTrait;
+
     /**
      * The default partial view script.
      */

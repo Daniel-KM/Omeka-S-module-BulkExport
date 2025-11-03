@@ -14,8 +14,10 @@ class SpreadsheetWriterConfigForm extends FieldsWriterConfigForm
                 'type' => Element\Text::class,
                 'options' => [
                     'label' => 'Multi-value separator', // @translate
-                    'info' => 'To output all values of each property, cells can be multivalued with this separator.
-It is recommended to use a character that is never used, like "|", or a random string.', // @translate
+                    'info' => <<<'TXT'
+                        To output all values of each property, cells can be multivalued with this separator.
+                        It is recommended to use a character that is never used, like "|", or a random string.
+                        TXT, // @translate
                 ],
                 'attributes' => [
                     'id' => 'separator',

@@ -93,7 +93,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
         if ($this->options['only_first']) {
             foreach ($this->fieldNames as $fieldName) {
-                $values = $this->stringMetadata($resource, $fieldName);
+                $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
+                $shaperParams = $this->shaperSettings($shaper);
+                $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
+                $values = $this->shapeValues($values, $shaperParams);
                 $dataResource[] = (string) reset($values);
             }
             return $dataResource;
@@ -101,7 +104,10 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
         $separator = $this->options['separator'];
         foreach ($this->fieldNames as $fieldName) {
-            $values = $this->stringMetadata($resource, $fieldName);
+            $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
+            $shaperParams = $this->shaperSettings($shaper);
+            $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
+            $values = $this->shapeValues($values, $shaperParams);
             // Check if one of the values has the separator.
             $check = array_filter($values, function ($v) use ($separator) {
                 return strpos((string) $v, $separator) !== false;

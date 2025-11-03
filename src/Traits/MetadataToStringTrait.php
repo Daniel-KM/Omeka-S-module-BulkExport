@@ -25,7 +25,6 @@ trait MetadataToStringTrait
      * - format_resource: may be "url_title", "url", "title", "id", "identifier"
      *   (with the property set below), "identifier_id", or id. Default is
      *   "url_title".
-     *   property set below), else the id will be used.
      * - format_resource_property: if resource hasn't this term, the id is used.
      * - format_uri: May be "uri", "html" or "uri_label".
      * @return array Always an array, even for single metadata. The caller knows

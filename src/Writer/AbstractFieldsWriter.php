@@ -6,6 +6,7 @@ use BulkExport\Api\Representation\ExportRepresentation;
 use BulkExport\Traits\ListTermsTrait;
 use BulkExport\Traits\MetadataToStringTrait;
 use BulkExport\Traits\ResourceFieldsTrait;
+use BulkExport\Traits\ShaperTrait;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
 abstract class AbstractFieldsWriter extends AbstractWriter
@@ -13,6 +14,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
     use ListTermsTrait;
     use MetadataToStringTrait;
     use ResourceFieldsTrait;
+    use ShaperTrait;
 
     /**
      * Limit for the loop to avoid heavy sql requests.
@@ -33,6 +35,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'resource_types',
         'metadata',
         'metadata_exclude',
+        'metadata_shapers',
         // Keep query in the config to simplify regular export.
         'query',
         'incremental',
@@ -51,6 +54,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'resource_types',
         'metadata',
         'metadata_exclude',
+        'metadata_shapers',
         'query',
         'incremental',
         'include_deleted',
@@ -421,7 +425,10 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         $dataResource = [];
         $removeEmptyFields = !$this->options['empty_fields'];
         foreach ($this->fieldNames as $fieldName) {
-            $values = $this->stringMetadata($resource, $fieldName);
+            $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
+            $shaperParams = $this->shaperSettings($shaper);
+            $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
+            $values = $this->shapeValues($values, $shaperParams);
             if ($removeEmptyFields) {
                 $values = array_filter($values, 'strlen');
                 if (!count($values)) {

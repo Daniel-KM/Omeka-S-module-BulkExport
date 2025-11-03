@@ -5,6 +5,7 @@ namespace BulkExport\Formatter;
 use BulkExport\Traits\ListTermsTrait;
 use BulkExport\Traits\MetadataToStringTrait;
 use BulkExport\Traits\ResourceFieldsTrait;
+use BulkExport\Traits\ShaperTrait;
 use Omeka\Api\Exception\NotFoundException;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 
@@ -13,6 +14,7 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
     use ListTermsTrait;
     use MetadataToStringTrait;
     use ResourceFieldsTrait;
+    use ShaperTrait;
 
     protected $defaultOptionsFields = [
         'format_fields' => 'name',
@@ -97,7 +99,10 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         $dataResource = [];
         $removeEmptyFields = !$this->options['empty_fields'];
         foreach ($this->fieldNames as $fieldName) {
-            $values = $this->stringMetadata($resource, $fieldName);
+            $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
+            $shaperParams = $this->shaperSettings($shaper);
+            $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
+            $values = $this->shapeValues($values, $shaperParams);
             if ($removeEmptyFields) {
                 $values = array_filter($values, 'strlen');
                 if (!count($values)) {
