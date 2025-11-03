@@ -486,6 +486,11 @@ class Module extends AbstractModule
 
     public function handleViewBrowseAfterSelection(Event $event): void
     {
+        $services = $this->getServiceLocator();
+        if ($services->get('Omeka\Settings\Site')->get('selection_mode') !== 'flat') {
+            return;
+        }
+
         $view = $event->getTarget();
         $resourceType = 'resource';
         $user = $view->identity();
@@ -494,7 +499,7 @@ class Module extends AbstractModule
             $request['owner_id'] = $user->getId();
             unset($request['page'], $request['limit']);
             // The view helper api doesn't manage options (returnScalar).
-            $api = $this->getServiceLocator()->get('Omeka\ApiManager');
+            $api = $services->get('Omeka\ApiManager');
             $query = $api->search('selection_resources', $request, ['returnScalar' => 'resource'])->getContent();
         }
 
