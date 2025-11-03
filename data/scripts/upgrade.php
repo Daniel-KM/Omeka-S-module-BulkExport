@@ -400,6 +400,46 @@ if (version_compare($oldVersion, '3.4.35', '<')) {
     $messenger->addWarning($message);
 }
 
+if (version_compare($oldVersion, '3.4.38', '<')) {
+    $sql = <<<'SQL'
+        CREATE TABLE `bulk_shaper` (
+            `id` INT AUTO_INCREMENT NOT NULL,
+            `owner_id` INT DEFAULT NULL,
+            `label` VARCHAR(190) NOT NULL,
+            `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)',
+            `created` DATETIME NOT NULL,
+            `modified` DATETIME DEFAULT NULL,
+            INDEX `IDX_C40AB3ED7E3C61F9` (`owner_id`),
+            PRIMARY KEY(`id`)
+        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
+        ALTER TABLE `bulk_shaper` ADD CONSTRAINT `FK_C40AB3ED7E3C61F9` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
+        SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Table exists.
+    }
+
+    $message = new PsrMessage(
+        'It is now possible to define a specific format for each metadata.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    // Create value_data table and triggers for indexing value length.
+    $tableExists = $connection->executeQuery("SHOW TABLES LIKE 'value_data';")->fetchOne();
+    if (!$tableExists) {
+        // Dispatch job to populate the table with existing data.
+        require_once dirname(__DIR__, 2) . '/src/Job/IndexValueLength.php';
+        $dispatcher = $services->get('Omeka\Job\Dispatcher');
+        $dispatcher->dispatch(\BulkExport\Job\IndexValueLength::class);
+
+        $message = new PsrMessage(
+            'A table has been created to index value lengths for quicker exports. A background job is populating it.' // @translate
+        );
+        $messenger->addSuccess($message);
+    }
+}
+
 // In all cases.
 
 if (!empty($failExporters)) {
@@ -411,10 +451,13 @@ if (!empty($failExporters)) {
             $data = include $filepath;
             $sql = <<<'SQL'
                 INSERT INTO `bulk_exporter`
-                (`owner_id`, `label`, `writer`, `config`) VALUES
-                (:owner_id, :label, :writer, :config)
+                    (`owner_id`, `label`, `writer`, `config`) VALUES
+                    (:owner_id, :label, :writer, :config)
                 ON DUPLICATE KEY UPDATE
-                `owner_id` = :owner_id, `label` = :label, `writer` = :writer, `config` = :config
+                    `owner_id` = :owner_id,
+                    `label` = :label,
+                    `writer` = :writer,
+                    `config` = :config
                 SQL;
             $stmt = $connection->prepare($sql);
             $stmt->bindValue('owner_id', $user->getId(), \PDO::PARAM_INT);
