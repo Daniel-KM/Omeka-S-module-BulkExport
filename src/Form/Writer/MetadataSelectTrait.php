@@ -111,6 +111,14 @@ trait MetadataSelectTrait
                     'o:media/dcterms:title' => 'Label (first title)', // @translate
                 ],
             ],
+            'o:asset' => [
+                'label' => 'Asset (thumbnail)', // @translate
+                'options' => [
+                    'o:asset/o:id' => 'Asset id', // @translate
+                    'o:asset/o:asset_url' => 'Asset url', // @translate
+                    'o:asset/o:filename' => 'Asset filename', // @translate
+                ],
+            ],
             'o:item' => [
                 'label' => 'Item (for media)', // @translate
                 'options' => [

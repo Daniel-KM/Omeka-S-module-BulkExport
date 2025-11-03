@@ -269,6 +269,9 @@ trait ResourceFieldsTrait
                 'o:media/o:size' => $this->translator->translate('File size'), // @translate,
                 'o:media/original_url' => $this->translator->translate('Original file url'), // @translate,
                 'o:asset' => $this->translator->translate('Asset'), // @translate
+                'o:asset/o:id' => $this->translator->translate('Asset id'), // @translate
+                'o:asset/o:asset_url' => $this->translator->translate('Asset url'), // @translate
+                'o:asset/o:filename' => $this->translator->translate('Asset filename'), // @translate
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
                 'url' => $this->translator->translate('Url'), // @translate,
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
@@ -373,6 +376,9 @@ trait ResourceFieldsTrait
             'o:annotation',
             */
             'o:asset',
+            'o:asset/o:id',
+            'o:asset/o:asset_url',
+            'o:asset/o:filename',
             'url',
             'resource_type',
             // Module History Log.

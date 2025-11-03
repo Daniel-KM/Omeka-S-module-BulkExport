@@ -148,6 +148,17 @@ trait MetadataToStringTrait
                     ? $resource->originalUrl()
                     : [];
 
+            // Asset (thumbnail) for resource.
+            case 'o:asset/o:id':
+                $thumbnail = $resource->thumbnail();
+                return $thumbnail ? [$thumbnail->id()] : [];
+            case 'o:asset/o:asset_url':
+                $thumbnail = $resource->thumbnail();
+                return $thumbnail ? [$thumbnail->assetUrl()] : [];
+            case 'o:asset/o:filename':
+                $thumbnail = $resource->thumbnail();
+                return $thumbnail ? [$thumbnail->filename()] : [];
+
             // Item for media.
             case 'o:item/o:id':
                 return $resource->resourceName() === 'media'
