@@ -89,9 +89,25 @@ abstract class AbstractWriterConfigForm extends Form
         return $this;
     }
 
-    protected function appendIncremental(): self
+    protected function appendMore(): self
     {
         $this
+            ->add([
+                'name' => 'zip_files',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'label' => 'Export all original or thumbnails as zip', // @translate
+                    'value_options' => [
+                        'original' => 'Original', // @translate
+                        'large' => 'Large', // @translate
+                        'medium' => 'Medium', // @translate
+                        'square' => 'Square', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'zip_files',
+                ],
+            ])
             ->add([
                 'name' => 'incremental',
                 'type' => Element\Checkbox::class,

@@ -24,6 +24,8 @@ class SettingsFieldset extends Fieldset
 
     public function init(): void
     {
+        // TODO Use a main shaper for default config, then use it here instead of the full list of params.
+
         $this
             ->setAttribute('id', 'bulk-export')
             ->setOption('element_groups', $this->elementGroups)
@@ -44,8 +46,6 @@ class SettingsFieldset extends Fieldset
 
             ->addDisplayViews()
 
-            ->appendMetadataSelect('bulkexport_metadata')
-
             ->add([
                 'name' => 'bulkexport_formatters',
                 'type' => Element\MultiCheckbox::class,
@@ -58,23 +58,9 @@ class SettingsFieldset extends Fieldset
                     'id' => 'bulkexport_formatters',
                 ],
             ])
-            ->add([
-                'name' => 'bulkexport_format_fields',
-                'type' => Element\Radio::class,
-                'options' => [
-                    'element_group' => 'export',
-                    'label' => 'Metadata names or headers', // @translate
-                    'value_options' => [
-                        'name' => 'Rdf names', // @translate
-                        'label' => 'Labels', // @translate
-                        'template' => 'First template alternative name', // @translate
-                    ],
-                ],
-                'attributes' => [
-                    'id' => 'bulkexport_format_fields',
-                    'value' => 'name',
-                ],
-            ])
+
+            ->appendMetadataSelect('bulkexport_')
+
             ->add([
                 'name' => 'bulkexport_format_fields_labels',
                 'type' => OmekaElement\ArrayTextarea::class,
@@ -93,6 +79,41 @@ class SettingsFieldset extends Fieldset
                         Person = dcterms:creator dcterms:contributor
                         dcterms:subject = dcterms:subject dcterms:temporal
                         TXT, // @translate
+                ],
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata_shapers',
+                'type' => OmekaElement\ArrayTextarea::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Specific shapers by metadata', // @translate
+                    'info' => 'Shapers are defined in the page "Shapers" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, "=" and the identifier or label of the shaper.', // @translate
+                    'as_key_value' => true,
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_metadata_shaper',
+                    'rows' => '10',
+                    'placeholder' => <<<'TXT'
+                        dcterms:creator = Person
+                        dcterms:date = Year only
+                        TXT, // @translate
+                ],
+            ])
+            ->add([
+                'name' => 'bulkexport_format_fields',
+                'type' => Element\Radio::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Metadata names or headers', // @translate
+                    'value_options' => [
+                        'name' => 'Rdf names', // @translate
+                        'label' => 'Labels', // @translate
+                        'template' => 'First template alternative name', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_format_fields',
+                    'value' => 'name',
                 ],
             ])
             ->add([

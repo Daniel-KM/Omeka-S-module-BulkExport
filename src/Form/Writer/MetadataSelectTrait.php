@@ -3,15 +3,14 @@
 namespace BulkExport\Form\Writer;
 
 use Common\Form\Element as CommonElement;
-use Omeka\Form\Element as OmekaElement;
 
 trait MetadataSelectTrait
 {
-    public function appendMetadataSelect($name = 'metadata')
+    public function appendMetadataSelect($prefix = '')
     {
         $this
             ->add([
-                'name' => $name,
+                'name' => $prefix . 'metadata',
                 'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
@@ -21,7 +20,7 @@ trait MetadataSelectTrait
                     'term_as_value' => true,
                 ],
                 'attributes' => [
-                    'id' => $name,
+                    'id' => $prefix . 'metadata',
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',
@@ -29,7 +28,7 @@ trait MetadataSelectTrait
                 ],
             ])
             ->add([
-                'name' => $name . '_exclude',
+                'name' => $prefix . 'metadata_exclude',
                 'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
@@ -48,29 +47,11 @@ trait MetadataSelectTrait
                     'term_as_value' => true,
                 ],
                 'attributes' => [
-                    'id' => $name . '_exclude',
+                    'id' => $prefix . 'metadata_exclude',
                     'required' => false,
                     'multiple' => true,
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more metadata…', // @translate
-                ],
-            ])
-            ->add([
-                'name' => $name . '_shapers',
-                'type' => OmekaElement\ArrayTextarea::class,
-                'options' => [
-                    'element_group' => 'export',
-                    'label' => 'Specific shapers by metadata', // @translate
-                    'info' => 'Shapers are defined in the page "Shapers" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, "=" and the identifier or label of the shaper.', // @translate
-                    'as_key_value' => true,
-                ],
-                'attributes' => [
-                    'id' => $name . '_shaper',
-                    'rows' => '10',
-                    'placeholder' => <<<'TXT'
-                        dcterms:creator = Person
-                        dcterms:date = Year only
-                        TXT, // @translate
                 ],
             ])
         ;

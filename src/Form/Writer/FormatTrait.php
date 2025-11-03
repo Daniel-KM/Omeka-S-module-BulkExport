@@ -12,22 +12,6 @@ trait FormatTrait
     {
         $this
             ->add([
-                'name' => 'format_fields',
-                'type' => CommonElement\OptionalRadio::class,
-                'options' => [
-                    'label' => 'Metadata names or headers', // @translate
-                    'value_options' => [
-                        'name' => 'Rdf names', // @translate
-                        'label' => 'Labels', // @translate
-                        'template' => 'First template alternative name', // @translate
-                    ],
-                ],
-                'attributes' => [
-                    'id' => 'format_fields',
-                    'value' => 'name',
-                ],
-            ])
-            ->add([
                 'name' => 'format_fields_labels',
                 'type' => OmekaElement\ArrayTextarea::class,
                 'options' => [
@@ -45,6 +29,40 @@ trait FormatTrait
                         Person = dcterms:creator dcterms:contributor
                         dcterms:subject = dcterms:subject dcterms:temporal
                         TXT, // @translate
+                ],
+            ])
+            ->add([
+                'name' => 'metadata_shapers',
+                'type' => OmekaElement\ArrayTextarea::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Specific shapers by metadata', // @translate
+                    'info' => 'Shapers are defined in the page "Shapers" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, "=" and the identifier or label of the shaper.', // @translate
+                    'as_key_value' => true,
+                ],
+                'attributes' => [
+                    'id' => 'metadata_shaper',
+                    'rows' => '10',
+                    'placeholder' => <<<'TXT'
+                        dcterms:creator = Person
+                        dcterms:date = Year only
+                        TXT, // @translate
+                ],
+            ])
+            ->add([
+                'name' => 'format_fields',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Metadata names or headers', // @translate
+                    'value_options' => [
+                        'name' => 'Rdf names', // @translate
+                        'label' => 'Labels', // @translate
+                        'template' => 'First template alternative name', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'format_fields',
+                    'value' => 'name',
                 ],
             ])
             ->add([

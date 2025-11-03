@@ -22,7 +22,7 @@ class FieldsWriterConfigForm extends AbstractWriterConfigForm
             ->appendFormats()
             ->appendSpecific()
             ->appendFile()
-            ->appendIncremental()
+            ->appendMore()
             ->appendLast()
         ;
      }
