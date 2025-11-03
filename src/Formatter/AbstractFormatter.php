@@ -301,7 +301,8 @@ abstract class AbstractFormatter implements FormatterInterface
                     } else {
                         $this->isQuery = true;
                         $this->query = $resources;
-                        $this->hasError = empty($this->resourceType) || $this->resourceType === 'resources';
+                        $this->hasError = empty($this->resourceType)
+                            || ($this->resourceType === 'resources' && version_compare(\Omeka\Module::VERSION, '4.1', '<'));
                         if (!$this->hasError) {
                             // Most of the time, the query is processed by id
                             // for memory performance.
