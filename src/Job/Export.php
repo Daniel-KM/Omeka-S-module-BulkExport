@@ -113,7 +113,11 @@ class Export extends AbstractJob
 
         // Make compatible with EasyAdmin tasks, that may use a fake job.
         if ($this->job->getId()) {
-            $this->api->update('bulk_exports', $this->export->id(), ['o:job' => $this->job], [], ['isPartial' => true]);
+            // Use a reference to avoid Doctrine cascade persist issues when the
+            // job entity might be detached after api operations.
+            $entityManager = $this->services->get('Omeka\EntityManager');
+            $jobReference = $entityManager->getReference(\Omeka\Entity\Job::class, $this->job->getId());
+            $this->api->update('bulk_exports', $this->export->id(), ['o:job' => $jobReference], [], ['isPartial' => true]);
         }
 
         $this->writer = $this->getWriter();
