@@ -102,6 +102,11 @@ abstract class AbstractWriterConfigForm extends Form
                         'large' => 'Large', // @translate
                         'medium' => 'Medium', // @translate
                         'square' => 'Square', // @translate
+                        'asset' => 'Attached asset', // @translate
+                        'asset_original' => 'Asset, else original', // @translate
+                        'asset_large' => 'Asset, else large', // @translate
+                        'asset_medium' => 'Asset, else medium', // @translate
+                        'asset_square' => 'Asset, else square', // @translate
                     ],
                 ],
                 'attributes' => [

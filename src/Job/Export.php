@@ -435,6 +435,13 @@ class Export extends AbstractJob
         return $this;
     }
 
+    /**
+     * Create a zip file with all files for the specified format.
+     *
+     * Format are "original", "large", "medium", "square" and "asset".
+     * Special formats are "asset_original", "asset_large", etc. When used, the
+     * asset is stored if any, else the thumbnail in the specified format.
+     */
     protected function zipFilesForType(string $resourceType, array $ids, string $format, int $by): int
     {
         // Get the list of files matching the ids.
@@ -488,14 +495,9 @@ class Export extends AbstractJob
             $zip->setArchiveComment($comment);
 
             // The path is already relative.
+            // The format is prepended now and the extension is the right one.
             foreach ($files as $file) {
-                // Use .jpg as default extension for thumbnails.
-                if ($format === 'original') {
-                    $relativePath = $format . '/' . $file;
-                } else {
-                    $extension = pathinfo($file, PATHINFO_EXTENSION);
-                    $relativePath = $format . '/' . mb_substr($file, 0, -(mb_strlen($extension) + 1)) . '.jpg';
-                }
+                $relativePath = ltrim((string) $file, '/');
                 $fullPath = $this->basePath . '/' . $relativePath;
                 if (!file_exists($fullPath) || !is_readable($fullPath)) {
                     continue;
@@ -534,23 +536,107 @@ class Export extends AbstractJob
         file_put_contents($this->basePath . '/zip/zipfiles.txt', $list);
     }
 
+    /**
+     * Get the list of files for the specified format.
+     *
+     * Format are "original", "large", "medium", "square" and "asset".
+     * Special formats are "asset_original", "asset_large", etc. When used, the
+     * asset is stored if any, else the thumbnail in the specified format.
+     */
     protected function listStorageNamesForFormat($resourceType, array $ids, string $format): array
     {
+        $prefix = $format;
+        if (in_array($format, ['original', 'large', 'medium', 'square'])) {
+            $sql = <<<'SQL'
+                SELECT
+                    `id`,
+                    CONCAT(:prefix, '/', `storage_id`, '.', `extension`) AS "file"
+                FROM `media`
+                WHERE `__HAS__` = 1
+                  AND `storage_id` IS NOT NULL
+                  AND `storage_id` != ""
+                  AND `extension` IS NOT NULL
+                  AND `extension` != ""
+                  AND `__TYPE__` IN (:ids)
+                ORDER BY `storage_id` ASC;
+                SQL;
+            $sql = strtr($sql, [
+                '__HAS__' => $format === 'original' ? 'has_original' : 'has_thumbnails',
+                '__TYPE__' => $resourceType === 'items' ? 'item_id' : 'id',
+            ]);
+            return $this->connection->executeQuery(
+                $sql,
+                ['prefix' => $prefix, 'ids' => $ids],
+                ['ids' => Connection::PARAM_INT_ARRAY]
+            )->fetchAllKeyValue();
+        }
+
+        if ($format === 'asset') {
+            $sql = <<<'SQL'
+                SELECT
+                    `resource`.`id`,
+                    CONCAT(:prefix, '/', `asset`.`storage_id`, '.', `asset`.`extension`) AS "file"
+                FROM `asset`
+                INNER JOIN `resource` ON `resource`.`thumbnail_id` = `asset`.`id`
+                WHERE `resource`.`id` IN (:ids)
+                ORDER BY `asset`.`storage_id` ASC;
+                SQL;
+            return $this->connection->executeQuery(
+                $sql,
+                ['prefix' => $prefix, 'ids' => $ids],
+                ['ids' => Connection::PARAM_INT_ARRAY]
+            )->fetchAllKeyValue();
+        }
+
+        // Complex output for special formats like "asset_original", etc.
+        // Prepend the main type: "asset" when asset exists, else fallback
+        // original or derivative.
+        $fallback = substr($format, 6);
+        $prefix = 'asset';
+
         $sql = <<<'SQL'
-            SELECT `id`, CONCAT(`storage_id`, ".", `extension`) as "file"
-            FROM `media`
-            WHERE `__HAS__` = 1
-                AND `storage_id` IS NOT NULL
-                AND `storage_id` != ""
-                AND `extension` IS NOT NULL
-                AND `extension` != ""
-                AND `__TYPE__` IN (:ids)
-            ORDER BY `storage_id` ASC;
+            (
+                SELECT `resource`.`id`, CONCAT('asset', '/', `asset`.`storage_id`, '.', `asset`.`extension`) AS "file"
+                FROM `resource` resource
+                INNER JOIN `asset` asset ON resource.`thumbnail_id` = asset.`id`
+                WHERE resource.`id` IN (:ids)
+            )
+            UNION ALL
+            (
+                SELECT
+                    `media`.`__TYPE_ID__` AS `id`,
+                    CONCAT(
+                        :fallback,
+                        '/',
+                        `media`.`storage_id`,
+                        '.',
+                        CASE WHEN :fallback = 'original' THEN `media`.`extension` ELSE 'jpg' END
+                    ) AS "file"
+                FROM `media` media
+                WHERE `media`.`storage_id` IS NOT NULL
+                    AND `media`.`storage_id` != ""
+                    AND (
+                      (:fallback = 'original' AND `media`.`has_original` = 1 AND `media`.`extension` IS NOT NULL AND `media`.`extension` != "")
+                      OR (:fallback != 'original' AND `media`.`has_thumbnails` = 1)
+                    )
+                    AND `media`.`__TYPE__` IN (:ids)
+                    AND `media`.`id` NOT IN (
+                        SELECT `m2`.`id`
+                        FROM `media` m2
+                        INNER JOIN `resource` r2 ON r2.`thumbnail_id` IS NOT NULL
+                        WHERE r2.`id` = m2.`__TYPE_ID__`
+                    )
+            )
+            ORDER BY `file` ASC;
             SQL;
         $sql = strtr($sql, [
-            '__HAS__' => $format === 'original' ? 'has_original' : 'has_thumbnails',
             '__TYPE__' => $resourceType === 'items' ? 'item_id' : 'id',
+            '__TYPE_ID__' => $resourceType === 'items' ? 'item_id' : 'id',
         ]);
-        return $this->connection->executeQuery($sql, ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY])->fetchAllKeyValue();
+        return $this->connection->executeQuery(
+            $sql,
+            ['ids' => $ids, 'fallback' => $fallback],
+            ['ids' => Connection::PARAM_INT_ARRAY]
+        )->fetchAllKeyValue();
     }
 }
