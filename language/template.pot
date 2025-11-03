@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-03 00:00+0000\n"
+"POT-Creation-Date: 2025-11-03 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:33 Module.php:142
+#: data/scripts/upgrade.php:35 Module.php:47
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr ""
 
-#: Module.php:218
+#: Module.php:129
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:230
+#: Module.php:141
 msgid "Remove bulk export directory"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:51
+#: src/Api/Representation/ExporterRepresentation.php:151
+#, php-format
+msgid "Exporter #%d"
+msgstr ""
+
+#: src/Api/Representation/ShaperRepresentation.php:112
+#: view/bulk/admin/shaper/edit.phtml:27 view/bulk/admin/shaper/show.phtml:20
+#, php-format
+msgid "Shaper #%d"
+msgstr ""
+
+#: src/Controller/Admin/ExporterController.php:55
 msgid "[No label]"
 msgstr ""
 
@@ -38,7 +49,7 @@ msgstr ""
 msgid "Method not allowed for export for now"
 msgstr ""
 
-#: src/Controller/ApiController.php:42 src/Controller/ApiController.php:118
+#: src/Controller/ApiController.php:49 src/Controller/ApiController.php:125
 msgid "Resource type not allowed for export for now"
 msgstr ""
 
@@ -50,11 +61,11 @@ msgstr ""
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:148
+#: src/Controller/ExporterTrait.php:149
 msgid "The list of ids should be a list of numeric internal identifiers."
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:157
+#: src/Controller/ExporterTrait.php:158
 msgid ""
 "A query cannot be used to export \"resources\" before Omeka S v4.1: set the "
 "resource type or use the list of ids instead."
@@ -124,27 +135,91 @@ msgid "File size"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:270
+msgid "Url to original"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:271
 msgid "Original file url"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:272
-msgid "Annotation"
+msgid "Url to large thumbnail"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:273
-msgid "Url"
+msgid "Url to medium thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:276
-msgid "Tag"
+#: src/Traits/ResourceFieldsTrait.php:274
+msgid "Url to square thumbnail"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:280
+msgid "Asset id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:281
+msgid "Asset url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:282
+msgid "Asset file name"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:283
+msgid "Asset id if any, else primary media id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:284
+msgid "Asset url if any, else primary media original url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:285
+msgid "Asset url if any, else primary media large url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:286
+msgid "Asset url if any, else primary media medium url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:287
+msgid "Asset url if any, else primary media square url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:288
+msgid "Asset file name if any, else primary media original file name"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:289
+msgid "Asset file name if any, else primary media large file name"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:290
+msgid "Asset file name if any, else primary media medium file name"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:291
+msgid "Asset file name if any, else primary media square file name"
 msgstr ""
 
 #: src/Traits/ResourceFieldsTrait.php:292
+msgid "Annotation"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:293
+msgid "Url"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:296
+msgid "Tag"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:312
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:297
+#: src/Traits/ResourceFieldsTrait.php:317
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
@@ -186,135 +261,142 @@ msgstr ""
 msgid "no-name"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:18
-#: view/bulk/admin/export/browse.phtml:15 view/bulk/admin/export/logs.phtml:49
-#: view/bulk/admin/export/show.phtml:20
-#: view/bulk/admin/exporter/configure-writer.phtml:24
-#: view/bulk/admin/exporter/delete.phtml:19
-#: view/bulk/admin/exporter/edit.phtml:23
-#: view/bulk/admin/exporter/start.phtml:27
+#: view/bulk/admin/bulk-export/index.phtml:22
+#: view/bulk/admin/export/browse.phtml:18 view/bulk/admin/export/logs.phtml:54
+#: view/bulk/admin/export/show.phtml:31
+#: view/bulk/admin/exporter/configure-writer.phtml:28
+#: view/bulk/admin/exporter/delete.phtml:23
+#: view/bulk/admin/exporter/edit.phtml:27
+#: view/bulk/admin/exporter/start.phtml:31
+#: view/bulk/admin/shaper/browse.phtml:26
+#: view/bulk/admin/shaper/delete.phtml:23 view/bulk/admin/shaper/edit.phtml:27
+#: view/bulk/admin/shaper/show.phtml:20
 msgid "Bulk export"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:22
+#: view/bulk/admin/bulk-export/index.phtml:26
 msgid "Add an exporter"
 msgstr ""
 
-#: view/bulk/admin/bulk-export/index.phtml:25
-msgid "See all exports"
+#: view/bulk/admin/bulk-export/index.phtml:29
+msgid "Add a shaper"
 msgstr ""
 
 #: view/bulk/admin/bulk-export/index.phtml:32
+msgid "See all exports"
+msgstr ""
+
+#: view/bulk/admin/bulk-export/index.phtml:41
 msgid "Last exports"
 msgstr ""
 
-#: view/bulk/admin/export/browse.phtml:15
 #: view/bulk/admin/export/browse.phtml:18
+#: view/bulk/admin/export/browse.phtml:21
 msgid "Exports"
 msgstr ""
 
-#: view/bulk/admin/export/browse.phtml:27
+#: view/bulk/admin/export/browse.phtml:30
 msgid "No exports yet."
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:18
+#: view/bulk/admin/export/export-table.phtml:25
 msgid "Label / Comment"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:20
+#: view/bulk/admin/export/export-table.phtml:27
 msgid "Process"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:44
+#: view/bulk/admin/export/export-table.phtml:53
 msgid "task"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:49
+#: view/bulk/admin/export/export-table.phtml:58
 #: view/bulk/admin/export/show-details.phtml:30
 msgid "Get file"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:56
+#: view/bulk/admin/export/export-table.phtml:65
 msgid "Stop"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:61
+#: view/bulk/admin/export/export-table.phtml:70
 msgid "See params"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:65
+#: view/bulk/admin/export/export-table.phtml:74
 #: view/bulk/admin/export/show-details.phtml:55
 msgid "See logs"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:82
+#: view/bulk/admin/export/export-table.phtml:101
 #, php-format
 msgid "Start: %s"
 msgstr ""
 
-#: view/bulk/admin/export/export-table.phtml:85
+#: view/bulk/admin/export/export-table.phtml:104
 #, php-format
 msgid "End: %s"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:38
+#: view/bulk/admin/export/logs.phtml:40
 msgid "Emergency"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:39
+#: view/bulk/admin/export/logs.phtml:41
 msgid "Alert"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:40
+#: view/bulk/admin/export/logs.phtml:42
 msgid "Critical"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:43
+#: view/bulk/admin/export/logs.phtml:45
 msgid "Notice"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:45
+#: view/bulk/admin/export/logs.phtml:47
 msgid "Debug"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:49 view/bulk/admin/export/show.phtml:20
+#: view/bulk/admin/export/logs.phtml:54 view/bulk/admin/export/show.phtml:31
 #, php-format
 msgid "Export #%d"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:53 view/bulk/admin/export/show.phtml:24
+#: view/bulk/admin/export/logs.phtml:61 view/bulk/admin/export/show.phtml:38
 msgid "Attempt to stop job"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:56
+#: view/bulk/admin/export/logs.phtml:64
 msgid "Manage logs"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:67
+#: view/bulk/admin/export/logs.phtml:75
 msgid "Show only messages whose severity is higher than or equal to"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:84
+#: view/bulk/admin/export/logs.phtml:92
 msgid "Message"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:85
+#: view/bulk/admin/export/logs.phtml:93
 msgid "Severity"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:86
+#: view/bulk/admin/export/logs.phtml:94
 msgid "Time"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:107
+#: view/bulk/admin/export/logs.phtml:118
 msgid "Full log"
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:124
+#: view/bulk/admin/export/logs.phtml:135
 msgid "No logs yet."
 msgstr ""
 
-#: view/bulk/admin/export/logs.phtml:124
+#: view/bulk/admin/export/logs.phtml:135
 msgid "Refresh page"
 msgstr ""
 
@@ -323,13 +405,15 @@ msgid "Output file"
 msgstr ""
 
 #: view/bulk/admin/export/show-details.phtml:34
-#: view/bulk/admin/exporter/add.phtml:22
-#: view/bulk/admin/exporter/delete.phtml:19
+#: view/bulk/admin/exporter/add.phtml:26
+#: view/bulk/admin/exporter/delete.phtml:23
 #: view/bulk/admin/exporter/menu-tab.phtml:16
 msgid "Exporter"
 msgstr ""
 
 #: view/bulk/admin/export/show-details.phtml:43
+#: view/bulk/admin/shaper/shaper-table.phtml:62
+#: view/bulk/admin/shaper/show-details.phtml:21
 msgid "[no owner]"
 msgstr ""
 
@@ -337,78 +421,152 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:35
+#: view/bulk/admin/export/show.phtml:49
 #, php-format
 msgid "Exporter: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:36
+#: view/bulk/admin/export/show.phtml:50 view/bulk/admin/shaper/show.phtml:35
 #, php-format
 msgid "Owner: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:37 view/bulk/admin/exporter/start.phtml:34
+#: view/bulk/admin/export/show.phtml:51 view/bulk/admin/exporter/start.phtml:38
 #, php-format
 msgid "Comment: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:40
+#: view/bulk/admin/export/show.phtml:55
+msgid "System state:"
+msgstr ""
+
+#: view/bulk/admin/export/show.phtml:60
 #, php-format
 msgid "Started: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:43
+#: view/bulk/admin/export/show.phtml:63
 #, php-format
 msgid "Ended: %s"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:46 view/bulk/admin/exporter/start.phtml:35
+#: view/bulk/admin/export/show.phtml:66 view/bulk/admin/exporter/start.phtml:39
+#: view/bulk/admin/shaper/show-details.phtml:34
+#: view/bulk/admin/shaper/show.phtml:41
 msgid "Parameters"
 msgstr ""
 
-#: view/bulk/admin/export/show.phtml:47
+#: view/bulk/admin/export/show.phtml:67
 #: view/bulk/admin/exporter/exporter-table.phtml:24
 #: view/bulk/admin/exporter/menu-tab.phtml:25
-#: view/bulk/admin/exporter/start.phtml:36
+#: view/bulk/admin/exporter/start.phtml:40
 msgid "Writer"
 msgstr ""
 
-#: view/bulk/admin/exporter/add.phtml:22
+#: view/bulk/admin/exporter/add.phtml:26 view/bulk/admin/shaper/add.phtml:26
 msgid "Bulk Export"
 msgstr ""
 
-#: view/bulk/admin/exporter/add.phtml:25
+#: view/bulk/admin/exporter/add.phtml:29
 msgid "Create new exporter"
 msgstr ""
 
-#: view/bulk/admin/exporter/configure-writer.phtml:29
+#: view/bulk/admin/exporter/configure-writer.phtml:33
 #, php-format
 msgid "Writer: %s"
 msgstr ""
 
-#: view/bulk/admin/exporter/configure-writer.phtml:30
+#: view/bulk/admin/exporter/configure-writer.phtml:34
 msgid "Fill the default values of the writer."
 msgstr ""
 
-#: view/bulk/admin/exporter/delete.phtml:22
+#: view/bulk/admin/exporter/delete.phtml:26
 #, php-format
 msgid "Delete exporter (%s)"
 msgstr ""
 
-#: view/bulk/admin/exporter/delete.phtml:23
+#: view/bulk/admin/exporter/delete.phtml:27
 msgid "Are you sure you want to delete this exporter ?"
 msgstr ""
 
-#: view/bulk/admin/exporter/edit.phtml:28
+#: view/bulk/admin/exporter/edit.phtml:32
 msgid "Edit exporter"
 msgstr ""
 
 #: view/bulk/admin/exporter/exporter-table.phtml:16
-msgid "Available exporters"
+msgid "Exporters"
 msgstr ""
 
-#: view/bulk/admin/exporter/start.phtml:48
+#: view/bulk/admin/exporter/start.phtml:52
 msgid "Store export"
+msgstr ""
+
+#: view/bulk/admin/shaper/add.phtml:26
+msgid "New shaper"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:26
+#: view/bulk/admin/shaper/shaper-table.phtml:15
+msgid "Shapers"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:30
+msgid "Add new shaper"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:78
+#: view/bulk/admin/shaper/browse.phtml:97
+msgid "Delete shapers"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:79
+msgid "Are you sure you would like to delete the selected shapers?"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:81
+#: view/bulk/admin/shaper/browse.phtml:100
+#, php-format
+msgid ""
+"%1$s: this action will permanently delete %2$s shapers and cannot be undone."
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:98
+msgid "Are you sure you would like to delete all shapers?"
+msgstr ""
+
+#: view/bulk/admin/shaper/browse.phtml:143
+msgid "No shapers yet."
+msgstr ""
+
+#: view/bulk/admin/shaper/delete.phtml:23
+msgid "Shaper"
+msgstr ""
+
+#: view/bulk/admin/shaper/delete.phtml:26
+#, php-format
+msgid "Delete shaper(%s)"
+msgstr ""
+
+#: view/bulk/admin/shaper/delete.phtml:27
+msgid "Are you sure you want to delete this shaper ?"
+msgstr ""
+
+#: view/bulk/admin/shaper/shaper-table.phtml:34
+msgid "Select shaper"
+msgstr ""
+
+#: view/bulk/admin/shaper/show.phtml:28
+msgid "Edit shaper"
+msgstr ""
+
+#: view/bulk/admin/shaper/show.phtml:36
+#, php-format
+msgid "Created: %s"
+msgstr ""
+
+#: view/bulk/admin/shaper/show.phtml:38
+#, php-format
+msgid "Modified: %s"
 msgstr ""
 
 #: view/common/resource-page-block-layout/bulk-export-button.phtml:18
@@ -416,56 +574,64 @@ msgstr ""
 msgid "Export record"
 msgstr ""
 
-#: data/scripts/upgrade.php:147
+#: data/scripts/upgrade.php:43 Module.php:55
+msgid "The module {module} should be upgraded to version {version} or later."
+msgstr ""
+
+#: data/scripts/upgrade.php:157
 msgid ""
 "It is now possible to export resources as GeoJSON for values filled via "
 "Value Suggest Geonames."
 msgstr ""
 
-#: data/scripts/upgrade.php:154
+#: data/scripts/upgrade.php:164
 msgid ""
 "It is now possible to export into a specific directory with a specific "
 "filename."
 msgstr ""
 
-#: data/scripts/upgrade.php:161
+#: data/scripts/upgrade.php:171
 msgid ""
 "It is now possible to export via the api endpoint: just add an extension to "
 "it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
 "local/items/151.odt\" (from module Api Info)."
 msgstr ""
 
-#: data/scripts/upgrade.php:213
+#: data/scripts/upgrade.php:223
 msgid "It is now possible to store an exporter as a task."
 msgstr ""
 
-#: data/scripts/upgrade.php:218
+#: data/scripts/upgrade.php:228
 msgid "It is now possible to do an incremental export."
 msgstr ""
 
-#: data/scripts/upgrade.php:334
+#: data/scripts/upgrade.php:344
 msgid ""
 "The config of exporters has been upgraded to a new format. You may check "
 "them if you use a complex config."
 msgstr ""
 
-#: data/scripts/upgrade.php:350
+#: data/scripts/upgrade.php:360
 msgid ""
 "New resource page blocks have been added to display a button to export "
 "current resources."
 msgstr ""
 
-#: data/scripts/upgrade.php:355
+#: data/scripts/upgrade.php:365
 msgid ""
 "A new option has been added to display the exporters automatically in "
 "selected pages for themes that don’t manage resource page blocks. Check your "
 "site if needed."
 msgstr ""
 
-#: data/scripts/upgrade.php:388
+#: data/scripts/upgrade.php:398
 msgid ""
 "The option \"divclass\" was removed from blocks. Check your theme if you "
 "customized it."
+msgstr ""
+
+#: data/scripts/upgrade.php:424
+msgid "It is now possible to define a specific format for each metadata."
 msgstr ""
 
 #: data/exporters/ods.php:5
@@ -484,17 +650,27 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: Module.php:154
+#: Module.php:65
 msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
-#: Module.php:224
+#: Module.php:135
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
 #: test/BulkExportTest/Job/ExportTest.php:287
 #, php-format
 msgid "No argument files (%s)."
+msgstr ""
+
+#: src/Traits/ShaperTrait.php:159
+msgid "For formatter \"Table\", the table is not set."
+msgstr ""
+
+#: src/Traits/ShaperTrait.php:172
+msgid ""
+"For formatter \"Table\", the table #{table_id} does not exist and values are "
+"not normalized."
 msgstr ""
 
 #: src/Traits/OpenDocumentTextTemplateTrait.php:54
@@ -514,73 +690,93 @@ msgid ""
 "1000 or 5000 characters: {properties}."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:303
+#: src/Traits/ResourceFieldsTrait.php:275
+#: src/Form/Writer/MetadataSelectTrait.php:114
+msgid "File name of original"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:276
+#: src/Form/Writer/MetadataSelectTrait.php:115
+msgid "File name of large thumbnail"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:277
+#: src/Form/Writer/MetadataSelectTrait.php:116
+msgid "File name of medium thumbnail"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:278
+#: src/Form/Writer/MetadataSelectTrait.php:117
+msgid "File name of square thumbnail"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:323
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:134
+#: src/Writer/AbstractFieldsWriter.php:143
 msgid "No headers are used in any resources."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:152
+#: src/Writer/AbstractFieldsWriter.php:161
 msgid "{number} different fields are used in all resources."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:230
+#: src/Writer/AbstractFieldsWriter.php:239
 msgid "No resource type selected."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:235
+#: src/Writer/AbstractFieldsWriter.php:244
 msgid "No resource to export."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:250
+#: src/Writer/AbstractFieldsWriter.php:259
 msgid "All resources of all resource types ({total}) exported."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:279
+#: src/Writer/AbstractFieldsWriter.php:288
 msgid "Starting export of {total} {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:294
+#: src/Writer/AbstractFieldsWriter.php:303
 msgid ""
 "The job \"Export\" was stopped: {processed}/{total} resources processed."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:341
-#: src/Writer/AbstractFieldsWriter.php:353
+#: src/Writer/AbstractFieldsWriter.php:350
+#: src/Writer/AbstractFieldsWriter.php:362
 msgid ""
 "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
 "skipped."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:358
+#: src/Writer/AbstractFieldsWriter.php:367
 msgid "End export of {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:369
+#: src/Writer/AbstractFieldsWriter.php:378
 msgid ""
 "The deleted resources cannot be output when the internal id is not included "
 "in the list of fields."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:385
+#: src/Writer/AbstractFieldsWriter.php:394
 msgid "Starting export of deleted {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:406
+#: src/Writer/AbstractFieldsWriter.php:415
 msgid "End export of {total} deleted {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:411
+#: src/Writer/AbstractFieldsWriter.php:420
 msgid "No deleted resource exported for {resource_type}."
 msgstr ""
 
-#: src/Writer/AbstractFieldsWriter.php:637
+#: src/Writer/AbstractFieldsWriter.php:649
 msgid ""
-"Previous completed export by user {username} with exporter "
-"\"{exporter_label}\" is #{export_id} on {date}."
+"Previous completed export by user {username} with exporter \"{exporter_label}"
+"\" is #{export_id} on {date}."
 msgstr ""
 
 #: src/Writer/GeoJsonWriter.php:7
@@ -592,14 +788,14 @@ msgid "OpenDocument Text"
 msgstr ""
 
 #: src/Writer/OpenDocumentTextWriter.php:24
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:60
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:66
 msgid ""
 "To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
 "required."
 msgstr ""
 
-#: src/Writer/TextWriter.php:63 src/Writer/AbstractFieldsJsonWriter.php:59
-#: src/Formatter/AbstractFormatter.php:383 src/Formatter/Ods.php:58
+#: src/Writer/TextWriter.php:69 src/Writer/AbstractFieldsJsonWriter.php:59
+#: src/Formatter/AbstractFormatter.php:384 src/Formatter/Ods.php:58
 msgid "Unable to open output: {error}."
 msgstr ""
 
@@ -613,7 +809,7 @@ msgstr ""
 msgid "Unsupported format {format} for spreadsheet."
 msgstr ""
 
-#: src/Writer/AbstractSpreadsheetWriter.php:111
+#: src/Writer/AbstractSpreadsheetWriter.php:117
 msgid ""
 "Skipped {resource_type} #{resource_id}: it contains the separator "
 "\"{separator}\"."
@@ -658,62 +854,83 @@ msgstr ""
 msgid "OpenDocument Spreadsheet"
 msgstr ""
 
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:71 src/Formatter/Ods.php:30
+#: src/Writer/OpenDocumentSpreadsheetWriter.php:77 src/Formatter/Ods.php:30
 msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
 msgstr ""
 
-#: src/Job/Export.php:51
+#: src/Job/Export.php:73
 msgid "Export record id is not set."
 msgstr ""
 
-#: src/Job/Export.php:60
+#: src/Job/Export.php:82
 msgid "Export record id #{id} does not exist."
 msgstr ""
 
-#: src/Job/Export.php:87
+#: src/Job/Export.php:109
 msgid "Export as task based on export #{export_id}."
 msgstr ""
 
-#: src/Job/Export.php:101
+#: src/Job/Export.php:123
 msgid "Writer \"{writer}\" is not available."
 msgstr ""
 
-#: src/Job/Export.php:122
+#: src/Job/Export.php:144
 msgid "Export error: {error}"
 msgstr ""
 
-#: src/Job/Export.php:131
+#: src/Job/Export.php:153
 msgid "Export started"
 msgstr ""
 
-#: src/Job/Export.php:142
+#: src/Job/Export.php:182
 msgid "Export completed"
 msgstr ""
 
-#: src/Job/Export.php:180
+#: src/Job/Export.php:220
 msgid "The export is available locally as specified (size: {size} bytes)."
 msgstr ""
 
-#: src/Job/Export.php:187
+#: src/Job/Export.php:227
 msgid "The export is available at {link} (size: {size} bytes)."
 msgstr ""
 
-#: src/Job/Export.php:287
+#: src/Job/Export.php:327
 msgid "No owner to notify end of process."
 msgstr ""
 
-#: src/Job/Export.php:301
+#: src/Job/Export.php:341
 msgid "[Omeka Bulk Export] #{job_id}"
 msgstr ""
 
-#: src/Job/Export.php:305
+#: src/Job/Export.php:345
 msgid ""
 "Export ended (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Job/Export.php:331
+#: src/Job/Export.php:371
 msgid "Error when sending email to notify end of process."
+msgstr ""
+
+#: src/Job/Export.php:414
+msgid "No resources to create zip file."
+msgstr ""
+
+#: src/Job/Export.php:421
+msgid "Creation of zip of all local files ({format})"
+msgstr ""
+
+#: src/Job/Export.php:429
+msgid ""
+"End of creation of zip for format {format} to {download}: {total} files."
+msgstr ""
+
+#: src/Job/Export.php:456
+msgid "No files to zip for format \"{format}\"."
+msgstr ""
+
+#: src/Job/Export.php:475
+msgid "Zipping \"{format}\" files stopped."
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:26
@@ -750,88 +967,130 @@ msgstr ""
 msgid "Media / browse"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:35
+#: src/Form/SettingsFieldset.php:38
 msgid "Maximum number of resources to export"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:36
+#: src/Form/SettingsFieldset.php:39
 msgid "This setting is applied only for the direct output."
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:49
+#: src/Form/SettingsFieldset.php:54
 msgid "Formatters to display in resource pages"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:61 src/Form/Writer/FormatTrait.php:17
+#: src/Form/SettingsFieldset.php:69 src/Form/Writer/FormatTrait.php:19
+msgid "Labels with field names for merging and specific order"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:70 src/Form/Writer/FormatTrait.php:20
+msgid ""
+"Fill the label and the field names to manage a specific order of data and "
+"merge of metadata. Unlisted metadata will be added next."
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:78 src/Form/Writer/FormatTrait.php:28
+msgid ""
+"Person = dcterms:creator dcterms:contributor\n"
+"dcterms:subject = dcterms:subject dcterms:temporal"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:89 src/Form/Writer/FormatTrait.php:39
+msgid "Specific shapers by metadata"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:90 src/Form/Writer/FormatTrait.php:40
+msgid ""
+"Shapers are defined in the page \"Shapers\" and allows to define specific "
+"rules for specific metadata. If not set, the rules are the main ones. Set "
+"the metadata name, \"=\" and the identifier or label of the shaper."
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:96 src/Form/Writer/FormatTrait.php:46
+msgid ""
+"dcterms:creator = Person\n"
+"dcterms:date = Year only"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:107 src/Form/Writer/FormatTrait.php:56
 msgid "Metadata names or headers"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:63 src/Form/Writer/FormatTrait.php:19
+#: src/Form/SettingsFieldset.php:109 src/Form/Writer/FormatTrait.php:58
 msgid "Rdf names"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:64 src/Form/Writer/FormatTrait.php:20
+#: src/Form/SettingsFieldset.php:110 src/Form/Writer/FormatTrait.php:59
 msgid "Labels"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:65 src/Form/Writer/FormatTrait.php:21
+#: src/Form/SettingsFieldset.php:111 src/Form/Writer/FormatTrait.php:60
 msgid "First template alternative name"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:78 src/Form/Writer/FormatTrait.php:33
+#: src/Form/SettingsFieldset.php:124 src/Form/Writer/FormatTrait.php:72
 msgid "Format of values"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:80 src/Form/Writer/FormatTrait.php:35
+#: src/Form/SettingsFieldset.php:126 src/Form/Writer/FormatTrait.php:74
 msgid "String"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:81
+#: src/Form/SettingsFieldset.php:127
 msgid "Html (slow with some modules)"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:94 src/Form/Writer/FormatTrait.php:50
+#: src/Form/SettingsFieldset.php:140 src/Form/Writer/FormatTrait.php:89
 msgid "Format of linked resources"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:96 src/Form/Writer/FormatTrait.php:53
+#: src/Form/SettingsFieldset.php:142 src/Form/Writer/FormatTrait.php:92
 msgid "Id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:97 src/Form/Writer/FormatTrait.php:52
+#: src/Form/SettingsFieldset.php:143 src/Form/Writer/FormatTrait.php:91
 msgid "Identifier (property below)"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:98 src/Form/Writer/FormatTrait.php:54
+#: src/Form/SettingsFieldset.php:144 src/Form/Writer/FormatTrait.php:93
 msgid "Identifier or id"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:99 src/Form/Writer/FormatTrait.php:57
+#: src/Form/SettingsFieldset.php:145 src/Form/Writer/FormatTrait.php:96
 msgid "Omeka url and title"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:101 src/Form/Writer/FormatTrait.php:55
+#: src/Form/SettingsFieldset.php:147 src/Form/Writer/FormatTrait.php:94
 msgid "Omeka url"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:114 src/Form/Writer/FormatTrait.php:69
+#: src/Form/SettingsFieldset.php:160 src/Form/Writer/FormatTrait.php:108
 msgid "Property for linked resources"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:130 src/Form/Writer/FormatTrait.php:84
+#: src/Form/SettingsFieldset.php:176 src/Form/Writer/FormatTrait.php:123
 msgid "Format of uri"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:132 src/Form/Writer/FormatTrait.php:86
+#: src/Form/SettingsFieldset.php:178 src/Form/Writer/FormatTrait.php:125
 msgid "Uri and label separated by a space"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:133 src/Form/Writer/FormatTrait.php:87
+#: src/Form/SettingsFieldset.php:179 src/Form/Writer/FormatTrait.php:126
 msgid "Uri only"
 msgstr ""
 
-#: src/Form/SettingsFieldset.php:134 src/Form/Writer/FormatTrait.php:36
-#: src/Form/Writer/FormatTrait.php:88
+#: src/Form/SettingsFieldset.php:180 src/Form/Writer/FormatTrait.php:127
+msgid "Label if any, else uri"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:181 src/Form/ShaperConfigFieldset.php:165
+#: src/Form/Writer/FormatTrait.php:128
+msgid "Label only"
+msgstr ""
+
+#: src/Form/SettingsFieldset.php:182 src/Form/Writer/FormatTrait.php:75
+#: src/Form/Writer/FormatTrait.php:129
 msgid "Html"
 msgstr ""
 
@@ -839,21 +1098,118 @@ msgstr ""
 msgid "Delete exporter"
 msgstr ""
 
-#: src/Form/ExporterForm.php:48
+#: src/Form/ShaperConfigFieldset.php:35
+msgid ""
+"This optional description will help to understand the purpose of this shaper."
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:40
+msgid "This shaper can be use to…"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:75
+msgid "Cleaning and normalization"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:76
+msgid "The cleaning is processed in the following order."
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:78
+msgid "Escape html"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:79
+msgid "Strip tags"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:80
+msgid "Lower case"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:81
+msgid "Upper case"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:82
+msgid "Upper case first character"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:83
+msgid "Remove diacritics"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:84
+msgid "Alphanumeric only"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:85
+msgid "Alphabetic only"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:86 src/Form/ShaperConfigFieldset.php:104
+msgid "Max length"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:87
+msgid "Number"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:88
+msgid "Year"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:89
+msgid "Map value to a code or code to a value (module Table)"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:117
+msgid "String to prepend"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:129
+msgid "String to append"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:145
+msgid "Table for normalization \"Table\""
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:153
+msgid "Select a table…"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:163
+msgid "Table: Mode of normalization"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:166
+msgid "Code only"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:182
+msgid "Table: include original value too"
+msgstr ""
+
+#: src/Form/ShaperConfigFieldset.php:194
+msgid "Table: strict check (same case, same diacritics)"
+msgstr ""
+
+#: src/Form/ExporterForm.php:49
 msgid "Other params"
 msgstr ""
 
-#: src/Form/ExporterForm.php:67
+#: src/Form/ExporterForm.php:68
 msgid "Store exporter as a task"
 msgstr ""
 
-#: src/Form/ExporterForm.php:68
+#: src/Form/ExporterForm.php:69
 msgid ""
 "Allows to store a job to run it via command line or a cron task (see module "
 "EasyAdmin)."
 msgstr ""
 
-#: src/Form/ExporterForm.php:78
+#: src/Form/ExporterForm.php:79
 msgid "Notify by email when finished"
 msgstr ""
 
@@ -873,113 +1229,129 @@ msgstr ""
 msgid "If empty, all used properties will be returned."
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:26
-#: src/Form/Writer/MetadataSelectTrait.php:52
+#: src/Form/Writer/MetadataSelectTrait.php:27
+#: src/Form/Writer/MetadataSelectTrait.php:54
 msgid "Select one or more metadata…"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:34
+#: src/Form/Writer/MetadataSelectTrait.php:35
 msgid "Metadata to exclude"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:35
+#: src/Form/Writer/MetadataSelectTrait.php:36
 msgid ""
 "It is recommended to remove big fields from the list of properties, in "
 "particular extracted text."
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:39
-#: src/Form/Writer/MetadataSelectTrait.php:76
+#: src/Form/Writer/MetadataSelectTrait.php:65
 msgid "Resource metadata"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:41
-#: src/Form/Writer/MetadataSelectTrait.php:93
+#: src/Form/Writer/MetadataSelectTrait.php:83
 msgid "All used properties more than 500 characters"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:42
-#: src/Form/Writer/MetadataSelectTrait.php:95
+#: src/Form/Writer/MetadataSelectTrait.php:85
 msgid "All used properties more than 1000 characters"
 msgstr ""
 
 #: src/Form/Writer/MetadataSelectTrait.php:43
-#: src/Form/Writer/MetadataSelectTrait.php:97
+#: src/Form/Writer/MetadataSelectTrait.php:87
 msgid "All used properties more than 5000 characters"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:78
-#: src/Form/Writer/MetadataSelectTrait.php:108
-#: src/Form/Writer/MetadataSelectTrait.php:116
-#: src/Form/Writer/MetadataSelectTrait.php:126
-#: src/Form/Writer/MetadataSelectTrait.php:134
+#: src/Form/Writer/MetadataSelectTrait.php:67
+msgid "Specific fields below"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:68
+#: src/Form/Writer/MetadataSelectTrait.php:98
+#: src/Form/Writer/MetadataSelectTrait.php:106
+#: src/Form/Writer/MetadataSelectTrait.php:142
+#: src/Form/Writer/MetadataSelectTrait.php:150
 msgid "Internal id"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:79
+#: src/Form/Writer/MetadataSelectTrait.php:69
 msgid "Resource url"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:86
+#: src/Form/Writer/MetadataSelectTrait.php:76
 msgid "Owner id"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:87
+#: src/Form/Writer/MetadataSelectTrait.php:77
 msgid "Visibility public/private"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:89
+#: src/Form/Writer/MetadataSelectTrait.php:79
 msgid "Openness"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:91
+#: src/Form/Writer/MetadataSelectTrait.php:81
 msgid "All used properties"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:92
+#: src/Form/Writer/MetadataSelectTrait.php:82
 msgid "All used properties less than 500 characters"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:94
+#: src/Form/Writer/MetadataSelectTrait.php:84
 msgid "All used properties less than 1000 characters"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:96
+#: src/Form/Writer/MetadataSelectTrait.php:86
 msgid "All used properties less than 5000 characters"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:102
+#: src/Form/Writer/MetadataSelectTrait.php:92
 msgid "Tags (Folksonomy)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:106
+#: src/Form/Writer/MetadataSelectTrait.php:96
 msgid "Item set (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:110
-#: src/Form/Writer/MetadataSelectTrait.php:120
-#: src/Form/Writer/MetadataSelectTrait.php:128
-#: src/Form/Writer/MetadataSelectTrait.php:136
+#: src/Form/Writer/MetadataSelectTrait.php:100
+#: src/Form/Writer/MetadataSelectTrait.php:119
+#: src/Form/Writer/MetadataSelectTrait.php:144
+#: src/Form/Writer/MetadataSelectTrait.php:152
 msgid "Label (first title)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:114
+#: src/Form/Writer/MetadataSelectTrait.php:104
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:117
+#: src/Form/Writer/MetadataSelectTrait.php:107
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:118
+#: src/Form/Writer/MetadataSelectTrait.php:108
+msgid "File name"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:109
 msgid "Source url / file"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:124
+#: src/Form/Writer/MetadataSelectTrait.php:123
+msgid "Asset (thumbnail)"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:133
+msgid "Asset file nameif any, else primary media original file name"
+msgstr ""
+
+#: src/Form/Writer/MetadataSelectTrait.php:140
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Writer/MetadataSelectTrait.php:132
+#: src/Form/Writer/MetadataSelectTrait.php:148
 msgid "Resource (for annotation)"
 msgstr ""
 
@@ -1005,10 +1377,6 @@ msgstr ""
 msgid "Select one or more resource type…"
 msgstr ""
 
-#: src/Form/Writer/ResourceTypesSelectTrait.php:40
-msgid "required"
-msgstr ""
-
 #: src/Form/Writer/AbstractWriterConfigForm.php:20
 msgid "This optional comment will help admins for future reference."
 msgstr ""
@@ -1017,21 +1385,21 @@ msgstr ""
 msgid "Optional comment for future reference."
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:32
-msgid "Use a background job"
-msgstr ""
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:33
+#: src/Form/Writer/AbstractWriterConfigForm.php:43
 msgid ""
-"For complex formats or numerous resources, the process may require more than "
-"30 seconds, that is the default duration of web server before error."
+"Include deleted resources according to date (require module HistoryLog, "
+"query unsupported)"
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:52
+#: src/Form/Writer/AbstractWriterConfigForm.php:46
+msgid "Id only"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:66
 msgid "Directory"
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:53
+#: src/Form/Writer/AbstractWriterConfigForm.php:67
 msgid ""
 "This setting allows to store the file in the specified location. It should "
 "be writeable by the web server. It may be relative to Omeka root. Available "
@@ -1039,11 +1407,11 @@ msgid ""
 "\"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:66
+#: src/Form/Writer/AbstractWriterConfigForm.php:80
 msgid "Filename"
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:67
+#: src/Form/Writer/AbstractWriterConfigForm.php:81
 msgid ""
 "This setting allows to store the file always with the same name, generally "
 "for server tasks. The existing file will be overridden. Available "
@@ -1051,47 +1419,83 @@ msgid ""
 "\"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:85
+#: src/Form/Writer/AbstractWriterConfigForm.php:99
+msgid "Export all original or thumbnails as zip"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:102
+msgid "Large"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:104
+msgid "Square"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:105
+msgid "Attached asset"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:106
+msgid "Asset, else original"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:107
+msgid "Asset, else large"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:108
+msgid "Asset, else medium"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:109
+msgid "Asset, else square"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:120
 msgid "Incremental since last successful export"
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:86
+#: src/Form/Writer/AbstractWriterConfigForm.php:121
 msgid ""
 "Only new and updated resources since last completed export with the same "
 "exporter and user will be output."
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:104
+#: src/Form/Writer/AbstractWriterConfigForm.php:139
+msgid "Use a background job"
+msgstr ""
+
+#: src/Form/Writer/AbstractWriterConfigForm.php:140
 msgid ""
-"Include deleted resources according to date (require module HistoryLog, "
-"query unsupported)"
+"For complex formats or numerous resources, the process may require more than "
+"30 seconds, that is the default duration of web server before error."
 msgstr ""
 
-#: src/Form/Writer/AbstractWriterConfigForm.php:107
-msgid "Id only"
-msgstr ""
-
-#: src/Form/Writer/CsvWriterConfigForm.php:17
+#: src/Form/Writer/CsvWriterConfigForm.php:18
 msgid "Delimiter"
 msgstr ""
 
-#: src/Form/Writer/CsvWriterConfigForm.php:28
+#: src/Form/Writer/CsvWriterConfigForm.php:29
 msgid "Enclosure"
 msgstr ""
 
-#: src/Form/Writer/CsvWriterConfigForm.php:39
+#: src/Form/Writer/CsvWriterConfigForm.php:40
 msgid "Escape"
+msgstr ""
+
+#: src/Form/ShaperDeleteForm.php:29
+msgid "Delete shaper"
 msgstr ""
 
 #: src/Form/ExporterStartForm.php:27
 msgid "Start export"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:141
+#: src/Api/Representation/ExportRepresentation.php:143
 msgid "ready"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:147
+#: src/Api/Representation/ExportRepresentation.php:149
 msgid "Ready"
 msgstr ""
 
@@ -1099,99 +1503,127 @@ msgstr ""
 msgid "bulk_exports"
 msgstr ""
 
-#: src/Controller/Admin/ExportController.php:70
+#: src/Controller/Admin/ExportController.php:71
 msgid "export"
 msgstr ""
 
-#: src/Controller/Admin/ExportController.php:88
+#: src/Controller/Admin/ExportController.php:89
 msgid "Export successfully deleted"
 msgstr ""
 
-#: src/Controller/Admin/ExportController.php:105
+#: src/Controller/Admin/ExportController.php:110
 msgid "The export process #{export} does not exists."
 msgstr ""
 
-#: src/Controller/Admin/ExportController.php:112
+#: src/Controller/Admin/ExportController.php:117
 msgid "Attempting to stop the export process #{export}."
 msgstr ""
 
-#: src/Controller/Admin/ExportController.php:117
+#: src/Controller/Admin/ExportController.php:122
 msgid "The process #{export} cannot be stopped."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:33
-#: src/Controller/Admin/ExporterController.php:90
-#: src/Controller/Admin/ExporterController.php:135
-#: src/Controller/Admin/ExporterController.php:204
+#: src/Controller/Admin/ExporterController.php:37
+#: src/Controller/Admin/ExporterController.php:105
+#: src/Controller/Admin/ExporterController.php:154
+#: src/Controller/Admin/ExporterController.php:234
 msgid "exporter_id"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:64
-msgid "Save of exporter failed"
-msgstr ""
-
 #: src/Controller/Admin/ExporterController.php:69
-msgid "Exporter successfully saved"
+msgid "Save of exporter {exporter_label} failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:99
-msgid "This exporter cannot be deleted: exports that use it exist."
-msgstr ""
-
-#: src/Controller/Admin/ExporterController.php:112
-msgid "Exporter successfully deleted"
+#: src/Controller/Admin/ExporterController.php:78
+msgid "Exporter {exporter_label} successfully saved"
 msgstr ""
 
 #: src/Controller/Admin/ExporterController.php:114
+msgid "This exporter cannot be deleted: exports that use it exist."
+msgstr ""
+
+#: src/Controller/Admin/ExporterController.php:127
+msgid "Exporter successfully deleted"
+msgstr ""
+
+#: src/Controller/Admin/ExporterController.php:129
 msgid "Delete of exporter failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:172
-msgid "Writer configuration saved"
+#: src/Controller/Admin/ExporterController.php:192
+msgid "Writer configuration for exporter {exporter_label} successfully saved"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:174
-msgid "Save of writer configuration failed"
+#: src/Controller/Admin/ExporterController.php:197
+msgid "Save of writer configuration for exporter {exporter_label} failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:212
+#: src/Controller/Admin/ExporterController.php:242
 msgid "writer"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:233
+#: src/Controller/Admin/ExporterController.php:263
 msgid "This export will be stored to be run as a task."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:244
+#: src/Controller/Admin/ExporterController.php:274
 msgid "The page was reloaded, but params are lost. Restart the export."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:302
+#: src/Controller/Admin/ExporterController.php:332
 msgid "Save of export failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:312
+#: src/Controller/Admin/ExporterController.php:342
 msgid "The export #{bulk_export} was stored for future use."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:336
+#: src/Controller/Admin/ExporterController.php:366
 msgid ""
 "Export started in background (job {link_open_job}#{jobId}{link_close}, "
 "{link_open_log}logs{link_close}). This may take a while."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:337
+#: src/Controller/Admin/ExporterController.php:367
 msgid ""
 "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:356
+#: src/Controller/Admin/ExporterController.php:386
 msgid "Export start failed"
 msgstr ""
 
-#: src/Controller/Admin/ExporterController.php:432
+#: src/Controller/Admin/ExporterController.php:462
 msgid "Continue"
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:116
+msgid "Shaper successfully deleted"
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:134
+msgid "You must select at least one shaper to batch delete."
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:143
+msgid "Shapers successfully deleted"
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:169
+msgid "Deleting shapers. This may take a while."
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:198
+msgid "shaper_id"
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:227
+msgid "Save of shaper failed"
+msgstr ""
+
+#: src/Controller/Admin/ShaperController.php:232
+msgid "Shaper successfully saved"
 msgstr ""
 
 #: src/Service/FormatterManagerFactory.php:21
@@ -1202,7 +1634,7 @@ msgstr ""
 msgid "Unable to format resources as {format}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:420
+#: src/Formatter/AbstractFormatter.php:421
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
@@ -1212,7 +1644,7 @@ msgid ""
 "are required."
 msgstr ""
 
-#: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:45
+#: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:48
 msgid "No metadata are used in any resources."
 msgstr ""
 
@@ -1273,14 +1705,14 @@ msgstr ""
 msgid "Bulk export button"
 msgstr ""
 
-#: config/module.config.php:369
+#: config/module.config.php:374
 msgid "Dashboard"
 msgstr ""
 
-#: config/module.config.php:382
+#: config/module.config.php:387
 msgid "Past Exports"
 msgstr ""
 
-#: config/module.config.php:399
+#: config/module.config.php:404
 msgid "Params"
 msgstr ""
