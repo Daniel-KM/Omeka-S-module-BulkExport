@@ -41,6 +41,8 @@ trait ShaperTrait
 
         $normalizations = $shaperParams['normalization'] ?? [];
         $maxLength = empty($shaperParams['max_length']) ? 0 : (int) $shaperParams['max_length'];
+        $stringToPrepend = strlen($shaperParams['prepend'] ?? '') ? $shaperParams['prepend'] : null;
+        $stringToAppend  = strlen($shaperParams['append'] ?? '') ? $shaperParams['append'] : null;
 
         $result = [];
         foreach ($values as $value) {
@@ -121,6 +123,14 @@ trait ShaperTrait
 
             if ($maxLength) {
                 $value = mb_substr((string) $value, 0, $maxLength);
+            }
+
+            if (isset($stringToPrepend)) {
+                $value = $stringToPrepend . $value;
+            }
+
+            if (isset($stringToAppend)) {
+                $value .= $stringToAppend;
             }
 
             $result[] = $value;

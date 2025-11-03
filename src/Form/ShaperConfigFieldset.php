@@ -101,6 +101,31 @@ class ShaperConfigFieldset extends Fieldset
                     'data-normalization' => 'max_length',
                 ],
             ])
+
+            ->add([
+                'name' => 'prepend',
+                'type' => Element\Text::class,
+                'options' => [
+                    'label' => 'String to prepend', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'replace_prepend',
+                    // This attribute is required to make "batch edit all" working.
+                    'data-collection-action' => 'replace',
+                ],
+            ])
+            ->add([
+                'name' => 'append',
+                'type' => Element\Text::class,
+                'options' => [
+                    'label' => 'String to append', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'replace_append',
+                    // This attribute is required to make "batch edit all" working.
+                    'data-collection-action' => 'replace',
+                ],
+            ])
         ;
     }
 }
