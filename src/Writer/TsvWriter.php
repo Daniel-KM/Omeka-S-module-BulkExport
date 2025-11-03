@@ -31,6 +31,7 @@ class TsvWriter extends CsvWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
@@ -51,6 +52,7 @@ class TsvWriter extends CsvWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];

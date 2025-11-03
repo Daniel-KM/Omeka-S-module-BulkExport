@@ -27,6 +27,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
@@ -46,6 +47,7 @@ class TextWriter extends AbstractFieldsWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];

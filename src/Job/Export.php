@@ -7,9 +7,11 @@ use BulkExport\Interfaces\Configurable;
 use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Writer\Manager as WriterManager;
 use BulkExport\Writer\WriterInterface;
-use Laminas\Log\Logger;
 use Common\Stdlib\PsrMessage;
+use Doctrine\DBAL\Connection;
+use Laminas\Log\Logger;
 use Omeka\Job\AbstractJob;
+use ZipArchive;
 
 class Export extends AbstractJob
 {
@@ -19,9 +21,24 @@ class Export extends AbstractJob
     protected $api;
 
     /**
-     * @var \Laminas\Log\Logger
+     * @var string
      */
-    protected $logger;
+    protected $basePath;
+
+    /**
+     * @var string
+     */
+    protected $baseUrl;
+
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    protected $entityManager;
 
     /**
      * @var \BulkExport\Api\Representation\ExportRepresentation
@@ -32,6 +49,11 @@ class Export extends AbstractJob
      * @var \BulkExport\Api\Representation\ExporterRepresentation
      */
     protected $exporter;
+
+    /**
+     * @var \Laminas\Log\Logger
+     */
+    protected $logger;
 
     /**
      * @var \BulkExport\Writer\WriterInterface
@@ -138,6 +160,24 @@ class Export extends AbstractJob
         $this->writer->process();
 
         $this->saveFilename();
+
+        // TODO Manage option incremental for zip of files.
+        // $zipFiles = $this->exporter->configOption('exporter', 'zip_files');
+        $zipFiles = $this->writer->getParam('zip_files', []);
+        if ($zipFiles) {
+            $resourceTypes = $this->writer->getParam('resource_types', []);
+            // TODO Use api names, not rdf names for resource_types.
+            $resourceTypesApi = array_intersect($resourceTypes, ['items', 'media', 'o:Item', 'o:Media']);
+            if ($resourceTypesApi) {
+                $query = $this->writer->getParam('query', []);
+                if (!is_array($query)) {
+                    $queryArray = [];
+                    parse_str((string) $query, $queryArray);
+                    $query = $queryArray;
+                }
+                $this->zipFiles($zipFiles, $resourceTypesApi, $query);
+            }
+        }
 
         $this->logger->notice('Export completed'); // @translate
 
@@ -333,5 +373,184 @@ class Export extends AbstractJob
         }
 
         return $this;
+    }
+
+    /**
+     * Create a zip of files.
+     *
+     * Adapted:
+     * @see \BulkExport\Job\Export::zipFiles()
+     * @see \Zip\Job\ZipFiles::perform()
+     */
+    protected function zipFiles(array $formats, array $resourceTypes, array $query): self
+    {
+        if (!$formats || !$resourceTypes) {
+            return $this;
+        }
+
+        $services = $this->getServiceLocator();
+        $config = $services->get('Config');
+        $this->basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $this->baseUrl = $config['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
+
+        $this->connection = $services->get('Omeka\Connection');
+        $this->entityManager = $services->get('Omeka\EntityManager');
+
+        // Resource types may be "items" or "media".
+        $resourceType = in_array('items', $resourceTypes) || in_array('o:Item', $resourceTypes)
+            ? 'items'
+            : 'media';
+
+        if ($resourceType === 'items') {
+            // TODO item_id require a single id, so use a loop for now. And for now, not possible to use "has_original" or "has_thumbnails" (or use loop): $format === 'original' ? 'has_original' : 'has_thumbnails' => true.
+            // TODO Check storage_id early.
+            $ids= $this->api->search('items', ['has_media' => true] + $query, ['returnScalar' => 'id'])->getContent();
+        } else {
+            $ids = $this->api->search('media', ['renderer' => 'file'] + $query, ['returnScalar' => 'id'])->getContent();
+        }
+
+        if (!$ids) {
+            $this->logger->notice(
+                'No resources to create zip file.' // @translate
+            );
+            return $this;
+        }
+
+        foreach ($formats as $format) {
+            $this->logger->notice(
+                'Creation of zip of all local files ({format})', // @translate
+                ['format' => $format]
+            );
+
+            // TODO Limit by total number of files by zip.
+            $total = $this->zipFilesForType($resourceType, $ids, $format, 0);
+
+            $this->logger->notice(
+                'End of creation of zip for format {format} to {download}: {total} files.', // @translate
+                // TODO For now, only one file.
+                ['format' => $format, 'download' => $this->baseUrl . '/temp/export_' . $format . '_' . $this->job->getId() . '_0001.zip', 'total' => $total]
+            );
+        }
+
+        return $this;
+    }
+
+    protected function zipFilesForType(string $resourceType, array $ids, string $format, int $by): int
+    {
+        // Get the list of files matching the ids.
+        // Media may not have any file according to hasOriginal() or hasThumbnails().
+
+        // Get the full list of files inside the specified directory.
+        $storageNames = $this->listStorageNamesForFormat($resourceType, $ids, $format);
+        $totalFiles = count($storageNames);
+
+        if (!$totalFiles) {
+            $this->logger->warn(
+                'No files to zip for format "{format}".', // @translate
+                ['format' => $format]
+            );
+            return 0;
+        }
+
+        // Batch zip the resources in chunks.
+        $filesZip = [];
+        $index = 0;
+        $indexFile = 1;
+        $baseFilename = $this->basePath . '/temp/tmp/export_' . $format . '_' . $this->job->getId() . '_';
+        $finalBaseFilename = $this->basePath . '/temp/export_' . $format . '_' . $this->job->getId() . '_';
+        $totalChunks = $totalFiles && $by ? (int) ceil(count($storageNames) / $by) : 0;
+
+        @mkdir(dirname($baseFilename), 0775, true);
+
+        foreach (array_chunk($storageNames, $by ?: 10000000, true) as $files) {
+            if ($this->shouldStop()) {
+                $this->logger->warn(
+                    'Zipping "{format}" files stopped.', // @translate
+                    ['format' => $format]
+                );
+                foreach ($filesZip as $file) {
+                    @unlink($file);
+                }
+                return 0;
+            }
+
+            $filepath = $baseFilename . sprintf('%04d', ++$index) . '.zip';
+            $filesZip[] = $filepath;
+
+            @unlink($filepath);
+            $zip = new ZipArchive();
+            $zip->open($filepath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $comment = <<<INI
+                chunk = $index
+                total_chunks = $totalChunks
+                total_files = $totalFiles
+                INI;
+            $zip->setArchiveComment($comment);
+
+            // The path is already relative.
+            foreach ($files as $file) {
+                // Use .jpg as default extension for thumbnails.
+                if ($format === 'original') {
+                    $relativePath = $format . '/' . $file;
+                } else {
+                    $extension = pathinfo($file, PATHINFO_EXTENSION);
+                    $relativePath = $format . '/' . mb_substr($file, 0, -(mb_strlen($extension) + 1)) . '.jpg';
+                }
+                $fullPath = $this->basePath . '/' . $relativePath;
+                if (!file_exists($fullPath) || !is_readable($fullPath)) {
+                    continue;
+                }
+                $zip->addFile($fullPath, $relativePath);
+                ++$indexFile;
+            }
+
+            $zip->close();
+        }
+
+        // Remove all old zip files for this type.
+        $removeList = glob($finalBaseFilename . '*.zip');
+        // $removeList[] = $this->basePath . '/temp/zipfiles.txt';
+        foreach ($removeList as $file) {
+            @unlink($file);
+        }
+
+        // Move temp zip files to final destination.
+        foreach ($filesZip as $file) {
+            rename($file, str_replace($baseFilename, $finalBaseFilename, $file));
+        }
+
+        return count($filesZip);
+    }
+
+    /**
+     * @todo Use the list of zip files.
+     */
+    protected function addZipList(): void
+    {
+        $length = mb_strlen($this->basePath) + 1;
+        $list = implode("\n", array_map(function($v) use ($length) {
+            return mb_substr($v, $length);
+        }, glob($this->basePath . '/zip/*.zip')));
+        file_put_contents($this->basePath . '/zip/zipfiles.txt', $list);
+    }
+
+    protected function listStorageNamesForFormat($resourceType, array $ids, string $format): array
+    {
+        $sql = <<<'SQL'
+            SELECT `id`, CONCAT(`storage_id`, ".", `extension`) as "file"
+            FROM `media`
+            WHERE `__HAS__` = 1
+                AND `storage_id` IS NOT NULL
+                AND `storage_id` != ""
+                AND `extension` IS NOT NULL
+                AND `extension` != ""
+                AND `__TYPE__` IN (:ids)
+            ORDER BY `storage_id` ASC;
+            SQL;
+        $sql = strtr($sql, [
+            '__HAS__' => $format === 'original' ? 'has_original' : 'has_thumbnails',
+            '__TYPE__' => $resourceType === 'items' ? 'item_id' : 'id',
+        ]);
+        return $this->connection->executeQuery($sql, ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY])->fetchAllKeyValue();
     }
 }

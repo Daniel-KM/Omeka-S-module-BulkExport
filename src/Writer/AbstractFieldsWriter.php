@@ -39,6 +39,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata_shapers',
         // Keep query in the config to simplify regular export.
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
@@ -58,6 +59,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
@@ -81,6 +83,7 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'only_first' => false,
         'empty_fields' => false,
         'query' => [],
+        'zip_files',
         'incremental' => false,
         'include_deleted' => null,
     ];

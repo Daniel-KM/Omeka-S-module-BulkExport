@@ -43,6 +43,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
@@ -66,6 +67,7 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'metadata_exclude',
         'metadata_shapers',
         'query',
+        'zip_files',
         'incremental',
         'include_deleted',
     ];
