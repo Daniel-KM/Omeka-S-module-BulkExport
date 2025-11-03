@@ -209,7 +209,7 @@ abstract class AbstractFormatter implements FormatterInterface
         }
 
         if ($content === null) {
-            $content = (string) file_get_contents($this->output);
+            $content = $this->output ? (string) file_get_contents($this->output) : null;
         }
 
         $resourceType = $this->options['resource_type'] ?? 'resources';
