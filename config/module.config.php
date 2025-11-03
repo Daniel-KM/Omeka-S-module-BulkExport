@@ -55,6 +55,7 @@ $conf = [
             Form\ExporterForm::class => Service\Form\ExporterFormFactory::class,
             Form\SettingsFieldset::class => Service\Form\SettingsFieldsetFactory::class,
             Form\SiteSettingsFieldset::class => Service\Form\SiteSettingsFieldsetFactory::class,
+            Form\ShaperConfigFieldset::class => Service\Form\ShaperConfigFieldsetFactory::class,
         ],
     ],
     'resource_page_block_layouts' => [

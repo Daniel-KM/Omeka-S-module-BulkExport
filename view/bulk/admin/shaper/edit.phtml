@@ -10,9 +10,12 @@ $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 
-$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers edit');
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headScript()
+    ->appendFile($assetUrl('js/bulk-export-admin.js', 'BulkExport'), 'text/javascript', ['defer' => 'defer']);
 
-$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->htmlElement('body')->appendAttribute('class', 'bulk-shapers edit');
 
 $form->prepare();
 

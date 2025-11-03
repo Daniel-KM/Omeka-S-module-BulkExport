@@ -117,7 +117,9 @@ trait ShaperTrait
                 }
 
                 if (in_array('table', $normalizations)) {
-                    $value = $this->formatTable($value);
+                    // TODO Manage multiple outputs in ShaperTrait: how to add multiple values in results here.
+                    $value = $this->formatTable($value, $shaperParams);
+                    $value = $value ? reset($value) : '';
                 }
             }
 
@@ -137,5 +139,80 @@ trait ShaperTrait
         }
 
         return $result;
+    }
+
+    protected function formatTable($value, array $shaperParams): array
+    {
+        /** @var \Table\Api\Representation\TableRepresentation[] $tables */
+        static $tables = [];
+
+        // TODO Add an option to force output when there is no table.
+
+        $value = trim(strip_tags((string) $value));
+        if (!strlen($value)) {
+            return [];
+        }
+
+        $tableId = $shaperParams['table'] ?? null;
+        if (!$tableId) {
+            $this->services->get('Omeka\Logger')->err(
+                'For formatter "Table", the table is not set.' // @translate
+            );
+            return [$value];
+        }
+
+        // Check if table is available one time only.
+        if (!array_key_exists($tableId, $tables)) {
+            /** @var \Omeka\Api\Manager $api */
+            try {
+                $tables[$tableId] = $this->api->read('tables', is_numeric($tableId) ? ['id' => $tableId] : ['slug' => $tableId])->getContent();
+            } catch (\Exception $e) {
+                $tables[$tableId] = null;
+                $this->logger->err(
+                    'For formatter "Table", the table #{table_id} does not exist and values are not normalized.', // @translate
+                    ['table_id' => $tableId]
+                );
+                return [$value];
+            }
+        }
+        if (!$tables[$tableId]) {
+            return [$value];
+        }
+
+        $table = $tables[$tableId];
+
+        // Keep original order of values.
+
+        $mode = $shaperParams['table_mode'] ?? 'label';
+        $indexOriginal = !empty($shaperParams['table_index_original']);
+        $checkStrict = !empty($shaperParams['table_check_strict']);
+
+        $result = [];
+        switch ($mode) {
+            default:
+            case 'label':
+                if ($indexOriginal) {
+                    $result[] = $value;
+                }
+                $result[] = $table->labelFromCode($value, $checkStrict) ?? '';
+                break;
+
+            case 'code':
+                if ($indexOriginal) {
+                    $result[] = $value;
+                }
+                $result[] = $table->codeFromLabel($value, $checkStrict) ?? '';
+                break;
+
+            case 'both':
+                if ($indexOriginal) {
+                    $result[] = $value;
+                }
+                $result[] = $table->labelFromCode($value, $checkStrict) ?? '';
+                $result[] = $table->codeFromLabel($value, $checkStrict) ?? '';
+                break;
+        }
+
+        return array_values(array_unique(array_filter($result, 'strlen')));
     }
 }

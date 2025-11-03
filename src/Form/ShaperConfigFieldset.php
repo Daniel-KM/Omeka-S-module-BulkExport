@@ -5,6 +5,7 @@ namespace BulkExport\Form;
 use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
+use Omeka\Api\Manager as ApiManager;
 
 /**
  * Adapted:
@@ -15,6 +16,11 @@ use Laminas\Form\Fieldset;
 class ShaperConfigFieldset extends Fieldset
 {
     use Writer\FormatTrait;
+
+    /**
+     * @var \Omeka\Api\Manager
+     */
+    protected $apiManager;
 
     public function init(): void
     {
@@ -80,6 +86,7 @@ class ShaperConfigFieldset extends Fieldset
                         'max_length' => 'Max length', // @translate
                         'integer' => 'Number', // @translate
                         'year' => 'Year', // @translate
+                        'table' => 'Map value to a code or code to a value (module Table)', // @translate
                     ],
                 ],
                 'attributes' => [
@@ -128,5 +135,80 @@ class ShaperConfigFieldset extends Fieldset
                 ],
             ])
         ;
+
+            if (class_exists('Table\Module', false)) {
+                $this
+                    ->add([
+                        'name' => 'table',
+                        'type' => \Table\Form\Element\TablesSelect::class,
+                        'options' => [
+                            'label' => 'Table for normalization "Table"', // @translate
+                            'disable_group_by_owner' => true,
+                            'empty_option' => '',
+                        ],
+                        'attributes' => [
+                            'id' => 'table',
+                            'class' => 'chosen-select',
+                            'required' => false,
+                            'data-placeholder' => 'Select a table…', // @translate
+                            'value' => '',
+                            // Setting for normalization "table" only.
+                            'data-normalization' => 'table',
+                        ],
+                    ])
+                    ->add([
+                        'name' => 'table_mode',
+                        'type' => Element\Radio::class,
+                        'options' => [
+                            'label' => 'Table: Mode of normalization', // @translate
+                            'value_options' => [
+                                'label' => 'Label only', // @translate
+                                'code' => 'Code only', // @translate
+                                // TODO Manage multiple outputs in ShaperTrait.
+                                // 'both' => 'Label and code', // @translate
+                            ],
+                        ],
+                        'attributes' => [
+                            'id' => 'table_mode',
+                            'required' => false,
+                            'value' => 'label',
+                            'data-normalization' => 'table',
+                        ],
+                    ])
+                    ->add([
+                        'name' => 'table_index_original',
+                        'type' => Element\Checkbox::class,
+                        'options' => [
+                            'label' => 'Table: include original value too', // @translate
+                        ],
+                        'attributes' => [
+                            'id' => 'table_index_original',
+                            'required' => false,
+                            'data-normalization' => 'table',
+                        ],
+                    ])
+                    ->add([
+                        'name' => 'table_check_strict',
+                        'type' => Element\Checkbox::class,
+                        'options' => [
+                            'label' => 'Table: strict check (same case, same diacritics)', // @translate
+                        ],
+                        'attributes' => [
+                            'id' => 'table_check_strict',
+                            'required' => false,
+                            'data-normalization' => 'table',
+                        ],
+                    ]);
+
+                // TODO Why the fieldset does not use form manager to load and init form element?
+                $this->get('table')
+                    ->setApiManager($this->apiManager);
+            }
+    }
+
+    public function setApiManager(ApiManager $apiManager): self
+    {
+        $this->apiManager = $apiManager;
+        return $this;
     }
 }

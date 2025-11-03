@@ -10,8 +10,12 @@ $escape = $plugins->get('escapeHtml');
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headScript()
+    ->appendFile($assetUrl('js/bulk-export-admin.js', 'BulkExport'), 'text/javascript', ['defer' => 'defer']);
+
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters delete');
-$this->headLink()->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
 
 $form->prepare();
 ?>

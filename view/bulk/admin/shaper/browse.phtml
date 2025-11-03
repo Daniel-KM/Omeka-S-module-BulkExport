@@ -9,12 +9,16 @@
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $userIsAllowed = $plugins->get('userIsAllowed');
 
-$this->headLink()->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headLink()
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+$this->headScript()
+    ->appendFile($assetUrl('js/bulk-export-admin.js', 'BulkExport'), 'text/javascript', ['defer' => 'defer']);
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-shapers browse');
 ?>
