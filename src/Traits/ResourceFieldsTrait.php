@@ -265,9 +265,17 @@ trait ResourceFieldsTrait
                 'o:media/o:id' => $this->translator->translate('Media id'), // @translate
                 'o:media/file' => $this->translator->translate('Media file'), // @translate
                 'o:media/o:source' => $this->translator->translate('Media source'), // @translate
-                'o:media/o:media_type' => $this->translator->translate('File media type'), // @translate,
+                'o:media/o:media_type' => $this->translator->translate('File media type'), // @translate
                 'o:media/o:size' => $this->translator->translate('File size'), // @translate,
-                'o:media/original_url' => $this->translator->translate('Original file url'), // @translate,
+                'o:media/o:original_url' => $this->translator->translate('Url to original'), // @translate
+                'o:media/original_url' => $this->translator->translate('Original file url'), // @translate
+                'o:media/o:thumbnails_url/large' => $this->translator->translate('Url to large thumbnail'), // @translate
+                'o:media/o:thumbnails_url/medium' => $this->translator->translate('Url to medium thumbnail'), // @translate
+                'o:media/o:thumbnails_url/square' => $this->translator->translate('Url to square thumbnail'), // @translate
+                'o:media/o:filename' => 'File name of original', // @translate
+                'o:media/o:filename/large' => 'File name of large thumbnail', // @translate
+                'o:media/o:filename/medium' => 'File name of medium thumbnail', // @translate
+                'o:media/o:filename/square' => 'File name of square thumbnail', // @translate
                 'o:asset' => $this->translator->translate('Asset'), // @translate
                 'o:asset/o:id' => $this->translator->translate('Asset id'), // @translate
                 'o:asset/o:asset_url' => $this->translator->translate('Asset url'), // @translate
@@ -372,7 +380,15 @@ trait ResourceFieldsTrait
             'o:media/o:source',
             'o:media/o:media_type',
             'o:media/o:size',
+            'o:media/o:original_url',
             'o:media/original_url',
+            'o:media/o:thumbnails_url/large',
+            'o:media/o:thumbnails_url/medium',
+            'o:media/o:thumbnails_url/square',
+            'o:media/o:filename',
+            'o:media/o:filename/large',
+            'o:media/o:filename/medium',
+            'o:media/o:filename/square',
             'o:annotation',
             */
             'o:asset',

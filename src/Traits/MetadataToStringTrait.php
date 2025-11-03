@@ -143,9 +143,26 @@ trait MetadataToStringTrait
                 return $resource->resourceName() === 'media'
                     ? $resource->size()
                     : [];
+            case 'o:media/o:original_url':
             case 'o:media/original_url':
                 return $resource->resourceName() === 'media'
                     ? $resource->originalUrl()
+                    : [];
+            case 'o:media/o:thumbnails_url/large':
+            case 'o:media/o:thumbnails_url/medium':
+            case 'o:media/o:thumbnails_url/square':
+                return $resource->resourceName() === 'media' && $resource->hasThumbnails()
+                    ? [$resource->thumbnailUrl(substr($metadata, strrpos($metadata, '/') + 1))]
+                    : [];
+            case 'o:media/o:filename':
+                return $resource->resourceName() === 'media' && $resource->hasOriginal()
+                    ? [$resource->filename()]
+                    : [];
+            case 'o:media/o:filename/large':
+            case 'o:media/o:filename/medium':
+            case 'o:media/o:filename/square':
+                return $resource->resourceName() === 'media' && $resource->hasThumbnails()
+                    ? [substr($resource->filename(), 0, strrpos($resource->filename(), '.')) . '.jpg']
                     : [];
 
             // Asset (thumbnail) for resource.

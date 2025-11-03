@@ -105,8 +105,16 @@ trait MetadataSelectTrait
                 'options' => [
                     'o:media/o:id' => 'Internal id', // @translate
                     'o:media/file' => 'Url / File', // @translate
-                    'o:media/filename' => 'Filename', // @translate
+                    'o:media/filename' => 'File name', // @translate
                     'o:media/o:source' => 'Source url / file', // @translate
+                    'o:media/o:original_url' => 'Url to original', // @translate
+                    'o:media/o:thumbnails_url/large' => 'Url to large thumbnail', // @translate
+                    'o:media/o:thumbnails_url/medium' => 'Url to medium thumbnail', // @translate
+                    'o:media/o:thumbnails_url/square' => 'Url to square thumbnail', // @translate
+                    'o:media/o:filename' => 'File name of original', // @translate
+                    'o:media/o:filename/large' => 'File name of large thumbnail', // @translate
+                    'o:media/o:filename/medium' => 'File name of medium thumbnail', // @translate
+                    'o:media/o:filename/square' => 'File name of square thumbnail', // @translate
                     'o:media/dcterms:identifier' => 'Identifier', // @translate
                     'o:media/dcterms:title' => 'Label (first title)', // @translate
                 ],
