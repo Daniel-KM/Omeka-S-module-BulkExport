@@ -303,7 +303,7 @@ trait ResourceFieldsTrait
 
         if (strpos($fieldName, '[')) {
             $base = strtok($fieldName, '[');
-            $property = trim(strok('['), ' []');
+            $property = trim(strtok('['), ' []');
             $second = $mapping[$property]
                 ?? ($useFirstTemplateProperty ? $this->translatePropertyTemplate($fieldName) : $this->translateProperty($fieldName));
             switch ($base) {

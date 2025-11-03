@@ -41,13 +41,13 @@ class ShaperController extends AbstractActionController
 
         $formDeleteSelected = $this->getForm(ConfirmForm::class);
         $formDeleteSelected->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete'], ['query' => $returnQuery], true));
-        $formDeleteSelected->setButtonLabel('Confirm Delete'); // @translate
         $formDeleteSelected->setAttribute('id', 'confirm-delete-selected');
+        $formDeleteSelected->setButtonLabel('Confirm Delete'); // @translate
 
         $formDeleteAll = $this->getForm(ConfirmForm::class);
         $formDeleteAll->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete-all'], ['query' => $returnQuery], true));
-        $formDeleteAll->setButtonLabel('Confirm Delete'); // @translate
         $formDeleteAll->setAttribute('id', 'confirm-delete-all');
+        $formDeleteAll->setButtonLabel('Confirm Delete'); // @translate
         $formDeleteAll->get('submit')->setAttribute('disabled', true);
 
         return new ViewModel([

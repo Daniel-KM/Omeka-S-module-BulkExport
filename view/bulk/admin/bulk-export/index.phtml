@@ -9,11 +9,12 @@
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $hyperlink = $plugins->get('hyperlink');
 
 $this->headLink()
-    ->appendStylesheet($this->assetUrl('css/bulk-export-admin.css', 'BulkExport'));
+    ->appendStylesheet($assetUrl('css/bulk-export-admin.css', 'BulkExport'));
 
 $this->htmlElement('body')->appendAttribute('class', 'bulk-exporters bulk-exports browse');
 ?>

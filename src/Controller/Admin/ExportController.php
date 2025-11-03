@@ -30,14 +30,15 @@ class ExportController extends AbstractActionController
         $formDeleteSelected = $this->getForm(\Omeka\Form\ConfirmForm::class);
         $formDeleteSelected
             ->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete'], true))
-            ->setButtonLabel('Confirm Delete') // @translate
-            ->setAttribute('id', 'confirm-delete-selected');
+            ->setAttribute('id', 'confirm-delete-selected')
+            ->setButtonLabel('Confirm Delete'); // @translate
 
         $formDeleteAll = $this->getForm(\Omeka\Form\ConfirmForm::class);
         $formDeleteAll
             ->setAttribute('action', $this->url()->fromRoute(null, ['action' => 'batch-delete-all'], true))
-            ->setButtonLabel('Confirm Delete') // @translate
             ->setAttribute('id', 'confirm-delete-all')
+            ->setButtonLabel('Confirm Delete'); // @translate
+        $formDeleteAll
             ->get('submit')->setAttribute('disabled', true);
         */
 

@@ -290,9 +290,7 @@ trait MetadataToStringTrait
                 $json = $resource->jsonSerialize();
                 $tags =  empty($json['o-module-folksonomy:tag'])
                     ? []
-                    : array_map(function ($v) {
-                        return $v->name();
-                    }, $json['o-module-folksonomy:tag']);
+                    : array_map(fn ($v) => $v->name(), $json['o-module-folksonomy:tag']);
                 return $tags;
 
             // All properties for all resources.

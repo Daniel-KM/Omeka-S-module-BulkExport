@@ -85,7 +85,7 @@ abstract class AbstractFormatter implements FormatterInterface
     protected $resources = [];
 
     /**
-     * @var int|]
+     * @var int[]
      */
     protected $resourceIds = [];
 
