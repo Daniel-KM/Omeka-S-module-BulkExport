@@ -321,6 +321,18 @@ class Module extends AbstractModule
             'view.details',
             [$this, 'warnUninstall']
         );
+
+        // Add task to EasyAdmin Check and Fix form.
+        $sharedEventManager->attach(
+            \EasyAdmin\Form\CheckAndFixForm::class,
+            'form.add_elements',
+            [$this, 'handleEasyAdminCheckAndFixForm']
+        );
+        $sharedEventManager->attach(
+            \EasyAdmin\Controller\Admin\CheckAndFixController::class,
+            'easyadmin.job',
+            [$this, 'handleEasyAdminJob']
+        );
     }
 
     public function handleMainSettingsFilters(Event $event): void
@@ -512,5 +524,30 @@ class Module extends AbstractModule
             'exporters' => $view->bulkExporters(),
             'resourceType' => $resourceType,
         ]);
+    }
+
+    public function handleEasyAdminCheckAndFixForm(Event $event): void
+    {
+        /** @var \EasyAdmin\Form\CheckAndFixForm $form */
+        $form = $event->getTarget();
+
+        $fieldset = $form->get('module_tasks');
+        $valueOptions = $fieldset->get('process')->getValueOptions();
+        $valueOptions['db_value_data_index'] = 'BulkExport: Reindex value lengths (all values)'; // @translate
+        $valueOptions['db_value_data_index_missing'] = 'BulkExport: Reindex value lengths (missing only)'; // @translate
+        $fieldset->get('process')->setValueOptions($valueOptions);
+    }
+
+    public function handleEasyAdminJob(Event $event): void
+    {
+        $process = $event->getParam('process');
+
+        if ($process === 'db_value_data_index') {
+            $event->setParam('job', \BulkExport\Job\IndexValueLength::class);
+            $event->setParam('args', ['mode' => 'all']);
+        } elseif ($process === 'db_value_data_index_missing') {
+            $event->setParam('job', \BulkExport\Job\IndexValueLength::class);
+            $event->setParam('args', ['mode' => 'missing']);
+        }
     }
 }

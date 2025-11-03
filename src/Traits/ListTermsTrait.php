@@ -68,17 +68,21 @@ trait ListTermsTrait
             $types['entity_classes'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
         }
 
+        // Use table value_data with index idx_value_length for performance
+        // instead of CHAR_LENGTH() on value.value.
+        if ((int) $options['min_size'] > 0 || (int) $options['max_size'] > 0) {
+            $qb
+                ->innerJoin('value', 'value_data', 'value_data', 'value_data.id = value.id');
+        }
+
         if ((int) $options['min_size'] > 0) {
             $qb
-                ->andWhere('CHAR_LENGTH(`value`.`value`) >= ' . (int) $options['min_size']);
+                ->andWhere('value_data.length >= ' . (int) $options['min_size']);
         }
 
         if ((int) $options['max_size'] > 0) {
             $qb
-                ->andWhere($expr->orX(
-                    '`value`.`value` IS NULL',
-                    'CHAR_LENGTH(`value`.`value`) <= ' . (int) $options['max_size']
-                ));
+                ->andWhere('value_data.length <= ' . (int) $options['max_size']);
         }
 
         $terms = $connection->executeQuery($qb, $bind, $types)->fetchAllKeyValue();
