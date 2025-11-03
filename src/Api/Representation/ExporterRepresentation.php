@@ -131,4 +131,65 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             ['force_canonical' => $canonical]
         );
     }
+
+    /**
+     * Get the display title for this resource.
+     *
+     * @param string|null $default
+     * @param array|string|null $lang
+     * @return string|null
+     *
+     * @see \Omeka\Api\Representation\AbstractResourceRepresentation::displayTitle()
+     */
+    public function displayTitle($default = null, $lang = null)
+    {
+        $title = $this->label();
+        if ($title === null || $title === '') {
+            if ($default === null || $default === '') {
+                $translator = $this->getServiceLocator()->get('MvcTranslator');
+                $title = sprintf(
+                    $translator->translate('Exporter #%d'), // @translate
+                    $this->id()
+                );
+            } else {
+                $title = $default;
+            }
+        }
+        return $title;;
+    }
+
+    /**
+     * Get a "pretty" link to this resource containing a thumbnail and
+     * display title.
+     *
+     * @param string $thumbnailType Type of thumbnail to show
+     * @param string|null $titleDefault See $default param for displayTitle()
+     * @param string|null $action Action to link to (see link() and linkRaw())
+     * @param array $attributes HTML attributes, key and value
+     * @param array|string|null $lang Language IETF tag
+     * @return string
+     *
+     * @see \Omeka\Api\Representation\AbstractResourceRepresentation::linkPretty()
+     */
+    public function linkPretty(
+        $thumbnailType = 'square',
+        $titleDefault = null,
+        $action = null,
+        array $attributes = null,
+        $lang = null
+    ) {
+        $escape = $this->getViewHelper('escapeHtml');
+        $thumbnail = $this->getViewHelper('thumbnail');
+        $linkContent = sprintf(
+            '%s<span class="resource-name">%s</span>',
+            $thumbnail($this, $thumbnailType),
+            $escape($this->displayTitle($titleDefault, $lang))
+        );
+        if (empty($attributes['class'])) {
+            $attributes['class'] = 'resource-link';
+        } else {
+            $attributes['class'] .= ' resource-link';
+        }
+        return $this->linkRaw($linkContent, $action, $attributes);
+    }
 }

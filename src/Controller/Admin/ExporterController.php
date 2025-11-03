@@ -65,12 +65,19 @@ class ExporterController extends AbstractActionController
                 }
 
                 if (!$response) {
-                    $this->messenger()->addError('Save of exporter failed'); // @translate
+                    $this->messenger()->addError((new PsrMessage(
+                        'Save of exporter {exporter_label} failed', // @translate
+                        ['exporter_label' => $response->getContent()->linkPretty()]
+                    ))->setEscapeHtml(false));
                     return $id
                         ? $this->redirect()->toRoute('admin/bulk-export/id', [], true)
                         : $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
                 } else {
-                    $this->messenger()->addSuccess('Exporter successfully saved'); // @translate
+                    $exporter = $response->getContent();
+                    $this->messenger()->addSuccess((new PsrMessage(
+                        'Exporter {exporter_label} successfully saved', // @translate
+                        ['exporter_label' => $exporter->linkPretty()]
+                    ))->setEscapeHtml(false));
                     return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
                 }
             } else {
@@ -181,9 +188,15 @@ class ExporterController extends AbstractActionController
                 $update = ['o:config' => $currentData['o:config']];
                 $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $update, [], ['isPartial' => true]);
                 if ($response) {
-                    $this->messenger()->addSuccess('Writer configuration saved'); // @translate
+                    $this->messenger()->addSuccess((new PsrMessage(
+                        'Writer configuration for exporter {exporter_label} successfully saved', // @translate
+                        ['exporter_label' => $exporter->linkPretty()]
+                    ))->setEscapeHtml(false));
                 } else {
-                    $this->messenger()->addError('Save of writer configuration failed'); // @translate
+                    $this->messenger()->addError((new PsrMessage(
+                        'Save of writer configuration for exporter {exporter_label} failed', // @translate
+                        ['exporter_label' => $exporter->linkPretty()]
+                    ))->setEscapeHtml(false));
                 }
                 return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
             } else {
