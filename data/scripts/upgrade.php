@@ -440,7 +440,133 @@ if (version_compare($oldVersion, '3.4.38', '<')) {
     }
 }
 
+if (version_compare($oldVersion, '3.4.39', '<')) {
+    // Add formatter column and migrate from writer to formatter.
+    // The formatter field stores the Formatter alias (e.g., 'csv') while
+    // writer stored the full Writer class name.
+    $sql = <<<'SQL'
+        ALTER TABLE `bulk_exporter`
+            ADD `formatter` VARCHAR(190) DEFAULT NULL AFTER `label`;
+        SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Column may already exist.
+    }
+
+    // Migrate writer class names to formatter aliases.
+    $writerToFormatter = [
+        'BulkExport\\Writer\\CsvWriter' => 'csv',
+        'BulkExport\\Writer\\TsvWriter' => 'tsv',
+        'BulkExport\\Writer\\TextWriter' => 'txt',
+        'BulkExport\\Writer\\OpenDocumentSpreadsheetWriter' => 'ods',
+        'BulkExport\\Writer\\OpenDocumentTextWriter' => 'odt',
+        'BulkExport\\Writer\\JsonTableWriter' => 'json-table',
+        'BulkExport\\Writer\\GeoJsonWriter' => 'geojson',
+    ];
+
+    foreach ($writerToFormatter as $writerClass => $formatterAlias) {
+        $sql = <<<'SQL'
+            UPDATE `bulk_exporter`
+            SET `formatter` = :formatter
+            WHERE `writer` = :writer AND (`formatter` IS NULL OR `formatter` = '');
+            SQL;
+        $connection->executeStatement($sql, [
+            'formatter' => $formatterAlias,
+            'writer' => $writerClass,
+        ]);
+    }
+
+    $message = new PsrMessage(
+        'The exporter architecture has been upgraded. Exporters now use Formatters directly for better performance and maintainability.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    // Remove the legacy writer column now that all data has been migrated to formatter.
+    $sql = <<<'SQL'
+        ALTER TABLE `bulk_exporter`
+            DROP COLUMN `writer`;
+        SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Column may not exist or already removed.
+    }
+
+    // Rename 'writer' key to 'formatter' in config JSON (bulk_exporter.config).
+    $sql = <<<'SQL'
+        UPDATE `bulk_exporter`
+        SET `config` = JSON_SET(
+            JSON_REMOVE(`config`, '$.writer'),
+            '$.formatter',
+            JSON_EXTRACT(`config`, '$.writer')
+        )
+        WHERE JSON_EXTRACT(`config`, '$.writer') IS NOT NULL;
+        SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Fallback for older MySQL versions without JSON functions.
+        $sql = "SELECT `id`, `config` FROM `bulk_exporter`";
+        $stmt = $connection->executeQuery($sql);
+        while ($row = $stmt->fetchAssociative()) {
+            $config = json_decode($row['config'], true) ?: [];
+            if (isset($config['writer'])) {
+                $config['formatter'] = $config['writer'];
+                unset($config['writer']);
+                $updateSql = "UPDATE `bulk_exporter` SET `config` = :config WHERE `id` = :id";
+                $connection->executeStatement($updateSql, [
+                    'config' => json_encode($config),
+                    'id' => $row['id'],
+                ]);
+            }
+        }
+    }
+
+    // Rename 'writer' key to 'formatter' in params JSON (bulk_export.params).
+    $sql = <<<'SQL'
+        UPDATE `bulk_export`
+        SET `params` = JSON_SET(
+            JSON_REMOVE(`params`, '$.writer'),
+            '$.formatter',
+            JSON_EXTRACT(`params`, '$.writer')
+        )
+        WHERE JSON_EXTRACT(`params`, '$.writer') IS NOT NULL;
+        SQL;
+    try {
+        $connection->executeStatement($sql);
+    } catch (\Exception $e) {
+        // Fallback for older MySQL versions without JSON functions.
+        $sql = "SELECT `id`, `params` FROM `bulk_export`";
+        $stmt = $connection->executeQuery($sql);
+        while ($row = $stmt->fetchAssociative()) {
+            $params = json_decode($row['params'], true) ?: [];
+            if (isset($params['writer'])) {
+                $params['formatter'] = $params['writer'];
+                unset($params['writer']);
+                $updateSql = "UPDATE `bulk_export` SET `params` = :params WHERE `id` = :id";
+                $connection->executeStatement($updateSql, [
+                    'params' => json_encode($params),
+                    'id' => $row['id'],
+                ]);
+            }
+        }
+    }
+}
+
 // In all cases.
+
+// Ensure value_data table exists (may have been missed if job failed).
+$tableExists = $connection->executeQuery("SHOW TABLES LIKE 'value_data';")->fetchOne();
+if (!$tableExists) {
+    require_once dirname(__DIR__, 2) . '/src/Job/IndexValueLength.php';
+    $dispatcher = $services->get('Omeka\Job\Dispatcher');
+    $dispatcher->dispatch(\BulkExport\Job\IndexValueLength::class);
+    $message = new PsrMessage(
+        'The table to index value lengths was missing and has been recreated. A background job is populating it.' // @translate
+    );
+    $messenger->addWarning($message);
+}
 
 if (!empty($failExporters)) {
     try {
@@ -451,18 +577,19 @@ if (!empty($failExporters)) {
             $data = include $filepath;
             $sql = <<<'SQL'
                 INSERT INTO `bulk_exporter`
-                    (`owner_id`, `label`, `writer`, `config`) VALUES
-                    (:owner_id, :label, :writer, :config)
+                    (`owner_id`, `label`, `formatter`, `config`) VALUES
+                    (:owner_id, :label, :formatter, :config)
                 ON DUPLICATE KEY UPDATE
                     `owner_id` = :owner_id,
                     `label` = :label,
-                    `writer` = :writer,
+                    `formatter` = :formatter,
                     `config` = :config
                 SQL;
             $stmt = $connection->prepare($sql);
             $stmt->bindValue('owner_id', $user->getId(), \PDO::PARAM_INT);
             $stmt->bindValue('label', $data['label'], \PDO::PARAM_STR);
-            $stmt->bindValue('writer', $data['writer'], \PDO::PARAM_STR);
+            // Support both new 'formatter' key and legacy 'writer' key.
+            $stmt->bindValue('formatter', $data['formatter'] ?? $data['writer'] ?? null, \PDO::PARAM_STR);
             $stmt->bindValue('config', json_encode($data['config']), \PDO::PARAM_STR);
             $stmt->executeStatement();
         }
