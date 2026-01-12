@@ -3,9 +3,9 @@
 return [
     'owner' => null,
     'label' => 'OpenDocument text (odt)', // @translate
-    'writer' => \BulkExport\Writer\OpenDocumentTextWriter::class,
+    'formatter' => 'odt',
     'config' => [
-        'writer' => [
+        'formatter' => [
             'format_fields' => 'label',
             'resource_types' => [
                 'o:Item',

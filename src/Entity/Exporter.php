@@ -61,18 +61,6 @@ class Exporter extends AbstractEntity
     protected $formatter;
 
     /**
-     * @var string
-     *
-     * @Column(
-     *     type="string",
-     *     nullable=true,
-     *     length=190
-     * )
-     * @deprecated Use $formatter instead.
-     */
-    protected $writer;
-
-    /**
      * @var array
      *
      * @Column(
@@ -136,23 +124,6 @@ class Exporter extends AbstractEntity
     public function getFormatter(): ?string
     {
         return $this->formatter;
-    }
-
-    /**
-     * @deprecated No more writer. Use setFormatter() instead.
-     */
-    public function setWriter(?string $writer): self
-    {
-        $this->writer = $writer;
-        return $this;
-    }
-
-    /**
-     * @deprecated No more writer. Use getFormatter() instead.
-     */
-    public function getWriter(): ?string
-    {
-        return $this->writer;
     }
 
     public function setConfig($config): self

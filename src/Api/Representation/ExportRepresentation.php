@@ -131,10 +131,10 @@ class ExportRepresentation extends AbstractEntityRepresentation
         return $this->resource->getParams();
     }
 
-    public function writerParams(): array
+    public function formatterParams(): array
     {
         $parameters = $this->params();
-        return $parameters['writer'] ?? [];
+        return $parameters['formatter'] ?? [];
     }
 
     public function status(): string

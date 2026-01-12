@@ -56,7 +56,7 @@ class ExporterController extends AbstractActionController
                     $data['o:owner'] = $this->identity();
                     $response = $this->api($form)->create('bulk_exporters', $data);
                 } else {
-                    $oConfig = array_replace(['exporter' => [], 'writer' => []], $currentData['o:config']);
+                    $oConfig = array_replace(['exporter' => [], 'formatter' => []], $currentData['o:config']);
                     $oConfig['exporter'] = $data['o:config']['exporter'] ?? [];
                     $data['o:config'] = $oConfig;
                     $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $data, [], ['isPartial' => true]);
@@ -138,7 +138,7 @@ class ExporterController extends AbstractActionController
         ]);
     }
 
-    public function configureWriterAction()
+    public function configureFormatterAction()
     {
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         $id = (int) $this->params()->fromRoute('id');
@@ -163,11 +163,11 @@ class ExporterController extends AbstractActionController
         }
 
         $form = $this->getForm($configFormClass);
-        $form->setAttribute('id', 'exporter-writer-form');
+        $form->setAttribute('id', 'exporter-formatter-form');
 
         // Get current config from exporter.
-        $writerConfig = $exporter->writerConfig();
-        $form->setData($writerConfig);
+        $formatterConfig = $exporter->formatterConfig();
+        $form->setData($formatterConfig);
 
         $form->add([
             'name' => 'form_submit',
@@ -194,7 +194,7 @@ class ExporterController extends AbstractActionController
                 unset($formData['csrf'], $formData['form_submit'], $formData['current_form']);
 
                 $currentData = $exporter->getJsonLd();
-                $currentData['o:config']['writer'] = $formData;
+                $currentData['o:config']['formatter'] = $formData;
                 $update = ['o:config' => $currentData['o:config']];
                 $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $update, [], ['isPartial' => true]);
                 if ($response) {
@@ -299,11 +299,11 @@ class ExporterController extends AbstractActionController
                 $session->{$currentForm} = $data;
                 switch ($currentForm) {
                     default:
-                    case 'writer':
-                        // Extract params directly from form data (no Writer needed).
+                    case 'formatter':
+                        // Extract params directly from form data.
                         $session->comment = trim((string) ($data['comment'] ?? ''));
                         $session->useBackground = !empty($data['use_background']);
-                        $session->writer = $data;
+                        $session->formatterParams = $data;
                         $next = 'confirm';
                         $formCallback = $formsCallbacks[$next];
                         break;
@@ -315,14 +315,14 @@ class ExporterController extends AbstractActionController
                         $exportData['o-bulk:exporter'] = $exporter->getResource();
 
                         // Get params from session.
-                        $writerParams = $session->writer ?? [];
+                        $formatterParams = $session->formatterParams ?? [];
 
                         // Add some default params.
-                        $writerParams['site_slug'] = null;
-                        $writerParams['is_site_request'] = false;
+                        $formatterParams['site_slug'] = null;
+                        $formatterParams['is_site_request'] = false;
 
                         $exportData['o:params'] = [
-                            'writer' => $writerParams,
+                            'formatter' => $formatterParams,
                         ];
                         $response = $this->api()->create('bulk_exports', $exportData);
                         if (!$response) {
@@ -405,19 +405,19 @@ class ExporterController extends AbstractActionController
         $view = new ViewModel([
             'exporter' => $exporter,
             'form' => $form,
-            'step' => $next ?? 'writer',
+            'step' => $next ?? 'formatter',
             'steps' => array_keys(array_filter($formsCallbacks)),
         ]);
 
         if ($next === 'confirm') {
             $exportArgs = [];
             $exportArgs['comment'] = $session['comment'];
-            $exportArgs['writer'] = $session['writer'];
+            $exportArgs['formatter'] = $session['formatterParams'];
             // For security purpose.
-            unset($exportArgs['writer']['filename']);
-            unset($exportArgs['writer']['export_id']);
-            unset($exportArgs['writer']['exporter_label']);
-            unset($exportArgs['writer']['export_started']);
+            unset($exportArgs['formatter']['filename']);
+            unset($exportArgs['formatter']['export_id']);
+            unset($exportArgs['formatter']['exporter_label']);
+            unset($exportArgs['formatter']['export_started']);
             $view
                 ->setVariable('exportArgs', $exportArgs);
         }
@@ -437,24 +437,24 @@ class ExporterController extends AbstractActionController
         $paramsFormClass = $exporter->getParamsFormClass();
         if ($paramsFormClass) {
             /* @return \Laminas\Form\Form */
-            $formsCallbacks['writer'] = function () use ($exporter, $controller, $paramsFormClass) {
-                $writerForm = $controller->getForm($paramsFormClass);
+            $formsCallbacks['formatter'] = function () use ($exporter, $controller, $paramsFormClass) {
+                $formatterForm = $controller->getForm($paramsFormClass);
                 // Pre-fill with exporter's saved config.
-                $writerConfig = $exporter->writerConfig();
-                $writerForm->setData($writerConfig);
+                $formatterConfig = $exporter->formatterConfig();
+                $formatterForm->setData($formatterConfig);
 
-                $writerForm->add([
+                $formatterForm->add([
                     'name' => 'current_form',
                     'type' => Element\Hidden::class,
                     'attributes' => [
-                        'value' => 'writer',
+                        'value' => 'formatter',
                     ],
                 ]);
-                $writerForm->add([
+                $formatterForm->add([
                     'name' => 'form_submit',
                     'type' => Fieldset::class,
                 ]);
-                $writerForm->get('form_submit')->add([
+                $formatterForm->get('form_submit')->add([
                     'name' => 'submit',
                     'type' => Element\Submit::class,
                     'attributes' => [
@@ -462,7 +462,7 @@ class ExporterController extends AbstractActionController
                     ],
                 ]);
 
-                return $writerForm;
+                return $formatterForm;
             };
         }
 

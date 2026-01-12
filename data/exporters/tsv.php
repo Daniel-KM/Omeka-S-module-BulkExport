@@ -3,9 +3,9 @@
 return [
     'owner' => null,
     'label' => 'TSV (tab-separated values)', // @translate
-    'writer' => \BulkExport\Writer\TsvWriter::class,
+    'formatter' => 'tsv',
     'config' => [
-        'writer' => [
+        'formatter' => [
             'separator' => ' | ',
             'resource_types' => [
                 'o:Item',

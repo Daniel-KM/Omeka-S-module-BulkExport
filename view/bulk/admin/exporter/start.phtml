@@ -37,9 +37,9 @@ $form->get('form_submit')->remove('submit');
     <?php unset($exportArgs['comment']); ?>
     <p><?= $escape(sprintf($translate('Comment: %s'), $comment)) ?></p>
     <h3><?= $escape($translate('Parameters')) ?></h3>
-    <h4><?= $escape($translate('Writer')) ?></h4>
+    <h4><?= $escape($translate('Formatter')) ?></h4>
     <div class="value">
-        <pre><?= $escape(json_encode($exportArgs['writer'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?></pre>
+        <pre><?= $escape(json_encode($exportArgs['formatter'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)); ?></pre>
     </div>
     <?php endif; ?>
     <?= $this->form()->openTag($form) ?>

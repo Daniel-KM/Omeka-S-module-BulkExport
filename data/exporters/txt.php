@@ -3,9 +3,9 @@
 return [
     'owner' => null,
     'label' => 'Text', // @translate
-    'writer' => \BulkExport\Writer\TextWriter::class,
+    'formatter' => 'txt',
     'config' => [
-        'writer' => [
+        'formatter' => [
             'format_fields' => 'label',
             'resource_types' => [
                 'o:Item',

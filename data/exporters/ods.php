@@ -3,9 +3,9 @@
 return [
     'owner' => null,
     'label' => 'OpenDocument spreadsheet (ods)', // @translate
-    'writer' => \BulkExport\Writer\OpenDocumentSpreadsheetWriter::class,
+    'formatter' => 'ods',
     'config' => [
-        'writer' => [
+        'formatter' => [
             'separator' => ' | ',
             'resource_types' => [
                 'o:Item',

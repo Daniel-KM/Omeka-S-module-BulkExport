@@ -73,18 +73,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
      */
     public function formatterName(): ?string
     {
-        $formatter = $this->resource->getFormatter();
-        if ($formatter) {
-            return $formatter;
-        }
-
-        // Fallback: derive from legacy writer class for backward compatibility.
-        $writerClass = $this->resource->getWriter();
-        if (!$writerClass) {
-            return null;
-        }
-
-        return $this->writerClassToFormatterName($writerClass);
+        return $this->resource->getFormatter();
     }
 
     /**
@@ -111,12 +100,21 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
+     * Get the formatter label.
+     */
+    public function formatterLabel(): ?string
+    {
+        $formatter = $this->formatter();
+        return $formatter ? $formatter->getLabel() : $this->formatterName();
+    }
+
+    /**
      * Get the formatter config.
      */
     public function formatterConfig(): array
     {
         $conf = $this->config();
-        return $conf['writer'] ?? [];
+        return $conf['formatter'] ?? [];
     }
 
     protected function getFormatterManager(): FormatterManager
@@ -125,23 +123,6 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             $this->formatterManager = $this->getServiceLocator()->get(FormatterManager::class);
         }
         return $this->formatterManager;
-    }
-
-    /**
-     * Convert legacy writer class name to formatter alias.
-     */
-    protected function writerClassToFormatterName(string $writerClass): ?string
-    {
-        $mapping = [
-            'BulkExport\\Writer\\CsvWriter' => 'csv',
-            'BulkExport\\Writer\\TsvWriter' => 'tsv',
-            'BulkExport\\Writer\\TextWriter' => 'txt',
-            'BulkExport\\Writer\\OpenDocumentSpreadsheetWriter' => 'ods',
-            'BulkExport\\Writer\\OpenDocumentTextWriter' => 'odt',
-            'BulkExport\\Writer\\JsonTableWriter' => 'json-table',
-            'BulkExport\\Writer\\GeoJsonWriter' => 'geojson',
-        ];
-        return $mapping[$writerClass] ?? null;
     }
 
     /**
@@ -180,15 +161,6 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     {
         $conf = $this->config();
         return $conf['exporter'] ?? [];
-    }
-
-    /**
-     * Get the writer/formatter config (kept for backward compatibility).
-     */
-    public function writerConfig(): array
-    {
-        $conf = $this->config();
-        return $conf['writer'] ?? [];
     }
 
     public function adminUrl($action = null, $canonical = false)

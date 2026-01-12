@@ -3,9 +3,9 @@
 return [
     'owner' => null,
     'label' => 'CSV', // @translate
-    'writer' => \BulkExport\Writer\CsvWriter::class,
+    'formatter' => 'csv',
     'config' => [
-        'writer' => [
+        'formatter' => [
             'delimiter' => ',',
             'enclosure' => '"',
             'escape' => '\\',

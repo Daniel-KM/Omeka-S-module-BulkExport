@@ -10,7 +10,7 @@ use BulkExport\Interfaces\Configurable as ConfigurableExport;
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 
-$writer = $exporter->writer();
+$formatter = $exporter->formatter();
 
 $nav = [
     'exporter' => $translate('Exporter'),
@@ -21,12 +21,12 @@ if ($current !== 'exporter') {
         'href="#exporter"' => 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'edit', 'id' => $exporter->id()]) . '"',
     ];
 }
-if ($writer && ($writer instanceof ConfigurableExport)) {
-    $nav['writer'] = $translate('Writer');
-    if ($current === 'writer') {
-        $replace['<li><a href="#writer"'] = '<li class="active"><a href="#writer"';
+if ($formatter && ($formatter instanceof ConfigurableExport)) {
+    $nav['formatter'] = $translate('Formatter');
+    if ($current === 'formatter') {
+        $replace['<li><a href="#formatter"'] = '<li class="active"><a href="#formatter"';
     } else {
-        $replace['href="#writer"'] = 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()]) . '"';
+        $replace['href="#formatter"'] = 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-formatter', 'id' => $exporter->id()]) . '"';
     }
 }
 ?>

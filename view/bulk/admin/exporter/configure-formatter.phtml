@@ -2,7 +2,6 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \BulkExport\Api\Representation\ExporterRepresentation $exporter
- * @var \BulkExport\Writer\WriterInterface $writer
  * @var \Laminas\Form\Form $form
  */
 
@@ -27,11 +26,11 @@ $form->get('form_submit')->remove('submit');
 
 <?= $this->pageTitle($exporter->label(), 1, $translate('Bulk export')) ?>
 
-<?= $this->partial('bulk/admin/exporter/menu-tab', ['exporter' => $exporter, 'current' => 'writer']) ?>
+<?= $this->partial('bulk/admin/exporter/menu-tab', ['exporter' => $exporter, 'current' => 'formatter']) ?>
 
 <div id="bulk-export">
-    <h3><?= $escape(sprintf($translate('Writer: %s'), $writer->getLabel())) ?></h3>
-    <p><?= $escape($translate('Fill the default values of the writer.')) ?></p>
+    <h3><?= $escape(sprintf($translate('Formatter: %s'), $exporter->formatterLabel())) ?></h3>
+    <p><?= $escape($translate('Fill the default values of the formatter.')) ?></p>
     <?= $this->form()->openTag($form) ?>
     <?= $this->formCollection($form) ?>
     <?= $this->form()->closeTag() ?>

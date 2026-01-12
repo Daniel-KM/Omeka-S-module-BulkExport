@@ -21,7 +21,7 @@ $hyperlink = $plugins->get('hyperlink');
     <thead>
         <tr>
             <th><?= $escape($translate('Name')) ?></th>
-            <th><?= $escape($translate('Writer')) ?></th>
+            <th><?= $escape($translate('Formatter')) ?></th>
         </tr>
     </thead>
     <tbody>
@@ -59,10 +59,10 @@ $hyperlink = $plugins->get('hyperlink');
                 </ul>
             </td>
             <td>
-                <?php $writer = $exporter->writer(); ?>
-                <?= $writer ? $escape($writer->getLabel()) : null ?>
-                <?php if ($writer instanceof ConfigurableExport): ?>
-                    (<?= $hyperlink($translate('Configure'), $url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-writer', 'id' => $exporter->id()])) ?>)
+                <?php $formatter = $exporter->formatter(); ?>
+                <?= $formatter ? $escape($formatter->getLabel()) : null ?>
+                <?php if ($formatter instanceof ConfigurableExport): ?>
+                    (<?= $hyperlink($translate('Configure'), $url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'configure-formatter', 'id' => $exporter->id()])) ?>)
                 <?php endif; ?>
             </td>
         </tr>

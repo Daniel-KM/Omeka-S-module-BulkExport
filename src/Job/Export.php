@@ -261,10 +261,10 @@ class Export extends AbstractJob
      */
     protected function initializeOptions(): void
     {
-        $writerConfig = $this->exporter->writerConfig();
-        $writerParams = $this->export->writerParams();
+        $formatterConfig = $this->exporter->formatterConfig();
+        $formatterParams = $this->export->formatterParams();
 
-        $this->options = array_merge($writerConfig, $writerParams);
+        $this->options = array_merge($formatterConfig, $formatterParams);
         $this->options['export_id'] = $this->export->id();
         $this->options['exporter_label'] = $this->exporter->label();
         $this->options['export_started'] = $this->export->started();
