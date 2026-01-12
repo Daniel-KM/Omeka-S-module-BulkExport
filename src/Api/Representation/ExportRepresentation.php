@@ -117,13 +117,22 @@ class ExportRepresentation extends AbstractEntityRepresentation
 
     /**
      * Get the file size.
+     *
+     * Note: For files stored in cloud storage (S3, etc.), the size may not be
+     * available if the file is not accessible locally.
      */
     public function filesize(): ?int
     {
         $filepath = $this->filename(true);
-        return $filepath
-            ? filesize($filepath)
-            : null;
+        if (!$filepath) {
+            return null;
+        }
+        // For local files or when local cache exists.
+        if (file_exists($filepath)) {
+            return filesize($filepath) ?: null;
+        }
+        // For cloud storage, the file may not be accessible locally.
+        return null;
     }
 
     public function params(): array

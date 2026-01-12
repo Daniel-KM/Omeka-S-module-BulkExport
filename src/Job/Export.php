@@ -122,6 +122,11 @@ class Export extends AbstractJob
      */
     protected $formatsWithAppendDeleted = ['csv', 'tsv', 'txt'];
 
+    /**
+     * @var int|null Filesize stored before temp file deletion (for cloud storage).
+     */
+    protected $lastSavedFilesize;
+
     public function perform(): void
     {
         $this->services = $this->getServiceLocator();
@@ -855,33 +860,61 @@ class Export extends AbstractJob
 
     /**
      * Save the temp file to the final destination.
+     *
+     * When using the default location (files/bulk_export/), the file is stored
+     * using Omeka's file store adapter to support cloud storage (S3, etc.).
+     * When using a custom location, local file system is used.
      */
     protected function saveFile(): self
     {
         $config = $this->services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $destinationDir = $basePath . '/bulk_export';
+        $defaultDestinationDir = $basePath . '/bulk_export';
 
         $outputFilepath = $this->getOutputFilepath();
-        $filename = mb_strpos($outputFilepath, $destinationDir) === 0
-            ? mb_substr($outputFilepath, mb_strlen($destinationDir) + 1)
-            : $outputFilepath;
 
-        try {
-            $result = copy($this->filepath, $outputFilepath);
-            @unlink($this->filepath);
-        } catch (\Exception $e) {
-            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
-                'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
-                ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
-            ));
-        }
+        // Check if using default location or custom path.
+        $useFileStore = mb_strpos($outputFilepath, $defaultDestinationDir) === 0;
 
-        if (!$result) {
-            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
-                'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
-                ['filename' => $filename, 'tempfile' => $this->filepath]
-            ));
+        if ($useFileStore) {
+            // Use Omeka's file store for default location (supports S3, etc.).
+            $filename = mb_substr($outputFilepath, mb_strlen($defaultDestinationDir) + 1);
+            $storagePath = 'bulk_export/' . $filename;
+
+            try {
+                // Store filesize before upload (may not be available after for cloud storage).
+                $this->lastSavedFilesize = filesize($this->filepath) ?: null;
+
+                /** @var \Omeka\File\Store\StoreInterface $store */
+                $store = $this->services->get('Omeka\File\Store');
+                $store->put($this->filepath, $storagePath);
+                @unlink($this->filepath);
+            } catch (\Exception $e) {
+                throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                    'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
+                    ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
+                ));
+            }
+        } else {
+            // Use local file system for custom paths.
+            $filename = $outputFilepath;
+
+            try {
+                $result = copy($this->filepath, $outputFilepath);
+                @unlink($this->filepath);
+            } catch (\Exception $e) {
+                throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                    'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
+                    ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
+                ));
+            }
+
+            if (!$result) {
+                throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                    'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
+                    ['filename' => $filename, 'tempfile' => $this->filepath]
+                ));
+            }
         }
 
         // Update export record with filename.
@@ -889,7 +922,9 @@ class Export extends AbstractJob
         $this->export = $this->api->update('bulk_exports', $this->export->id(), $data, [], ['isPartial' => true])->getContent();
 
         $fileUrl = $this->export->fileUrl();
-        $filesize = $this->export->filesize();
+        // For cloud storage, filesize may not be available after upload.
+        // Use the size from when we saved (stored in $filesize during save).
+        $filesize = $this->export->filesize() ?? $this->lastSavedFilesize ?? null;
         if (!$fileUrl) {
             $this->logger->notice(
                 'The export is available locally as specified (size: {size} bytes).', // @translate

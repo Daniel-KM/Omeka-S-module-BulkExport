@@ -104,13 +104,30 @@ class ExportAdapter extends AbstractEntityAdapter
     {
         /** @var \BulkExport\Entity\Export $entity */
         $entity = parent::deleteEntity($request);
+
         // Deletion rights is already checked.
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $filepath = $basePath . '/bulk_export/' . $entity->getFilename();
-        if (file_exists($filepath) && is_writeable($filepath)) {
-            unlink($filepath);
+        $filename = $entity->getFilename();
+        if (!$filename) {
+            return $entity;
         }
+
+        // Check if using custom path (absolute) or default location (relative).
+        if (mb_substr($filename, 0, 1) === '/') {
+            // Custom path: use local file system.
+            if (file_exists($filename) && is_writeable($filename)) {
+                @unlink($filename);
+            }
+        } else {
+            // Default location: use Omeka's file store (supports S3, etc.).
+            try {
+                /** @var \Omeka\File\Store\StoreInterface $store */
+                $store = $this->getServiceLocator()->get('Omeka\File\Store');
+                $store->delete('bulk_export/' . $filename);
+            } catch (\Exception $e) {
+                // Silently ignore deletion errors (file may not exist).
+            }
+        }
+
         return $entity;
     }
 }
