@@ -61,6 +61,32 @@ trait ResourceFieldsTrait
     protected $labelFormatFields = 'name';
 
     /**
+     * Column information for value_per_column mode.
+     *
+     * Structure: [fieldName => ['max_count' => int, 'columns' => [...]], ...]
+     * For metadata mode: columns = [['lang' => x, 'type' => y, 'visibility' => z, 'count' => n], ...]
+     *
+     * @var array
+     */
+    protected $fieldColumnsInfo = [];
+
+    /**
+     * Expanded field names for value_per_column mode.
+     *
+     * @var array
+     */
+    protected $expandedFieldNames = [];
+
+    /**
+     * Mapping from expanded field name to original field name and metadata.
+     *
+     * Structure: [expandedName => ['field' => x, 'index' => n, 'lang' => y, 'type' => z, 'visibility' => v], ...]
+     *
+     * @var array
+     */
+    protected $expandedFieldsMap = [];
+
+    /**
      * @var array
      */
     protected $propertySizes = [
@@ -692,5 +718,368 @@ trait ResourceFieldsTrait
             'operation',
         ];
         return in_array($fieldName, $singles);
+    }
+
+    /**
+     * Check if field is a property (has colon but not o: prefix).
+     */
+    protected function isPropertyField(string $fieldName): bool
+    {
+        return strpos($fieldName, ':') !== false
+            && strpos($fieldName, 'o:') !== 0
+            && strpos($fieldName, 'oa:') !== 0;
+    }
+
+    /**
+     * Check if value_per_column mode is enabled.
+     */
+    protected function isValuePerColumnMode(): bool
+    {
+        return !empty($this->options['value_per_column']);
+    }
+
+    /**
+     * Get the column metadata options (language, datatype, visibility).
+     *
+     * @return array Array of enabled metadata keys.
+     */
+    protected function getColumnMetadataOptions(): array
+    {
+        $options = $this->options['column_metadata'] ?? [];
+        if (!is_array($options)) {
+            return [];
+        }
+        return array_filter($options);
+    }
+
+    /**
+     * Pre-scan resources to calculate max value counts per field.
+     *
+     * This is called before export when value_per_column mode is enabled.
+     * It iterates through all resources to find the maximum number of values
+     * for each property field.
+     *
+     * When column_metadata options are set, it also tracks unique combinations
+     * of language, datatype, and visibility.
+     *
+     * @param array $resourceIds Resource IDs grouped by type.
+     * @return self
+     */
+    protected function prescanResourcesForColumns(array $resourceIds): self
+    {
+        if (!$this->isValuePerColumnMode()) {
+            return $this;
+        }
+
+        $this->fieldColumnsInfo = [];
+        $columnMetadata = $this->getColumnMetadataOptions();
+        $hasMetadataMode = !empty($columnMetadata);
+
+        // Initialize field info for all property fields.
+        foreach ($this->fieldNames as $fieldName) {
+            if ($this->isPropertyField($fieldName) && !$this->isSingleField($fieldName)) {
+                $this->fieldColumnsInfo[$fieldName] = [
+                    'max_count' => 0,
+                    'columns' => [],
+                ];
+            }
+        }
+
+        if (empty($this->fieldColumnsInfo)) {
+            return $this;
+        }
+
+        $services = $this->getServiceLocator();
+        $entityManager = $services->get('Omeka\EntityManager');
+
+        foreach ($resourceIds as $resourceType => $ids) {
+            if (empty($ids)) {
+                continue;
+            }
+
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            $adapter = $services->get('Omeka\ApiAdapterManager')->get($resourceName);
+
+            // Process in batches to avoid memory issues.
+            $batchSize = 100;
+            $chunks = array_chunk($ids, $batchSize);
+
+            foreach ($chunks as $chunk) {
+                $resources = $this->api->search($resourceName, [
+                    'id' => $chunk,
+                ], ['finalize' => false])->getContent();
+
+                foreach ($resources as $resource) {
+                    $resource = $adapter->getRepresentation($resource);
+                    $this->scanResourceForColumnInfo($resource, $hasMetadataMode, $columnMetadata);
+                    unset($resource);
+                }
+
+                unset($resources);
+                $entityManager->clear();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Scan a single resource to update column info.
+     *
+     * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+     * @param bool $hasMetadataMode
+     * @param array $columnMetadata
+     */
+    protected function scanResourceForColumnInfo($resource, bool $hasMetadataMode, array $columnMetadata): void
+    {
+        foreach ($this->fieldColumnsInfo as $fieldName => &$info) {
+            $values = $resource->value($fieldName, ['all' => true]);
+            $valueCount = count($values);
+
+            if (!$hasMetadataMode) {
+                // Simple mode: just track max count.
+                if ($valueCount > $info['max_count']) {
+                    $info['max_count'] = $valueCount;
+                }
+            } else {
+                // Metadata mode: track by language/datatype/visibility combinations.
+                $metadataCounts = [];
+                foreach ($values as $value) {
+                    $key = $this->getValueMetadataKey($value, $columnMetadata);
+                    $metadataCounts[$key] = ($metadataCounts[$key] ?? 0) + 1;
+                }
+
+                // Update max counts per metadata combination.
+                foreach ($metadataCounts as $key => $count) {
+                    if (!isset($info['columns'][$key])) {
+                        $info['columns'][$key] = [
+                            'metadata' => $this->parseValueMetadataKey($key, $columnMetadata),
+                            'max_count' => 0,
+                        ];
+                    }
+                    if ($count > $info['columns'][$key]['max_count']) {
+                        $info['columns'][$key]['max_count'] = $count;
+                    }
+                }
+
+                // Also update total max count.
+                if ($valueCount > $info['max_count']) {
+                    $info['max_count'] = $valueCount;
+                }
+            }
+        }
+        unset($info);
+    }
+
+    /**
+     * Get a key string representing value metadata for grouping.
+     *
+     * @param \Omeka\Api\Representation\ValueRepresentation $value
+     * @param array $columnMetadata
+     * @return string
+     */
+    protected function getValueMetadataKey($value, array $columnMetadata): string
+    {
+        $parts = [];
+        if (in_array('language', $columnMetadata)) {
+            $parts[] = 'lang:' . ($value->lang() ?? '');
+        }
+        if (in_array('datatype', $columnMetadata)) {
+            $parts[] = 'type:' . $value->type();
+        }
+        if (in_array('visibility', $columnMetadata)) {
+            $parts[] = 'vis:' . ($value->isPublic() ? '1' : '0');
+        }
+        return implode('|', $parts) ?: 'default';
+    }
+
+    /**
+     * Parse a metadata key back into its components.
+     *
+     * @param string $key
+     * @param array $columnMetadata
+     * @return array
+     */
+    protected function parseValueMetadataKey(string $key, array $columnMetadata): array
+    {
+        $result = [
+            'language' => null,
+            'datatype' => null,
+            'visibility' => null,
+        ];
+
+        if ($key === 'default') {
+            return $result;
+        }
+
+        $parts = explode('|', $key);
+        foreach ($parts as $part) {
+            if (strpos($part, 'lang:') === 0) {
+                $result['language'] = substr($part, 5);
+            } elseif (strpos($part, 'type:') === 0) {
+                $result['datatype'] = substr($part, 5);
+            } elseif (strpos($part, 'vis:') === 0) {
+                $result['visibility'] = substr($part, 4) === '1';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Expand field names for value_per_column mode.
+     *
+     * After pre-scan, this method expands each property field into multiple
+     * columns based on the max value count found.
+     *
+     * @return self
+     */
+    protected function expandFieldNamesForColumns(): self
+    {
+        if (!$this->isValuePerColumnMode() || empty($this->fieldColumnsInfo)) {
+            $this->expandedFieldNames = $this->fieldNames;
+            return $this;
+        }
+
+        $this->expandedFieldNames = [];
+        $this->expandedFieldsMap = [];
+        $columnMetadata = $this->getColumnMetadataOptions();
+        $hasMetadataMode = !empty($columnMetadata);
+
+        foreach ($this->fieldNames as $fieldName) {
+            if (!isset($this->fieldColumnsInfo[$fieldName])) {
+                // Not a property field or single field - keep as is.
+                $this->expandedFieldNames[] = $fieldName;
+                continue;
+            }
+
+            $info = $this->fieldColumnsInfo[$fieldName];
+
+            if ($hasMetadataMode && !empty($info['columns'])) {
+                // Metadata mode: create columns per metadata combination.
+                foreach ($info['columns'] as $key => $columnInfo) {
+                    for ($i = 1; $i <= $columnInfo['max_count']; $i++) {
+                        $suffix = $this->buildColumnMetadataSuffix($columnInfo['metadata'], $columnMetadata);
+                        $expandedName = $columnInfo['max_count'] > 1
+                            ? $fieldName . $suffix . ' [' . $i . ']'
+                            : $fieldName . $suffix;
+                        $this->expandedFieldNames[] = $expandedName;
+                        $this->expandedFieldsMap[$expandedName] = [
+                            'field' => $fieldName,
+                            'index' => $i,
+                            'metadata_key' => $key,
+                        ] + $columnInfo['metadata'];
+                    }
+                }
+            } else {
+                // Simple mode: just repeat the field name.
+                for ($i = 1; $i <= $info['max_count']; $i++) {
+                    // Use the same header name for all columns (as requested).
+                    $this->expandedFieldNames[] = $fieldName;
+                    $this->expandedFieldsMap[$fieldName . '#' . $i] = [
+                        'field' => $fieldName,
+                        'index' => $i,
+                        'metadata_key' => null,
+                    ];
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Build a suffix for column header based on metadata.
+     *
+     * @param array $metadata
+     * @param array $columnMetadata
+     * @return string
+     */
+    protected function buildColumnMetadataSuffix(array $metadata, array $columnMetadata): string
+    {
+        $parts = [];
+
+        if (in_array('language', $columnMetadata) && $metadata['language'] !== null) {
+            if ($metadata['language'] !== '') {
+                $parts[] = '@' . $metadata['language'];
+            }
+        }
+        if (in_array('datatype', $columnMetadata) && $metadata['datatype'] !== null) {
+            $parts[] = '^^' . $metadata['datatype'];
+        }
+        if (in_array('visibility', $columnMetadata) && $metadata['visibility'] !== null) {
+            if (!$metadata['visibility']) {
+                $parts[] = '[private]';
+            }
+        }
+
+        return $parts ? ' ' . implode(' ', $parts) : '';
+    }
+
+    /**
+     * Get resource values organized for value_per_column output.
+     *
+     * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+     * @param string $fieldName Original field name.
+     * @return array Values organized by column position.
+     */
+    protected function getValuesForColumnOutput($resource, string $fieldName): array
+    {
+        if (!isset($this->fieldColumnsInfo[$fieldName])) {
+            return [];
+        }
+
+        $info = $this->fieldColumnsInfo[$fieldName];
+        $columnMetadata = $this->getColumnMetadataOptions();
+        $hasMetadataMode = !empty($columnMetadata) && !empty($info['columns']);
+
+        $values = $resource->value($fieldName, ['all' => true]);
+
+        if (!$hasMetadataMode) {
+            // Simple mode: return values in order, padded with empty strings.
+            $result = [];
+            for ($i = 0; $i < $info['max_count']; $i++) {
+                $result[] = isset($values[$i]) ? (string) $values[$i] : '';
+            }
+            return $result;
+        }
+
+        // Metadata mode: organize values by metadata combination.
+        $valuesByMetadata = [];
+        foreach ($values as $value) {
+            $key = $this->getValueMetadataKey($value, $columnMetadata);
+            $valuesByMetadata[$key][] = (string) $value;
+        }
+
+        // Build result array in column order.
+        $result = [];
+        foreach ($info['columns'] as $key => $columnInfo) {
+            $columnValues = $valuesByMetadata[$key] ?? [];
+            for ($i = 0; $i < $columnInfo['max_count']; $i++) {
+                $result[] = $columnValues[$i] ?? '';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the expanded field names for output (headers).
+     *
+     * @return array
+     */
+    protected function getExpandedFieldNames(): array
+    {
+        return $this->expandedFieldNames ?: $this->fieldNames;
+    }
+
+    /**
+     * Check if the expanded field names differ from original.
+     *
+     * @return bool
+     */
+    protected function hasExpandedFields(): bool
+    {
+        return !empty($this->expandedFieldNames) && $this->expandedFieldNames !== $this->fieldNames;
     }
 }

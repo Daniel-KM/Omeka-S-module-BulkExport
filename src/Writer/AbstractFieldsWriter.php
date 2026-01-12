@@ -42,6 +42,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     protected $paramsKeys = [
@@ -62,6 +64,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     protected $options = [
@@ -86,6 +90,8 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         'zip_files',
         'incremental' => false,
         'include_deleted' => null,
+        'value_per_column' => false,
+        'column_metadata' => [],
     ];
 
     /**
@@ -147,12 +153,33 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             return $this;
         }
 
+        // Pre-scan for value_per_column mode to calculate max column counts.
+        if ($this->isValuePerColumnMode()) {
+            $this->logger->info('Pre-scanning resources for value_per_column mode...'); // @translate
+            $resourceIds = $this->getResourceIdsByType();
+            $this->prescanResourcesForColumns($resourceIds);
+            $this->expandFieldNamesForColumns();
+            $this->logger->info(
+                'Pre-scan complete. Expanded to {count} columns.', // @translate
+                ['count' => count($this->getExpandedFieldNames())]
+            );
+        }
+
         if ($this->prependFieldNames) {
+            // Use expanded field names for headers in value_per_column mode.
+            $headerFields = $this->isValuePerColumnMode()
+                ? $this->getExpandedFieldNames()
+                : $this->fieldNames;
+
             if (isset($this->options['format_fields']) && $this->options['format_fields'] === 'label') {
                 $this->prepareFieldLabels();
-                $this->writeFields($this->fieldLabels);
+                // For value_per_column, we use the expanded names directly as labels.
+                $headerLabels = $this->isValuePerColumnMode()
+                    ? $this->getExpandedFieldNames()
+                    : $this->fieldLabels;
+                $this->writeFields($headerLabels);
             } else {
-                $this->writeFields($this->fieldNames);
+                $this->writeFields($headerFields);
             }
         }
 

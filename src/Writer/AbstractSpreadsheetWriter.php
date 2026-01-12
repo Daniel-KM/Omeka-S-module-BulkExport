@@ -89,6 +89,11 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
+        // Handle value_per_column mode.
+        if ($this->isValuePerColumnMode()) {
+            return $this->getDataResourcePerColumn($resource);
+        }
+
         $dataResource = [];
 
         if ($this->options['only_first']) {
@@ -140,6 +145,48 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
             }
             $dataResource[] = implode($separator, $allValues);
         }
+        return $dataResource;
+    }
+
+    /**
+     * Get resource data with one value per column.
+     *
+     * @param AbstractResourceEntityRepresentation $resource
+     * @return array
+     */
+    protected function getDataResourcePerColumn(AbstractResourceEntityRepresentation $resource): array
+    {
+        $dataResource = [];
+
+        foreach ($this->fieldNames as $fieldName) {
+            // Check if this is a property field with expanded columns.
+            if (isset($this->fieldColumnsInfo[$fieldName])) {
+                // Get values organized by column position.
+                $columnValues = $this->getValuesForColumnOutput($resource, $fieldName);
+                foreach ($columnValues as $value) {
+                    $dataResource[] = $value;
+                }
+            } else {
+                // Non-property field or single field - use standard processing.
+                $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+                $outputShaper = $this->getShaperForField($fieldName);
+                $allValues = [];
+                foreach ($sourceFields as $sourceField) {
+                    $shaper = $outputShaper ?? $this->getShaperForField($sourceField);
+                    $shaperParams = $this->shaperSettings($shaper);
+                    $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
+                    $values = $this->shapeValues($values, $shaperParams);
+                    $allValues = array_merge($allValues, $values);
+                }
+                // For non-expanded fields, join with separator or take first value.
+                if ($this->options['only_first'] || !$this->options['has_separator']) {
+                    $dataResource[] = (string) reset($allValues);
+                } else {
+                    $dataResource[] = implode($this->options['separator'], $allValues);
+                }
+            }
+        }
+
         return $dataResource;
     }
 }
