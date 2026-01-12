@@ -64,6 +64,12 @@ class GeoJson extends AbstractFieldsJsonFormatter
             return $this;
         }
 
+        // Initialize stats for tracking.
+        $this->stats['total'] = $this->isId ? count($this->resourceIds) : count($this->resources);
+        $this->stats['processed'] = 0;
+        $this->stats['succeeded'] = 0;
+        $this->stats['skipped'] = 0;
+
         $this->initializeOutput();
         if ($this->hasError) {
             return $this;
@@ -146,12 +152,16 @@ class GeoJson extends AbstractFieldsJsonFormatter
                         /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
                         $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                     } catch (NotFoundException $e) {
+                        $this->stats['skipped']++;
+                        $this->stats['processed']++;
                         continue;
                     }
                     $geonamesRdfDatas = $this->geonamesRdfUrls($resource);
                     foreach ($geonamesRdfDatas as $geonamesRdfData) {
                         $geonamesUrlToResourceData[$geonamesRdfData['uri']]['id'][] = $resourceId;
                     }
+                    $this->stats['succeeded']++;
+                    $this->stats['processed']++;
                     unset($resource);
                 }
                 // Avoid memory issue.
@@ -166,6 +176,8 @@ class GeoJson extends AbstractFieldsJsonFormatter
                     foreach ($geonamesRdfDatas as $geonamesRdfData) {
                         $geonamesUrlToResourceData[$geonamesRdfData['uri']]['id'][] = $resource->Id();
                     }
+                    $this->stats['succeeded']++;
+                    $this->stats['processed']++;
                 }
                 // Avoid memory issue.
                 $entityManager->clear();

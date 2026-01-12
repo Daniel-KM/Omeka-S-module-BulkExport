@@ -29,6 +29,12 @@ abstract class AbstractViewFormatter extends AbstractFormatter
 
     protected function process(): self
     {
+        // Initialize stats for tracking.
+        $this->stats['total'] = $this->isId ? count($this->resourceIds) : count($this->resources);
+        $this->stats['processed'] = 0;
+        $this->stats['succeeded'] = 0;
+        $this->stats['skipped'] = 0;
+
         $this->initializeOutput();
         if ($this->hasError) {
             return $this;
@@ -59,13 +65,19 @@ abstract class AbstractViewFormatter extends AbstractFormatter
                 try {
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                    $this->stats['skipped']++;
+                    $this->stats['processed']++;
                     continue;
                 }
                 $this->writeResource($resource, ++$index);
+                $this->stats['succeeded']++;
+                $this->stats['processed']++;
             }
         } else {
             foreach ($this->resources as $resource) {
                 $this->writeResource($resource, ++$index);
+                $this->stats['succeeded']++;
+                $this->stats['processed']++;
             }
         }
 

@@ -92,8 +92,13 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
         }
 
         // Process resources with batch memory management in batch mode.
-        $processed = 0;
         $batchSize = $this->batchSize ?? self::SQL_LIMIT;
+
+        // Initialize stats for tracking.
+        $this->stats['total'] = $this->isId ? count($this->resourceIds) : count($this->resources);
+        $this->stats['processed'] = 0;
+        $this->stats['succeeded'] = 0;
+        $this->stats['skipped'] = 0;
 
         if ($this->isId) {
             foreach ($this->resourceIds as $resourceId) {
@@ -103,14 +108,18 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
                 try {
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                    $this->stats['skipped']++;
+                    $this->stats['processed']++;
                     continue;
                 }
                 $dataResource = $this->getDataResource($resource);
                 if (count($dataResource)) {
                     $this->writeFields($dataResource);
+                    $this->stats['succeeded']++;
                 }
+                $this->stats['processed']++;
                 // Clear entity manager periodically to avoid memory issues in batch mode.
-                if ($this->isBatchMode() && ++$processed % $batchSize === 0) {
+                if ($this->isBatchMode() && $this->stats['processed'] % $batchSize === 0) {
                     $this->clearEntityManager();
                     $this->reportProgress();
                 }
@@ -123,9 +132,11 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
                 $dataResource = $this->getDataResource($resource);
                 if (count($dataResource)) {
                     $this->writeFields($dataResource);
+                    $this->stats['succeeded']++;
                 }
+                $this->stats['processed']++;
                 // Clear entity manager periodically to avoid memory issues in batch mode.
-                if ($this->isBatchMode() && ++$processed % $batchSize === 0) {
+                if ($this->isBatchMode() && $this->stats['processed'] % $batchSize === 0) {
                     $this->clearEntityManager();
                     $this->reportProgress();
                 }

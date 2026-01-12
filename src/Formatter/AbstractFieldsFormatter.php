@@ -67,19 +67,29 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
             }
         }
 
+        // Initialize stats for tracking.
+        $this->stats['total'] = $this->isId ? count($this->resourceIds) : count($this->resources);
+        $this->stats['processed'] = 0;
+        $this->stats['succeeded'] = 0;
+        $this->stats['skipped'] = 0;
+
         if ($this->isId) {
             foreach ($this->resourceIds as $resourceId) {
                 try {
                     /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (NotFoundException $e) {
+                    $this->stats['skipped']++;
+                    $this->stats['processed']++;
                     continue;
                 }
                 $dataResource = $this->getDataResource($resource);
                 if (count($dataResource)) {
                     $this
                         ->writeFields($dataResource);
+                    $this->stats['succeeded']++;
                 }
+                $this->stats['processed']++;
             }
         } else {
             foreach ($this->resources as $resource) {
@@ -87,7 +97,9 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
                 if (count($dataResource)) {
                     $this
                         ->writeFields($dataResource);
+                    $this->stats['succeeded']++;
                 }
+                $this->stats['processed']++;
             }
         }
 

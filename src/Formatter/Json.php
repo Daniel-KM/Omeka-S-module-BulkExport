@@ -19,6 +19,12 @@ class Json extends AbstractFormatter
 
     protected function process(): self
     {
+        // Initialize stats for tracking.
+        $this->stats['total'] = $this->isSingle ? 1 : ($this->isId ? count($this->resourceIds) : count($this->resources));
+        $this->stats['processed'] = 0;
+        $this->stats['succeeded'] = 0;
+        $this->stats['skipped'] = 0;
+
         if ($this->isSingle) {
             $this->processSingle();
             return $this;
@@ -36,10 +42,14 @@ class Json extends AbstractFormatter
                 try {
                     $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
                 } catch (NotFoundException $e) {
+                    $this->stats['skipped']++;
+                    $this->stats['processed']++;
                     continue;
                 }
                 $this->content .= $this->getDataResource($resource);
                 $this->content .= ",\n";
+                $this->stats['succeeded']++;
+                $this->stats['processed']++;
             }
             $this->content = rtrim($this->content, ",\n") . "\n]";
             $this->toOutput();
@@ -52,6 +62,8 @@ class Json extends AbstractFormatter
         foreach ($this->resources as $resource) {
             $this->content .= $this->getDataResource($resource);
             $this->content .= ",\n";
+            $this->stats['succeeded']++;
+            $this->stats['processed']++;
         }
         $this->content = rtrim($this->content, ",\n") . "\n]";
         $this->toOutput();
@@ -62,6 +74,8 @@ class Json extends AbstractFormatter
     {
         $this->content = $this->getDataResource($this->resource);
         $this->toOutput();
+        $this->stats['succeeded']++;
+        $this->stats['processed']++;
         return $this;
     }
 
@@ -80,12 +94,16 @@ class Json extends AbstractFormatter
             try {
                 $resource = $this->api->read($this->resourceType, ['id' => $resourceId])->getContent();
             } catch (NotFoundException $e) {
+                $this->stats['skipped']++;
+                $this->stats['processed']++;
                 continue;
             }
             // TODO In the case the user asks something forbidden, there will be one trailing comma. See json-table.
             $append = $revertedIndex ? ',' : '';
             $jsonResource = $this->getDataResource($resource);
             fwrite($this->handle, $jsonResource . $append . "\n");
+            $this->stats['succeeded']++;
+            $this->stats['processed']++;
         }
 
         fwrite($this->handle, ']');
