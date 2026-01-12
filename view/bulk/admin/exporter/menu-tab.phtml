@@ -5,23 +5,21 @@
  * @var string $current
  */
 
-use BulkExport\Interfaces\Configurable as ConfigurableExport;
-
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
-
-$formatter = $exporter->formatter();
 
 $nav = [
     'exporter' => $translate('Exporter'),
 ];
+$replace = [];
 if ($current !== 'exporter') {
     $replace = [
         '<li class="active">' => '<li>',
         'href="#exporter"' => 'href="' . $this->url('admin/bulk-export/id', ['controller' => 'exporter', 'action' => 'edit', 'id' => $exporter->id()]) . '"',
     ];
 }
-if ($formatter && ($formatter instanceof ConfigurableExport)) {
+// Check if a config form is available via the formatter_forms registry.
+if ($exporter->getConfigFormClass()) {
     $nav['formatter'] = $translate('Formatter');
     if ($current === 'formatter') {
         $replace['<li><a href="#formatter"'] = '<li class="active"><a href="#formatter"';

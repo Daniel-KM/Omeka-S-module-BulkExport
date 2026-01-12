@@ -99,13 +99,9 @@ trait ShaperTrait
                     $value = preg_replace('~\p{N}+~u', '', (string) $value);
                 }
 
-                if (in_array('max_length', $normalizations)) {
-                    $maxLength = !empty($this->settings['max_length'])
-                        ? (int) $this->settings['max_length']
-                        : 0;
-                    if ($maxLength) {
-                        $value = mb_substr((string) $value, 0, $maxLength);
-                    }
+                // TODO max_length normalization is handled below, but which order?
+                if (in_array('max_length', $normalizations) && $maxLength) {
+                    $value = mb_substr((string) $value, 0, $maxLength);
                 }
 
                 if (in_array('integer', $normalizations)) {
