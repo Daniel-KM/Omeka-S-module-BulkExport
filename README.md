@@ -53,6 +53,15 @@ the module to `BulkExport`, go to the root of the module, and run:
 composer install --no-dev
 ```
 
+* For test
+
+The module includes a comprehensive test suite with unit and functional tests.
+Run them from the root of Omeka:
+
+```sh
+vendor/bin/phpunit -c modules/BulkExport/phpunit.xml --testdox
+```
+
 
 Quick start
 -----------
@@ -95,6 +104,94 @@ background job: just config a writer for default params, then use it and process
 the export.
 
 
+Advanced spreadsheet options
+----------------------------
+
+### Custom field labels and field merging (format_fields_labels)
+
+You can customize column headers and merge multiple fields into a single column
+using the `format_fields_labels` option. This is useful for:
+
+- Renaming columns with custom labels
+- Merging multiple properties into a single column
+- Controlling the order of columns in the output
+
+Format: one line per definition, with `Label = field1 field2 ...`
+
+Example:
+```
+Identifier = dcterms:identifier o:id
+Title = dcterms:title dcterms:alternative
+```
+
+This will create:
+- An "Identifier" column containing values from both `dcterms:identifier` and `o:id`
+- A "Title" column containing values from both `dcterms:title` and `dcterms:alternative`
+
+Fields listed in format_fields_labels appear first in the output, in their
+specified order. Other fields are appended after.
+
+### Multiple shapers per metadata (metadata_shapers)
+
+A single metadata field can have multiple shapers applied, each creating its own
+column in the output. This is useful when you need the same data transformed in
+different ways.
+
+Format: Each entry specifies a metadata field and a shaper to apply.
+
+Example: If you configure `dcterms:title` with both "Uppercase" and "Lowercase"
+shapers, the output will contain:
+- `dcterms:title` - original value
+- `dcterms:title [Uppercase]` - uppercase transformation
+- `dcterms:title [Lowercase]` - lowercase transformation
+
+### One value per column (value_per_column)
+
+When enabled, each value of a multi-valued property gets its own column instead
+of being joined with a separator. The module pre-scans all resources to
+determine the maximum number of values for each property.
+
+Example: An item with 3 subjects will produce 3 columns, all named `dcterms:subject`:
+
+| dcterms:subject | dcterms:subject | dcterms:subject |
+|-----------------|-----------------|-----------------|
+| Subject 1       | Subject 2       | Subject 3       |
+
+For items with fewer values, the extra columns are left empty.
+
+### Column metadata (column_metadata)
+
+You can include language, datatype, and/or visibility in column headers using
+the `column_metadata` option. Available options:
+
+- `language`: Add language tag to header (e.g., `dcterms:subject @fr`)
+- `datatype`: Add datatype to header (e.g., `dcterms:subject ^^uri`)
+- `visibility`: Add visibility indicator for private values (e.g., `dcterms:subject [private]`)
+
+This option works in two modes:
+
+**With value_per_column enabled**: Creates separate columns for each value
+within each metadata group.
+
+Example with `column_metadata: ['language']` and `value_per_column: true`:
+
+| dcterms:subject @fr | dcterms:subject @fr | dcterms:subject @en |
+|---------------------|---------------------|---------------------|
+| Sujet 1             | Sujet 2             | English subject     |
+
+**Without value_per_column**: Creates one column per metadata group, with values
+joined by the separator.
+
+Example with `column_metadata: ['language']` and `value_per_column: false`:
+
+| dcterms:subject @fr      | dcterms:subject @en              |
+|--------------------------|----------------------------------|
+| Sujet 1 \| Sujet 2       | English subject \| Another one   |
+
+This is useful when you want to keep all French subjects in one column, all
+English subjects in another, etc.
+
+
 Notes
 -----
 
@@ -107,16 +204,30 @@ Notes
 TODO
 ----
 
-- [ ] Integrate the new feature api output for Omeka S v4.1.
-- [ ] Remove Writers and factorize with Formatters.
-- [ ] Select resources like in the module ebook.
-- [ ] For spreadsheet, add an option (by default in admin) to set headers with the datatype and the language (so multiple headers for the same property).
+- [x] For spreadsheet, add an option to set headers with the datatype and the
+  language (so multiple headers for the same property).
 - [x] Rights on exports.
 - [x] Deletion of old exports.
-- [ ] Make any size output real time (streamable).
+- [x] Factorized writers into formatters
+- [ ] Extract duplicated mapping methods (`mapResourceTypeToEntity`, etc.)
+  into `ResourceTypeMappingTrait`
+- [ ] Integrate the new feature api output for Omeka S v4.1.
+- [ ] Integrate with module [Mapper] for custom export mappings.
+- [ ] Enable real-time output for any size
+- [ ] Optimize pre-scan phase for `value_per_column` mode with database-level
+  aggregation (SQL COUNT/GROUP BY) instead of PHP loops
+- [ ] Add progress callbacks for real-time export status updates
+- [ ] Consider async export with Server-Sent Events or WebSocket notifications
+- [ ] Simplify exporter configuration (preset templates)
+- [ ] Export preview
+- [ ] Improve progress display during background exports (percentage, end)
+- [ ] The browse view may be like the Menu view (all edits in one page)
+- [ ] Add drag-and-drop column ordering for spreadsheet exports
+- [ ] Export history with re-run capability
+- [ ] One-click re-export with same settings
 - [ ] For api, allow to pass settings like in module [Api Info].
 - [ ] Use request header "Accept" like .extension.
-- [ ] The browse view may be like the Menu view, so all edits can be done in one page.
+- [ ] Select resources like in the module ebook.
 
 
 Warning
@@ -126,6 +237,11 @@ Use it at your own risk.
 
 It’s always recommended to backup your files and your databases and to check
 your archives regularly so you can roll back if needed.
+
+```sh
+# database dump example
+mysqldump -u omeka -p omeka | gzip > "omeka.$(date +%Y%m%d_%H%M%S).sql.gz"
+```
 
 
 Troubleshooting
@@ -168,10 +284,11 @@ Copyright
 ---------
 
 * Copyright BibLibre, 2016-2017
-* Copyright Daniel Berthereau, 2019-2025 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2019-2026 (see [Daniel-KM] on GitLab)
 
 This module was initially inspired by the [Omeka Classic] [Export plugin], built
-by [Biblibre].
+by [Biblibre], but is now fully restructured and rewritten on another design
+pattern.
 
 
 [Bulk Export]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport
@@ -184,6 +301,7 @@ by [Biblibre].
 [BulkExport.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/releases
 [installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
+[Mapper]: https://gitlab.com/Daniel-KM/Omeka-S-module-Mapper
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
