@@ -89,8 +89,8 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
     {
-        // Handle value_per_column mode.
-        if ($this->isValuePerColumnMode()) {
+        // Handle column expansion modes (value_per_column and/or column_metadata).
+        if ($this->hasColumnExpansionMode()) {
             return $this->getDataResourcePerColumn($resource);
         }
 
@@ -157,12 +157,13 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
     protected function getDataResourcePerColumn(AbstractResourceEntityRepresentation $resource): array
     {
         $dataResource = [];
+        $separator = $this->options['separator'] ?? ' | ';
 
         foreach ($this->fieldNames as $fieldName) {
             // Check if this is a property field with expanded columns.
             if (isset($this->fieldColumnsInfo[$fieldName])) {
                 // Get values organized by column position.
-                $columnValues = $this->getValuesForColumnOutput($resource, $fieldName);
+                $columnValues = $this->getValuesForColumnOutput($resource, $fieldName, $separator);
                 foreach ($columnValues as $value) {
                     $dataResource[] = $value;
                 }

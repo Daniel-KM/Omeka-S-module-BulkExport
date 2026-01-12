@@ -153,9 +153,9 @@ abstract class AbstractFieldsWriter extends AbstractWriter
             return $this;
         }
 
-        // Pre-scan for value_per_column mode to calculate max column counts.
-        if ($this->isValuePerColumnMode()) {
-            $this->logger->info('Pre-scanning resources for value_per_column mode...'); // @translate
+        // Pre-scan for column expansion modes (value_per_column and/or column_metadata).
+        if ($this->hasColumnExpansionMode()) {
+            $this->logger->info('Pre-scanning resources for column expansion mode...'); // @translate
             $resourceIds = $this->getResourceIdsByType();
             $this->prescanResourcesForColumns($resourceIds);
             $this->expandFieldNamesForColumns();
@@ -166,15 +166,15 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         }
 
         if ($this->prependFieldNames) {
-            // Use expanded field names for headers in value_per_column mode.
-            $headerFields = $this->isValuePerColumnMode()
+            // Use expanded field names for headers in column expansion mode.
+            $headerFields = $this->hasColumnExpansionMode()
                 ? $this->getExpandedFieldNames()
                 : $this->fieldNames;
 
             if (isset($this->options['format_fields']) && $this->options['format_fields'] === 'label') {
                 $this->prepareFieldLabels();
-                // For value_per_column, we use the expanded names directly as labels.
-                $headerLabels = $this->isValuePerColumnMode()
+                // For column expansion, we use the expanded names directly as labels.
+                $headerLabels = $this->hasColumnExpansionMode()
                     ? $this->getExpandedFieldNames()
                     : $this->fieldLabels;
                 $this->writeFields($headerLabels);

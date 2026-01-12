@@ -739,6 +739,24 @@ trait ResourceFieldsTrait
     }
 
     /**
+     * Check if column_metadata mode is enabled (independent of value_per_column).
+     */
+    protected function hasColumnMetadataMode(): bool
+    {
+        return !empty($this->getColumnMetadataOptions());
+    }
+
+    /**
+     * Check if any column expansion mode is active.
+     *
+     * Returns true if either value_per_column or column_metadata is enabled.
+     */
+    protected function hasColumnExpansionMode(): bool
+    {
+        return $this->isValuePerColumnMode() || $this->hasColumnMetadataMode();
+    }
+
+    /**
      * Get the column metadata options (language, datatype, visibility).
      *
      * @return array Array of enabled metadata keys.
@@ -755,9 +773,9 @@ trait ResourceFieldsTrait
     /**
      * Pre-scan resources to calculate max value counts per field.
      *
-     * This is called before export when value_per_column mode is enabled.
-     * It iterates through all resources to find the maximum number of values
-     * for each property field.
+     * This is called before export when value_per_column or column_metadata
+     * mode is enabled. It iterates through all resources to find the maximum
+     * number of values for each property field.
      *
      * When column_metadata options are set, it also tracks unique combinations
      * of language, datatype, and visibility.
@@ -767,7 +785,7 @@ trait ResourceFieldsTrait
      */
     protected function prescanResourcesForColumns(array $resourceIds): self
     {
-        if (!$this->isValuePerColumnMode()) {
+        if (!$this->hasColumnExpansionMode()) {
             return $this;
         }
 
@@ -927,16 +945,19 @@ trait ResourceFieldsTrait
     }
 
     /**
-     * Expand field names for value_per_column mode.
+     * Expand field names for column expansion modes.
      *
      * After pre-scan, this method expands each property field into multiple
-     * columns based on the max value count found.
+     * columns based on the configuration:
+     * - value_per_column only: repeat field name for each value
+     * - column_metadata only: one column per metadata combination (values joined)
+     * - both: columns per metadata combination with index for each value
      *
      * @return self
      */
     protected function expandFieldNamesForColumns(): self
     {
-        if (!$this->isValuePerColumnMode() || empty($this->fieldColumnsInfo)) {
+        if (!$this->hasColumnExpansionMode() || empty($this->fieldColumnsInfo)) {
             $this->expandedFieldNames = $this->fieldNames;
             return $this;
         }
@@ -945,6 +966,7 @@ trait ResourceFieldsTrait
         $this->expandedFieldsMap = [];
         $columnMetadata = $this->getColumnMetadataOptions();
         $hasMetadataMode = !empty($columnMetadata);
+        $hasValuePerColumn = $this->isValuePerColumnMode();
 
         foreach ($this->fieldNames as $fieldName) {
             if (!isset($this->fieldColumnsInfo[$fieldName])) {
@@ -958,21 +980,36 @@ trait ResourceFieldsTrait
             if ($hasMetadataMode && !empty($info['columns'])) {
                 // Metadata mode: create columns per metadata combination.
                 foreach ($info['columns'] as $key => $columnInfo) {
-                    for ($i = 1; $i <= $columnInfo['max_count']; $i++) {
-                        $suffix = $this->buildColumnMetadataSuffix($columnInfo['metadata'], $columnMetadata);
-                        $expandedName = $columnInfo['max_count'] > 1
-                            ? $fieldName . $suffix . ' [' . $i . ']'
-                            : $fieldName . $suffix;
+                    $suffix = $this->buildColumnMetadataSuffix($columnInfo['metadata'], $columnMetadata);
+
+                    if ($hasValuePerColumn) {
+                        // Both modes: one column per value within each metadata group.
+                        for ($i = 1; $i <= $columnInfo['max_count']; $i++) {
+                            $expandedName = $columnInfo['max_count'] > 1
+                                ? $fieldName . $suffix . ' [' . $i . ']'
+                                : $fieldName . $suffix;
+                            $this->expandedFieldNames[] = $expandedName;
+                            $this->expandedFieldsMap[$expandedName] = [
+                                'field' => $fieldName,
+                                'index' => $i,
+                                'metadata_key' => $key,
+                                'joined' => false,
+                            ] + $columnInfo['metadata'];
+                        }
+                    } else {
+                        // Metadata only: one column per metadata group, values joined.
+                        $expandedName = $fieldName . $suffix;
                         $this->expandedFieldNames[] = $expandedName;
                         $this->expandedFieldsMap[$expandedName] = [
                             'field' => $fieldName,
-                            'index' => $i,
+                            'index' => null,
                             'metadata_key' => $key,
+                            'joined' => true,
                         ] + $columnInfo['metadata'];
                     }
                 }
-            } else {
-                // Simple mode: just repeat the field name.
+            } elseif ($hasValuePerColumn) {
+                // value_per_column only: just repeat the field name.
                 for ($i = 1; $i <= $info['max_count']; $i++) {
                     // Use the same header name for all columns (as requested).
                     $this->expandedFieldNames[] = $fieldName;
@@ -980,6 +1017,7 @@ trait ResourceFieldsTrait
                         'field' => $fieldName,
                         'index' => $i,
                         'metadata_key' => null,
+                        'joined' => false,
                     ];
                 }
             }
@@ -1017,13 +1055,14 @@ trait ResourceFieldsTrait
     }
 
     /**
-     * Get resource values organized for value_per_column output.
+     * Get resource values organized for column expansion output.
      *
      * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
      * @param string $fieldName Original field name.
+     * @param string $separator Separator for joining values (used in metadata-only mode).
      * @return array Values organized by column position.
      */
-    protected function getValuesForColumnOutput($resource, string $fieldName): array
+    protected function getValuesForColumnOutput($resource, string $fieldName, string $separator = ' | '): array
     {
         if (!isset($this->fieldColumnsInfo[$fieldName])) {
             return [];
@@ -1032,11 +1071,12 @@ trait ResourceFieldsTrait
         $info = $this->fieldColumnsInfo[$fieldName];
         $columnMetadata = $this->getColumnMetadataOptions();
         $hasMetadataMode = !empty($columnMetadata) && !empty($info['columns']);
+        $hasValuePerColumn = $this->isValuePerColumnMode();
 
         $values = $resource->value($fieldName, ['all' => true]);
 
         if (!$hasMetadataMode) {
-            // Simple mode: return values in order, padded with empty strings.
+            // value_per_column only: return values in order, padded with empty strings.
             $result = [];
             for ($i = 0; $i < $info['max_count']; $i++) {
                 $result[] = isset($values[$i]) ? (string) $values[$i] : '';
@@ -1055,8 +1095,15 @@ trait ResourceFieldsTrait
         $result = [];
         foreach ($info['columns'] as $key => $columnInfo) {
             $columnValues = $valuesByMetadata[$key] ?? [];
-            for ($i = 0; $i < $columnInfo['max_count']; $i++) {
-                $result[] = $columnValues[$i] ?? '';
+
+            if ($hasValuePerColumn) {
+                // Both modes: one value per column, padded with empty strings.
+                for ($i = 0; $i < $columnInfo['max_count']; $i++) {
+                    $result[] = $columnValues[$i] ?? '';
+                }
+            } else {
+                // Metadata only: join all values for this metadata group.
+                $result[] = implode($separator, $columnValues);
             }
         }
 
