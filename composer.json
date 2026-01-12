@@ -1,4 +1,25 @@
 {
+    "name": "daniel-km/omeka-s-module-bulk-export",
+    "description": "Module for Omeka S that allows to export resources and more into various formats (json-ld, json, csv, tsv, spreadsheet ods, geojson, etc.).",
+    "type": "library",
+    "keywords": [
+        "Omeka S",
+        "Omeka S module",
+        "bulk",
+        "export"
+    ],
+    "license": "CECILL-2.1",
+    "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport",
+    "authors": [
+        {
+            "name": "Daniel Berthereau",
+            "email": "Daniel.packagist@Berthereau.net"
+        }
+    ],
+    "support": {
+        "issues": "https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/-/issues",
+        "forum": "https://forum.omeka.org/"
+    },
     "require": {
         "openspout/openspout": "^3.7",
         "phpoffice/phpword": "^1.2"
@@ -7,8 +28,10 @@
         "doctrine/inflector": "*",
         "laminas/laminas-escaper": "*"
     },
-    "require-dev": {
-        "biblibre/omeka-s-test-helper": "dev-master"
+    "autoload": {
+        "psr-4": {
+            "BulkExport\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -16,8 +39,13 @@
         }
     },
     "config": {
-        "platform": {
-            "php": "7.4"
+        "platform": {"php": "7.4"},
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
         }
+    },
+    "extra": {
+        "installer-name" : "BulkExport"
     }
 }
