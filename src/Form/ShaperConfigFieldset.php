@@ -15,7 +15,7 @@ use Omeka\Api\Manager as ApiManager;
  */
 class ShaperConfigFieldset extends Fieldset
 {
-    use Writer\FormatTrait;
+    use Formatter\FormatTrait;
 
     /**
      * @var \Omeka\Api\Manager
