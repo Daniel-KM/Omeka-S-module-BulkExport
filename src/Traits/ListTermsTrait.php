@@ -10,6 +10,11 @@ trait ListTermsTrait
     protected $propertyTemplateLabelsByTerm;
 
     /**
+     * @var bool|null
+     */
+    protected $hasValueDataTable;
+
+    /**
      * To be prepared ouside.
      *
      * @var \Laminas\Mvc\I18n\Translator
@@ -69,20 +74,31 @@ trait ListTermsTrait
         }
 
         // Use table value_data with index idx_value_length for performance
-        // instead of CHAR_LENGTH() on value.value.
+        // instead of CHAR_LENGTH() on value.value. Fallback to CHAR_LENGTH()
+        // if the table doesn't exist.
         if ((int) $options['min_size'] > 0 || (int) $options['max_size'] > 0) {
-            $qb
-                ->innerJoin('value', 'value_data', 'value_data', 'value_data.id = value.id');
-        }
+            if ($this->hasValueDataTable === null) {
+                $this->hasValueDataTable = (bool) $connection->executeQuery(
+                    "SHOW TABLES LIKE 'value_data'"
+                )->fetchOne();
+            }
 
-        if ((int) $options['min_size'] > 0) {
-            $qb
-                ->andWhere('value_data.length >= ' . (int) $options['min_size']);
-        }
-
-        if ((int) $options['max_size'] > 0) {
-            $qb
-                ->andWhere('value_data.length <= ' . (int) $options['max_size']);
+            if ($this->hasValueDataTable) {
+                $qb->innerJoin('value', 'value_data', 'value_data', 'value_data.id = value.id');
+                if ((int) $options['min_size'] > 0) {
+                    $qb->andWhere('value_data.length >= ' . (int) $options['min_size']);
+                }
+                if ((int) $options['max_size'] > 0) {
+                    $qb->andWhere('value_data.length <= ' . (int) $options['max_size']);
+                }
+            } else {
+                if ((int) $options['min_size'] > 0) {
+                    $qb->andWhere('CHAR_LENGTH(value.value) >= ' . (int) $options['min_size']);
+                }
+                if ((int) $options['max_size'] > 0) {
+                    $qb->andWhere('CHAR_LENGTH(value.value) <= ' . (int) $options['max_size']);
+                }
+            }
         }
 
         $terms = $connection->executeQuery($qb, $bind, $types)->fetchAllKeyValue();
