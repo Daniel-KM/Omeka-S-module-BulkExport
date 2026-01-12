@@ -2,12 +2,15 @@
 
 namespace BulkExport\Formatter;
 
+use BulkExport\Traits\BatchProcessingTrait;
 use Laminas\Http\PhpEnvironment\Response as HttpResponse;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Common\Stdlib\PsrMessage;
 
 abstract class AbstractFormatter implements FormatterInterface
 {
+    use BatchProcessingTrait;
+
     // The list of managed resources should be managed by the FormatterManager.
     const RESOURCES = [
         'item' => 'items',
