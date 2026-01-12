@@ -4,16 +4,24 @@ namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Common\Stdlib\PsrMessage;
-use OpenSpout\Common\Type;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
-class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
+/**
+ * ODS Writer - thin wrapper around Ods Formatter.
+ *
+ * @see \BulkExport\Formatter\Ods for the actual ODS formatting logic
+ */
+class OpenDocumentSpreadsheetWriter extends AbstractFormatterWriter
 {
     protected $label = 'OpenDocument Spreadsheet'; // @translate
     protected $extension = 'ods';
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
     protected $configFormClass = SpreadsheetWriterConfigForm::class;
     protected $paramsFormClass = SpreadsheetWriterConfigForm::class;
+
+    /**
+     * The formatter to delegate to.
+     */
+    protected $formatterName = 'ods';
 
     protected $configKeys = [
         'separator',
@@ -34,6 +42,8 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     protected $paramsKeys = [
@@ -55,9 +65,9 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
-
-    protected $spreadsheetType = Type::ODS;
 
     public function isValid(): bool
     {
@@ -81,16 +91,5 @@ class OpenDocumentSpreadsheetWriter extends AbstractSpreadsheetWriter
         }
 
         return parent::isValid();
-    }
-
-    protected function initializeOutput(): self
-    {
-        $config = $this->getServiceLocator()->get('Config');
-        $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
-        $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
-        $this->spreadsheetWriter
-            ->setTempFolder($tempDir)
-            ->openToFile($this->filepath);
-        return $this;
     }
 }

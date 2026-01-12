@@ -4,16 +4,24 @@ namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\SpreadsheetWriterConfigForm;
 use Laminas\Form\Form;
-use OpenSpout\Common\Type;
 
+/**
+ * TSV Writer - thin wrapper around Tsv Formatter.
+ *
+ * @see \BulkExport\Formatter\Tsv for the actual TSV formatting logic
+ */
 class TsvWriter extends CsvWriter
 {
     protected $label = 'TSV (tab-separated values)'; // @translate
     protected $extension = 'tsv';
     protected $mediaType = 'text/tab-separated-values';
-    protected $spreadsheetType = Type::CSV;
     protected $configFormClass = SpreadsheetWriterConfigForm::class;
     protected $paramsFormClass = SpreadsheetWriterConfigForm::class;
+
+    /**
+     * The formatter to delegate to.
+     */
+    protected $formatterName = 'tsv';
 
     protected $configKeys = [
         'separator',
@@ -34,6 +42,8 @@ class TsvWriter extends CsvWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     protected $paramsKeys = [
@@ -55,12 +65,15 @@ class TsvWriter extends CsvWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     public function handleParamsForm(Form $form)
     {
         parent::handleParamsForm($form);
         $params = $this->getParams();
+        // Force TSV-specific settings.
         $params['delimiter'] = "\t";
         // Unlike import, chr(0) cannot be used, because it's output.
         // Anyway, enclosure and escape are used only when there is a tabulation
@@ -72,5 +85,13 @@ class TsvWriter extends CsvWriter
         $params['escape'] = self::DEFAULT_ESCAPE;
         $this->setParams($params);
         return $this;
+    }
+
+    protected function getFormatterOptions(): array
+    {
+        $options = parent::getFormatterOptions();
+        // Override with TSV-specific options.
+        $options['delimiter'] = "\t";
+        return $options;
     }
 }

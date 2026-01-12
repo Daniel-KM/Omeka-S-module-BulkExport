@@ -60,7 +60,11 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
 
         // Pre-scan for column expansion modes (value_per_column and/or column_metadata).
         if ($this->hasColumnExpansionMode()) {
-            $this->prescanResourcesForColumns($this->resourceIds ?: array_map(fn($r) => $r->id(), $this->resources));
+            // Get flat list of IDs.
+            $flatIds = $this->resourceIds ?: array_map(fn($r) => $r->id(), $this->resources);
+            // Format as grouped by resource type for prescan.
+            $resourceType = $this->options['resource_types'][0] ?? 'o:Item';
+            $this->prescanResourcesForColumns([$resourceType => $flatIds]);
             $this->expandFieldNamesForColumns();
         }
 
@@ -87,6 +91,10 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
             }
         }
 
+        // Process resources with batch memory management in batch mode.
+        $processed = 0;
+        $batchSize = $this->batchSize ?? self::SQL_LIMIT;
+
         if ($this->isId) {
             foreach ($this->resourceIds as $resourceId) {
                 if ($this->shouldStop()) {
@@ -101,6 +109,11 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
                 if (count($dataResource)) {
                     $this->writeFields($dataResource);
                 }
+                // Clear entity manager periodically to avoid memory issues in batch mode.
+                if ($this->isBatchMode() && ++$processed % $batchSize === 0) {
+                    $this->clearEntityManager();
+                    $this->reportProgress();
+                }
             }
         } else {
             foreach ($this->resources as $resource) {
@@ -111,11 +124,26 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
                 if (count($dataResource)) {
                     $this->writeFields($dataResource);
                 }
+                // Clear entity manager periodically to avoid memory issues in batch mode.
+                if ($this->isBatchMode() && ++$processed % $batchSize === 0) {
+                    $this->clearEntityManager();
+                    $this->reportProgress();
+                }
             }
         }
 
         $this->finalizeOutput();
         return $this;
+    }
+
+    /**
+     * Clear the entity manager to free memory.
+     */
+    protected function clearEntityManager(): void
+    {
+        if (isset($this->services)) {
+            $this->services->get('Omeka\EntityManager')->clear();
+        }
     }
 
     protected function getDataResource(AbstractResourceEntityRepresentation $resource): array
@@ -145,6 +173,15 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
             }
 
             if ($this->options['has_separator']) {
+                // Check if any value contains the separator (data integrity issue).
+                $valuesWithSeparator = array_filter($allValues, fn($v) => strpos((string) $v, $separator) !== false);
+                if ($valuesWithSeparator) {
+                    $this->logger->warn(
+                        'Skipped resource #{resource_id}: a value in field "{field}" contains the separator "{separator}".', // @translate
+                        ['resource_id' => $resource->id(), 'field' => $fieldName, 'separator' => $separator]
+                    );
+                    return [];
+                }
                 $dataResource[] = implode($separator, $allValues);
             } else {
                 $dataResource[] = (string) reset($allValues);

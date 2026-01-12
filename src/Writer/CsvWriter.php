@@ -3,16 +3,20 @@
 namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\CsvWriterConfigForm;
-use OpenSpout\Common\Type;
 
 /**
- * OpenSpout Spreadshet writer doesn't support escape for csv (even if it
- * manages end of line and encoding). So the basic file handler is used for csv.
- * The format tsv uses the Spout writer, because there is no escape.
+ * CSV Writer - thin wrapper around Csv Formatter.
  *
- * @todo Check if OpenSpout supports escape for csv.
+ * This writer delegates CSV formatting to the Csv Formatter while handling:
+ * - Configuration forms for admin interface
+ * - Incremental export support
+ * - HistoryLog integration (include_deleted)
+ * - File path management
+ * - Job integration
+ *
+ * @see \BulkExport\Formatter\Csv for the actual CSV formatting logic
  */
-class CsvWriter extends AbstractSpreadsheetWriter
+class CsvWriter extends AbstractFormatterWriter
 {
     const DEFAULT_DELIMITER = ',';
     const DEFAULT_ENCLOSURE = '"';
@@ -23,6 +27,11 @@ class CsvWriter extends AbstractSpreadsheetWriter
     protected $mediaType = 'text/csv';
     protected $configFormClass = CsvWriterConfigForm::class;
     protected $paramsFormClass = CsvWriterConfigForm::class;
+
+    /**
+     * The formatter to delegate to.
+     */
+    protected $formatterName = 'csv';
 
     protected $configKeys = [
         'delimiter',
@@ -46,6 +55,8 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
     protected $paramsKeys = [
@@ -70,22 +81,19 @@ class CsvWriter extends AbstractSpreadsheetWriter
         'zip_files',
         'incremental',
         'include_deleted',
+        'value_per_column',
+        'column_metadata',
     ];
 
-    protected $spreadsheetType = Type::CSV;
-
-    protected function initializeOutput(): self
+    protected function getFormatterOptions(): array
     {
-        parent::initializeOutput();
+        $options = parent::getFormatterOptions();
 
-        $this->spreadsheetWriter
-            ->setFieldDelimiter($this->getParam('delimiter', self::DEFAULT_DELIMITER))
-            ->setFieldEnclosure($this->getParam('enclosure', self::DEFAULT_ENCLOSURE))
-            // The escape character cannot be set with this writer.
-            // ->setFieldEscape($this->getParam('escape', self::DEFAULT_ESCAPE))
-            // The end of line cannot be set with csv writer (reader only).
-            // ->setEndOfLineCharacter("\n")
-            ->setShouldAddBOM(true);
-        return $this;
+        // Add CSV-specific options.
+        $options['delimiter'] = $this->getParam('delimiter', self::DEFAULT_DELIMITER);
+        $options['enclosure'] = $this->getParam('enclosure', self::DEFAULT_ENCLOSURE);
+        $options['escape'] = $this->getParam('escape', self::DEFAULT_ESCAPE);
+
+        return $options;
     }
 }

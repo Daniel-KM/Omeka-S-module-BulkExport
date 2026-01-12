@@ -173,6 +173,16 @@ abstract class AbstractFormatter implements FormatterInterface
         $this->dataTypeManager = $services->get('Omeka\DataTypeManager');
     }
 
+    /**
+     * Get the service locator.
+     *
+     * This method provides compatibility with traits that use getServiceLocator().
+     */
+    public function getServiceLocator(): ServiceLocatorInterface
+    {
+        return $this->services;
+    }
+
     public function getLabel(): string
     {
         return $this->label;
@@ -475,5 +485,65 @@ abstract class AbstractFormatter implements FormatterInterface
             return false;
         }
         return (bool) @mkdir($dirPath, 0775, true);
+    }
+
+    /**
+     * Map JSON resource type to API resource name.
+     *
+     * This method provides compatibility with traits that use mapResourceTypeToApiResource().
+     */
+    protected function mapResourceTypeToApiResource($jsonResourceType): ?string
+    {
+        $mapping = [
+            // Core.
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource_classes',
+            'o:ResourceTemplate' => 'resource_templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item_sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site_pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api_resources',
+            // Modules.
+            'oa:Annotation' => 'annotations',
+        ];
+        return $mapping[$jsonResourceType] ?? null;
+    }
+
+    /**
+     * Map JSON resource type to human-readable text.
+     *
+     * This method provides compatibility with traits that use mapResourceTypeToText().
+     */
+    protected function mapResourceTypeToText($jsonResourceType): ?string
+    {
+        $mapping = [
+            // Core.
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource classes',
+            'o:ResourceTemplate' => 'resource templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api resources',
+            // Modules.
+            'oa:Annotation' => 'annotations',
+        ];
+        return $mapping[$jsonResourceType] ?? null;
     }
 }

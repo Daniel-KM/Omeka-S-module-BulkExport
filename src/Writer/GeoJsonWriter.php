@@ -2,45 +2,63 @@
 
 namespace BulkExport\Writer;
 
-class GeoJsonWriter extends AbstractFieldsJsonWriter
+use BulkExport\Form\Writer\FieldsJsonWriterConfigForm;
+
+/**
+ * GeoJSON Writer - thin wrapper around GeoJson Formatter.
+ *
+ * @see \BulkExport\Formatter\GeoJson for the actual GeoJSON formatting logic
+ */
+class GeoJsonWriter extends AbstractFormatterWriter
 {
     protected $label = 'GeoJSON'; // @translate
     protected $extension = 'geojson';
     protected $mediaType = 'application/geo+json';
-    protected $outputSingleAsMultiple = true;
-    protected $outputIsObject = true;
+    protected $configFormClass = FieldsJsonWriterConfigForm::class;
+    protected $paramsFormClass = FieldsJsonWriterConfigForm::class;
 
     /**
-     * @var \BulkExport\Formatter\GeoJson
+     * The formatter to delegate to.
      */
-    protected $geojsonFormatter;
+    protected $formatterName = 'geojson';
 
-    public function process(): self
-    {
-        $this->options += $this->defaultOptions;
+    protected $configKeys = [
+        'dirpath',
+        'filebase',
+        'format_fields',
+        'format_fields_labels',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
+        'language',
+        'resource_types',
+        'metadata',
+        'metadata_exclude',
+        'metadata_shapers',
+        'query',
+        'zip_files',
+        'incremental',
+        'include_deleted',
+    ];
 
-        $this->translator = $this->getServiceLocator()->get('MvcTranslator');
-
-        // TODO Check if formatters params are the same.
-        $this
-            ->initializeParams()
-            ->prepareTempFile();
-
-        if ($this->hasError) {
-            return $this;
-        }
-
-        $resourceIds = $this->getResourceIdsByType();
-        $resourceIds = array_merge(...array_values($resourceIds));
-
-        $this->geojsonFormatter = $this->services->get(\BulkExport\Formatter\Manager::class)->get('geojson');
-        $this->geojsonFormatter
-            ->format($resourceIds, $this->filepath, $this->options)
-            ->getContent();
-
-        $this
-            ->saveFile();
-
-        return $this;
-    }
+    protected $paramsKeys = [
+        'dirpath',
+        'filebase',
+        'format_fields',
+        'format_fields_labels',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
+        'language',
+        'resource_types',
+        'metadata',
+        'metadata_exclude',
+        'metadata_shapers',
+        'query',
+        'zip_files',
+        'incremental',
+        'include_deleted',
+    ];
 }

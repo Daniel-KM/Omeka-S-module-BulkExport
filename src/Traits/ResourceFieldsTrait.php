@@ -816,6 +816,9 @@ trait ResourceFieldsTrait
             }
 
             $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            if (!$resourceName) {
+                continue;
+            }
             $adapter = $services->get('Omeka\ApiAdapterManager')->get($resourceName);
 
             // Process in batches to avoid memory issues.

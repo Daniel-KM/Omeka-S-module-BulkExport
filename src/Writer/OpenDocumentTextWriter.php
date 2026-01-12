@@ -3,19 +3,65 @@
 namespace BulkExport\Writer;
 
 use BulkExport\Form\Writer\TextWriterConfigForm;
-use BulkExport\Traits\OpenDocumentTextTemplateTrait;
 use Common\Stdlib\PsrMessage;
-use PhpOffice\PhpWord;
 
-class OpenDocumentTextWriter extends AbstractFieldsWriter
+/**
+ * ODT Writer - thin wrapper around Odt Formatter.
+ *
+ * @see \BulkExport\Formatter\Odt for the actual ODT formatting logic
+ */
+class OpenDocumentTextWriter extends AbstractFormatterWriter
 {
-    use OpenDocumentTextTemplateTrait;
-
     protected $label = 'OpenDocument Text'; // @translate
     protected $extension = 'odt';
     protected $mediaType = 'application/vnd.oasis.opendocument.text';
     protected $configFormClass = TextWriterConfigForm::class;
     protected $paramsFormClass = TextWriterConfigForm::class;
+
+    /**
+     * The formatter to delegate to.
+     */
+    protected $formatterName = 'odt';
+
+    protected $configKeys = [
+        'dirpath',
+        'filebase',
+        'format_fields',
+        'format_fields_labels',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
+        'language',
+        'resource_types',
+        'metadata',
+        'metadata_exclude',
+        'metadata_shapers',
+        'query',
+        'zip_files',
+        'incremental',
+        'include_deleted',
+    ];
+
+    protected $paramsKeys = [
+        'dirpath',
+        'filebase',
+        'format_fields',
+        'format_fields_labels',
+        'format_generic',
+        'format_resource',
+        'format_resource_property',
+        'format_uri',
+        'language',
+        'resource_types',
+        'metadata',
+        'metadata_exclude',
+        'metadata_shapers',
+        'query',
+        'zip_files',
+        'incremental',
+        'include_deleted',
+    ];
 
     public function isValid(): bool
     {
@@ -27,27 +73,5 @@ class OpenDocumentTextWriter extends AbstractFieldsWriter
             return false;
         }
         return parent::isValid();
-    }
-
-    protected function initializeOutput(): self
-    {
-        $this->initializeOpenDocumentText();
-        return $this;
-    }
-
-    protected function finalizeOutput(): self
-    {
-        $objWriter = PhpWord\IOFactory::createWriter($this->openDocument, 'ODText');
-        $objWriter->save($this->filepath);
-        return $this;
-    }
-
-    /**
-     * For compatibility with php 7.4, the method is called indirectly.
-     */
-    protected function writeFields(array $fields): self
-    {
-        $this->_writeFields($fields);
-        return $this;
     }
 }
