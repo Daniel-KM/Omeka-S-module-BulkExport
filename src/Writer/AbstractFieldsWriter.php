@@ -430,22 +430,31 @@ abstract class AbstractFieldsWriter extends AbstractWriter
         $dataResource = [];
         $removeEmptyFields = !$this->options['empty_fields'];
         foreach ($this->fieldNames as $fieldName) {
-            $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
-            $shaperParams = $this->shaperSettings($shaper);
-            $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
-            $values = $this->shapeValues($values, $shaperParams);
-            if ($removeEmptyFields) {
-                $values = array_filter($values, 'strlen');
-                if (!count($values)) {
-                    continue;
+            // Get all source fields for this output field (handles merged fields).
+            $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+
+            $allValues = [];
+            foreach ($sourceFields as $sourceField) {
+                $shaper = $this->options['metadata_shapers'][$sourceField] ?? null;
+                $shaperParams = $this->shaperSettings($shaper);
+                $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
+                $values = $this->shapeValues($values, $shaperParams);
+                if ($removeEmptyFields) {
+                    $values = array_filter($values, 'strlen');
                 }
+                $allValues = array_merge($allValues, $values);
             }
+
+            if ($removeEmptyFields && !count($allValues)) {
+                continue;
+            }
+
             if (isset($dataResource[$fieldName])) {
                 $dataResource[$fieldName] = is_array($dataResource[$fieldName])
-                    ? array_merge($dataResource[$fieldName], $values)
-                    : array_merge([$dataResource[$fieldName]], $values);
+                    ? array_merge($dataResource[$fieldName], $allValues)
+                    : array_merge([$dataResource[$fieldName]], $allValues);
             } else {
-                $dataResource[$fieldName] = $values;
+                $dataResource[$fieldName] = $allValues;
             }
         }
         return $dataResource;

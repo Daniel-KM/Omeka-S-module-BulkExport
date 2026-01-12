@@ -93,23 +93,35 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
 
         if ($this->options['only_first']) {
             foreach ($this->fieldNames as $fieldName) {
-                $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
-                $shaperParams = $this->shaperSettings($shaper);
-                $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
-                $values = $this->shapeValues($values, $shaperParams);
-                $dataResource[] = (string) reset($values);
+                // Get all source fields for this output field (handles merged fields).
+                $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+                $allValues = [];
+                foreach ($sourceFields as $sourceField) {
+                    $shaper = $this->options['metadata_shapers'][$sourceField] ?? null;
+                    $shaperParams = $this->shaperSettings($shaper);
+                    $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
+                    $values = $this->shapeValues($values, $shaperParams);
+                    $allValues = array_merge($allValues, $values);
+                }
+                $dataResource[] = (string) reset($allValues);
             }
             return $dataResource;
         }
 
         $separator = $this->options['separator'];
         foreach ($this->fieldNames as $fieldName) {
-            $shaper = $this->options['metadata_shapers'][$fieldName] ?? null;
-            $shaperParams = $this->shaperSettings($shaper);
-            $values = $this->stringMetadata($resource, $fieldName, $shaperParams);
-            $values = $this->shapeValues($values, $shaperParams);
+            // Get all source fields for this output field (handles merged fields).
+            $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+            $allValues = [];
+            foreach ($sourceFields as $sourceField) {
+                $shaper = $this->options['metadata_shapers'][$sourceField] ?? null;
+                $shaperParams = $this->shaperSettings($shaper);
+                $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
+                $values = $this->shapeValues($values, $shaperParams);
+                $allValues = array_merge($allValues, $values);
+            }
             // Check if one of the values has the separator.
-            $check = array_filter($values, function ($v) use ($separator) {
+            $check = array_filter($allValues, function ($v) use ($separator) {
                 return strpos((string) $v, $separator) !== false;
             });
             if ($check) {
@@ -120,7 +132,7 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
                 $dataResource = [];
                 break;
             }
-            $dataResource[] = implode($separator, $values);
+            $dataResource[] = implode($separator, $allValues);
         }
         return $dataResource;
     }

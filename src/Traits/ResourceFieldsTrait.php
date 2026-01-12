@@ -18,6 +18,24 @@ trait ResourceFieldsTrait
     protected $fieldLabels;
 
     /**
+     * Mapping of custom labels to source fields for merging.
+     *
+     * Structure: [label => [field1, field2, ...], ...]
+     *
+     * @var array
+     */
+    protected $fieldsLabelsMapping = [];
+
+    /**
+     * Reverse mapping from source field to target label.
+     *
+     * Structure: [field => label, ...]
+     *
+     * @var array
+     */
+    protected $fieldsToLabelMapping = [];
+
+    /**
      * @var string
      */
     protected $labelFormatFields = 'name';
@@ -51,6 +69,114 @@ trait ResourceFieldsTrait
             'properties_large',
         ],
     ];
+
+    /**
+     * Parse the format_fields_labels option.
+     *
+     * Format: "Label = field1 field2" on each line.
+     * - The label (before `=`) is the column header.
+     * - The fields (after `=`, space-separated) are merged into that column.
+     *
+     * @param array $formatFieldsLabels Lines from the config option.
+     * @return self
+     */
+    protected function parseFormatFieldsLabels(?array $formatFieldsLabels): self
+    {
+        $this->fieldsLabelsMapping = [];
+        $this->fieldsToLabelMapping = [];
+
+        if (empty($formatFieldsLabels)) {
+            return $this;
+        }
+
+        foreach ($formatFieldsLabels as $line) {
+            $line = trim((string) $line);
+            if (!$line || strpos($line, '=') === false) {
+                continue;
+            }
+
+            [$label, $fields] = array_map('trim', explode('=', $line, 2));
+            if ($label === '' || $fields === '') {
+                continue;
+            }
+
+            // Split fields by spaces.
+            $fieldList = preg_split('/\s+/', $fields, -1, PREG_SPLIT_NO_EMPTY);
+            if (empty($fieldList)) {
+                continue;
+            }
+
+            $this->fieldsLabelsMapping[$label] = $fieldList;
+
+            // Build reverse mapping.
+            foreach ($fieldList as $field) {
+                $this->fieldsToLabelMapping[$field] = $label;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Reorder and filter field names according to format_fields_labels.
+     *
+     * Fields listed in format_fields_labels come first in their specified order.
+     * Other fields are appended after.
+     *
+     * @param array $fieldNames Original field names.
+     * @return array Reordered field names with merged fields replaced by labels.
+     */
+    protected function applyFieldsLabelsOrder(array $fieldNames): array
+    {
+        if (empty($this->fieldsLabelsMapping)) {
+            return $fieldNames;
+        }
+
+        $result = [];
+        $usedFields = [];
+
+        // First, add fields from format_fields_labels in order.
+        foreach ($this->fieldsLabelsMapping as $label => $fields) {
+            // Check if any of the source fields exist in fieldNames.
+            $hasField = false;
+            foreach ($fields as $field) {
+                if (in_array($field, $fieldNames)) {
+                    $hasField = true;
+                    $usedFields[] = $field;
+                }
+            }
+            if ($hasField) {
+                // Use the label as the output field name.
+                $result[] = $label;
+            }
+        }
+
+        // Then, add remaining fields that are not mapped.
+        foreach ($fieldNames as $fieldName) {
+            if (!in_array($fieldName, $usedFields)) {
+                $result[] = $fieldName;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the source fields for a given output field name.
+     *
+     * If the field is a merged label, returns all source fields.
+     * Otherwise returns the field itself.
+     *
+     * @param string $fieldName Output field name (may be a label).
+     * @return array List of source field names.
+     */
+    protected function getSourceFieldsForOutput(string $fieldName): array
+    {
+        if (isset($this->fieldsLabelsMapping[$fieldName])) {
+            return $this->fieldsLabelsMapping[$fieldName];
+        }
+        return [$fieldName];
+    }
 
     /**
      * @param array $listFieldNames Fields to prepare instead of default list.
@@ -154,6 +280,13 @@ trait ResourceFieldsTrait
             );
         }
 
+        // Apply format_fields_labels for custom ordering and merging.
+        $formatFieldsLabels = $this->options['format_fields_labels'] ?? [];
+        if ($formatFieldsLabels) {
+            $this->parseFormatFieldsLabels($formatFieldsLabels);
+            $this->fieldNames = $this->applyFieldsLabelsOrder($this->fieldNames);
+        }
+
         $this->fieldNames = array_values($this->fieldNames);
 
         return $this;
@@ -232,7 +365,12 @@ trait ResourceFieldsTrait
         }
         $this->fieldLabels = [];
         foreach ($this->fieldNames as $fieldName) {
-            $this->fieldLabels[] = $this->getFieldLabel($fieldName, $useFirstTemplateProperty);
+            // If this is a custom label from format_fields_labels, use it directly.
+            if (isset($this->fieldsLabelsMapping[$fieldName])) {
+                $this->fieldLabels[] = $fieldName;
+            } else {
+                $this->fieldLabels[] = $this->getFieldLabel($fieldName, $useFirstTemplateProperty);
+            }
         }
         return $this;
     }

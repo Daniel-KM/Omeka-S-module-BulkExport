@@ -62,26 +62,6 @@ class SettingsFieldset extends Fieldset
             ->appendMetadataSelect('bulkexport_')
 
             ->add([
-                'name' => 'bulkexport_format_fields_labels',
-                'type' => OmekaElement\ArrayTextarea::class,
-                'options' => [
-                    'element_group' => 'export',
-                    'label' => 'Labels with field names for merging and specific order', // @translate
-                    'info' => 'Fill the label and the field names to manage a specific order of data and merge of metadata. Unlisted metadata will be added next.', // @translate
-                    // Do not export as key value in order to allow multiple
-                    // columns with the same header.
-                    'as_key_value' => false,
-                ],
-                'attributes' => [
-                    'id' => 'bulkexport_format_fields_labels',
-                    'rows' => '10',
-                    'placeholder' => <<<'TXT'
-                        Person = dcterms:creator dcterms:contributor
-                        dcterms:subject = dcterms:subject dcterms:temporal
-                        TXT, // @translate
-                ],
-            ])
-            ->add([
                 'name' => 'bulkexport_metadata_shapers',
                 'type' => OmekaElement\ArrayTextarea::class,
                 'options' => [
@@ -114,6 +94,26 @@ class SettingsFieldset extends Fieldset
                 'attributes' => [
                     'id' => 'bulkexport_format_fields',
                     'value' => 'name',
+                ],
+            ])
+            ->add([
+                'name' => 'bulkexport_format_fields_labels',
+                'type' => OmekaElement\ArrayTextarea::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Labels with field names for merging and specific order', // @translate
+                    'info' => 'Fill the label and the field names to manage a specific order of data and merge of metadata. Unlisted metadata will be added next.', // @translate
+                    // Do not export as key value in order to allow multiple
+                    // columns with the same header.
+                    'as_key_value' => false,
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_format_fields_labels',
+                    'rows' => '10',
+                    'placeholder' => <<<'TXT'
+                        Person = dcterms:creator dcterms:contributor
+                        dcterms:subject = dcterms:subject dcterms:temporal
+                        TXT, // @translate
                 ],
             ])
             ->add([
