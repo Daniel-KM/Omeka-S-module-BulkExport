@@ -2,8 +2,6 @@
 
 namespace BulkExportTest\Api\Adapter;
 
-use BulkExport\Writer\CsvWriter;
-use BulkExport\Writer\TsvWriter;
 use Omeka\Test\AbstractHttpControllerTestCase;
 use BulkExportTest\BulkExportTestTrait;
 
@@ -33,8 +31,8 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     {
         $data = [
             'o:label' => 'Test Exporter',
-            'o:writer' => CsvWriter::class,
-            'o:config' => $this->getCsvWriterConfig(),
+            'o:formatter' => 'csv',
+            'o:config' => $this->getCsvFormatterConfig(),
         ];
 
         $response = $this->api()->create('bulk_exporters', $data);
@@ -44,7 +42,7 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
 
         $this->assertNotNull($exporter->id());
         $this->assertEquals('Test Exporter', $exporter->label());
-        $this->assertEquals(CsvWriter::class, $exporter->writerClass());
+        $this->assertEquals('csv', $exporter->formatterName());
     }
 
     /**
@@ -53,7 +51,7 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     public function testReadExporter(): void
     {
         // Create exporter directly.
-        $exporter = $this->createExporter('Read Test', CsvWriter::class);
+        $exporter = $this->createExporter('Read Test', 'csv');
 
         // Read via API.
         $response = $this->api()->read('bulk_exporters', $exporter->getId());
@@ -69,19 +67,19 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     public function testUpdateExporter(): void
     {
         // Create exporter.
-        $exporter = $this->createExporter('Update Test', CsvWriter::class);
+        $exporter = $this->createExporter('Update Test', 'csv');
 
         // Update via API.
         $data = [
             'o:label' => 'Updated Label',
-            'o:writer' => TsvWriter::class,
+            'o:formatter' => 'tsv',
         ];
 
         $response = $this->api()->update('bulk_exporters', $exporter->getId(), $data);
         $result = $response->getContent();
 
         $this->assertEquals('Updated Label', $result->label());
-        $this->assertEquals(TsvWriter::class, $result->writerClass());
+        $this->assertEquals('tsv', $result->formatterName());
     }
 
     /**
@@ -90,7 +88,7 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     public function testDeleteExporter(): void
     {
         // Create exporter.
-        $exporter = $this->createExporter('Delete Test', CsvWriter::class);
+        $exporter = $this->createExporter('Delete Test', 'csv');
         $exporterId = $exporter->getId();
 
         // Remove from cleanup list since we're deleting it.
@@ -110,8 +108,8 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     public function testSearchExporters(): void
     {
         // Create multiple exporters.
-        $this->createExporter('Search Test 1', CsvWriter::class);
-        $this->createExporter('Search Test 2', TsvWriter::class);
+        $this->createExporter('Search Test 1', 'csv');
+        $this->createExporter('Search Test 2', 'tsv');
 
         // Search all.
         $response = $this->api()->search('bulk_exporters');
@@ -121,17 +119,17 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * Test exporter with invalid writer class fails.
+     * Test exporter with invalid formatter fails gracefully.
      */
-    public function testCreateExporterWithInvalidWriterClass(): void
+    public function testCreateExporterWithInvalidFormatter(): void
     {
         $data = [
             'o:label' => 'Invalid Exporter',
-            'o:writer' => 'NonExistent\\Writer\\Class',
+            'o:formatter' => 'nonexistent-format',
             'o:config' => [],
         ];
 
-        // This may throw an exception or create with invalid class.
+        // This may throw an exception or create with invalid formatter.
         // The actual behavior depends on validation in the adapter.
         try {
             $response = $this->api()->create('bulk_exporters', $data);
@@ -140,7 +138,7 @@ class ExporterAdapterTest extends AbstractHttpControllerTestCase
             // If it doesn't throw, at least check it was created.
             $this->assertNotNull($exporter->id());
         } catch (\Exception $e) {
-            // Expected behavior - validation should reject invalid class.
+            // Expected behavior - validation should reject invalid formatter.
             $this->assertTrue(true);
         }
     }

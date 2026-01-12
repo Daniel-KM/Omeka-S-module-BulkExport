@@ -3,8 +3,8 @@
 namespace BulkExportTest\Job;
 
 use BulkExport\Job\Export;
-use BulkExport\Writer\CsvWriter;
-use BulkExport\Writer\TsvWriter;
+
+
 use Omeka\Entity\Job;
 use Omeka\Test\AbstractHttpControllerTestCase;
 use BulkExportTest\BulkExportTestTrait;
@@ -72,7 +72,7 @@ class ExportTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter and export.
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
             'resource_types' => ['items'],
         ]);
@@ -99,7 +99,7 @@ class ExportTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter and export.
-        $exporter = $this->createExporter('TSV Test', TsvWriter::class, $this->getTsvWriterConfig());
+        $exporter = $this->createExporter('TSV Test', 'tsv', $this->getTsvFormatterConfig());
         $export = $this->createExport($exporter, [
             'resource_types' => ['items'],
         ]);
@@ -129,7 +129,7 @@ class ExportTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with query filter for item1 only.
-        $exporter = $this->createExporter('Filtered Export', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('Filtered Export', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
             'resource_types' => ['items'],
             'query' => ['id' => [$item1->id()]],
@@ -152,7 +152,7 @@ class ExportTest extends AbstractHttpControllerTestCase
     public function testExportWithNoResults(): void
     {
         // Create exporter with query that matches nothing.
-        $exporter = $this->createExporter('Empty Export', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('Empty Export', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
             'resource_types' => ['items'],
             'query' => ['id' => [999999]],

@@ -4,7 +4,7 @@ namespace BulkExportTest\Job;
 
 use BulkExport\Entity\Export;
 use BulkExport\Job\Export as ExportJob;
-use BulkExport\Writer\CsvWriter;
+
 use BulkExportTest\BulkExportTestTrait;
 use Omeka\Entity\Job;
 use Omeka\Test\AbstractHttpControllerTestCase;
@@ -43,9 +43,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => true,
@@ -100,9 +100,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => true,
@@ -161,9 +161,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => true,
@@ -206,9 +206,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => true,
@@ -246,9 +246,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => false,
@@ -298,9 +298,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => false,
@@ -379,9 +379,9 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
             ],
         ]);
 
-        $exporter = $this->createExporter('CSV Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
                 'value_per_column' => false,

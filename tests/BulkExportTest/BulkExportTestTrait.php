@@ -173,11 +173,11 @@ trait BulkExportTestTrait
      * Create an exporter entity.
      *
      * @param string $label Exporter label.
-     * @param string $writerClass Writer class name.
-     * @param array $writerConfig Writer configuration.
+     * @param string $formatterName Formatter name (e.g., 'csv', 'tsv').
+     * @param array $formatterConfig Formatter configuration.
      * @return Exporter
      */
-    protected function createExporter(string $label, string $writerClass, array $writerConfig = []): Exporter
+    protected function createExporter(string $label, string $formatterName, array $formatterConfig = []): Exporter
     {
         $auth = $this->getServiceLocator()->get('Omeka\AuthenticationService');
         $entityManager = $this->getEntityManager();
@@ -185,8 +185,8 @@ trait BulkExportTestTrait
         $exporter = new Exporter();
         $exporter->setOwner($auth->getIdentity());
         $exporter->setLabel($label);
-        $exporter->setWriter($writerClass);
-        $exporter->setConfig($writerConfig);
+        $exporter->setFormatter($formatterName);
+        $exporter->setConfig($formatterConfig);
 
         $entityManager->persist($exporter);
         $entityManager->flush();
@@ -200,7 +200,7 @@ trait BulkExportTestTrait
      * Create an export entity.
      *
      * @param Exporter $exporter Exporter to use.
-     * @param array $params Writer parameters.
+     * @param array $params Formatter parameters.
      * @return Export
      */
     protected function createExport(Exporter $exporter, array $params = []): Export
@@ -368,9 +368,9 @@ trait BulkExportTestTrait
     }
 
     /**
-     * Get CSV writer default configuration.
+     * Get CSV formatter default configuration.
      */
-    protected function getCsvWriterConfig(): array
+    protected function getCsvFormatterConfig(): array
     {
         return [
             'delimiter' => ',',
@@ -381,9 +381,9 @@ trait BulkExportTestTrait
     }
 
     /**
-     * Get TSV writer default configuration.
+     * Get TSV formatter default configuration.
      */
-    protected function getTsvWriterConfig(): array
+    protected function getTsvFormatterConfig(): array
     {
         return [
             'delimiter' => "\t",

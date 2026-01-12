@@ -4,8 +4,8 @@ namespace BulkExportTest\Job;
 
 use BulkExport\Entity\Export;
 use BulkExport\Job\Export as ExportJob;
-use BulkExport\Writer\CsvWriter;
-use BulkExport\Writer\TsvWriter;
+
+
 use Omeka\Entity\Job;
 use Omeka\Test\AbstractHttpControllerTestCase;
 use BulkExportTest\BulkExportTestTrait;
@@ -49,9 +49,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with format_fields_labels configuration.
-        $exporter = $this->createExporter('CSV Labels Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Labels Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:contributor'],
                 'format_fields' => 'name',
@@ -99,9 +99,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with format_fields_labels configuration.
-        $exporter = $this->createExporter('CSV Merge Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Merge Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:contributor'],
                 'format_fields' => 'name',
@@ -153,9 +153,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with specific ordering.
-        $exporter = $this->createExporter('CSV Order Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Order Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:subject', 'dcterms:description'],
                 'format_fields' => 'name',
@@ -205,9 +205,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with multiple merges.
-        $exporter = $this->createExporter('CSV Multi Merge Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Multi Merge Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:contributor', 'dcterms:subject', 'dcterms:temporal'],
                 'format_fields' => 'name',
@@ -270,9 +270,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create TSV exporter with format_fields_labels.
-        $exporter = $this->createExporter('TSV Labels Test', TsvWriter::class, $this->getTsvWriterConfig());
+        $exporter = $this->createExporter('TSV Labels Test', 'tsv', $this->getTsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:contributor'],
                 'format_fields' => 'name',
@@ -317,9 +317,9 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         ]);
 
         // Create exporter with only one field in format_fields_labels.
-        $exporter = $this->createExporter('CSV Unlisted Test', CsvWriter::class, $this->getCsvWriterConfig());
+        $exporter = $this->createExporter('CSV Unlisted Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'writer' => [
+            'formatter' => [
                 'resource_types' => ['o:Item'],
                 'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator', 'dcterms:description'],
                 'format_fields' => 'name',
