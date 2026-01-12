@@ -35,7 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "BulkExportTest\\": "test/BulkExportTest/"
+            "BulkExportTest\\": "tests/BulkExportTest/"
         }
     },
     "config": {
