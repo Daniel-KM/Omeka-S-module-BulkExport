@@ -8,6 +8,8 @@ use Laminas\Form\Form;
 /**
  * TSV Writer - thin wrapper around Tsv Formatter.
  *
+ * Inherits include_deleted support from CsvWriter.
+ *
  * @see \BulkExport\Formatter\Tsv for the actual TSV formatting logic
  */
 class TsvWriter extends CsvWriter
