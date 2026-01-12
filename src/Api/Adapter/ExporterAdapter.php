@@ -17,14 +17,16 @@ class ExporterAdapter extends AbstractEntityAdapter
         'id' => 'id',
         'label' => 'label',
         'owner_id' => 'owner',
-        'writer' => 'writer',
+        'formatter' => 'formatter',
+        'writer' => 'writer', // @deprecated
     ];
 
     protected $scalarFields = [
         'id' => 'id',
         'label' => 'label',
         'owner' => 'owner',
-        'writer' => 'writer',
+        'formatter' => 'formatter',
+        'writer' => 'writer', // @deprecated
         'config' => 'config',
     ];
 

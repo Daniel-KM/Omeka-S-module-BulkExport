@@ -67,10 +67,10 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'id', 'owner', 'label', 'writer', 'config', 'exports'];
+            return ['__isInitialized__', 'id', 'owner', 'label', 'formatter', 'writer', 'config', 'exports'];
         }
 
-        return ['__isInitialized__', 'id', 'owner', 'label', 'writer', 'config', 'exports'];
+        return ['__isInitialized__', 'id', 'owner', 'label', 'formatter', 'writer', 'config', 'exports'];
     }
 
     /**
@@ -133,7 +133,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setInitializer(\Closure $initializer = null): void
+    public function __setInitializer(?\Closure $initializer = null): void
     {
         $this->__initializer__ = $initializer;
     }
@@ -151,7 +151,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
      */
-    public function __setCloner(\Closure $cloner = null): void
+    public function __setCloner(?\Closure $cloner = null): void
     {
         $this->__cloner__ = $cloner;
     }
@@ -239,7 +239,29 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function setWriter(string $writer): \BulkExport\Entity\Exporter
+    public function setFormatter(?string $formatter): \BulkExport\Entity\Exporter
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFormatter', [$formatter]);
+
+        return parent::setFormatter($formatter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFormatter(): ?string
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFormatter', []);
+
+        return parent::getFormatter();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setWriter(?string $writer): \BulkExport\Entity\Exporter
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setWriter', [$writer]);
@@ -250,7 +272,7 @@ class Exporter extends \BulkExport\Entity\Exporter implements \Doctrine\ORM\Prox
     /**
      * {@inheritDoc}
      */
-    public function getWriter(): string
+    public function getWriter(): ?string
     {
 
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getWriter', []);

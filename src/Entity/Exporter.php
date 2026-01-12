@@ -50,13 +50,25 @@ class Exporter extends AbstractEntity
     protected $label;
 
     /**
+     * @var string|null
+     *
+     * @Column(
+     *     type="string",
+     *     nullable=true,
+     *     length=190
+     * )
+     */
+    protected $formatter;
+
+    /**
      * @var string
      *
      * @Column(
      *     type="string",
-     *     nullable=false,
+     *     nullable=true,
      *     length=190
      * )
+     * @deprecated Use $formatter instead.
      */
     protected $writer;
 
@@ -115,13 +127,30 @@ class Exporter extends AbstractEntity
         return $this->label;
     }
 
-    public function setWriter(string $writer): self
+    public function setFormatter(?string $formatter): self
+    {
+        $this->formatter = $formatter;
+        return $this;
+    }
+
+    public function getFormatter(): ?string
+    {
+        return $this->formatter;
+    }
+
+    /**
+     * @deprecated No more writer. Use setFormatter() instead.
+     */
+    public function setWriter(?string $writer): self
     {
         $this->writer = $writer;
         return $this;
     }
 
-    public function getWriter(): string
+    /**
+     * @deprecated No more writer. Use getFormatter() instead.
+     */
+    public function getWriter(): ?string
     {
         return $this->writer;
     }

@@ -2,6 +2,7 @@
 
 namespace BulkExport\Api\Representation;
 
+use BulkExport\Formatter\Manager as FormatterManager;
 use BulkExport\Interfaces\Configurable;
 use BulkExport\Writer\Manager as WriterManager;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
@@ -9,12 +10,24 @@ use Omeka\Api\Representation\AbstractEntityRepresentation;
 class ExporterRepresentation extends AbstractEntityRepresentation
 {
     /**
+     * @var \BulkExport\Formatter\Manager
+     */
+    protected $formatterManager;
+
+    /**
+     * @var \BulkExport\Formatter\FormatterInterface
+     */
+    protected $formatter;
+
+    /**
      * @var \BulkExport\Writer\Manager
+     * @deprecated No more writer.
      */
     protected $writerManager;
 
     /**
      * @var \BulkExport\Writer\WriterInterface
+     * @deprecated No more writer.
      */
     protected $writer;
 
@@ -35,7 +48,8 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             'o:id' => $this->id(),
             'o:owner' => $owner ? $owner->getReference()->jsonSerialize() : null,
             'o:label' => $this->label(),
-            'o-bulk:writer' => $this->writerClass(),
+            'o-bulk:formatter' => $this->formatterName(),
+            'o-bulk:writer' => $this->writerClass(), // @deprecated
             'o:config' => $this->config(),
         ];
     }
@@ -69,6 +83,85 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return $conf[$part][$key] ?? null;
     }
 
+    /**
+     * Get the formatter name (alias like 'csv', 'ods', etc.).
+     */
+    public function formatterName(): ?string
+    {
+        $formatter = $this->resource->getFormatter();
+        if ($formatter) {
+            return $formatter;
+        }
+
+        // Fallback: derive from writer class for backward compatibility.
+        $writerClass = $this->resource->getWriter();
+        if (!$writerClass) {
+            return null;
+        }
+
+        return $this->writerClassToFormatterName($writerClass);
+    }
+
+    /**
+     * Get the formatter instance.
+     */
+    public function formatter(): ?\BulkExport\Formatter\FormatterInterface
+    {
+        if ($this->formatter) {
+            return $this->formatter;
+        }
+
+        $formatterName = $this->formatterName();
+        if (!$formatterName) {
+            return null;
+        }
+
+        $manager = $this->getFormatterManager();
+        if (!$manager->has($formatterName)) {
+            return null;
+        }
+
+        $this->formatter = $manager->get($formatterName);
+        return $this->formatter;
+    }
+
+    /**
+     * Get the formatter config (same as writer config for BC).
+     */
+    public function formatterConfig(): array
+    {
+        $conf = $this->config();
+        return $conf['writer'] ?? [];
+    }
+
+    protected function getFormatterManager(): FormatterManager
+    {
+        if (!$this->formatterManager) {
+            $this->formatterManager = $this->getServiceLocator()->get(FormatterManager::class);
+        }
+        return $this->formatterManager;
+    }
+
+    /**
+     * Convert writer class name to formatter alias.
+     */
+    protected function writerClassToFormatterName(string $writerClass): ?string
+    {
+        $mapping = [
+            'BulkExport\\Writer\\CsvWriter' => 'csv',
+            'BulkExport\\Writer\\TsvWriter' => 'tsv',
+            'BulkExport\\Writer\\TextWriter' => 'txt',
+            'BulkExport\\Writer\\OpenDocumentSpreadsheetWriter' => 'ods',
+            'BulkExport\\Writer\\OpenDocumentTextWriter' => 'odt',
+            'BulkExport\\Writer\\JsonTableWriter' => 'json-table',
+            'BulkExport\\Writer\\GeoJsonWriter' => 'geojson',
+        ];
+        return $mapping[$writerClass] ?? null;
+    }
+
+    /**
+     * @deprecated No more writer. Use formatterName() instead.
+     */
     public function writerClass(): ?string
     {
         return $this->resource->getWriter();

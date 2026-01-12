@@ -16,7 +16,8 @@ CREATE TABLE `bulk_exporter` (
     `id` INT AUTO_INCREMENT NOT NULL,
     `owner_id` INT DEFAULT NULL,
     `label` VARCHAR(190) NOT NULL,
-    `writer` VARCHAR(190) NOT NULL,
+    `formatter` VARCHAR(190) DEFAULT NULL,
+    `writer` VARCHAR(190) DEFAULT NULL,
     `config` LONGTEXT NOT NULL COMMENT '(DC2Type:json)',
     INDEX `IDX_6093500B7E3C61F9` (`owner_id`),
     PRIMARY KEY(`id`)

@@ -123,9 +123,11 @@ class Export extends AbstractJob
         $this->writer = $this->getWriter();
         if (!$this->writer) {
             $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
+            $formatterName = $this->exporter->formatterName();
+            $writerClass = $this->exporter->writerClass();
             $this->logger->err(
-                'Writer "{writer}" is not available.', // @translate
-                ['writer' => $this->exporter->writerClass()]
+                'Formatter "{formatter}" (writer "{writer}") is not available.', // @translate
+                ['formatter' => $formatterName ?? 'N/A', 'writer' => $writerClass ?? 'N/A']
             );
             return;
         }
@@ -241,11 +243,19 @@ class Export extends AbstractJob
     protected function getWriter(): ?\BulkExport\Writer\WriterInterface
     {
         $services = $this->getServiceLocator();
-        $writerClass = $this->exporter->writerClass();
         $writerManager = $services->get(WriterManager::class);
-        if (!$writerManager->has($writerClass)) {
+
+        // Get writer class from formatter name if available.
+        $writerClass = $this->getWriterClassFromFormatter();
+        if (!$writerClass) {
+            // Fallback to legacy writer class.
+            $writerClass = $this->exporter->writerClass();
+        }
+
+        if (!$writerClass || !$writerManager->has($writerClass)) {
             return null;
         }
+
         $writer = $writerManager->get($writerClass);
         $writer->setServiceLocator($services);
         if ($writer instanceof Configurable) {
@@ -255,6 +265,33 @@ class Export extends AbstractJob
             $writer->setParams($this->export->writerParams());
         }
         return $writer;
+    }
+
+    /**
+     * Get the Writer class from the formatter name.
+     *
+     * Exporters store formatter name, but Jobs still use Writers
+     * internally for complex features (forms, incremental, include_deleted).
+     */
+    protected function getWriterClassFromFormatter(): ?string
+    {
+        $formatterName = $this->exporter->formatterName();
+        if (!$formatterName) {
+            return null;
+        }
+
+        // Map formatter alias to Writer class.
+        $mapping = [
+            'csv' => \BulkExport\Writer\CsvWriter::class,
+            'tsv' => \BulkExport\Writer\TsvWriter::class,
+            'txt' => \BulkExport\Writer\TextWriter::class,
+            'ods' => \BulkExport\Writer\OpenDocumentSpreadsheetWriter::class,
+            'odt' => \BulkExport\Writer\OpenDocumentTextWriter::class,
+            'json-table' => \BulkExport\Writer\JsonTableWriter::class,
+            'geojson' => \BulkExport\Writer\GeoJsonWriter::class,
+        ];
+
+        return $mapping[$formatterName] ?? null;
     }
 
     /**
