@@ -458,6 +458,39 @@ $conf = [
             'txt' => Formatter\Txt::class,
         ],
     ],
+    // Formatter form classes for admin configuration.
+    // Maps formatter aliases to form classes (config and params forms).
+    // This allows Job to use Formatters directly without Writer classes.
+    'formatter_forms' => [
+        'csv' => [
+            'config' => Form\Writer\CsvWriterConfigForm::class,
+            'params' => Form\Writer\CsvWriterConfigForm::class,
+        ],
+        'tsv' => [
+            'config' => Form\Writer\CsvWriterConfigForm::class,
+            'params' => Form\Writer\CsvWriterConfigForm::class,
+        ],
+        'txt' => [
+            'config' => Form\Writer\FieldsWriterConfigForm::class,
+            'params' => Form\Writer\FieldsWriterConfigForm::class,
+        ],
+        'ods' => [
+            'config' => Form\Writer\SpreadsheetWriterConfigForm::class,
+            'params' => Form\Writer\SpreadsheetWriterConfigForm::class,
+        ],
+        'odt' => [
+            'config' => Form\Writer\SpreadsheetWriterConfigForm::class,
+            'params' => Form\Writer\SpreadsheetWriterConfigForm::class,
+        ],
+        'geojson' => [
+            'config' => Form\Writer\FieldsJsonWriterConfigForm::class,
+            'params' => Form\Writer\FieldsJsonWriterConfigForm::class,
+        ],
+        'json-table' => [
+            'config' => Form\Writer\FieldsJsonWriterConfigForm::class,
+            'params' => Form\Writer\FieldsJsonWriterConfigForm::class,
+        ],
+    ],
     'bulkexport' => [
         'settings' => [
             'bulkexport_limit' => 1000,

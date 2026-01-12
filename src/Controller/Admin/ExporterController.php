@@ -156,9 +156,17 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
         }
 
+        // Get form class from config registry (no longer requires Writer instance).
+        $configFormClass = $exporter->getConfigFormClass();
+        if (!$configFormClass) {
+            $message = new PsrMessage('No configuration form available for formatter "{formatter}"', ['formatter' => $exporter->formatterName() ?? 'N/A']); // @translate
+            $this->messenger()->addError($message);
+            return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
+        }
+
         /** @var \BulkExport\Writer\WriterInterface $writer */
         $writer = $exporter->writer();
-        $form = $this->getForm($writer->getConfigFormClass());
+        $form = $this->getForm($configFormClass);
         $form->setAttribute('id', 'exporter-writer-form');
         $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
         $form->setData($writerConfig);
@@ -437,10 +445,12 @@ class ExporterController extends AbstractActionController
         $formsCallbacks = [];
 
         $writer = $exporter->writer();
-        if ($writer instanceof Parametrizable) {
+        // Get params form class from config registry.
+        $paramsFormClass = $exporter->getParamsFormClass();
+        if ($paramsFormClass && $writer instanceof Parametrizable) {
             /* @return \Laminas\Form\Form */
-            $formsCallbacks['writer'] = function () use ($writer, $exporter, $controller) {
-                $writerForm = $controller->getForm($writer->getParamsFormClass());
+            $formsCallbacks['writer'] = function () use ($writer, $exporter, $controller, $paramsFormClass) {
+                $writerForm = $controller->getForm($paramsFormClass);
                 $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
                 $writerForm->setData($writerConfig);
 

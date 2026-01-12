@@ -160,6 +160,56 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
+     * Get the config form class for this formatter.
+     *
+     * This allows getting the form class without instantiating a Writer.
+     * Falls back to Writer's form class if no config entry exists.
+     */
+    public function getConfigFormClass(): ?string
+    {
+        $formatterName = $this->formatterName();
+        if (!$formatterName) {
+            return null;
+        }
+
+        $config = $this->getServiceLocator()->get('Config');
+        $formatterForms = $config['formatter_forms'] ?? [];
+
+        if (isset($formatterForms[$formatterName]['config'])) {
+            return $formatterForms[$formatterName]['config'];
+        }
+
+        // Fallback to Writer for backward compatibility.
+        $writer = $this->writer();
+        return $writer ? $writer->getConfigFormClass() : null;
+    }
+
+    /**
+     * Get the params form class for this formatter.
+     *
+     * This allows getting the form class without instantiating a Writer.
+     * Falls back to Writer's form class if no config entry exists.
+     */
+    public function getParamsFormClass(): ?string
+    {
+        $formatterName = $this->formatterName();
+        if (!$formatterName) {
+            return null;
+        }
+
+        $config = $this->getServiceLocator()->get('Config');
+        $formatterForms = $config['formatter_forms'] ?? [];
+
+        if (isset($formatterForms[$formatterName]['params'])) {
+            return $formatterForms[$formatterName]['params'];
+        }
+
+        // Fallback to Writer for backward compatibility.
+        $writer = $this->writer();
+        return $writer ? $writer->getParamsFormClass() : null;
+    }
+
+    /**
      * @deprecated No more writer. Use formatterName() instead.
      */
     public function writerClass(): ?string
