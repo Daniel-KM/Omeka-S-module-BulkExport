@@ -1,11 +1,11 @@
 {
     "name": "daniel-km/omeka-s-module-bulk-export",
-    "description": "Module for Omeka S that allows to export resources and more into various formats (json-ld, json, csv, tsv, spreadsheet ods, geojson, etc.).",
-    "type": "library",
+    "type": "omeka-s-module",
+    "description": "Module for Omeka S: Extensible bulk export and formatter module for admin and public sides.",
     "keywords": [
         "Omeka S",
         "Omeka S module",
-        "bulk",
+        "admin",
         "export"
     ],
     "license": "CECILL-2.1",
@@ -19,6 +19,9 @@
     "support": {
         "issues": "https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/-/issues",
         "forum": "https://forum.omeka.org/"
+    },
+    "_require (not set until Omeka S merges PR #2412)": {
+        "omeka/omeka-s-core": "^4.0"
     },
     "require": {
         "openspout/openspout": "^3.7",
@@ -39,13 +42,8 @@
         }
     },
     "config": {
-        "platform": {"php": "7.4"},
-        "allow-plugins": {
-            "composer/installers": true,
-            "oomphinc/composer-installers-extender": true
+        "platform": {
+            "php": "7.4"
         }
-    },
-    "extra": {
-        "installer-name" : "BulkExport"
     }
 }
