@@ -4,149 +4,44 @@ namespace BulkExportTest;
 
 use BulkExport\Entity\Export;
 use BulkExport\Entity\Exporter;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use Omeka\Api\Manager as ApiManager;
+use CommonTest\JobTestTrait;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Entity\Job;
 
 /**
  * Shared test helpers for BulkExport module tests.
+ *
+ * Extends CommonTest\JobTestTrait with BulkExport-specific helpers.
  */
 trait BulkExportTestTrait
 {
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $services;
-
-    /**
-     * @var array List of created resource IDs for cleanup.
-     */
-    protected $createdResources = [];
+    use JobTestTrait {
+        JobTestTrait::cleanupResources as baseCleanupResources;
+    }
 
     /**
      * @var array List of created exporter IDs for cleanup.
      */
-    protected $createdExporters = [];
+    protected array $createdExporters = [];
 
     /**
      * @var array List of created export IDs for cleanup.
      */
-    protected $createdExports = [];
+    protected array $createdExports = [];
 
     /**
-     * @var string Temporary file path.
+     * @var string|null Temporary file path.
      */
-    protected $tempFile;
+    protected ?string $tempFile = null;
 
     /**
-     * Get the API manager.
-     */
-    protected function api(): ApiManager
-    {
-        return $this->getServiceLocator()->get('Omeka\ApiManager');
-    }
-
-    /**
-     * Get the service locator.
-     */
-    protected function getServiceLocator(): ServiceLocatorInterface
-    {
-        if ($this->services === null) {
-            $this->services = $this->getApplication()->getServiceManager();
-        }
-        return $this->services;
-    }
-
-    /**
-     * Get the entity manager.
-     */
-    protected function getEntityManager()
-    {
-        return $this->getServiceLocator()->get('Omeka\EntityManager');
-    }
-
-    /**
-     * Get the database connection.
-     */
-    protected function getConnection()
-    {
-        return $this->getServiceLocator()->get('Omeka\Connection');
-    }
-
-    /**
-     * Login as admin user.
-     */
-    protected function loginAdmin(): void
-    {
-        $auth = $this->getServiceLocator()->get('Omeka\AuthenticationService');
-        $adapter = $auth->getAdapter();
-        $adapter->setIdentity('admin@example.com');
-        $adapter->setCredential('root');
-        $auth->authenticate();
-    }
-
-    /**
-     * Logout current user.
-     */
-    protected function logout(): void
-    {
-        $auth = $this->getServiceLocator()->get('Omeka\AuthenticationService');
-        $auth->clearIdentity();
-    }
-
-    /**
-     * Create a test item.
+     * Create a test item (wrapper for createTrackedItem with simpler API).
      *
      * @param array $data Item data with property terms as keys.
      * @return ItemRepresentation
      */
     protected function createItem(array $data): ItemRepresentation
     {
-        $itemData = [];
-        $easyMeta = $this->getServiceLocator()->get('Common\EasyMeta');
-
-        foreach ($data as $term => $values) {
-            if (strpos($term, ':') === false) {
-                $itemData[$term] = $values;
-                continue;
-            }
-
-            $propertyId = $easyMeta->propertyId($term);
-            if (!$propertyId) {
-                continue;
-            }
-
-            $itemData[$term] = [];
-            foreach ($values as $value) {
-                $valueData = [
-                    'type' => $value['type'] ?? 'literal',
-                    'property_id' => $propertyId,
-                ];
-                if (isset($value['@value'])) {
-                    $valueData['@value'] = $value['@value'];
-                }
-                if (isset($value['@id'])) {
-                    $valueData['@id'] = $value['@id'];
-                }
-                if (isset($value['@language'])) {
-                    $valueData['@language'] = $value['@language'];
-                }
-                if (isset($value['o:label'])) {
-                    $valueData['o:label'] = $value['o:label'];
-                }
-                if (isset($value['is_public'])) {
-                    $valueData['is_public'] = $value['is_public'];
-                }
-                $itemData[$term][] = $valueData;
-            }
-        }
-
-        $response = $this->api()->create('items', $itemData);
-        $item = $response->getContent();
-        $this->createdResources[] = ['type' => 'items', 'id' => $item->id()];
-
-        return $item;
+        return $this->createTrackedItem($data);
     }
 
     /**
@@ -255,65 +150,11 @@ trait BulkExportTestTrait
     }
 
     /**
-     * @var \Exception|null Last exception from job execution.
+     * Get the database connection.
      */
-    protected $lastJobException;
-
-    /**
-     * Run a job synchronously for testing.
-     *
-     * @param string $jobClass Job class name.
-     * @param array $args Job arguments.
-     * @param bool $expectError If true, don't rethrow exceptions.
-     * @return Job
-     */
-    protected function runJob(string $jobClass, array $args, bool $expectError = false): Job
+    protected function getConnection()
     {
-        $this->lastJobException = null;
-        $services = $this->getServiceLocator();
-        $entityManager = $services->get('Omeka\EntityManager');
-        $auth = $services->get('Omeka\AuthenticationService');
-
-        $job = new Job();
-        $job->setStatus(Job::STATUS_STARTING);
-        $job->setClass($jobClass);
-        $job->setArgs($args);
-        $job->setOwner($auth->getIdentity());
-
-        $entityManager->persist($job);
-        $entityManager->flush();
-
-        $jobClass = $job->getClass();
-        $jobInstance = new $jobClass($job, $services);
-        $job->setStatus(Job::STATUS_IN_PROGRESS);
-        $job->setStarted(new \DateTime('now'));
-        $entityManager->flush();
-
-        try {
-            $jobInstance->perform();
-            if ($job->getStatus() === Job::STATUS_IN_PROGRESS) {
-                $job->setStatus(Job::STATUS_COMPLETED);
-            }
-        } catch (\Throwable $e) {
-            $this->lastJobException = $e;
-            $job->setStatus(Job::STATUS_ERROR);
-            if (!$expectError) {
-                throw $e;
-            }
-        }
-
-        $job->setEnded(new \DateTime('now'));
-        $entityManager->flush();
-
-        return $job;
-    }
-
-    /**
-     * Get the last exception from job execution.
-     */
-    protected function getLastJobException(): ?\Exception
-    {
-        return $this->lastJobException;
+        return $this->getServiceLocator()->get('Omeka\Connection');
     }
 
     /**
@@ -321,15 +162,8 @@ trait BulkExportTestTrait
      */
     protected function cleanupResources(): void
     {
-        // Delete created items.
-        foreach ($this->createdResources as $resource) {
-            try {
-                $this->api()->delete($resource['type'], $resource['id']);
-            } catch (\Exception $e) {
-                // Ignore errors during cleanup.
-            }
-        }
-        $this->createdResources = [];
+        // Clean up base resources (items, etc.)
+        $this->baseCleanupResources();
 
         // Delete created exports.
         $entityManager = $this->getEntityManager();
