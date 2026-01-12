@@ -348,7 +348,11 @@ trait ResourceFieldsTrait
         $listFieldsToExclude = $this->cleanListFieldNames($listFieldsToExclude);
 
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types'] ?? []);
-        $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
+        $resourceIds = $this->resourceIds ?? [];
+        $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm([
+            'entity_classes' => $entityClasses,
+            'resource_ids' => $resourceIds,
+        ]));
         $this->options['resource_types'] = $this->options['resource_types'] ?: [];
 
         if ($listFieldNames) {
@@ -404,15 +408,25 @@ trait ResourceFieldsTrait
             }
             // TODO Why is there a check on max size here?
             $hasPropertiesMinMax = true;
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses, 'max_size' => 5000]));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => $entityClasses,
+                'resource_ids' => $resourceIds,
+                'max_size' => 5000,
+            ]));
             $this->fieldNames = array_merge($this->fieldNames, $usedProperties);
         }
 
         if ($hasProperties && in_array('oa:Annotation', $this->options['resource_types'])) {
-            foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationBody::class]])) as $property) {
+            foreach (array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => [\Annotate\Entity\AnnotationBody::class],
+                'resource_ids' => $resourceIds,
+            ])) as $property) {
                 $this->fieldNames[] = 'oa:hasBody/' . $property;
             }
-            foreach (array_keys($this->getUsedPropertiesByTerm(['entity_classes' => [\Annotate\Entity\AnnotationTarget::class]])) as $property) {
+            foreach (array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => [\Annotate\Entity\AnnotationTarget::class],
+                'resource_ids' => $resourceIds,
+            ])) as $property) {
                 $this->fieldNames[] = 'oa:hasTarget/' . $property;
             }
         }
@@ -486,11 +500,15 @@ trait ResourceFieldsTrait
         }
 
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types']);
+        $resourceIds = $this->resourceIds ?? [];
 
         $index = array_search('properties', $listFieldNames);
         if ($index !== false) {
             unset($listFieldNames[$index]);
-            $usedProperties = array_keys($this->getUsedPropertiesByTerm(['entity_classes' => $entityClasses]));
+            $usedProperties = array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => $entityClasses,
+                'resource_ids' => $resourceIds,
+            ]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
         }
 
@@ -500,6 +518,7 @@ trait ResourceFieldsTrait
             $maxSize = array_pop($maxSizes);
             $usedProperties = array_keys($this->getUsedPropertiesByTerm([
                 'entity_classes' => $entityClasses,
+                'resource_ids' => $resourceIds,
                 'max_size' => $this->propertySizes[$maxSize],
             ]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);
@@ -511,6 +530,7 @@ trait ResourceFieldsTrait
             $minSize = reset($minSizes);
             $usedProperties = array_keys($this->getUsedPropertiesByTerm([
                 'entity_classes' => $entityClasses,
+                'resource_ids' => $resourceIds,
                 'min_size' => $this->propertySizes[$minSize],
             ]));
             $listFieldNames = array_merge($listFieldNames, $usedProperties);

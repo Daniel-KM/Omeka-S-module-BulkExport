@@ -26,6 +26,7 @@ trait ListTermsTrait
      *
      * @param array $options Associative array:
      * - entity_classes (array): limit properties to entity classes.
+     * - resource_ids (array): limit properties to specific resources.
      * - min_size (int): property is removed if one value is smaller than it.
      * - max_size (int): property is removed if one value is larger than it.
      * @return array
@@ -34,6 +35,7 @@ trait ListTermsTrait
     {
         $options += [
             'entity_classes' => [],
+            'resource_ids' => [],
             'min_size' => 0,
             'max_size' => 0,
         ];
@@ -71,6 +73,13 @@ trait ListTermsTrait
             ;
             $bind['entity_classes'] = array_values(array_unique($options['entity_classes']));
             $types['entity_classes'] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+        }
+
+        // Filter by specific resource IDs if provided.
+        if (!empty($options['resource_ids'])) {
+            $qb->andWhere($expr->in('value.resource_id', ':resource_ids'));
+            $bind['resource_ids'] = array_values(array_map('intval', $options['resource_ids']));
+            $types['resource_ids'] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
         }
 
         // Use table value_data with index idx_value_length for performance
