@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace BulkExport\Form\Writer;
+namespace BulkExport\Form\Formatter;
 
 use Omeka\Form\Element as OmekaElement;
 

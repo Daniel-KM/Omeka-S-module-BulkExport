@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace BulkExport\Form\Writer;
+namespace BulkExport\Form\Formatter;
 
 use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;

@@ -6,7 +6,6 @@ $conf = [
     'service_manager' => [
         'factories' => [
             Formatter\Manager::class => Service\FormatterManagerFactory::class,
-            Writer\Manager::class => Service\PluginManagerFactory::class,
         ],
     ],
     'entity_manager' => [
@@ -48,8 +47,10 @@ $conf = [
             Form\ExporterDeleteForm::class => Form\ExporterDeleteForm::class,
             Form\ExporterStartForm::class => Form\ExporterStartForm::class,
             Form\ShaperDeleteForm::class => Form\ShaperDeleteForm::class,
-            Form\Writer\CsvWriterConfigForm::class => Form\Writer\CsvWriterConfigForm::class,
-            Form\Writer\SpreadsheetWriterConfigForm::class => Form\Writer\SpreadsheetWriterConfigForm::class,
+            Form\Formatter\CsvConfigForm::class => Form\Formatter\CsvConfigForm::class,
+            Form\Formatter\SpreadsheetConfigForm::class => Form\Formatter\SpreadsheetConfigForm::class,
+            Form\Formatter\FieldsConfigForm::class => Form\Formatter\FieldsConfigForm::class,
+            Form\Formatter\FieldsJsonConfigForm::class => Form\Formatter\FieldsJsonConfigForm::class,
         ],
         'factories' => [
             Form\ExporterForm::class => Service\Form\ExporterFormFactory::class,
@@ -416,20 +417,6 @@ $conf = [
             ],
         ],
     ],
-    // Writers are designed for job processing and formatters for instant process.
-    'bulk_export' => [
-        // TODO Normalize writers as manageable or deprecate them
-        // @deprecated To be removed. Only difference with formatters are manual settings or admin/site settings.
-        'writers' => [
-            Writer\CsvWriter::class => Writer\CsvWriter::class,
-            Writer\GeoJsonWriter::class => Writer\GeoJsonWriter::class,
-            Writer\JsonTableWriter::class => Writer\JsonTableWriter::class,
-            Writer\OpenDocumentSpreadsheetWriter::class => Writer\OpenDocumentSpreadsheetWriter::class,
-            Writer\OpenDocumentTextWriter::class => Writer\OpenDocumentTextWriter::class,
-            Writer\TextWriter::class => Writer\TextWriter::class,
-            Writer\TsvWriter::class => Writer\TsvWriter::class,
-        ],
-    ],
     // TODO Rss/Atom feeds.
     // TODO Rename the key "fomatters" as "exporters" or genericize.
     'formatters' => [
@@ -460,35 +447,34 @@ $conf = [
     ],
     // Formatter form classes for admin configuration.
     // Maps formatter aliases to form classes (config and params forms).
-    // This allows Job to use Formatters directly without Writer classes.
     'formatter_forms' => [
         'csv' => [
-            'config' => Form\Writer\CsvWriterConfigForm::class,
-            'params' => Form\Writer\CsvWriterConfigForm::class,
+            'config' => Form\Formatter\CsvConfigForm::class,
+            'params' => Form\Formatter\CsvConfigForm::class,
         ],
         'tsv' => [
-            'config' => Form\Writer\CsvWriterConfigForm::class,
-            'params' => Form\Writer\CsvWriterConfigForm::class,
+            'config' => Form\Formatter\CsvConfigForm::class,
+            'params' => Form\Formatter\CsvConfigForm::class,
         ],
         'txt' => [
-            'config' => Form\Writer\FieldsWriterConfigForm::class,
-            'params' => Form\Writer\FieldsWriterConfigForm::class,
+            'config' => Form\Formatter\FieldsConfigForm::class,
+            'params' => Form\Formatter\FieldsConfigForm::class,
         ],
         'ods' => [
-            'config' => Form\Writer\SpreadsheetWriterConfigForm::class,
-            'params' => Form\Writer\SpreadsheetWriterConfigForm::class,
+            'config' => Form\Formatter\SpreadsheetConfigForm::class,
+            'params' => Form\Formatter\SpreadsheetConfigForm::class,
         ],
         'odt' => [
-            'config' => Form\Writer\SpreadsheetWriterConfigForm::class,
-            'params' => Form\Writer\SpreadsheetWriterConfigForm::class,
+            'config' => Form\Formatter\SpreadsheetConfigForm::class,
+            'params' => Form\Formatter\SpreadsheetConfigForm::class,
         ],
         'geojson' => [
-            'config' => Form\Writer\FieldsJsonWriterConfigForm::class,
-            'params' => Form\Writer\FieldsJsonWriterConfigForm::class,
+            'config' => Form\Formatter\FieldsJsonConfigForm::class,
+            'params' => Form\Formatter\FieldsJsonConfigForm::class,
         ],
         'json-table' => [
-            'config' => Form\Writer\FieldsJsonWriterConfigForm::class,
-            'params' => Form\Writer\FieldsJsonWriterConfigForm::class,
+            'config' => Form\Formatter\FieldsJsonConfigForm::class,
+            'params' => Form\Formatter\FieldsJsonConfigForm::class,
         ],
     ],
     'bulkexport' => [

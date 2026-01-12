@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace BulkExport\Form\Writer;
+namespace BulkExport\Form\Formatter;
 
 use Laminas\Form\Element;
 
-class CsvWriterConfigForm extends SpreadsheetWriterConfigForm
+class CsvConfigForm extends SpreadsheetConfigForm
 {
     public function appendSpecific(): self
     {

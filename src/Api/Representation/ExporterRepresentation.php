@@ -3,8 +3,6 @@
 namespace BulkExport\Api\Representation;
 
 use BulkExport\Formatter\Manager as FormatterManager;
-use BulkExport\Interfaces\Configurable;
-use BulkExport\Writer\Manager as WriterManager;
 use Omeka\Api\Representation\AbstractEntityRepresentation;
 
 class ExporterRepresentation extends AbstractEntityRepresentation
@@ -18,18 +16,6 @@ class ExporterRepresentation extends AbstractEntityRepresentation
      * @var \BulkExport\Formatter\FormatterInterface
      */
     protected $formatter;
-
-    /**
-     * @var \BulkExport\Writer\Manager
-     * @deprecated No more writer.
-     */
-    protected $writerManager;
-
-    /**
-     * @var \BulkExport\Writer\WriterInterface
-     * @deprecated No more writer.
-     */
-    protected $writer;
 
     public function getControllerName()
     {
@@ -49,7 +35,6 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             'o:owner' => $owner ? $owner->getReference()->jsonSerialize() : null,
             'o:label' => $this->label(),
             'o-bulk:formatter' => $this->formatterName(),
-            'o-bulk:writer' => $this->writerClass(), // @deprecated
             'o:config' => $this->config(),
         ];
     }
@@ -93,7 +78,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
             return $formatter;
         }
 
-        // Fallback: derive from writer class for backward compatibility.
+        // Fallback: derive from legacy writer class for backward compatibility.
         $writerClass = $this->resource->getWriter();
         if (!$writerClass) {
             return null;
@@ -126,7 +111,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * Get the formatter config (same as writer config for BC).
+     * Get the formatter config.
      */
     public function formatterConfig(): array
     {
@@ -143,7 +128,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * Convert writer class name to formatter alias.
+     * Convert legacy writer class name to formatter alias.
      */
     protected function writerClassToFormatterName(string $writerClass): ?string
     {
@@ -161,9 +146,6 @@ class ExporterRepresentation extends AbstractEntityRepresentation
 
     /**
      * Get the config form class for this formatter.
-     *
-     * This allows getting the form class without instantiating a Writer.
-     * Falls back to Writer's form class if no config entry exists.
      */
     public function getConfigFormClass(): ?string
     {
@@ -175,20 +157,11 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         $config = $this->getServiceLocator()->get('Config');
         $formatterForms = $config['formatter_forms'] ?? [];
 
-        if (isset($formatterForms[$formatterName]['config'])) {
-            return $formatterForms[$formatterName]['config'];
-        }
-
-        // Fallback to Writer for backward compatibility.
-        $writer = $this->writer();
-        return $writer ? $writer->getConfigFormClass() : null;
+        return $formatterForms[$formatterName]['config'] ?? null;
     }
 
     /**
      * Get the params form class for this formatter.
-     *
-     * This allows getting the form class without instantiating a Writer.
-     * Falls back to Writer's form class if no config entry exists.
      */
     public function getParamsFormClass(): ?string
     {
@@ -200,21 +173,7 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         $config = $this->getServiceLocator()->get('Config');
         $formatterForms = $config['formatter_forms'] ?? [];
 
-        if (isset($formatterForms[$formatterName]['params'])) {
-            return $formatterForms[$formatterName]['params'];
-        }
-
-        // Fallback to Writer for backward compatibility.
-        $writer = $this->writer();
-        return $writer ? $writer->getParamsFormClass() : null;
-    }
-
-    /**
-     * @deprecated No more writer. Use formatterName() instead.
-     */
-    public function writerClass(): ?string
-    {
-        return $this->resource->getWriter();
+        return $formatterForms[$formatterName]['params'] ?? null;
     }
 
     public function exporterConfig(): array
@@ -223,42 +182,13 @@ class ExporterRepresentation extends AbstractEntityRepresentation
         return $conf['exporter'] ?? [];
     }
 
+    /**
+     * Get the writer/formatter config (kept for backward compatibility).
+     */
     public function writerConfig(): array
     {
         $conf = $this->config();
         return $conf['writer'] ?? [];
-    }
-
-    public function writer(): ?\BulkExport\Writer\WriterInterface
-    {
-        if ($this->writer) {
-            return $this->writer;
-        }
-
-        $writerClass = $this->writerClass();
-        $manager = $this->getWriterManager();
-        if (!$manager->has($writerClass)) {
-            return null;
-        }
-
-        $this->writer = $manager->get($writerClass);
-        if ($this->writer instanceof Configurable) {
-            $config = $this->writerConfig();
-            $this->writer->setConfig($config);
-        }
-
-        $logger = $this->getServiceLocator()->get('Omeka\Logger');
-        $this->writer->setLogger($logger);
-
-        return $this->writer;
-    }
-
-    protected function getWriterManager(): WriterManager
-    {
-        if (!$this->writerManager) {
-            $this->writerManager = $this->getServiceLocator()->get(WriterManager::class);
-        }
-        return $this->writerManager;
     }
 
     public function adminUrl($action = null, $canonical = false)

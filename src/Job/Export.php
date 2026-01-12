@@ -3,18 +3,35 @@
 namespace BulkExport\Job;
 
 use BulkExport\Api\Representation\ExportRepresentation;
-use BulkExport\Interfaces\Configurable;
-use BulkExport\Interfaces\Parametrizable;
-use BulkExport\Writer\Manager as WriterManager;
-use BulkExport\Writer\WriterInterface;
+use BulkExport\Formatter\FormatterInterface;
+use BulkExport\Formatter\Manager as FormatterManager;
+use BulkExport\Traits\ListTermsTrait;
+use BulkExport\Traits\MetadataToStringTrait;
+use BulkExport\Traits\ResourceFieldsTrait;
 use Common\Stdlib\PsrMessage;
 use Doctrine\DBAL\Connection;
 use Laminas\Log\Logger;
 use Omeka\Job\AbstractJob;
 use ZipArchive;
 
+/**
+ * Export job that calls Formatters directly.
+ *
+ * Handles all job-specific concerns:
+ * - Resource gathering (existing and deleted)
+ * - Incremental export (modified_after query)
+ * - HistoryLog integration (include_deleted)
+ * - File management (temp file, output path, save)
+ * - Stats tracking and progress logging
+ */
 class Export extends AbstractJob
 {
+    use ListTermsTrait;
+    use MetadataToStringTrait;
+    use ResourceFieldsTrait;
+
+    const SQL_LIMIT = 100;
+
     /**
      * @var \Omeka\Api\Manager
      */
@@ -56,22 +73,71 @@ class Export extends AbstractJob
     protected $logger;
 
     /**
-     * @var \BulkExport\Writer\WriterInterface
+     * @var \BulkExport\Formatter\FormatterInterface
      */
-    protected $writer;
+    protected $formatter;
+
+    /**
+     * @var \Laminas\ServiceManager\ServiceLocatorInterface
+     */
+    protected $services;
+
+    /**
+     * @var string
+     */
+    protected $filepath;
+
+    /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * @var array
+     */
+    protected $stats;
+
+    /**
+     * @var bool
+     */
+    protected $hasHistoryLog = false;
+
+    /**
+     * @var bool
+     */
+    protected $includeDeleted = false;
+
+    /**
+     * @var array
+     */
+    protected $historyLastOperations;
+
+    /**
+     * @var array
+     */
+    protected $historyQueryDelete;
+
+    /**
+     * Formats that support appending deleted resources.
+     */
+    protected $formatsWithAppendDeleted = ['csv', 'tsv', 'txt'];
 
     public function perform(): void
     {
-        $services = $this->getServiceLocator();
-        $this->api = $services->get('Omeka\ApiManager');
-        $this->logger = $services->get('Omeka\Logger');
+        $this->services = $this->getServiceLocator();
+        $this->api = $this->services->get('Omeka\ApiManager');
+        $this->logger = $this->services->get('Omeka\Logger');
+
+        // Check HistoryLog module availability.
+        $moduleManager = $this->services->get('Omeka\ModuleManager');
+        $module = $moduleManager->getModule('HistoryLog');
+        $this->hasHistoryLog = $module
+            && $module->getState() === \Omeka\Module\Manager::STATE_ACTIVE;
 
         $bulkExportId = $this->getArg('bulk_export_id');
         if (!$bulkExportId) {
             $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
-            $this->logger->err(
-                'Export record id is not set.', // @translate
-            );
+            $this->logger->err('Export record id is not set.'); // @translate
             return;
         }
 
@@ -90,13 +156,11 @@ class Export extends AbstractJob
 
         $processAsTask = $this->exporter->configOption('exporter', 'as_task');
         if ($processAsTask) {
-            /** @var \Doctrine\ORM\EntityManager $entityManager */
-            $entityManager = $services->get('Omeka\EntityManager');
-            // jsonSerialize() keeps sub keys as unserialized objects.
+            $entityManager = $this->services->get('Omeka\EntityManager');
             $newExport = $this->export->jsonSerialize();
             $newExport = array_diff_key($newExport, array_flip(['@id', 'o:id', 'o:job']));
             $newExport['o-bulk:exporter'] = $entityManager->getReference(\BulkExport\Entity\Exporter::class, $this->exporter->id());
-            $newExport['o:owner'] = $services->get('Omeka\AuthenticationService')->getIdentity();
+            $newExport['o:owner'] = $this->services->get('Omeka\AuthenticationService')->getIdentity();
             $this->export = $this->api->create('bulk_exports', $newExport)->getContent();
         }
 
@@ -111,7 +175,6 @@ class Export extends AbstractJob
             );
         }
 
-        // Make compatible with EasyAdmin tasks, that may use a fake job.
         if ($this->job->getId()) {
             // Use a reference to avoid Doctrine cascade persist issues when the
             // job entity might be detached after api operations.
@@ -120,67 +183,49 @@ class Export extends AbstractJob
             $this->api->update('bulk_exports', $this->export->id(), ['o:job' => $jobReference], [], ['isPartial' => true]);
         }
 
-        $this->writer = $this->getWriter();
-        if (!$this->writer) {
+        // Get formatter directly.
+        $this->formatter = $this->getFormatter();
+        if (!$this->formatter) {
             $this->job->setStatus(\Omeka\Entity\Job::STATUS_ERROR);
-            $formatterName = $this->exporter->formatterName();
-            $writerClass = $this->exporter->writerClass();
             $this->logger->err(
-                'Formatter "{formatter}" (writer "{writer}") is not available.', // @translate
-                ['formatter' => $formatterName ?? 'N/A', 'writer' => $writerClass ?? 'N/A']
+                'Formatter "{formatter}" is not available.', // @translate
+                ['formatter' => $this->exporter->formatterName() ?? 'N/A']
             );
             return;
         }
 
-        // Save the label of the exporter, if needed (to create filename, etc.).
-        // Should be prepared befoer checking validity.
-        if ($this->writer instanceof Parametrizable) {
-            $params = $this->writer->getParams();
-            $params['export_id'] = $this->export->id();
-            $params['exporter_label'] = $this->exporter->label();
-            $params['export_started'] = $this->export->started();
-            $this->writer->setParams($params);
-            $siteSlug = $this->writer->getParam('site_slug');
-        } else {
-            $siteSlug = null;
-        }
+        // Initialize options from exporter config and export params.
+        $this->initializeOptions();
 
-        if (!$this->writer->isValid()) {
+        // Validate output path.
+        if (!$this->isValid()) {
             throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                 'Export error: {error}', // @translate
-                ['error' => $this->writer->getLastErrorMessage()]
+                ['error' => 'Output directory is not writable']
             ));
         }
-
-        $this->writer
-            ->setLogger($this->logger)
-            ->setJob($this);
 
         $this->logger->log(Logger::NOTICE, 'Export started'); // @translate
 
         // TODO Remove checking routes in Omeka v3.1.
         // Avoid a fatal error with background job when there is no route.
+        // Prepare route and site settings.
+        $siteSlug = $this->options['site_slug'] ?? null;
         $this->prepareRouteMatchAndSiteSettings($siteSlug);
         $this->prepareServerUrl();
 
-        $this->writer->process();
-
-        $this->saveFilename();
+        // Process the export.
+        $this->processExport();
 
         // TODO Manage option incremental for zip of files.
-        // $zipFiles = $this->exporter->configOption('exporter', 'zip_files');
-        $zipFiles = $this->writer->getParam('zip_files', []);
+        // Handle zip files if requested.
+        $zipFiles = $this->options['zip_files'] ?? [];
         if ($zipFiles) {
-            $resourceTypes = $this->writer->getParam('resource_types', []);
             // TODO Use api names, not rdf names for resource_types.
+            $resourceTypes = $this->options['resource_types'] ?? [];
             $resourceTypesApi = array_intersect($resourceTypes, ['items', 'media', 'o:Item', 'o:Media']);
             if ($resourceTypesApi) {
-                $query = $this->writer->getParam('query', []);
-                if (!is_array($query)) {
-                    $queryArray = [];
-                    parse_str((string) $query, $queryArray);
-                    $query = $queryArray;
-                }
+                $query = $this->options['query'] ?? [];
                 $this->zipFiles($zipFiles, $resourceTypesApi, $query);
             }
         }
@@ -194,30 +239,654 @@ class Export extends AbstractJob
     }
 
     /**
-     * Save the filename from the writer, if any.
-     *
-     * @param ExportRepresentation $export
-     * @param WriterInterface $writer
+     * Get the formatter instance.
      */
-    protected function saveFilename(): self
+    protected function getFormatter(): ?FormatterInterface
     {
-        if (!($this->writer instanceof Parametrizable)) {
-            return $this;
+        $formatterName = $this->exporter->formatterName();
+        if (!$formatterName) {
+            return null;
         }
 
-        $params = $this->writer->getParams();
-        if (empty($params['filename'])) {
-            return $this;
+        $formatterManager = $this->services->get(FormatterManager::class);
+        if (!$formatterManager->has($formatterName)) {
+            return null;
         }
 
-        $data = [
-            'o:filename' => $params['filename'],
+        return $formatterManager->get($formatterName);
+    }
+
+    /**
+     * Initialize options from exporter config and export params.
+     */
+    protected function initializeOptions(): void
+    {
+        $writerConfig = $this->exporter->writerConfig();
+        $writerParams = $this->export->writerParams();
+
+        $this->options = array_merge($writerConfig, $writerParams);
+        $this->options['export_id'] = $this->export->id();
+        $this->options['exporter_label'] = $this->exporter->label();
+        $this->options['export_started'] = $this->export->started();
+
+        // Parse query string if needed.
+        $query = $this->options['query'] ?? [];
+        if (!is_array($query)) {
+            $queryArray = [];
+            parse_str((string) $query, $queryArray);
+            $query = $queryArray;
+            $this->options['query'] = $query;
+        }
+
+        // Handle include_deleted.
+        $this->includeDeleted = $this->hasHistoryLog && !empty($this->options['include_deleted']);
+
+        // Handle incremental export.
+        if (!empty($this->options['incremental'])) {
+            $previousExport = $this->getPreviousExport();
+            if ($previousExport) {
+                $query['modified_after'] = $previousExport->job()->started()->format('Y-m-d\\TH:i:s');
+                $this->options['query'] = $query;
+            }
+        }
+
+        // Handle separator.
+        $separator = $this->options['separator'] ?? '';
+        $this->options['has_separator'] = mb_strlen($separator) > 0;
+        $this->options['only_first'] = !$this->options['has_separator'];
+        if ($this->options['only_first'] && isset($this->options['separator'])) {
+            $this->logger->warn(
+                'No separator selected: only the first value of each property of each resource will be output.' // @translate
+            );
+        }
+    }
+
+    /**
+     * Process the export: gather resources and call formatter.
+     */
+    protected function processExport(): void
+    {
+        $this->prepareTempFile();
+
+        // Initialize stats.
+        $this->stats = [
+            'process' => [],
+            'totals' => [],
+            'totalToProcess' => 0,
         ];
-        $this->export = $this->api->update('bulk_exports', $this->export->id(), $data, [], ['isPartial' => true])->getContent();
-        $filename = $this->export->filename(true);
-        if (!$filename) {
+
+        // Get resource IDs for existing resources.
+        $resourceIdsByType = $this->getResourceIdsByType();
+
+        // Prepare deleted resources info if needed.
+        $deletedIdsByType = [];
+        if ($this->includeDeleted) {
+            $this->prepareLastOperations();
+            $deletedIdsByType = $this->getDeletedResourceIdsByType();
+        }
+
+        // Count totals per resource type.
+        $resourceTypes = $this->options['resource_types'] ?? [];
+        foreach ($resourceTypes as $resourceType) {
+            $existingCount = count($resourceIdsByType[$resourceType] ?? []);
+            $deletedCount = count($deletedIdsByType[$resourceType] ?? []);
+            $this->stats['totals'][$resourceType] = $existingCount + $deletedCount;
+            $this->stats['process'][$resourceType] = [
+                'total' => $existingCount + $deletedCount,
+                'processed' => 0,
+                'succeed' => 0,
+                'skipped' => 0,
+            ];
+        }
+        $this->stats['totalToProcess'] = array_sum($this->stats['totals']);
+
+        if (!$this->stats['totalToProcess']) {
+            $this->logger->warn('No resources to export.'); // @translate
+            return;
+        }
+
+        // Merge existing IDs only for the formatter.
+        $allExistingIds = array_merge(...array_values($resourceIdsByType));
+
+        $this->logger->notice(
+            'Starting export of {total} resources.', // @translate
+            ['total' => $this->stats['totalToProcess']]
+        );
+
+        // Log per resource type.
+        foreach ($resourceTypes as $resourceType) {
+            $resourceText = $this->mapResourceTypeToText($resourceType);
+            $this->logger->info(
+                'Starting export of {total} {resource_type}.', // @translate
+                ['total' => $this->stats['totals'][$resourceType], 'resource_type' => $resourceText]
+            );
+        }
+
+        // Configure formatter.
+        $this->configureFormatter();
+
+        // Let the formatter process existing resources.
+        if (count($allExistingIds)) {
+            $this->formatter
+                ->format($allExistingIds, $this->filepath, $this->options)
+                ->getContent();
+        }
+
+        // Get stats from formatter if available.
+        if (method_exists($this->formatter, 'getStats')) {
+            $formatterStats = $this->formatter->getStats();
+            if ($formatterStats) {
+                foreach ($resourceTypes as $resourceType) {
+                    $this->stats['process'][$resourceType]['processed'] = $formatterStats['processed'] ?? 0;
+                    $this->stats['process'][$resourceType]['succeed'] = $formatterStats['succeeded'] ?? 0;
+                    $this->stats['process'][$resourceType]['skipped'] = $formatterStats['skipped'] ?? 0;
+                }
+            }
+        }
+
+        // Handle deleted resources separately.
+        $formatterName = $this->exporter->formatterName();
+        $supportsAppendDeleted = in_array($formatterName, $this->formatsWithAppendDeleted);
+        if ($this->includeDeleted && $supportsAppendDeleted) {
+            $this->appendDeletedResources($deletedIdsByType);
+        } elseif ($this->includeDeleted && !$supportsAppendDeleted) {
+            $this->logger->warn(
+                'Deleted resources cannot be included in this format. Use CSV or TSV for include_deleted support.' // @translate
+            );
+        }
+
+        // Log completion per resource type.
+        foreach ($resourceTypes as $resourceType) {
+            $resourceText = $this->mapResourceTypeToText($resourceType);
+            $stats = $this->stats['process'][$resourceType];
+            $this->logger->notice(
+                '{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} skipped.', // @translate
+                [
+                    'resource_type' => $resourceText,
+                    'processed' => $stats['processed'],
+                    'total' => $stats['total'],
+                    'succeed' => $stats['succeed'],
+                    'skipped' => $stats['skipped'],
+                ]
+            );
+        }
+
+        $this->logger->notice(
+            'Export completed: {total} resources processed.', // @translate
+            ['total' => $this->stats['totalToProcess']]
+        );
+
+        $this->saveFile();
+    }
+
+    /**
+     * Configure the formatter for batch processing.
+     */
+    protected function configureFormatter(): void
+    {
+        // Set job callback for stop checks.
+        $this->formatter->setJobCallback(fn() => $this->shouldStop());
+
+        // Set progress callback for logging.
+        $this->formatter->setProgressCallback(function ($processed, $total, $stats) {
+            $this->logger->info(
+                '{processed}/{total} resources processed.', // @translate
+                ['processed' => $processed, 'total' => $total]
+            );
+        });
+
+        // Set batch size.
+        $this->formatter->setBatchSize(self::SQL_LIMIT);
+    }
+
+    /**
+     * Get resource IDs grouped by type (existing resources only).
+     */
+    protected function getResourceIdsByType(): array
+    {
+        $result = [];
+        $query = $this->options['query'] ?? [];
+        unset($query['limit'], $query['offset'], $query['page'], $query['per_page']);
+
+        $resourceTypes = $this->options['resource_types'] ?? [];
+        foreach ($resourceTypes as $resourceType) {
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            $result[$resourceType] = $resourceName
+                ? $this->api->search($resourceName, $query, ['returnScalar' => 'id'])->getContent()
+                : [];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get deleted resource IDs grouped by type from HistoryLog.
+     */
+    protected function getDeletedResourceIdsByType(): array
+    {
+        if (!$this->hasHistoryLog || !$this->includeDeleted) {
+            return [];
+        }
+
+        $result = [];
+        $this->prepareQueryDelete();
+
+        $resourceTypes = $this->options['resource_types'] ?? [];
+        foreach ($resourceTypes as $resourceType) {
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            $result[$resourceType] = array_keys(
+                $this->historyLastOperations[$resourceName] ?? [],
+                'delete'
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Store history log last operations one time for performance.
+     */
+    protected function prepareLastOperations(): self
+    {
+        if (is_array($this->historyLastOperations)) {
             return $this;
         }
+
+        $this->historyLastOperations = [];
+
+        if (!$this->includeDeleted) {
+            $resourceTypes = $this->options['resource_types'] ?? [];
+            foreach ($resourceTypes as $resourceType) {
+                $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+                $this->historyLastOperations[$resourceName] = [];
+            }
+            return $this;
+        }
+
+        $this->prepareQueryDelete();
+
+        $resourceTypes = $this->options['resource_types'] ?? [];
+        foreach ($resourceTypes as $resourceType) {
+            $resourceName = $this->mapResourceTypeToApiResource($resourceType);
+            $ids = $this->api->search('history_events', [
+                'entity_name' => $resourceName,
+            ] + $this->historyQueryDelete, ['returnScalar' => 'entityId'])->getContent();
+
+            if ($ids) {
+                $entityIds = $this->api->search('history_events', [
+                    'entity_name' => $resourceName,
+                    'entity_id' => $ids,
+                    'distinct_entities' => 'last',
+                ], ['returnScalar' => 'entityId'])->getContent();
+                $operations = $this->api->search('history_events', [
+                    'entity_name' => $resourceName,
+                    'entity_id' => $ids,
+                    'distinct_entities' => 'last',
+                ], ['returnScalar' => 'operation'])->getContent();
+                $this->historyLastOperations[$resourceName] = array_combine($entityIds, $operations);
+            } else {
+                $this->historyLastOperations[$resourceName] = [];
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Prepare the query to get deleted resources.
+     */
+    protected function prepareQueryDelete(): self
+    {
+        if (is_array($this->historyQueryDelete)) {
+            return $this;
+        }
+
+        $query = $this->options['query'] ?? [];
+        unset($query['limit'], $query['offset'], $query['page'], $query['per_page']);
+
+        $this->historyQueryDelete = [
+            'operation' => 'delete',
+            'distinct_entities' => 'last',
+        ];
+
+        $supportedQueryEntityFields = [
+            'id' => 'entity_id',
+            'created' => 'created',
+            'created_before' => 'created_before',
+            'created_after' => 'created_after',
+            'created_before_on' => 'created_before_on',
+            'created_after_on' => 'created_after_on',
+            'created_until' => 'created_until',
+            'created_since' => 'created_since',
+            'modified' => 'created',
+            'modified_before' => 'created_before',
+            'modified_before_on' => 'created_before_on',
+            'modified_after' => 'created_after',
+            'modified_after_on' => 'created_after_on',
+            'modified_until' => 'created_until',
+            'modified_since' => 'created_since',
+        ];
+
+        foreach (array_intersect_key($query, $supportedQueryEntityFields) as $field => $data) {
+            $this->historyQueryDelete[$supportedQueryEntityFields[$field]] = $data;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Append deleted resources to CSV/TSV files.
+     */
+    protected function appendDeletedResources(array $deletedIdsByType): void
+    {
+        $this->prepareFieldNames($this->options['metadata'] ?? [], $this->options['metadata_exclude'] ?? []);
+
+        if (!in_array('o:id', $this->fieldNames)) {
+            $this->logger->warn(
+                'The deleted resources cannot be output when the internal id is not included in the list of fields.' // @translate
+            );
+            return;
+        }
+
+        $handle = fopen($this->filepath, 'a');
+        if (!$handle) {
+            $this->logger->err('Unable to append deleted resources to output file.'); // @translate
+            return;
+        }
+
+        $delimiter = $this->options['delimiter'] ?? ',';
+        $enclosure = $this->options['enclosure'] ?? '"';
+        $escape = $this->options['escape'] ?? '\\';
+
+        $deleted = 0;
+
+        foreach ($deletedIdsByType as $resourceType => $deletedIds) {
+            $resourceText = $this->mapResourceTypeToText($resourceType);
+
+            if (!count($deletedIds)) {
+                continue;
+            }
+
+            $this->logger->info(
+                'Appending {count} deleted {resource_type}.', // @translate
+                ['count' => count($deletedIds), 'resource_type' => $resourceText]
+            );
+
+            foreach ($deletedIds as $resourceId) {
+                $dataResource = [];
+                foreach ($this->fieldNames as $fieldName) {
+                    if ($fieldName === 'o:id') {
+                        $dataResource[] = (string) $resourceId;
+                    } elseif ($fieldName === 'operation') {
+                        $dataResource[] = 'delete';
+                    } else {
+                        $dataResource[] = '';
+                    }
+                }
+
+                fputcsv($handle, $dataResource, $delimiter, $enclosure, $escape);
+                ++$deleted;
+
+                $this->stats['process'][$resourceType]['processed']++;
+                $this->stats['process'][$resourceType]['succeed']++;
+            }
+        }
+
+        fclose($handle);
+
+        if ($deleted) {
+            $this->logger->notice(
+                'Appended {count} deleted resources to export.', // @translate
+                ['count' => $deleted]
+            );
+        }
+    }
+
+    /**
+     * Get the previous completed export for incremental processing.
+     */
+    protected function getPreviousExport(): ?ExportRepresentation
+    {
+        $exporter = $this->exporter;
+        $job = $this->export->job();
+        $user = $job ? $job->owner() : null;
+
+        if (!$exporter || !$job || !$user) {
+            return null;
+        }
+
+        try {
+            $previousExports = $this->api->search('bulk_exports', [
+                'exporter_id' => $exporter->id(),
+                'owner_id' => $user->id(),
+                'job_status' => \Omeka\Entity\Job::STATUS_COMPLETED,
+                'sort_by' => 'id',
+                'sort_order' => 'DESC',
+                'limit' => 1,
+            ])->getContent();
+        } catch (\Exception $e) {
+            $this->logger->err($e);
+            return null;
+        }
+
+        if (!count($previousExports)) {
+            return null;
+        }
+
+        $previousExport = reset($previousExports);
+
+        $this->logger->notice(
+            'Previous completed export by user {username} with exporter "{exporter_label}" is #{export_id} on {date}.', // @translate
+            [
+                'username' => $user->name(),
+                'exporter_label' => $exporter->label(),
+                'export_id' => $previousExport->id(),
+                'date' => $previousExport->started(),
+            ]
+        );
+
+        return $previousExport;
+    }
+
+    /**
+     * Prepare a temporary file for output.
+     */
+    protected function prepareTempFile(): self
+    {
+        $config = $this->services->get('Config');
+        $tempDir = $config['temp_dir'] ?: sys_get_temp_dir();
+        $this->filepath = @tempnam($tempDir, 'omk_bke_');
+        return $this;
+    }
+
+    /**
+     * Validate that the output directory is writable.
+     */
+    protected function isValid(): bool
+    {
+        $outputPath = $this->getOutputFilepath();
+        $destinationDir = dirname($outputPath);
+        return $this->checkDestinationDir($destinationDir) !== null;
+    }
+
+    /**
+     * Check or create the destination folder.
+     */
+    protected function checkDestinationDir(string $dirPath): ?string
+    {
+        if (strpos($dirPath, '../') !== false || strpos($dirPath, '..\\') !== false) {
+            $this->logger->err(
+                'The path should not contain "../".', // @translate
+                ['folder' => $dirPath]
+            );
+            return null;
+        }
+        if (file_exists($dirPath)) {
+            if (!is_dir($dirPath) || !is_writeable($dirPath)) {
+                $this->logger->err(
+                    'The destination folder "{folder}" is not writeable.', // @translate
+                    ['folder' => $dirPath]
+                );
+                return null;
+            }
+        } else {
+            $result = @mkdir($dirPath, 0775, true);
+            if (!$result) {
+                $this->logger->err(
+                    'The destination folder "{folder}" is not writeable.', // @translate
+                    ['folder' => $dirPath]
+                );
+                return null;
+            }
+        }
+        return $dirPath;
+    }
+
+    /**
+     * Get the output file path with placeholders.
+     */
+    protected function getOutputFilepath(): string
+    {
+        static $outputFilepath;
+
+        if (is_string($outputFilepath)) {
+            return $outputFilepath;
+        }
+
+        $translator = $this->services->get('MvcTranslator');
+
+        // Prepare placeholders.
+        $label = $this->options['exporter_label'] ?? '';
+        $label = $this->slugify($label);
+        $label = preg_replace('/_+/', '_', $label);
+        $formatterName = $this->exporter->formatterName() ?? 'export';
+        $exportId = $this->export ? $this->export->id() : '0';
+        $date = (new \DateTime())->format('Ymd');
+        $time = (new \DateTime())->format('His');
+        $user = $this->services->get('Omeka\AuthenticationService')->getIdentity();
+        $userId = $user ? $user->getId() : 0;
+        $userName = $user
+            ? ($this->slugify($user->getName()) ?: $translator->translate('unknown'))
+            : $translator->translate('anonymous');
+
+        $placeholders = [
+            '{label}' => $label,
+            '{exporter}' => $formatterName,
+            '{export_id}' => $exportId,
+            '{date}' => $date,
+            '{time}' => $time,
+            '{user_id}' => $userId,
+            '{username}' => $userName,
+            '{random}' => substr(strtr(base64_encode(random_bytes(128)), ['+' => '', '/' => '', '=' => '']), 0, 6),
+            '{exportid}' => $exportId,
+            '{userid}' => $userId,
+        ];
+
+        $config = $this->services->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $destinationDir = $basePath . '/bulk_export';
+
+        $dir = null;
+        $formatDirPath = $this->options['dirpath'] ?? null;
+        $hasFormatDirPath = !empty($formatDirPath);
+        if ($hasFormatDirPath) {
+            $dir = strtr($formatDirPath, $placeholders);
+            $dir = trim(rtrim($dir, '/\\ '));
+            if (mb_substr($dir, 0, 1) !== '/') {
+                $dir = OMEKA_PATH . '/' . $dir;
+            }
+            if ($dir && $dir !== '/' && $dir !== '\\') {
+                $destinationDir = $dir;
+            } else {
+                $this->logger->warn(
+                    'The specified dir path "{path}" is invalid. Using default one.', // @translate
+                    ['path' => $formatDirPath]
+                );
+            }
+        }
+
+        $formatFilename = $this->options['filebase'] ?? null;
+        $hasFormatFilename = !empty($formatFilename);
+
+        $formatFilename = $formatFilename
+            ?: ($label ? '{label}-{date}-{time}' : '{exporter}-{date}-{time}');
+        $extension = $this->formatter->getExtension();
+
+        $base = strtr($formatFilename, $placeholders);
+        if (!$base) {
+            $base = $translator->translate('no-name');
+        }
+
+        $base = $this->slugify($base, true);
+
+        if ($hasFormatFilename) {
+            $outputFilepath = $destinationDir . '/' . $base . '.' . $extension;
+        } else {
+            $outputFilepath = null;
+            $i = 0;
+            do {
+                $filename = sprintf('%s%s.%s', $base, $i ? '-' . $i : '', $extension);
+                $outputFilepath = $destinationDir . '/' . $filename;
+            } while (++$i && file_exists($outputFilepath));
+        }
+
+        return $outputFilepath;
+    }
+
+    /**
+     * Transform the given string into a valid filename.
+     */
+    protected function slugify(string $input, bool $keepCase = false): string
+    {
+        if (extension_loaded('intl')) {
+            $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
+            $slug = $transliterator->transliterate($input);
+        } elseif (extension_loaded('iconv')) {
+            $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $input);
+        } else {
+            $slug = $input;
+        }
+        $slug = $keepCase ? $slug : mb_strtolower($slug, 'UTF-8');
+        $slug = preg_replace('/[^a-zA-Z0-9-]+/u', '_', $slug);
+        $slug = preg_replace('/-{2,}/', '_', $slug);
+        $slug = preg_replace('/-*$/', '', $slug);
+        return $slug;
+    }
+
+    /**
+     * Save the temp file to the final destination.
+     */
+    protected function saveFile(): self
+    {
+        $config = $this->services->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        $destinationDir = $basePath . '/bulk_export';
+
+        $outputFilepath = $this->getOutputFilepath();
+        $filename = mb_strpos($outputFilepath, $destinationDir) === 0
+            ? mb_substr($outputFilepath, mb_strlen($destinationDir) + 1)
+            : $outputFilepath;
+
+        try {
+            $result = copy($this->filepath, $outputFilepath);
+            @unlink($this->filepath);
+        } catch (\Exception $e) {
+            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
+                ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
+            ));
+        }
+
+        if (!$result) {
+            throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
+                'Export error when saving "{filename}" (temp file: "{tempfile}").', // @translate
+                ['filename' => $filename, 'tempfile' => $this->filepath]
+            ));
+        }
+
+        // Update export record with filename.
+        $data = ['o:filename' => $filename];
+        $this->export = $this->api->update('bulk_exports', $this->export->id(), $data, [], ['isPartial' => true])->getContent();
 
         $fileUrl = $this->export->fileUrl();
         $filesize = $this->export->filesize();
@@ -226,97 +895,80 @@ class Export extends AbstractJob
                 'The export is available locally as specified (size: {size} bytes).', // @translate
                 ['size' => $filesize]
             );
-            return $this;
+        } else {
+            $this->logger->notice(
+                'The export is available at {link} (size: {size} bytes).', // @translate
+                [
+                    'link' => sprintf('<a href="%1$s" download="%2$s" target="_self">%2$s</a>', $fileUrl, basename($filename)),
+                    'size' => $filesize,
+                ]
+            );
         }
-
-        $this->logger->notice(
-            'The export is available at {link} (size: {size} bytes).', // @translate
-            [
-                'link' => sprintf('<a href="%1$s" download="%2$s" target="_self">%2$s</a>', $fileUrl, basename($filename)),
-                'size' => $filesize,
-            ]
-        );
 
         return $this;
     }
 
-    protected function getWriter(): ?\BulkExport\Writer\WriterInterface
+    protected function mapResourceTypeToApiResource($jsonResourceType): ?string
     {
-        $services = $this->getServiceLocator();
-        $writerManager = $services->get(WriterManager::class);
-
-        // Get writer class from formatter name if available.
-        $writerClass = $this->getWriterClassFromFormatter();
-        if (!$writerClass) {
-            // Fallback to legacy writer class.
-            $writerClass = $this->exporter->writerClass();
-        }
-
-        if (!$writerClass || !$writerManager->has($writerClass)) {
-            return null;
-        }
-
-        $writer = $writerManager->get($writerClass);
-        $writer->setServiceLocator($services);
-        if ($writer instanceof Configurable) {
-            $writer->setConfig($this->exporter->writerConfig());
-        }
-        if ($writer instanceof Parametrizable) {
-            $writer->setParams($this->export->writerParams());
-        }
-        return $writer;
-    }
-
-    /**
-     * Get the Writer class from the formatter name.
-     *
-     * Exporters store formatter name, but Jobs still use Writers
-     * internally for complex features (forms, incremental, include_deleted).
-     */
-    protected function getWriterClassFromFormatter(): ?string
-    {
-        $formatterName = $this->exporter->formatterName();
-        if (!$formatterName) {
-            return null;
-        }
-
-        // Map formatter alias to Writer class.
         $mapping = [
-            'csv' => \BulkExport\Writer\CsvWriter::class,
-            'tsv' => \BulkExport\Writer\TsvWriter::class,
-            'txt' => \BulkExport\Writer\TextWriter::class,
-            'ods' => \BulkExport\Writer\OpenDocumentSpreadsheetWriter::class,
-            'odt' => \BulkExport\Writer\OpenDocumentTextWriter::class,
-            'json-table' => \BulkExport\Writer\JsonTableWriter::class,
-            'geojson' => \BulkExport\Writer\GeoJsonWriter::class,
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource_classes',
+            'o:ResourceTemplate' => 'resource_templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item_sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site_pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api_resources',
+            'oa:Annotation' => 'annotations',
         ];
-
-        return $mapping[$formatterName] ?? null;
+        return $mapping[$jsonResourceType] ?? null;
     }
 
-    /**
-     * Set the default route and the default slug.
-     *
-     *  This method avoids crash when output of value is html and that the site
-     *  slug is needed for resource->siteUrl() used in linked resources.
-     *
-     * @param string $siteSlug
-     */
-    protected function prepareRouteMatchAndSiteSettings($siteSlug)
+    protected function mapResourceTypeToText($jsonResourceType): ?string
     {
-        $services = $this->getServiceLocator();
+        $mapping = [
+            'o:User' => 'users',
+            'o:Vocabulary' => 'vocabularies',
+            'o:ResourceClass' => 'resource classes',
+            'o:ResourceTemplate' => 'resource templates',
+            'o:Property' => 'properties',
+            'o:Item' => 'items',
+            'o:Media' => 'media',
+            'o:ItemSet' => 'item sets',
+            'o:Module' => 'modules',
+            'o:Site' => 'sites',
+            'o:SitePage' => 'site pages',
+            'o:Job' => 'jobs',
+            'o:Resource' => 'resources',
+            'o:Asset' => 'assets',
+            'o:ApiResource' => 'api resources',
+            'oa:Annotation' => 'annotations',
+        ];
+        return $mapping[$jsonResourceType] ?? null;
+    }
 
+    protected function prepareRouteMatchAndSiteSettings($siteSlug): self
+    {
         if ($siteSlug) {
             try {
                 $site = $this->api->read('sites', ['slug' => $siteSlug])->getContent();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                $site = null;
             }
         } else {
-            $defaultSiteId = $services->get('Omeka\Settings')->get('default_site');
+            $defaultSiteId = $this->services->get('Omeka\Settings')->get('default_site');
             try {
                 $site = $this->api->read('sites', ['id' => $defaultSiteId])->getContent();
                 $siteSlug = $site->slug();
             } catch (\Omeka\Api\Exception\NotFoundException $e) {
+                $site = null;
             }
         }
 
@@ -327,7 +979,7 @@ class Export extends AbstractJob
         }
 
         /** @var \Laminas\Mvc\MvcEvent $mvcEvent */
-        $mvcEvent = $services->get('Application')->getMvcEvent();
+        $mvcEvent = $this->services->get('Application')->getMvcEvent();
         $routeMatch = $mvcEvent->getRouteMatch();
         if ($routeMatch) {
             $routeMatch->setParam('site-slug', $siteSlug);
@@ -344,17 +996,16 @@ class Export extends AbstractJob
             $mvcEvent->setRouteMatch($routeMatch);
         }
 
-        /** @var \Omeka\Settings\SiteSettings $siteSettings */
-        $siteSettings = $services->get('Omeka\Settings\Site');
+        $siteSettings = $this->services->get('Omeka\Settings\Site');
         $siteSettings->setTargetId($site ? $site->id() : 1);
 
         return $this;
     }
 
-    protected function prepareServerUrl()
+    protected function prepareServerUrl(): self
     {
         /** @var \Laminas\View\Helper\ServerUrl $serverUrl */
-        $serverUrl = $this->getServiceLocator()->get('ViewHelperManager')->get('ServerUrl');
+        $serverUrl = $this->services->get('ViewHelperManager')->get('ServerUrl');
         if (!$serverUrl->getHost()) {
             $serverUrl->setHost('http://localhost');
         }
@@ -372,10 +1023,9 @@ class Export extends AbstractJob
         /**
          * @var \Omeka\Stdlib\Mailer $mailer
          */
-        $services = $this->getServiceLocator();
-        $mailer = $services->get('Omeka\Mailer');
         // To avoid issue with background job, use the view helper.
-        $urlHelper = $services->get('ViewHelperManager')->get('url');
+        $mailer = $this->services->get('Omeka\Mailer');
+        $urlHelper = $this->services->get('ViewHelperManager')->get('url');
         $to = $owner->getEmail();
         $jobId = (int) $this->job->getId();
         $subject = new PsrMessage(
@@ -416,36 +1066,27 @@ class Export extends AbstractJob
         return $this;
     }
 
-    /**
-     * Create a zip of files.
-     *
-     * Adapted:
-     * @see \BulkExport\Job\Export::zipFiles()
-     * @see \Zip\Job\ZipFiles::perform()
-     */
     protected function zipFiles(array $formats, array $resourceTypes, array $query): self
     {
         if (!$formats || !$resourceTypes) {
             return $this;
         }
 
-        $services = $this->getServiceLocator();
-        $config = $services->get('Config');
+        $config = $this->services->get('Config');
         $this->basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        $this->baseUrl = $config['file_store']['local']['base_uri'] ?: $services->get('Router')->getBaseUrl() . '/files';
+        $this->baseUrl = $config['file_store']['local']['base_uri'] ?: $this->services->get('Router')->getBaseUrl() . '/files';
 
-        $this->connection = $services->get('Omeka\Connection');
-        $this->entityManager = $services->get('Omeka\EntityManager');
+        $this->connection = $this->services->get('Omeka\Connection');
+        $this->entityManager = $this->services->get('Omeka\EntityManager');
 
-        // Resource types may be "items" or "media".
         $resourceType = in_array('items', $resourceTypes) || in_array('o:Item', $resourceTypes)
             ? 'items'
             : 'media';
 
         if ($resourceType === 'items') {
             // TODO item_id require a single id, so use a loop for now. And for now, not possible to use "has_original" or "has_thumbnails" (or use loop): $format === 'original' ? 'has_original' : 'has_thumbnails' => true.
-            // TODO Check storage_id early.
-            $ids= $this->api->search('items', ['has_media' => true] + $query, ['returnScalar' => 'id'])->getContent();
+            // TODO Check storage_id early
+            $ids = $this->api->search('items', ['has_media' => true] + $query, ['returnScalar' => 'id'])->getContent();
         } else {
             $ids = $this->api->search('media', ['renderer' => 'file'] + $query, ['returnScalar' => 'id'])->getContent();
         }
@@ -563,18 +1204,6 @@ class Export extends AbstractJob
         }
 
         return count($filesZip);
-    }
-
-    /**
-     * @todo Use the list of zip files.
-     */
-    protected function addZipList(): void
-    {
-        $length = mb_strlen($this->basePath) + 1;
-        $list = implode("\n", array_map(function($v) use ($length) {
-            return mb_substr($v, $length);
-        }, glob($this->basePath . '/zip/*.zip')));
-        file_put_contents($this->basePath . '/zip/zipfiles.txt', $list);
     }
 
     /**

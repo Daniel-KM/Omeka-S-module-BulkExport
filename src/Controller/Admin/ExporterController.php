@@ -6,8 +6,6 @@ use BulkExport\Api\Representation\ExporterRepresentation;
 use BulkExport\Form\ExporterDeleteForm;
 use BulkExport\Form\ExporterForm;
 use BulkExport\Form\ExporterStartForm;
-use BulkExport\Interfaces\Configurable;
-use BulkExport\Interfaces\Parametrizable;
 use BulkExport\Job\Export as JobExport;
 use Common\Stdlib\PsrMessage;
 use Laminas\Form\Element;
@@ -156,7 +154,7 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
         }
 
-        // Get form class from config registry (no longer requires Writer instance).
+        // Get form class from config registry.
         $configFormClass = $exporter->getConfigFormClass();
         if (!$configFormClass) {
             $message = new PsrMessage('No configuration form available for formatter "{formatter}"', ['formatter' => $exporter->formatterName() ?? 'N/A']); // @translate
@@ -164,11 +162,11 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
         }
 
-        /** @var \BulkExport\Writer\WriterInterface $writer */
-        $writer = $exporter->writer();
         $form = $this->getForm($configFormClass);
         $form->setAttribute('id', 'exporter-writer-form');
-        $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
+
+        // Get current config from exporter.
+        $writerConfig = $exporter->writerConfig();
         $form->setData($writerConfig);
 
         $form->add([
@@ -191,18 +189,22 @@ class ExporterController extends AbstractActionController
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
+                // Extract form data directly (no Writer needed).
+                $formData = $form->getData();
+                unset($formData['csrf'], $formData['form_submit'], $formData['current_form']);
+
                 $currentData = $exporter->getJsonLd();
-                $currentData['o:config']['writer'] = $writer->handleConfigForm($form)->getConfig();
+                $currentData['o:config']['writer'] = $formData;
                 $update = ['o:config' => $currentData['o:config']];
                 $response = $this->api($form)->update('bulk_exporters', $this->params('id'), $update, [], ['isPartial' => true]);
                 if ($response) {
                     $this->messenger()->addSuccess((new PsrMessage(
-                        'Writer configuration for exporter {exporter_label} successfully saved', // @translate
+                        'Configuration for exporter {exporter_label} successfully saved', // @translate
                         ['exporter_label' => $exporter->linkPretty()]
                     ))->setEscapeHtml(false));
                 } else {
                     $this->messenger()->addError((new PsrMessage(
-                        'Save of writer configuration for exporter {exporter_label} failed', // @translate
+                        'Save of configuration for exporter {exporter_label} failed', // @translate
                         ['exporter_label' => $exporter->linkPretty()]
                     ))->setEscapeHtml(false));
                 }
@@ -214,15 +216,14 @@ class ExporterController extends AbstractActionController
 
         return new ViewModel([
             'exporter' => $exporter,
-            'writer' => $writer,
             'form' => $form,
         ]);
     }
 
     /**
-     * Process a bulk export by step: writer and confirm.
+     * Process a bulk export by step: params and confirm.
      *
-     * @todo Simplify code of this three steps process.
+     * @todo Simplify code of this multi-steps process.
      * @todo Move to ExportController.
      *
      * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
@@ -244,10 +245,10 @@ class ExporterController extends AbstractActionController
             return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
         }
 
-        /** @var \BulkExport\Writer\WriterInterface $writer */
-        $writer = $exporter->writer();
-        if (!$writer) {
-            $message = new PsrMessage('Writer "{writer}" does not exist', ['writer' => $exporter->writerClass()]); // @translate
+        // Check formatter exists.
+        $formatterName = $exporter->formatterName();
+        if (!$formatterName) {
+            $message = new PsrMessage('Formatter is not configured for this exporter'); // @translate
             $this->messenger()->addError($message);
             return $this->redirect()->toRoute('admin/bulk-export', ['action' => 'browse'], true);
         }
@@ -258,9 +259,6 @@ class ExporterController extends AbstractActionController
 
         if (!$this->getRequest()->isPost()) {
             $session->exchangeArray([]);
-        }
-        if (isset($session->writer)) {
-            $writer->setParams($session->writer);
         }
 
         $formsCallbacks = $this->getStartFormsCallbacks($exporter);
@@ -302,16 +300,11 @@ class ExporterController extends AbstractActionController
                 switch ($currentForm) {
                     default:
                     case 'writer':
-                        $writer->handleParamsForm($form);
-                        $session->comment = trim((string) $data['comment']);
+                        // Extract params directly from form data (no Writer needed).
+                        $session->comment = trim((string) ($data['comment'] ?? ''));
                         $session->useBackground = !empty($data['use_background']);
-                        $session->writer = $writer->getParams();
-                        if (!$writer->isValid()) {
-                            $this->messenger()->addError($writer->getLastErrorMessage());
-                            $next = 'writer';
-                        } else {
-                            $next = 'confirm';
-                        }
+                        $session->writer = $data;
+                        $next = 'confirm';
                         $formCallback = $formsCallbacks[$next];
                         break;
 
@@ -320,15 +313,11 @@ class ExporterController extends AbstractActionController
                         $exportData['o:owner'] = $this->identity();
                         $exportData['o-bulk:comment'] = trim((string) $session['comment']) ?: null;
                         $exportData['o-bulk:exporter'] = $exporter->getResource();
-                        if ($writer instanceof Parametrizable) {
-                            $writerParams = $writer->getParams();
-                        } else {
-                            $writerParams = [];
-                        }
+
+                        // Get params from session.
+                        $writerParams = $session->writer ?? [];
 
                         // Add some default params.
-                        // TODO Make all writers parametrizable.
-                        // @see \BulkExport\Controller\OutputController::output().
                         $writerParams['site_slug'] = null;
                         $writerParams['is_site_request'] = false;
 
@@ -444,14 +433,14 @@ class ExporterController extends AbstractActionController
         $controller = $this;
         $formsCallbacks = [];
 
-        $writer = $exporter->writer();
         // Get params form class from config registry.
         $paramsFormClass = $exporter->getParamsFormClass();
-        if ($paramsFormClass && $writer instanceof Parametrizable) {
+        if ($paramsFormClass) {
             /* @return \Laminas\Form\Form */
-            $formsCallbacks['writer'] = function () use ($writer, $exporter, $controller, $paramsFormClass) {
+            $formsCallbacks['writer'] = function () use ($exporter, $controller, $paramsFormClass) {
                 $writerForm = $controller->getForm($paramsFormClass);
-                $writerConfig = $writer instanceof Configurable ? $writer->getConfig() : [];
+                // Pre-fill with exporter's saved config.
+                $writerConfig = $exporter->writerConfig();
                 $writerForm->setData($writerConfig);
 
                 $writerForm->add([

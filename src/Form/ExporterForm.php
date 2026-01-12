@@ -12,7 +12,7 @@ class ExporterForm extends Form
     /**
      * @var array
      */
-    protected $writerOptions = [];
+    protected $formatterOptions = [];
 
     public function init(): void
     {
@@ -31,14 +31,14 @@ class ExporterForm extends Form
                 ],
             ])
             ->add([
-                'name' => 'o-bulk:writer',
+                'name' => 'o-bulk:formatter',
                 'type' => Element\Select::class,
                 'options' => [
-                    'label' => 'Writer', // @translate
-                    'value_options' => $this->getWriterOptions(),
+                    'label' => 'Format', // @translate
+                    'value_options' => $this->getFormatterOptions(),
                 ],
                 'attributes' => [
-                    'id' => 'o-bulk-writer-class',
+                    'id' => 'o-bulk-formatter',
                 ],
             ])
 
@@ -102,14 +102,14 @@ class ExporterForm extends Form
             ]);
     }
 
-    public function setWriterOptions(array $writerOptions): self
+    public function setFormatterOptions(array $formatterOptions): self
     {
-        $this->writerOptions = $writerOptions;
+        $this->formatterOptions = $formatterOptions;
         return $this;
     }
 
-    protected function getWriterOptions(): array
+    protected function getFormatterOptions(): array
     {
-        return $this->writerOptions;
+        return $this->formatterOptions;
     }
 }

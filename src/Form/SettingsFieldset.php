@@ -2,7 +2,7 @@
 
 namespace BulkExport\Form;
 
-use BulkExport\Form\Writer\MetadataSelectTrait;
+use BulkExport\Form\Formatter\MetadataSelectTrait;
 use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;

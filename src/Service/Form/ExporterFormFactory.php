@@ -3,6 +3,7 @@
 namespace BulkExport\Service\Form;
 
 use BulkExport\Form\ExporterForm;
+use BulkExport\Formatter\Manager as FormatterManager;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
@@ -10,15 +11,15 @@ class ExporterFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $services, $requestedName, array $options = null)
     {
-        $writerOptions = [];
-        $writerManager = $services->get(\BulkExport\Writer\Manager::class);
-        $writers = $writerManager->getPlugins();
-        foreach ($writers as $key => $writer) {
-            $writerOptions[$key] = $writer->getLabel();
+        $formatterOptions = [];
+        $formatterManager = $services->get(FormatterManager::class);
+        $formatters = $formatterManager->getPlugins();
+        foreach ($formatters as $key => $formatter) {
+            $formatterOptions[$key] = $formatter->getLabel();
         }
 
         $form = new ExporterForm(null, $options ?? []);
         return $form
-            ->setWriterOptions($writerOptions);
+            ->setFormatterOptions($formatterOptions);
     }
 }

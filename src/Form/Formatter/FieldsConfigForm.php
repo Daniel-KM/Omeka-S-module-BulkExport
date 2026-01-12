@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace BulkExport\Form\Writer;
+namespace BulkExport\Form\Formatter;
 
-class FieldsWriterConfigForm extends AbstractWriterConfigForm
+class FieldsConfigForm extends AbstractConfigForm
 {
     use FormatTrait;
     use MetadataSelectTrait;
