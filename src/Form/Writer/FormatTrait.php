@@ -13,12 +13,16 @@ trait FormatTrait
         $this
             ->add([
                 'name' => 'metadata_shapers',
-                'type' => OmekaElement\ArrayTextarea::class,
+                'type' => CommonElement\DataTextarea::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Specific shapers by metadata', // @translate
                     'info' => 'Shapers are defined in the page "Shapers" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, "=" and the identifier or label of the shaper.', // @translate
-                    'as_key_value' => true,
+                    'as_key_value' => false,
+                    'data_options' => [
+                        'metadata' => null,
+                        'shaper' => null,
+                    ],
                 ],
                 'attributes' => [
                     'id' => 'metadata_shaper',

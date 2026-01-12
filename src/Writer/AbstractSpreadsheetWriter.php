@@ -95,9 +95,12 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
             foreach ($this->fieldNames as $fieldName) {
                 // Get all source fields for this output field (handles merged fields).
                 $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+                // Get the shaper for this output field (supports multiple shapers per metadata).
+                $outputShaper = $this->getShaperForField($fieldName);
                 $allValues = [];
                 foreach ($sourceFields as $sourceField) {
-                    $shaper = $this->options['metadata_shapers'][$sourceField] ?? null;
+                    // Use output field's shaper if set, otherwise check source field's shaper.
+                    $shaper = $outputShaper ?? $this->getShaperForField($sourceField);
                     $shaperParams = $this->shaperSettings($shaper);
                     $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
                     $values = $this->shapeValues($values, $shaperParams);
@@ -112,9 +115,12 @@ abstract class AbstractSpreadsheetWriter extends AbstractFieldsWriter
         foreach ($this->fieldNames as $fieldName) {
             // Get all source fields for this output field (handles merged fields).
             $sourceFields = $this->getSourceFieldsForOutput($fieldName);
+            // Get the shaper for this output field (supports multiple shapers per metadata).
+            $outputShaper = $this->getShaperForField($fieldName);
             $allValues = [];
             foreach ($sourceFields as $sourceField) {
-                $shaper = $this->options['metadata_shapers'][$sourceField] ?? null;
+                // Use output field's shaper if set, otherwise check source field's shaper.
+                $shaper = $outputShaper ?? $this->getShaperForField($sourceField);
                 $shaperParams = $this->shaperSettings($shaper);
                 $values = $this->stringMetadata($resource, $sourceField, $shaperParams);
                 $values = $this->shapeValues($values, $shaperParams);

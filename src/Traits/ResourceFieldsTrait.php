@@ -36,6 +36,26 @@ trait ResourceFieldsTrait
     protected $fieldsToLabelMapping = [];
 
     /**
+     * Mapping of output field name to its shaper identifier.
+     *
+     * Used when the same metadata appears multiple times with different shapers.
+     * Structure: [outputFieldName => shaperIdentifier, ...]
+     *
+     * @var array
+     */
+    protected $fieldShapersMap = [];
+
+    /**
+     * Mapping of output field name to its original source field.
+     *
+     * Used when the same metadata appears multiple times with different shapers.
+     * Structure: [outputFieldName => sourceField, ...]
+     *
+     * @var array
+     */
+    protected $fieldSourcesMap = [];
+
+    /**
      * @var string
      */
     protected $labelFormatFields = 'name';
@@ -165,17 +185,126 @@ trait ResourceFieldsTrait
      * Get the source fields for a given output field name.
      *
      * If the field is a merged label, returns all source fields.
+     * If the field has a shaper suffix, returns the original source field.
      * Otherwise returns the field itself.
      *
-     * @param string $fieldName Output field name (may be a label).
+     * @param string $fieldName Output field name (may be a label or shaper-suffixed).
      * @return array List of source field names.
      */
     protected function getSourceFieldsForOutput(string $fieldName): array
     {
+        // Check if this is a merged field (format_fields_labels).
         if (isset($this->fieldsLabelsMapping[$fieldName])) {
             return $this->fieldsLabelsMapping[$fieldName];
         }
+        // Check if this is a shaper-suffixed field (multiple shapers).
+        if (isset($this->fieldSourcesMap[$fieldName])) {
+            return [$this->fieldSourcesMap[$fieldName]];
+        }
         return [$fieldName];
+    }
+
+    /**
+     * Get the shaper identifier for a given output field name.
+     *
+     * @param string $fieldName Output field name.
+     * @return string|null Shaper identifier or null if no specific shaper.
+     */
+    protected function getShaperForField(string $fieldName): ?string
+    {
+        // First check explicit mapping from multiple shapers feature.
+        if (isset($this->fieldShapersMap[$fieldName])) {
+            return $this->fieldShapersMap[$fieldName];
+        }
+        // Fall back to simple key-value lookup (backwards compatibility).
+        return $this->options['metadata_shapers'][$fieldName] ?? null;
+    }
+
+    /**
+     * Parse metadata_shapers and prepare mappings for multiple shapers per field.
+     *
+     * Format (DataTextarea): [['metadata' => 'x', 'shaper' => 'y'], ...]
+     *
+     * When the same metadata has multiple shapers, creates unique output field
+     * names with shaper suffix (e.g., "dcterms:title [Uppercase]").
+     *
+     * @return self
+     */
+    protected function parseMetadataShapers(): self
+    {
+        $this->fieldShapersMap = [];
+        $this->fieldSourcesMap = [];
+
+        $metadataShapers = $this->options['metadata_shapers'] ?? [];
+        if (empty($metadataShapers)) {
+            return $this;
+        }
+
+        // Group by metadata field.
+        $shapersByMetadata = [];
+        foreach ($metadataShapers as $entry) {
+            $metadata = trim((string) ($entry['metadata'] ?? ''));
+            $shaper = trim((string) ($entry['shaper'] ?? ''));
+            if ($metadata !== '' && $shaper !== '') {
+                $shapersByMetadata[$metadata][] = $shaper;
+            }
+        }
+
+        // Build mappings.
+        $simpleMapping = [];
+        foreach ($shapersByMetadata as $metadata => $shapers) {
+            $shapers = array_unique($shapers);
+            if (count($shapers) === 1) {
+                // Single shaper: use simple key-value format.
+                $simpleMapping[$metadata] = $shapers[0];
+            } else {
+                // Multiple shapers: create unique field names with shaper suffix.
+                foreach ($shapers as $shaper) {
+                    $uniqueFieldName = $metadata . ' [' . $shaper . ']';
+                    $this->fieldShapersMap[$uniqueFieldName] = $shaper;
+                    $this->fieldSourcesMap[$uniqueFieldName] = $metadata;
+                    $simpleMapping[$uniqueFieldName] = $shaper;
+                }
+            }
+        }
+
+        // Replace options with normalized format.
+        $this->options['metadata_shapers'] = $simpleMapping;
+
+        return $this;
+    }
+
+    /**
+     * Get additional fields to add for multiple shapers.
+     *
+     * When a metadata field has multiple shapers, we need to add extra
+     * output columns for each additional shaper.
+     *
+     * @param array $fieldNames Current field names.
+     * @return array Field names with additional shaper columns.
+     */
+    protected function addMultipleShaperFields(array $fieldNames): array
+    {
+        if (empty($this->fieldSourcesMap)) {
+            return $fieldNames;
+        }
+
+        $result = [];
+        $addedShaperFields = [];
+
+        foreach ($fieldNames as $fieldName) {
+            $result[] = $fieldName;
+
+            // Check if this field has multiple shapers.
+            foreach ($this->fieldSourcesMap as $uniqueFieldName => $sourceField) {
+                if ($sourceField === $fieldName && !in_array($uniqueFieldName, $addedShaperFields)) {
+                    $result[] = $uniqueFieldName;
+                    $addedShaperFields[] = $uniqueFieldName;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -279,6 +408,12 @@ trait ResourceFieldsTrait
                 ['properties' => $missingProperties]
             );
         }
+
+        // Parse metadata_shapers for multiple shapers per field support.
+        $this->parseMetadataShapers();
+
+        // Add additional columns for fields with multiple shapers.
+        $this->fieldNames = $this->addMultipleShaperFields($this->fieldNames);
 
         // Apply format_fields_labels for custom ordering and merging.
         $formatFieldsLabels = $this->options['format_fields_labels'] ?? [];
