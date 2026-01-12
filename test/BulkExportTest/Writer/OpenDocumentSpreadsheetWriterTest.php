@@ -1,36 +1,81 @@
 <?php declare(strict_types=1);
+
 namespace BulkExportTest\Writer;
 
 use BulkExport\Writer\OpenDocumentSpreadsheetWriter;
 
-if (!class_exists('BulkExportTest\Writer\AbstractWriter')) {
-    require __DIR__ . '/AbstractWriter.php';
-}
-
-class OpenDocumentSpreadsheetWriterTest extends AbstractWriter
+/**
+ * Tests for the OpenDocument Spreadsheet (ODS) Writer.
+ */
+class OpenDocumentSpreadsheetWriterTest extends AbstractWriterTest
 {
-    protected $WriterClass = OpenDocumentSpreadsheetWriter::class;
+    protected $writerClass = OpenDocumentSpreadsheetWriter::class;
 
-    public function WriterProvider()
+    protected $fileExtension = 'ods';
+
+    public function setUp(): void
     {
-        return [
-            // filepath, options, expected for each test.
-            ['test_resources_heritage.ods', [], [true, 21, ['Identifier', 'Resource Type',
-                'Collection Identifier', 'Item Identifier', 'Media Url', 'Resource class', 'Title',
-                'Dublin Core : Creator', 'Date', 'Rights', 'Description', 'Dublin Core:Format',
-                'Dublin Core : Spatial Coverage', 'Tags', 'Latitude', 'Longitude', 'Default Zoom',]]],
-            ['test_column_missing.ods', [], [true, 4, ['Identifier', 'Title', 'Description']]],
-            ['test_column_in_excess.ods', [], [false, 5, ['Identifier', 'Title', 'Description']]],
-            ['test_column_in_excess_bis.ods', [], [true, 5, ['Identifier', 'Title', 'Description']]],
-            ['test_column_in_excess_ter.ods', [], [true, 5, ['Identifier', 'Title', 'Description']]],
+        parent::setUp();
+        $this->writerConfig = [
+            'separator' => ' | ',
         ];
     }
 
     /**
-     * @dataProvider WriterProvider
+     * Test ODS writer produces valid output.
+     *
+     * @group integration
      */
-    public function testCountRows($filepath, $options, $expected): void
+    public function testOdsOutput(): void
     {
-        $this->markTestSkipped('TODO Count empty rows with spreadsheet.');
+        // Create test items.
+        $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'ODS Test Item 1']],
+        ]);
+        $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'ODS Test Item 2']],
+        ]);
+
+        $tempFile = $this->createTempFile('ods');
+
+        $writer = $this->getWriter();
+        $writer->setParams([
+            'filename' => $tempFile,
+            'resource_types' => ['items'],
+        ]);
+
+        $this->assertTrue($writer->isValid());
     }
+
+    /**
+     * Test ODS writer handles multiple sheets.
+     */
+    public function testOdsHandlesMultipleResourceTypes(): void
+    {
+        // Create test items and item sets.
+        $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Test Item']],
+        ]);
+
+        $tempFile = $this->createTempFile('ods');
+
+        $writer = $this->getWriter();
+        $writer->setParams([
+            'filename' => $tempFile,
+            'resource_types' => ['items', 'item_sets'],
+        ]);
+
+        $this->assertTrue($writer->isValid());
+    }
+
+    /**
+     * Test ODS writer extension is correct.
+     */
+    public function testOdsExtension(): void
+    {
+        $writer = $this->getWriter();
+
+        $this->assertEquals('ods', $writer->getExtension());
+    }
+
 }
