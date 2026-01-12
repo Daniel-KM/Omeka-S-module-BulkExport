@@ -267,10 +267,25 @@ trait ResourceFieldsTrait
         }
 
         // Group by metadata field.
+        // Support both formats:
+        // - New format (DataTextarea): [['metadata' => 'x', 'shaper' => 'y'], ...]
+        // - Old format (simple key-value): ['x' => 'y', ...]
         $shapersByMetadata = [];
-        foreach ($metadataShapers as $entry) {
-            $metadata = trim((string) ($entry['metadata'] ?? ''));
-            $shaper = trim((string) ($entry['shaper'] ?? ''));
+        foreach ($metadataShapers as $key => $entry) {
+            // New format: $entry is an array with 'metadata' and 'shaper' keys.
+            if (is_array($entry)) {
+                $metadata = trim((string) ($entry['metadata'] ?? ''));
+                $shaper = trim((string) ($entry['shaper'] ?? ''));
+            }
+            // Old format: $key is metadata, $entry is shaper.
+            elseif (is_string($key) && !is_numeric($key)) {
+                $metadata = trim($key);
+                $shaper = trim((string) $entry);
+            }
+            // Invalid format.
+            else {
+                continue;
+            }
             if ($metadata !== '' && $shaper !== '') {
                 $shapersByMetadata[$metadata][] = $shaper;
             }
