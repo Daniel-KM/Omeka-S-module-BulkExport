@@ -3,7 +3,7 @@
 namespace BulkExport\Service\Form;
 
 use BulkExport\Form\ShaperConfigFieldset;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ShaperConfigFieldsetFactory implements FactoryInterface

@@ -4,7 +4,7 @@ namespace BulkExport\Service\Form;
 
 use BulkExport\Form\ExporterForm;
 use BulkExport\Formatter\Manager as FormatterManager;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ExporterFormFactory implements FactoryInterface

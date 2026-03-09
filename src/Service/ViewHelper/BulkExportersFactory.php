@@ -3,7 +3,7 @@
 namespace BulkExport\Service\ViewHelper;
 
 use BulkExport\View\Helper\BulkExporters;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class BulkExportersFactory implements FactoryInterface

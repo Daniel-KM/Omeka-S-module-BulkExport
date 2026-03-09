@@ -3,7 +3,7 @@
 namespace BulkExport\Service;
 
 use BulkExport\Formatter\Manager;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Omeka\Service\Exception\ConfigException;
 

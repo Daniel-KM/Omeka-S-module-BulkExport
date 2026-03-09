@@ -3,7 +3,7 @@
 namespace BulkExport\Service\ControllerPlugin;
 
 use BulkExport\Mvc\Controller\Plugin\ExportFormatter;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ExportFormatterFactory implements FactoryInterface
