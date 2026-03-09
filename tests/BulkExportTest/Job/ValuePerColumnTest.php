@@ -408,6 +408,128 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * Test value_per_column formats resource values using
+     * format_resource option instead of raw __toString().
+     */
+    public function testValuePerColumnResourceValues(): void
+    {
+        // Create an author item (the linked resource).
+        $author = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Victor Hugo']],
+        ]);
+
+        // Create an item with resource-type creator values.
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Les Misérables']],
+            'dcterms:creator' => [
+                [
+                    'type' => 'resource:item',
+                    'value_resource_id' => $author->id(),
+                ],
+            ],
+        ]);
+
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
+        $export = $this->createExport($exporter, [
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+                'metadata' => ['o:id', 'dcterms:title', 'dcterms:creator'],
+                'value_per_column' => true,
+                'separator' => ' | ',
+                'format_resource' => 'id',
+                'format_generic' => 'string',
+                'format_uri' => 'uri_label',
+                'query' => ['id' => $item->id()],
+            ],
+        ]);
+
+        $args = ['bulk_export_id' => $export->getId()];
+        $job = $this->runJob(ExportJob::class, $args);
+
+        $this->assertEquals(Job::STATUS_COMPLETED, $job->getStatus());
+
+        $outputFile = $this->getExportFilePath($export->getId());
+        $this->assertNotNull($outputFile);
+        $rows = $this->parseCsvFile($outputFile);
+
+        $headers = $rows[0];
+        $creatorIndex = array_search('dcterms:creator', $headers);
+        $this->assertNotFalse($creatorIndex, 'Should have dcterms:creator column');
+
+        $dataRow = $rows[1];
+        // With format_resource=id, the resource value should
+        // be the author's id, not __toString() representation.
+        $this->assertEquals(
+            (string) $author->id(),
+            $dataRow[$creatorIndex],
+            'Resource value should be formatted as id'
+        );
+    }
+
+    /**
+     * Test value_per_column formats URI values using format_uri
+     * option instead of raw __toString().
+     */
+    public function testValuePerColumnUriValues(): void
+    {
+        // Create an item with URI-type subject values.
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Test Item']],
+            'dcterms:subject' => [
+                [
+                    'type' => 'uri',
+                    '@id' => 'http://example.com/subject1',
+                    'o:label' => 'Subject One',
+                ],
+                [
+                    'type' => 'uri',
+                    '@id' => 'http://example.com/subject2',
+                    'o:label' => 'Subject Two',
+                ],
+            ],
+        ]);
+
+        // Test with format_uri=uri (should output only the URI).
+        $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
+        $export = $this->createExport($exporter, [
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+                'metadata' => ['o:id', 'dcterms:title', 'dcterms:subject'],
+                'value_per_column' => true,
+                'separator' => ' | ',
+                'format_resource' => 'id',
+                'format_generic' => 'string',
+                'format_uri' => 'uri',
+                'query' => ['id' => $item->id()],
+            ],
+        ]);
+
+        $args = ['bulk_export_id' => $export->getId()];
+        $job = $this->runJob(ExportJob::class, $args);
+
+        $this->assertEquals(Job::STATUS_COMPLETED, $job->getStatus());
+
+        $outputFile = $this->getExportFilePath($export->getId());
+        $this->assertNotNull($outputFile);
+        $rows = $this->parseCsvFile($outputFile);
+
+        $headers = $rows[0];
+        // Should have 2 dcterms:subject columns (one per URI).
+        $subjectIndices = [];
+        foreach ($headers as $i => $h) {
+            if ($h === 'dcterms:subject') {
+                $subjectIndices[] = $i;
+            }
+        }
+        $this->assertCount(2, $subjectIndices, 'Should have 2 subject columns');
+
+        $dataRow = $rows[1];
+        // With format_uri=uri, only the URI should appear.
+        $this->assertEquals('http://example.com/subject1', $dataRow[$subjectIndices[0]]);
+        $this->assertEquals('http://example.com/subject2', $dataRow[$subjectIndices[1]]);
+    }
+
+    /**
      * Get the export file path after job completion.
      */
     protected function getExportFilePath(int $exportId): ?string
