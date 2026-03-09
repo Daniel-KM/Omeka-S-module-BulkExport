@@ -238,8 +238,8 @@ class SettingsFieldset extends Fieldset
                     'info' => 'Add metadata attributes to column headers. Creates separate columns for each metadata group. Only applies to spreadsheet formats.', // @translate
                     'value_options' => [
                         'language' => 'Language (e.g. dcterms:subject @fr)', // @translate
-                        'datatype' => 'Datatype (e.g. dcterms:subject ^^uri)', // @translate
-                        'visibility' => 'Visibility (e.g. dcterms:subject [private])', // @translate
+                        'datatype' => 'Data type (e.g. dcterms:subject ^^uri)', // @translate
+                        'visibility' => 'Visibility (e.g. dcterms:subject §private)', // @translate
                     ],
                 ],
                 'attributes' => [

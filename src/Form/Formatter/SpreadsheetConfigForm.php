@@ -45,7 +45,7 @@ class SpreadsheetConfigForm extends FieldsConfigForm
                 'name' => 'column_metadata',
                 'type' => CommonElement\OptionalMultiCheckbox::class,
                 'options' => [
-                    'label' => 'Column metadata in headers', // @translate
+                    'label' => 'Add metadata in headers', // @translate
                     'info' => <<<'TXT'
                         Add metadata attributes to column headers.
                         When combined with "One value per column", creates separate columns for each metadata group.
@@ -53,8 +53,8 @@ class SpreadsheetConfigForm extends FieldsConfigForm
                         TXT, // @translate
                     'value_options' => [
                         'language' => 'Language (e.g. dcterms:subject @fr)', // @translate
-                        'datatype' => 'Datatype (e.g. dcterms:subject ^^uri)', // @translate
-                        'visibility' => 'Visibility (e.g. dcterms:subject [private])', // @translate
+                        'datatype' => 'Data type (e.g. dcterms:subject ^^uri)', // @translate
+                        'visibility' => 'Visibility (e.g. dcterms:subject §private)', // @translate
                     ],
                 ],
                 'attributes' => [

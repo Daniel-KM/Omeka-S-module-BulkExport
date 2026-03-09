@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 00:00+0000\n"
-"PO-Revision-Date: 2025-11-03 00:00+0000\n"
+"POT-Creation-Date: 2026-03-09 00:00+0000\n"
+"PO-Revision-Date: 2026-03-09 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -12,20 +12,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.6\n"
 
-#: data/scripts/upgrade.php:35 Module.php:47
+#: data/scripts/upgrade.php:35 Module.php:49
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
 
-#: Module.php:129
+#: data/scripts/upgrade.php:39 data/scripts/upgrade.php:63
+msgid "Missing requirement. Unable to upgrade."
+msgstr "Pré-requis absent. Impossible de mettre à jour."
+
+#: Module.php:143
 msgid "WARNING:"
 msgstr "ATTENTION :"
 
-#: Module.php:141
+#: Module.php:155
 msgid "Remove bulk export directory"
 msgstr "Supprimer le dossier d’export en lot"
 
-#: src/Api/Representation/ExporterRepresentation.php:151
+#: src/Api/Representation/ExporterRepresentation.php:196
 #, php-format
 msgid "Exporter #%d"
 msgstr "Exporteur #%d"
@@ -36,7 +40,7 @@ msgstr "Exporteur #%d"
 msgid "Shaper #%d"
 msgstr "Formateur #%d"
 
-#: src/Controller/Admin/ExporterController.php:55
+#: src/Controller/Admin/ExporterController.php:53
 msgid "[No label]"
 msgstr "[Sans libellé]"
 
@@ -56,194 +60,182 @@ msgstr "Type de ressource non supportée pour l’export."
 msgid "Unsupported format \"{format}\"."
 msgstr "Format non géré \"{format}\"."
 
-#: src/Controller/ExporterTrait.php:149
+#: src/Controller/ExporterTrait.php:152
 msgid "The list of ids should be a list of numeric internal identifiers."
-msgstr ""
-"La liste des ids doit être une liste d’identifiants internes numériques."
+msgstr "La liste des ids doit être une liste d’identifiants internes numériques."
 
-#: src/Controller/ExporterTrait.php:158
-msgid ""
-"A query cannot be used to export \"resources\" before Omeka S v4.1: set the "
-"resource type or use the list of ids instead."
-msgstr ""
-"Une requête ne peut pas être utilisée pour exporter des « ressources » avant "
-"Omeka S v4.1 : indiquer le type de ressources ou utiliser une liste d’ids."
+#: src/Controller/ExporterTrait.php:161
+msgid "A query cannot be used to export \"resources\" before Omeka S v4.1: set the resource type or use the list of ids instead."
+msgstr "Une requête ne peut pas être utilisée pour exporter des « ressources » avant Omeka S v4.1 : indiquer le type de ressources ou utiliser une liste d’ids."
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:18
+#: src/Job/Export.php:774
+msgid "unknown"
+msgstr "inconnu"
+
+#: src/Job/Export.php:775
+msgid "anonymous"
+msgstr "anonyme"
+
+#: src/Job/Export.php:822
+msgid "no-name"
+msgstr "sans-nom"
+
+#: src/Traits/OpenDocumentTextTemplateTrait.php:23
 msgid "Anonymous"
 msgstr "Anonyme"
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:57
-#: src/Traits/OpenDocumentTextTemplateTrait.php:58
 #: src/Traits/OpenDocumentTextTemplateTrait.php:62
-#: src/Traits/OpenDocumentTextTemplateTrait.php:64
+#: src/Traits/OpenDocumentTextTemplateTrait.php:63
+#: src/Traits/OpenDocumentTextTemplateTrait.php:67
+#: src/Traits/OpenDocumentTextTemplateTrait.php:69
 msgid "Bibliography"
 msgstr "Bibliographie"
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:65
+#: src/Traits/OpenDocumentTextTemplateTrait.php:70
 msgid "Digital library"
 msgstr "Bibliothèque numérique"
 
-#: src/Traits/ResourceFieldsTrait.php:247
+#: src/Traits/ResourceFieldsTrait.php:581
 msgid "id"
 msgstr "id"
 
-#: src/Traits/ResourceFieldsTrait.php:254
+#: src/Traits/ResourceFieldsTrait.php:588
 msgid "Resource id"
 msgstr "Id de la ressource"
 
-#: src/Traits/ResourceFieldsTrait.php:255
+#: src/Traits/ResourceFieldsTrait.php:589
 msgid "Resource identifier"
 msgstr "Identifiant de la ressource"
 
-#: src/Traits/ResourceFieldsTrait.php:258
+#: src/Traits/ResourceFieldsTrait.php:592
 msgid "Item set id"
 msgstr "Id de collection"
 
-#: src/Traits/ResourceFieldsTrait.php:261
+#: src/Traits/ResourceFieldsTrait.php:595
 msgid "Item id"
 msgstr "Id du contenu"
 
-#: src/Traits/ResourceFieldsTrait.php:262
+#: src/Traits/ResourceFieldsTrait.php:596
 msgid "Item identifier"
 msgstr "Identifiant du contenu"
 
-#: src/Traits/ResourceFieldsTrait.php:263
+#: src/Traits/ResourceFieldsTrait.php:597
 msgid "Item title"
 msgstr "Titre du contenu"
 
-#: src/Traits/ResourceFieldsTrait.php:265
+#: src/Traits/ResourceFieldsTrait.php:599
 msgid "Media id"
 msgstr "Id du média"
 
-#: src/Traits/ResourceFieldsTrait.php:266
+#: src/Traits/ResourceFieldsTrait.php:600
 msgid "Media file"
 msgstr "Fichier média"
 
-#: src/Traits/ResourceFieldsTrait.php:267
+#: src/Traits/ResourceFieldsTrait.php:601
 msgid "Media source"
 msgstr "Source du média"
 
-#: src/Traits/ResourceFieldsTrait.php:268
+#: src/Traits/ResourceFieldsTrait.php:602
 msgid "File media type"
 msgstr "Type de fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:269
+#: src/Traits/ResourceFieldsTrait.php:603
 msgid "File size"
 msgstr "Taille du fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:270
+#: src/Traits/ResourceFieldsTrait.php:604
 msgid "Url to original"
 msgstr "Url vers l'original"
 
-#: src/Traits/ResourceFieldsTrait.php:271
+#: src/Traits/ResourceFieldsTrait.php:605
 msgid "Original file url"
 msgstr "Url du fichier original"
 
-#: src/Traits/ResourceFieldsTrait.php:272
+#: src/Traits/ResourceFieldsTrait.php:606
 msgid "Url to large thumbnail"
 msgstr "Url vers la grande vignette"
 
-#: src/Traits/ResourceFieldsTrait.php:273
+#: src/Traits/ResourceFieldsTrait.php:607
 msgid "Url to medium thumbnail"
 msgstr "Url vers la vignette moyenne"
 
-#: src/Traits/ResourceFieldsTrait.php:274
+#: src/Traits/ResourceFieldsTrait.php:608
 msgid "Url to square thumbnail"
 msgstr "Url vers la vignette carrée"
 
-#: src/Traits/ResourceFieldsTrait.php:280
+#: src/Traits/ResourceFieldsTrait.php:614
 msgid "Asset id"
 msgstr "Id du fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:281
+#: src/Traits/ResourceFieldsTrait.php:615
 msgid "Asset url"
 msgstr "Url du fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:282
+#: src/Traits/ResourceFieldsTrait.php:616
 msgid "Asset file name"
 msgstr "Nom du fichier"
 
-#: src/Traits/ResourceFieldsTrait.php:283
+#: src/Traits/ResourceFieldsTrait.php:617
 msgid "Asset id if any, else primary media id"
-msgstr ""
-"Identifiant de l'actif s'il y en a un, sinon identifiant du média principal"
+msgstr "Identifiant de l'actif s'il y en a un, sinon identifiant du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:284
+#: src/Traits/ResourceFieldsTrait.php:618
 msgid "Asset url if any, else primary media original url"
-msgstr ""
-"Url de la vignette attachée, sinon url du fichier original du média principal"
+msgstr "Url de la vignette attachée, sinon url du fichier original du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:285
+#: src/Traits/ResourceFieldsTrait.php:619
 msgid "Asset url if any, else primary media large url"
-msgstr ""
-"Url de la vignette attachée, sinon url du fichier large du média principal"
+msgstr "Url de la vignette attachée, sinon url du fichier large du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:286
+#: src/Traits/ResourceFieldsTrait.php:620
 msgid "Asset url if any, else primary media medium url"
-msgstr ""
-"Url de la vignette attachée, sinon url de la vignette moyenne du média "
-"principal"
+msgstr "Url de la vignette attachée, sinon url de la vignette moyenne du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:287
+#: src/Traits/ResourceFieldsTrait.php:621
 msgid "Asset url if any, else primary media square url"
-msgstr ""
-"Url de la vignette attachée, sinon url de la vignette carrée du média "
-"principal"
+msgstr "Url de la vignette attachée, sinon url de la vignette carrée du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:288
+#: src/Traits/ResourceFieldsTrait.php:622
 msgid "Asset file name if any, else primary media original file name"
-msgstr ""
-"Nom du fichier de la vignette attachée, sinon nom du fichier original du "
-"média principal"
+msgstr "Nom du fichier de la vignette attachée, sinon nom du fichier original du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:289
+#: src/Traits/ResourceFieldsTrait.php:623
 msgid "Asset file name if any, else primary media large file name"
-msgstr ""
-"Nom du fichier de la vignette attachée, sinon nom du fichier large du média "
-"principal"
+msgstr "Nom du fichier de la vignette attachée, sinon nom du fichier large du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:290
+#: src/Traits/ResourceFieldsTrait.php:624
 msgid "Asset file name if any, else primary media medium file name"
-msgstr ""
-"Nom du fichier de la vignette attachée, sinon nom du fichier large du média "
-"moyen"
+msgstr "Nom du fichier de la vignette attachée, sinon nom du fichier large du média moyen"
 
-#: src/Traits/ResourceFieldsTrait.php:291
+#: src/Traits/ResourceFieldsTrait.php:625
 msgid "Asset file name if any, else primary media square file name"
-msgstr ""
-"Nom du fichier de la vignette attachée, sinon nom du fichier carré du média "
-"principal"
+msgstr "Nom du fichier de la vignette attachée, sinon nom du fichier carré du média principal"
 
-#: src/Traits/ResourceFieldsTrait.php:292
+#: src/Traits/ResourceFieldsTrait.php:626
 msgid "Annotation"
 msgstr "Annotation"
 
-#: src/Traits/ResourceFieldsTrait.php:293
+#: src/Traits/ResourceFieldsTrait.php:627
 msgid "Url"
 msgstr "Url"
 
-#: src/Traits/ResourceFieldsTrait.php:296
+#: src/Traits/ResourceFieldsTrait.php:630
 msgid "Tag"
 msgstr "Mot-clé"
 
-#: src/Traits/ResourceFieldsTrait.php:312
+#: src/Traits/ResourceFieldsTrait.php:646
 #, php-format
 msgid "Annotation body: %s"
 msgstr "Corps de l’annotation : %s"
 
-#: src/Traits/ResourceFieldsTrait.php:317
+#: src/Traits/ResourceFieldsTrait.php:651
 #, php-format
 msgid "Annotation target: %s"
 msgstr "Cible de l’annotation : %s"
 
 #: src/View/Helper/BulkExport.php:153
-msgid ""
-"A query cannot be used to export \"resources\": set the resource type or use "
-"the list of ids instead."
-msgstr ""
-"Une requête ne peut pas être utilisée pour exporter des « ressources » : "
-"indiquer le type de ressources ou utiliser une liste d’ids."
+msgid "A query cannot be used to export \"resources\": set the resource type or use the list of ids instead."
+msgstr "Une requête ne peut pas être utilisée pour exporter des « ressources » : indiquer le type de ressources ou utiliser une liste d’ids."
 
 #: src/View/Helper/BulkExport.php:177
 #, php-format
@@ -264,22 +256,10 @@ msgstr "Télécharger en texte"
 msgid "Download as %s"
 msgstr "Télécharger en %s"
 
-#: src/Writer/AbstractWriter.php:288
-msgid "unknown"
-msgstr "inconnu"
-
-#: src/Writer/AbstractWriter.php:289
-msgid "anonymous"
-msgstr "anonyme"
-
-#: src/Writer/AbstractWriter.php:338
-msgid "no-name"
-msgstr "sans-nom"
-
 #: view/bulk/admin/bulk-export/index.phtml:22
 #: view/bulk/admin/export/browse.phtml:18 view/bulk/admin/export/logs.phtml:54
 #: view/bulk/admin/export/show.phtml:31
-#: view/bulk/admin/exporter/configure-writer.phtml:28
+#: view/bulk/admin/exporter/configure-formatter.phtml:27
 #: view/bulk/admin/exporter/delete.phtml:23
 #: view/bulk/admin/exporter/edit.phtml:27
 #: view/bulk/admin/exporter/start.phtml:31
@@ -389,8 +369,7 @@ msgstr "Gérer les journaux"
 
 #: view/bulk/admin/export/logs.phtml:75
 msgid "Show only messages whose severity is higher than or equal to"
-msgstr ""
-"Afficher seulement les messages dont la sévérité est supérieure ou égale à"
+msgstr "Afficher seulement les messages dont la sévérité est supérieure ou égale à"
 
 #: view/bulk/admin/export/logs.phtml:92
 msgid "Message"
@@ -423,7 +402,7 @@ msgstr "Fichier d’export"
 #: view/bulk/admin/export/show-details.phtml:34
 #: view/bulk/admin/exporter/add.phtml:26
 #: view/bulk/admin/exporter/delete.phtml:23
-#: view/bulk/admin/exporter/menu-tab.phtml:16
+#: view/bulk/admin/exporter/menu-tab.phtml:12
 msgid "Exporter"
 msgstr "Exporteur"
 
@@ -474,10 +453,10 @@ msgstr "Paramètres"
 
 #: view/bulk/admin/export/show.phtml:67
 #: view/bulk/admin/exporter/exporter-table.phtml:24
-#: view/bulk/admin/exporter/menu-tab.phtml:25
+#: view/bulk/admin/exporter/menu-tab.phtml:23
 #: view/bulk/admin/exporter/start.phtml:40
-msgid "Writer"
-msgstr "Écriveur"
+msgid "Formatter"
+msgstr "Formateur"
 
 #: view/bulk/admin/exporter/add.phtml:26 view/bulk/admin/shaper/add.phtml:26
 msgid "Bulk Export"
@@ -487,14 +466,14 @@ msgstr "Export en lot"
 msgid "Create new exporter"
 msgstr "Créer un nouvel exporteur"
 
-#: view/bulk/admin/exporter/configure-writer.phtml:33
+#: view/bulk/admin/exporter/configure-formatter.phtml:32
 #, php-format
-msgid "Writer: %s"
-msgstr "Écriveur : %s"
+msgid "Formatter: %s"
+msgstr "Formateur : %s"
 
-#: view/bulk/admin/exporter/configure-writer.phtml:34
-msgid "Fill the default values of the writer."
-msgstr "Remplir les valeurs par défaut de l’écriveur."
+#: view/bulk/admin/exporter/configure-formatter.phtml:33
+msgid "Fill the default values of the formatter."
+msgstr "Remplir les valeurs par défaut du formateur."
 
 #: view/bulk/admin/exporter/delete.phtml:26
 #, php-format
@@ -519,12 +498,12 @@ msgstr "Enregistrer l’export"
 
 #: view/bulk/admin/shaper/add.phtml:26
 msgid "New shaper"
-msgstr "Nouveau façonneur"
+msgstr "Nouveau formateur"
 
 #: view/bulk/admin/shaper/browse.phtml:26
 #: view/bulk/admin/shaper/shaper-table.phtml:15
 msgid "Shapers"
-msgstr "Façonneurs"
+msgstr "Formateur"
 
 #: view/bulk/admin/shaper/browse.phtml:30
 msgid "Add new shaper"
@@ -542,11 +521,8 @@ msgstr "Êtes-vous sûr de vouloir supprimer ces formateurs ?"
 #: view/bulk/admin/shaper/browse.phtml:81
 #: view/bulk/admin/shaper/browse.phtml:100
 #, php-format
-msgid ""
-"%1$s: this action will permanently delete %2$s shapers and cannot be undone."
-msgstr ""
-"%1$s : cette action supprimera définitivement %2$s shapers et ne pourra pas "
-"être annulée."
+msgid "%1$s: this action will permanently delete %2$s shapers and cannot be undone."
+msgstr "%1$s : cette action supprimera définitivement %2$s shapers et ne pourra pas être annulée."
 
 #: view/bulk/admin/shaper/browse.phtml:98
 msgid "Are you sure you would like to delete all shapers?"
@@ -558,7 +534,7 @@ msgstr "Pas encore de formateurs."
 
 #: view/bulk/admin/shaper/delete.phtml:23
 msgid "Shaper"
-msgstr "Façonneuse"
+msgstr "Formateur"
 
 #: view/bulk/admin/shaper/delete.phtml:26
 #, php-format
@@ -571,7 +547,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer ce formateur ?"
 
 #: view/bulk/admin/shaper/shaper-table.phtml:34
 msgid "Select shaper"
-msgstr "Sélectionner la façonneuse"
+msgstr "Sélectionner le formateur"
 
 #: view/bulk/admin/shaper/show.phtml:28
 msgid "Edit shaper"
@@ -592,92 +568,59 @@ msgstr "Modifié : %s"
 msgid "Export record"
 msgstr "Exporter la notice"
 
-#: data/scripts/upgrade.php:43 Module.php:55
+#: data/scripts/upgrade.php:46 Module.php:59
+msgid "This version of module {module} requires a version of php ≥ {version}."
+msgstr "La version du module {module} doit avoir une version de php ≥ {version}."
+
+#: data/scripts/upgrade.php:55 Module.php:66
 msgid "The module {module} should be upgraded to version {version} or later."
-msgstr ""
-"Le module {module} doit être mis à niveau à la version {version} ou "
-"supérieure."
+msgstr "Le module {module} doit être mis à niveau à la version {version} ou supérieure."
 
-#: data/scripts/upgrade.php:157
-msgid ""
-"It is now possible to export resources as GeoJSON for values filled via "
-"Value Suggest Geonames."
-msgstr ""
-"Il est désormais possible d’exporter les ressources en GéoJSON pour les "
-"valeurs remplies avec Value Suggest Geonames."
+#: data/scripts/upgrade.php:174
+msgid "It is now possible to export resources as GeoJSON for values filled via Value Suggest Geonames."
+msgstr "Il est désormais possible d’exporter les ressources en GéoJSON pour les valeurs remplies avec Value Suggest Geonames."
 
-#: data/scripts/upgrade.php:164
-msgid ""
-"It is now possible to export into a specific directory with a specific "
-"filename."
-msgstr ""
-"Il est désormais possible d’exporter dans un dossier spécifique avec un nom "
-"de fichier spécifique."
+#: data/scripts/upgrade.php:181
+msgid "It is now possible to export into a specific directory with a specific filename."
+msgstr "Il est désormais possible d’exporter dans un dossier spécifique avec un nom de fichier spécifique."
 
-#: data/scripts/upgrade.php:171
-msgid ""
-"It is now possible to export via the api endpoint: just add an extension to "
-"it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
-"local/items/151.odt\" (from module Api Info)."
-msgstr ""
-"Il est désormais possible d’exporter via le point d’accès api : ajouter-lui "
-"une extension comme dans la vue admin ou publique, par exemple « /api/"
-"items.ods » ou « /api-local/items/151.odt » (à partir du module Api Info)."
+#: data/scripts/upgrade.php:188
+msgid "It is now possible to export via the api endpoint: just add an extension to it, like for admin or site view, for example \"/api/items.ods\" or \"/api-local/items/151.odt\" (from module Api Info)."
+msgstr "Il est désormais possible d’exporter via le point d’accès api : ajouter-lui une extension comme dans la vue admin ou publique, par exemple « /api/items.ods » ou « /api-local/items/151.odt » (à partir du module Api Info)."
 
-#: data/scripts/upgrade.php:223
+#: data/scripts/upgrade.php:240
 msgid "It is now possible to store an exporter as a task."
-msgstr ""
-"Il est désormais possible d’enregistrer un exporteur en tant que tâche."
+msgstr "Il est désormais possible d’enregistrer un exporteur en tant que tâche."
 
-#: data/scripts/upgrade.php:228
+#: data/scripts/upgrade.php:245
 msgid "It is now possible to do an incremental export."
 msgstr "Il est désormais possible de réaliser un export incrémental."
 
-#: data/scripts/upgrade.php:344
-msgid ""
-"The config of exporters has been upgraded to a new format. You may check "
-"them if you use a complex config."
-msgstr ""
-"La configuration des exporteurs a été mis à jour dans un nouveau format. "
-"Vous pouvez les vérifiez pour les configurations complexes."
+#: data/scripts/upgrade.php:361
+msgid "The config of exporters has been upgraded to a new format. You may check them if you use a complex config."
+msgstr "La configuration des exporteurs a été mis à jour dans un nouveau format. Vous pouvez les vérifiez pour les configurations complexes."
 
-#: data/scripts/upgrade.php:360
-msgid ""
-"New resource page blocks have been added to display a button to export "
-"current resources."
-msgstr ""
-"De nouveaux blocs pour les pages de ressources ont été ajoutés pour afficher "
-"un bouton pour exporter les ressources en cours."
+#: data/scripts/upgrade.php:377
+msgid "New resource page blocks have been added to display a button to export current resources."
+msgstr "De nouveaux blocs pour les pages de ressources ont été ajoutés pour afficher un bouton pour exporter les ressources en cours."
 
-#: data/scripts/upgrade.php:365
-msgid ""
-"A new option has been added to display the exporters automatically in "
-"selected pages for themes that don’t manage resource page blocks. Check your "
-"site if needed."
-msgstr ""
-"Une nouvelle option permet d’afficher les exporteurs automatiquement dans "
-"les pages sélectionnées pour les thèmes qui ne gèrent pas les blocs dans les "
-"pages de ressource. Vérifiez votre site si besoin."
+#: data/scripts/upgrade.php:382
+msgid "A new option has been added to display the exporters automatically in selected pages for themes that don’t manage resource page blocks. Check your site if needed."
+msgstr "Une nouvelle option permet d’afficher les exporteurs automatiquement dans les pages sélectionnées pour les thèmes qui ne gèrent pas les blocs dans les pages de ressource. Vérifiez votre site si besoin."
 
-#: data/scripts/upgrade.php:398
-msgid ""
-"The option \"divclass\" was removed from blocks. Check your theme if you "
-"customized it."
-msgstr ""
-"L’option « divclass » a été supprimée des blocs. Vérifiez votre thème si "
-"vous l’avez personnalisé."
+#: data/scripts/upgrade.php:415
+msgid "The option \"divclass\" was removed from blocks. Check your theme if you customized it."
+msgstr "L’option « divclass » a été supprimée des blocs. Vérifiez votre thème si vous l’avez personnalisé."
 
-#: data/scripts/upgrade.php:424
+#: data/scripts/upgrade.php:441
 msgid "It is now possible to define a specific format for each metadata."
-msgstr ""
-"Il est désormais possible de définir un format spécifique pour chaque "
-"métadonnée."
+msgstr "Il est désormais possible de définir un format spécifique pour chaque métadonnée."
 
 #: data/exporters/ods.php:5
 msgid "OpenDocument spreadsheet (ods)"
 msgstr "Tableur OpenDocument (ods)"
 
-#: data/exporters/csv.php:5 src/Writer/CsvWriter.php:21
+#: data/exporters/csv.php:5
 msgid "CSV"
 msgstr "CSV"
 
@@ -685,322 +628,205 @@ msgstr "CSV"
 msgid "OpenDocument text (odt)"
 msgstr "Texte OpenDocument (odt)"
 
-#: data/exporters/tsv.php:5 src/Writer/TsvWriter.php:11
+#: data/exporters/tsv.php:5
 msgid "TSV (tab-separated values)"
 msgstr "TSV (tab-separated values)"
 
-#: Module.php:65
+#: Module.php:76
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
 
-#: Module.php:135
+#: Module.php:149
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr "Tous les exports seront supprimés (dossier « {folder} »)."
 
-#: test/BulkExportTest/Job/ExportTest.php:287
-#, php-format
-msgid "No argument files (%s)."
-msgstr "Fichiers d’arguments manquants (%s)."
-
-#: src/Traits/ShaperTrait.php:159
+#: src/Traits/ShaperTrait.php:156
 msgid "For formatter \"Table\", the table is not set."
 msgstr "Pour le formateur « Table », la table n’est pas définie."
 
-#: src/Traits/ShaperTrait.php:172
-msgid ""
-"For formatter \"Table\", the table #{table_id} does not exist and values are "
-"not normalized."
-msgstr ""
-"Pour le formateur « Table », la table #{table_id} n'existe pas et les "
-"valeurs ne seront pas normalisées."
+#: src/Traits/ShaperTrait.php:169
+msgid "For formatter \"Table\", the table #{table_id} does not exist and values are not normalized."
+msgstr "Pour le formateur « Table », la table #{table_id} n'existe pas et les valeurs ne seront pas normalisées."
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:54
+#: src/Traits/OpenDocumentTextTemplateTrait.php:59
 #, php-format
 msgid "Bibliography from %s"
 msgstr "Bibliographie de %s"
 
-#: src/Traits/OpenDocumentTextTemplateTrait.php:105
-msgid ""
-"Skipped field \"{fieldname}\" of resource: it contains more than 1000 "
-"characters."
-msgstr ""
-"Le champ \"{fieldname}\" a été ignoré : il contient plus de 1000 caractères."
+#: src/Traits/BatchProcessingTrait.php:233
+msgid "Error processing resource #{id}: {error}"
+msgstr "Erreur lors du traitement de la ressource #{id} : {error}"
 
-#: src/Traits/ResourceFieldsTrait.php:152
-msgid ""
-"Some properties are not exported because they contain more or less than 500, "
-"1000 or 5000 characters: {properties}."
-msgstr ""
-"Certaines propriétés n’ont pas été exportées car elles contiennent plus ou "
-"moins de 500, 1000 ou 5000 caractères : {properties}."
+#: src/Traits/ResourceFieldsTrait.php:462
+msgid "Some properties are not exported because they contain more or less than 500, 1000 or 5000 characters: {properties}."
+msgstr "Certaines propriétés n’ont pas été exportées car elles contiennent plus ou moins de 500, 1000 ou 5000 caractères : {properties}."
 
-#: src/Traits/ResourceFieldsTrait.php:275
-#: src/Form/Writer/MetadataSelectTrait.php:114
+#: src/Traits/ResourceFieldsTrait.php:609
+#: src/Form/Formatter/MetadataSelectTrait.php:114
 msgid "File name of original"
 msgstr "Nom de fichier de l'original"
 
-#: src/Traits/ResourceFieldsTrait.php:276
-#: src/Form/Writer/MetadataSelectTrait.php:115
+#: src/Traits/ResourceFieldsTrait.php:610
+#: src/Form/Formatter/MetadataSelectTrait.php:115
 msgid "File name of large thumbnail"
 msgstr "Nom du fichier de la grande vignette"
 
-#: src/Traits/ResourceFieldsTrait.php:277
-#: src/Form/Writer/MetadataSelectTrait.php:116
+#: src/Traits/ResourceFieldsTrait.php:611
+#: src/Form/Formatter/MetadataSelectTrait.php:116
 msgid "File name of medium thumbnail"
 msgstr "Nom de fichier de la vignette du support"
 
-#: src/Traits/ResourceFieldsTrait.php:278
-#: src/Form/Writer/MetadataSelectTrait.php:117
+#: src/Traits/ResourceFieldsTrait.php:612
+#: src/Form/Formatter/MetadataSelectTrait.php:117
 msgid "File name of square thumbnail"
 msgstr "Nom de fichier de la vignette carrée"
 
-#: src/Traits/ResourceFieldsTrait.php:323
+#: src/Traits/ResourceFieldsTrait.php:657
 #, php-format
 msgid "%1$s: %2$s"
 msgstr "%1$s : %2$s"
 
-#: src/Writer/AbstractFieldsWriter.php:143
-msgid "No headers are used in any resources."
-msgstr "Aucune entête n’est utilisée dans les ressources."
-
-#: src/Writer/AbstractFieldsWriter.php:161
-msgid "{number} different fields are used in all resources."
-msgstr "{number} champs différents sont utilisés dans toutes les ressources."
-
-#: src/Writer/AbstractFieldsWriter.php:239
-msgid "No resource type selected."
-msgstr "Pas de type de ressource sélectionné."
-
-#: src/Writer/AbstractFieldsWriter.php:244
-msgid "No resource to export."
-msgstr "Pas de ressource à exporter."
-
-#: src/Writer/AbstractFieldsWriter.php:259
-msgid "All resources of all resource types ({total}) exported."
-msgstr ""
-"Toutes les ressources de tous les types de ressource ({total}) ont été "
-"exportées."
-
-#: src/Writer/AbstractFieldsWriter.php:288
-msgid "Starting export of {total} {resource_type}."
-msgstr "Lancement de l’export de {total} {resource_type}."
-
-#: src/Writer/AbstractFieldsWriter.php:303
-msgid ""
-"The job \"Export\" was stopped: {processed}/{total} resources processed."
-msgstr ""
-"La tâche \"Export\" a été arrêtée : {processed}/{total} ressources traitées."
-
-#: src/Writer/AbstractFieldsWriter.php:350
-#: src/Writer/AbstractFieldsWriter.php:362
-msgid ""
-"{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} "
-"skipped."
-msgstr ""
-"{processed}/{total} {resource_type} traités, {succeed} réussis, {skipped} "
-"ignorés."
-
-#: src/Writer/AbstractFieldsWriter.php:367
-msgid "End export of {resource_type}."
-msgstr "Fin de l’export de {resource_type}."
-
-#: src/Writer/AbstractFieldsWriter.php:378
-msgid ""
-"The deleted resources cannot be output when the internal id is not included "
-"in the list of fields."
-msgstr ""
-"Les ressources supprimées ne peuvent pas être exportées lorsque l’id interne "
-"n’est pas inclus dans la liste des champs."
-
-#: src/Writer/AbstractFieldsWriter.php:394
-msgid "Starting export of deleted {resource_type}."
-msgstr "Lancement de l’export des {resource_type} supprimés."
-
-#: src/Writer/AbstractFieldsWriter.php:415
-msgid "End export of {total} deleted {resource_type}."
-msgstr "Fin de l’export de {total} {resource_type} supprimés."
-
-#: src/Writer/AbstractFieldsWriter.php:420
-msgid "No deleted resource exported for {resource_type}."
-msgstr "Aucune ressource n’a été exportée pour {resource_type}."
-
-#: src/Writer/AbstractFieldsWriter.php:649
-msgid ""
-"Previous completed export by user {username} with exporter \"{exporter_label}"
-"\" is #{export_id} on {date}."
-msgstr ""
-"Le dernier export complet de l’utilisateur {username} avec l’exporteur "
-"« {exporter_label} » est #{export_id} du {date}."
-
-#: src/Writer/GeoJsonWriter.php:7
-msgid "GeoJSON"
-msgstr "GéoJSON"
-
-#: src/Writer/OpenDocumentTextWriter.php:14
-msgid "OpenDocument Text"
-msgstr "OpenDocument Text"
-
-#: src/Writer/OpenDocumentTextWriter.php:24
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:66
-msgid ""
-"To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are "
-"required."
-msgstr ""
-"Pour réaliser un export de {label}\", les extensions php \"zip\" et xml\" "
-"sont nécessaires."
-
-#: src/Writer/TextWriter.php:69 src/Writer/AbstractFieldsJsonWriter.php:59
-#: src/Formatter/AbstractFormatter.php:384 src/Formatter/Ods.php:58
-msgid "Unable to open output: {error}."
-msgstr "Impossible d’ouvrir la sortie : {error}."
-
-#: src/Writer/AbstractSpreadsheetWriter.php:48
-msgid ""
-"No separator selected: only the first value of each property of each "
-"resource will be output."
-msgstr ""
-"Aucun séparateur sélectionné : seule la première valeur de chaque propriété "
-"de chaque ressource sera exportée."
-
-#: src/Writer/AbstractSpreadsheetWriter.php:65
-msgid "Unsupported format {format} for spreadsheet."
-msgstr "Format non géré \"{format}\" pour les tableurs."
-
-#: src/Writer/AbstractSpreadsheetWriter.php:117
-msgid ""
-"Skipped {resource_type} #{resource_id}: it contains the separator "
-"\"{separator}\"."
-msgstr ""
-"Ignore {resource_type} #{resource_id} : il contient le séparateur "
-"\"{separator}\"."
-
-#: src/Writer/JsonTableWriter.php:7
-msgid "Json Table"
-msgstr "Json Table"
-
-#: src/Writer/AbstractWriter.php:160
-msgid "Output directory \"{folder}\" is not writeable."
-msgstr "Le dossier de sortie ({folder}) n’est pas inscriptible."
-
-#: src/Writer/AbstractWriter.php:233
-msgid "The path should not contain \"../\"."
-msgstr "Le chemin ne doit pas contenir « ../ »."
-
-#: src/Writer/AbstractWriter.php:241 src/Writer/AbstractWriter.php:250
-msgid "The destination folder \"{folder}\" is not writeable."
-msgstr "Le dossier de destination \"{folder}\" n’est pas inscriptible."
-
-#: src/Writer/AbstractWriter.php:323
-msgid "The specified dir path \"{path}\" is invalid. Using default one."
-msgstr ""
-"Le chemin indiqué pour le dossier \"{path}\" est incorrect. Le chemin par "
-"défaut est utilisé."
-
-#: src/Writer/AbstractWriter.php:400
-msgid ""
-"Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
-"{exception}"
-msgstr ""
-"Erreur d’enregistrement en sauvant \"{filename}\" (fichier temporaire : "
-"\"{tempfile}\") : {exception}"
-
-#: src/Writer/AbstractWriter.php:407
-msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
-msgstr ""
-"Erreur d’export lors de l’enregistrement de \"{filename}\" (fichier "
-"temporaire : \"{tempfile}\")."
-
-#: src/Writer/AbstractFieldsJsonWriter.php:92
-#: src/Formatter/AbstractFieldsJsonFormatter.php:69
-msgid "Unable to check output: {error}."
-msgstr "Impossible de vérifier la sortie : {error}."
-
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:12
-msgid "OpenDocument Spreadsheet"
-msgstr "OpenDocument Spreadsheet"
-
-#: src/Writer/OpenDocumentSpreadsheetWriter.php:77 src/Formatter/Ods.php:30
-msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
-msgstr ""
-"Le dossier temporaire \"{folder}\" n’existe pas ou n’est pas inscriptible."
-
-#: src/Job/Export.php:73
+#: src/Job/Export.php:145
 msgid "Export record id is not set."
 msgstr "L’id de l’export n’est pas indiqué."
 
-#: src/Job/Export.php:82
+#: src/Job/Export.php:153
 msgid "Export record id #{id} does not exist."
 msgstr "L’export #{id} n’existe pas."
 
-#: src/Job/Export.php:109
+#: src/Job/Export.php:178
 msgid "Export as task based on export #{export_id}."
 msgstr "Exporter en tant que tâche basé sur l’export #{export_id}"
 
-#: src/Job/Export.php:123
-msgid "Writer \"{writer}\" is not available."
-msgstr "L’écriveur \"{writer}\" n’est pas disponible."
+#: src/Job/Export.php:196
+msgid "Formatter \"{formatter}\" is not available."
+msgstr "Le formateur \"{formatter}\" n’est pas disponible."
 
-#: src/Job/Export.php:144
+#: src/Job/Export.php:208
 msgid "Export error: {error}"
 msgstr "Erreur d’export : {error}"
 
-#: src/Job/Export.php:153
+#: src/Job/Export.php:213
 msgid "Export started"
 msgstr "Lancement de l’export"
 
-#: src/Job/Export.php:182
+#: src/Job/Export.php:238
 msgid "Export completed"
 msgstr "Export complété"
 
-#: src/Job/Export.php:220
-msgid "The export is available locally as specified (size: {size} bytes)."
-msgstr ""
-"L’export est disponible localement comme indiqué (taille : {size} octets)."
+#: src/Job/Export.php:304
+msgid "No separator selected: only the first value of each property of each resource will be output."
+msgstr "Aucun séparateur sélectionné : seule la première valeur de chaque propriété de chaque ressource sera exportée."
 
-#: src/Job/Export.php:227
+#: src/Job/Export.php:349
+msgid "No resources to export."
+msgstr "Pas de ressources à exporter."
+
+#: src/Job/Export.php:357
+msgid "Starting export of {total} resources."
+msgstr "Démarrage de l’export de {total} ressources."
+
+#: src/Job/Export.php:365
+msgid "Starting export of {total} {resource_type}."
+msgstr "Lancement de l’export de {total} {resource_type}."
+
+#: src/Job/Export.php:399
+msgid "Deleted resources cannot be included in this format. Use CSV or TSV for include_deleted support."
+msgstr "Les ressources supprimées ne peuvent pas être incluses dans ce format. Utilisez le format csv ou tsv pour prendre en charge les ressources supprimées."
+
+#: src/Job/Export.php:408
+msgid "{processed}/{total} {resource_type} processed, {succeed} succeed, {skipped} skipped."
+msgstr "{processed}/{total} {resource_type} traités, {succeed} réussis, {skipped} ignorés."
+
+#: src/Job/Export.php:420
+msgid "Export completed: {total} resources processed."
+msgstr "Export terminé : {total} ressources traitées."
+
+#: src/Job/Export.php:438
+msgid "{processed}/{total} resources processed."
+msgstr "{processed}/{total} ressources traitées."
+
+#: src/Job/Export.php:591
+msgid "The deleted resources cannot be output when the internal id is not included in the list of fields."
+msgstr "Les ressources supprimées ne peuvent pas être exportées lorsque l’id interne n’est pas inclus dans la liste des champs."
+
+#: src/Job/Export.php:598
+msgid "Unable to append deleted resources to output file."
+msgstr "Impossible d’ajouter des ressources supprimées dans l’export."
+
+#: src/Job/Export.php:616
+msgid "Appending {count} deleted {resource_type}."
+msgstr "Ajout de {count} {resource_type} supprimés."
+
+#: src/Job/Export.php:644
+msgid "Appended {count} deleted resources to export."
+msgstr "Ajouté {count} ressources supprimés dans l’export."
+
+#: src/Job/Export.php:684
+msgid "Previous completed export by user {username} with exporter \"{exporter_label}\" is #{export_id} on {date}."
+msgstr "Le dernier export complet de l’utilisateur {username} avec l’exporteur « {exporter_label} » est #{export_id} du {date}."
+
+#: src/Job/Export.php:724
+msgid "The path should not contain \"../\"."
+msgstr "Le chemin ne doit pas contenir « ../ »."
+
+#: src/Job/Export.php:732 src/Job/Export.php:741
+msgid "The destination folder \"{folder}\" is not writeable."
+msgstr "Le dossier de destination \"{folder}\" n’est pas inscriptible."
+
+#: src/Job/Export.php:807
+msgid "The specified dir path \"{path}\" is invalid. Using default one."
+msgstr "Le chemin indiqué pour le dossier \"{path}\" est incorrect. Le chemin par défaut est utilisé."
+
+#: src/Job/Export.php:895 src/Job/Export.php:908
+msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): {exception}"
+msgstr "Erreur d’enregistrement en sauvant \"{filename}\" (fichier temporaire : \"{tempfile}\") : {exception}"
+
+#: src/Job/Export.php:915
+msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
+msgstr "Erreur d’export lors de l’enregistrement de \"{filename}\" (fichier temporaire : \"{tempfile}\")."
+
+#: src/Job/Export.php:931
+msgid "The export is available locally as specified (size: {size} bytes)."
+msgstr "L’export est disponible localement comme indiqué (taille : {size} octets)."
+
+#: src/Job/Export.php:936
 msgid "The export is available at {link} (size: {size} bytes)."
 msgstr "L’export est disponible à « {link} » (taille : {size} octets)."
 
-#: src/Job/Export.php:327
+#: src/Job/Export.php:1055
 msgid "No owner to notify end of process."
 msgstr "Aucun propriétaire à notifier à la fin du traitement."
 
-#: src/Job/Export.php:341
+#: src/Job/Export.php:1068
 msgid "[Omeka Bulk Export] #{job_id}"
 msgstr "[Omeka Export en lot] #{job_id}"
 
-#: src/Job/Export.php:345
-msgid ""
-"Export ended (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
-"logs{link_close})."
-msgstr ""
-"Export terminé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}"
-"journaux{link_close})."
+#: src/Job/Export.php:1072
+msgid "Export ended (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close})."
+msgstr "Export terminé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}journaux{link_close})."
 
-#: src/Job/Export.php:371
+#: src/Job/Export.php:1098
 msgid "Error when sending email to notify end of process."
 msgstr "Erreur lors de l’envoi du mail pour informer de la fin du traitement."
 
-#: src/Job/Export.php:414
+#: src/Job/Export.php:1132
 msgid "No resources to create zip file."
 msgstr "Pas de ressource à exporter en zip."
 
-#: src/Job/Export.php:421
+#: src/Job/Export.php:1139
 msgid "Creation of zip of all local files ({format})"
 msgstr "Création d'un fichier zip de tous les fichiers locaux ({format})"
 
-#: src/Job/Export.php:429
-msgid ""
-"End of creation of zip for format {format} to {download}: {total} files."
-msgstr ""
-"Fin de la création du zip pour le format {format} à {download} : {total} "
-"fichiers."
+#: src/Job/Export.php:1147
+msgid "End of creation of zip for format {format} to {download}: {total} files."
+msgstr "Fin de la création du zip pour le format {format} à {download} : {total} fichiers."
 
-#: src/Job/Export.php:456
+#: src/Job/Export.php:1174
 msgid "No files to zip for format \"{format}\"."
 msgstr "Pas de fichier à zipper pour le format \"{format}\"."
 
-#: src/Job/Export.php:475
+#: src/Job/Export.php:1193
 msgid "Zipping \"{format}\" files stopped."
 msgstr "La compression des fichiers pour le format \"{format}\" a été arrêtée."
 
@@ -1009,13 +835,8 @@ msgid "Resource pages where to display exporters automatically"
 msgstr "Pages de ressource où afficher les exporteurs automatiquement"
 
 #: src/Form/SiteSettingsFieldset.php:27
-msgid ""
-"The config should be compliant with module BlocksDisposition if you use it. "
-"When the theme supports resource page blocks, it is recommended to use them."
-msgstr ""
-"La configuration doit être conforme à celle du module BlocksDisposition si "
-"actif. Quand le thème prend en charge les blocs de page de ressources, il "
-"est recommandé de les utiliser."
+msgid "The config should be compliant with module BlocksDisposition if you use it. When the theme supports resource page blocks, it is recommended to use them."
+msgstr "La configuration doit être conforme à celle du module BlocksDisposition si actif. Quand le thème prend en charge les blocs de page de ressources, il est recommandé de les utiliser."
 
 #: src/Form/SiteSettingsFieldset.php:29
 msgid "Item / show"
@@ -1041,55 +862,27 @@ msgstr "Média / vue"
 msgid "Media / browse"
 msgstr "Média / liste"
 
-#: src/Form/SettingsFieldset.php:38
+#: src/Form/SettingsFieldset.php:39
 msgid "Maximum number of resources to export"
 msgstr "Nombre maximum de ressources à exporter"
 
-#: src/Form/SettingsFieldset.php:39
+#: src/Form/SettingsFieldset.php:40
 msgid "This setting is applied only for the direct output."
 msgstr "Ce paramètre sera appliqué seulement pour la sortie directe."
 
-#: src/Form/SettingsFieldset.php:54
+#: src/Form/SettingsFieldset.php:55
 msgid "Formatters to display in resource pages"
 msgstr "Formateurs à afficher dans les pages de ressources"
 
-#: src/Form/SettingsFieldset.php:69 src/Form/Writer/FormatTrait.php:19
-msgid "Labels with field names for merging and specific order"
-msgstr "Étiquettes avec noms de champs pour la fusion et l'ordre spécifique"
-
-#: src/Form/SettingsFieldset.php:70 src/Form/Writer/FormatTrait.php:20
-msgid ""
-"Fill the label and the field names to manage a specific order of data and "
-"merge of metadata. Unlisted metadata will be added next."
-msgstr ""
-"Remplissez l'étiquette et les noms des champs pour gérer un ordre spécifique "
-"de données et de fusion de métadonnées. Les métadonnées non listées seront "
-"ajoutées ensuite."
-
-#: src/Form/SettingsFieldset.php:78 src/Form/Writer/FormatTrait.php:28
-msgid ""
-"Person = dcterms:creator dcterms:contributor\n"
-"dcterms:subject = dcterms:subject dcterms:temporal"
-msgstr ""
-"Personne = dcterms:créateur dcterms:contributeur\n"
-"dcterms:subject = dcterms:subject dcterms:temporal"
-
-#: src/Form/SettingsFieldset.php:89 src/Form/Writer/FormatTrait.php:39
+#: src/Form/SettingsFieldset.php:70 src/Form/Formatter/FormatTrait.php:19
 msgid "Specific shapers by metadata"
 msgstr "Shapers spécifiques par métadonnées"
 
-#: src/Form/SettingsFieldset.php:90 src/Form/Writer/FormatTrait.php:40
-msgid ""
-"Shapers are defined in the page \"Shapers\" and allows to define specific "
-"rules for specific metadata. If not set, the rules are the main ones. Set "
-"the metadata name, \"=\" and the identifier or label of the shaper."
-msgstr ""
-"Les \"Shapers\" sont définis dans la page \"Shapers\" et permettent de "
-"définir des règles spécifiques pour des métadonnées spécifiques. Si elles ne "
-"sont pas définies, les règles sont les règles principales. Définissez le nom "
-"de la métadonnée, \"=\" et l'identifiant ou l'étiquette de la mise en forme."
+#: src/Form/SettingsFieldset.php:71 src/Form/Formatter/FormatTrait.php:20
+msgid "Shapers are defined in the page \"Shapers\" and allows to define specific rules for specific metadata. If not set, the rules are the main ones. Set the metadata name, \"=\" and the identifier or label of the shaper."
+msgstr "Les \"Shapers\" sont définis dans la page \"Shapers\" et permettent de définir des règles spécifiques pour des métadonnées spécifiques. Si elles ne sont pas définies, les règles sont les règles principales. Définissez le nom de la métadonnée, \"=\" et l'identifiant ou l'étiquette de la mise en forme."
 
-#: src/Form/SettingsFieldset.php:96 src/Form/Writer/FormatTrait.php:46
+#: src/Form/SettingsFieldset.php:81 src/Form/Formatter/FormatTrait.php:30
 msgid ""
 "dcterms:creator = Person\n"
 "dcterms:date = Year only"
@@ -1097,98 +890,150 @@ msgstr ""
 "dcterms:creator = Personne\n"
 "dcterms:date = Année seulement"
 
-#: src/Form/SettingsFieldset.php:107 src/Form/Writer/FormatTrait.php:56
+#: src/Form/SettingsFieldset.php:92 src/Form/Formatter/FormatTrait.php:40
 msgid "Metadata names or headers"
 msgstr "Noms des métadonnées ou entêtes"
 
-#: src/Form/SettingsFieldset.php:109 src/Form/Writer/FormatTrait.php:58
+#: src/Form/SettingsFieldset.php:94 src/Form/Formatter/FormatTrait.php:42
 msgid "Rdf names"
 msgstr "Noms rdf"
 
-#: src/Form/SettingsFieldset.php:110 src/Form/Writer/FormatTrait.php:59
+#: src/Form/SettingsFieldset.php:95 src/Form/Formatter/FormatTrait.php:43
 msgid "Labels"
 msgstr "Libellés"
 
-#: src/Form/SettingsFieldset.php:111 src/Form/Writer/FormatTrait.php:60
+#: src/Form/SettingsFieldset.php:96 src/Form/Formatter/FormatTrait.php:44
 msgid "First template alternative name"
 msgstr "Nom alternatif du premier modèle"
 
-#: src/Form/SettingsFieldset.php:124 src/Form/Writer/FormatTrait.php:72
+#: src/Form/SettingsFieldset.php:109 src/Form/Formatter/FormatTrait.php:57
+msgid "Labels with field names for merging and specific order"
+msgstr "Étiquettes avec noms de champs pour la fusion et l'ordre spécifique"
+
+#: src/Form/SettingsFieldset.php:110 src/Form/Formatter/FormatTrait.php:58
+msgid "Fill the label and the field names to manage a specific order of data and merge of metadata. Unlisted metadata will be added next."
+msgstr "Remplissez l'étiquette et les noms des champs pour gérer un ordre spécifique de données et de fusion de métadonnées. Les métadonnées non listées seront ajoutées ensuite."
+
+#: src/Form/SettingsFieldset.php:118 src/Form/Formatter/FormatTrait.php:66
+msgid ""
+"Person = dcterms:creator dcterms:contributor\n"
+"dcterms:subject = dcterms:subject dcterms:temporal"
+msgstr ""
+"Personne = dcterms:créateur dcterms:contributeur\n"
+"dcterms:subject = dcterms:subject dcterms:temporal"
+
+#: src/Form/SettingsFieldset.php:129 src/Form/Formatter/FormatTrait.php:76
 msgid "Format of values"
 msgstr "Format des valeurs"
 
-#: src/Form/SettingsFieldset.php:126 src/Form/Writer/FormatTrait.php:74
+#: src/Form/SettingsFieldset.php:131 src/Form/Formatter/FormatTrait.php:78
 msgid "String"
 msgstr "Chaîne"
 
-#: src/Form/SettingsFieldset.php:127
+#: src/Form/SettingsFieldset.php:132
 msgid "Html (slow with some modules)"
 msgstr "Html (lent avec certains modules)"
 
-#: src/Form/SettingsFieldset.php:140 src/Form/Writer/FormatTrait.php:89
+#: src/Form/SettingsFieldset.php:145 src/Form/Formatter/FormatTrait.php:93
 msgid "Format of linked resources"
 msgstr "Format des ressources liées"
 
-#: src/Form/SettingsFieldset.php:142 src/Form/Writer/FormatTrait.php:92
+#: src/Form/SettingsFieldset.php:147 src/Form/Formatter/FormatTrait.php:96
 msgid "Id"
 msgstr "Id"
 
-#: src/Form/SettingsFieldset.php:143 src/Form/Writer/FormatTrait.php:91
+#: src/Form/SettingsFieldset.php:148 src/Form/Formatter/FormatTrait.php:95
 msgid "Identifier (property below)"
 msgstr "Identifiant (propriété ci-dessous)"
 
-#: src/Form/SettingsFieldset.php:144 src/Form/Writer/FormatTrait.php:93
+#: src/Form/SettingsFieldset.php:149 src/Form/Formatter/FormatTrait.php:97
 msgid "Identifier or id"
 msgstr "Identifiant ou id"
 
-#: src/Form/SettingsFieldset.php:145 src/Form/Writer/FormatTrait.php:96
+#: src/Form/SettingsFieldset.php:150 src/Form/Formatter/FormatTrait.php:100
 msgid "Omeka url and title"
 msgstr "Omeka url et titre"
 
-#: src/Form/SettingsFieldset.php:147 src/Form/Writer/FormatTrait.php:94
+#: src/Form/SettingsFieldset.php:152 src/Form/Formatter/FormatTrait.php:98
 msgid "Omeka url"
 msgstr "Url Omeka"
 
-#: src/Form/SettingsFieldset.php:160 src/Form/Writer/FormatTrait.php:108
+#: src/Form/SettingsFieldset.php:165 src/Form/Formatter/FormatTrait.php:112
 msgid "Property for linked resources"
 msgstr "Propriété pour les ressources liées"
 
-#: src/Form/SettingsFieldset.php:176 src/Form/Writer/FormatTrait.php:123
+#: src/Form/SettingsFieldset.php:181 src/Form/Formatter/FormatTrait.php:127
 msgid "Format of uri"
 msgstr "Format de l’uri"
 
-#: src/Form/SettingsFieldset.php:178 src/Form/Writer/FormatTrait.php:125
+#: src/Form/SettingsFieldset.php:183 src/Form/Formatter/FormatTrait.php:129
 msgid "Uri and label separated by a space"
 msgstr "Uri et libellé séparés par une espace"
 
-#: src/Form/SettingsFieldset.php:179 src/Form/Writer/FormatTrait.php:126
+#: src/Form/SettingsFieldset.php:184 src/Form/Formatter/FormatTrait.php:130
 msgid "Uri only"
 msgstr "Uri seulement"
 
-#: src/Form/SettingsFieldset.php:180 src/Form/Writer/FormatTrait.php:127
+#: src/Form/SettingsFieldset.php:185 src/Form/Formatter/FormatTrait.php:131
 msgid "Label if any, else uri"
 msgstr "Libellé sinon uri"
 
-#: src/Form/SettingsFieldset.php:181 src/Form/ShaperConfigFieldset.php:165
-#: src/Form/Writer/FormatTrait.php:128
+#: src/Form/SettingsFieldset.php:186 src/Form/ShaperConfigFieldset.php:165
+#: src/Form/Formatter/FormatTrait.php:132
 msgid "Label only"
 msgstr "Libellé seul"
 
-#: src/Form/SettingsFieldset.php:182 src/Form/Writer/FormatTrait.php:75
-#: src/Form/Writer/FormatTrait.php:129
+#: src/Form/SettingsFieldset.php:187 src/Form/Formatter/FormatTrait.php:79
+#: src/Form/Formatter/FormatTrait.php:133
 msgid "Html"
 msgstr "Html"
+
+#: src/Form/SettingsFieldset.php:212
+msgid "Multi-value separator (spreadsheet)"
+msgstr "Séparateur multi-valeur (tableur)"
+
+#: src/Form/SettingsFieldset.php:213
+msgid "Separator used to join multiple values in a single cell for spreadsheet formats (csv, tsv, ods). If \"One value per column\" is enabled, this separator is used only for non-property fields."
+msgstr "Séparateur utilisé pour regrouper plusieurs valeurs dans une seule cellule pour les tableurs (csv, tsv, ods). Si l’option « Une valeur par colonne » est activée, ce séparateur n’est utilisé que pour les champs qui ne sont pas des propriétés."
+
+#: src/Form/SettingsFieldset.php:225
+msgid "One value per column (spreadsheet)"
+msgstr "Une valeur par colonne (tableur)"
+
+#: src/Form/SettingsFieldset.php:226
+msgid "When enabled, each value of a multi-valued property gets its own column. The module pre-scans all resources to determine the maximum number of values for each property. Only applies to spreadsheet formats (csv, tsv, ods)."
+msgstr "Si activé, chaque valeur d’une propriété multivaluée aura sa propre colonne. Le module cherche d’abord le nombre maximum de valeurs pour toutes les propriétés des ressources. Uniquement pour les tableurs (csv, tsv, ods)."
+
+#: src/Form/SettingsFieldset.php:237
+msgid "Column metadata in headers (spreadsheet)"
+msgstr "Métadonnées des colonnes dans les en-têtes (tableur)"
+
+#: src/Form/SettingsFieldset.php:238
+msgid "Add metadata attributes to column headers. Creates separate columns for each metadata group. Only applies to spreadsheet formats."
+msgstr "Ajouter des attributs de métadonnées aux en-têtes de colonnes. Crée des colonnes distinctes pour chaque groupe de métadonnées. S'applique seulement aux tableurs."
+
+#: src/Form/SettingsFieldset.php:240
+#: src/Form/Formatter/SpreadsheetConfigForm.php:55
+msgid "Language (e.g. dcterms:subject @fr)"
+msgstr "Langue (ex. : dcterms:subject @fr)"
+
+#: src/Form/SettingsFieldset.php:241
+#: src/Form/Formatter/SpreadsheetConfigForm.php:56
+msgid "Datatype (e.g. dcterms:subject ^^uri)"
+msgstr "Type de donnée (ex. : dcterms:subject ^^uri)"
+
+#: src/Form/SettingsFieldset.php:242
+#: src/Form/Formatter/SpreadsheetConfigForm.php:57
+msgid "Visibility (e.g. dcterms:subject [private])"
+msgstr "Visibilité (ex.: dcterms:subject [privé])"
 
 #: src/Form/ExporterDeleteForm.php:29
 msgid "Delete exporter"
 msgstr "Supprimer un exporteur"
 
 #: src/Form/ShaperConfigFieldset.php:35
-msgid ""
-"This optional description will help to understand the purpose of this shaper."
-msgstr ""
-"Cette description facultative aidera à comprendre l'objectif de cette mise "
-"en forme."
+msgid "This optional description will help to understand the purpose of this shaper."
+msgstr "Cette description facultative aidera à comprendre l'objectif de cette mise en forme."
 
 #: src/Form/ShaperConfigFieldset.php:40
 msgid "This shaper can be use to…"
@@ -1291,316 +1136,12 @@ msgid "Store exporter as a task"
 msgstr "Enregistrer l’exporteur en tant que tâche"
 
 #: src/Form/ExporterForm.php:69
-msgid ""
-"Allows to store a job to run it via command line or a cron task (see module "
-"EasyAdmin)."
-msgstr ""
-"Permet de conserver l’import de façon à le lancer via la ligne de commande "
-"ou une tâche cron (voir le module Easy Admin)."
+msgid "Allows to store a job to run it via command line or a cron task (see module EasyAdmin)."
+msgstr "Permet de conserver l’import de façon à le lancer via la ligne de commande ou une tâche cron (voir le module Easy Admin)."
 
 #: src/Form/ExporterForm.php:79
 msgid "Notify by email when finished"
 msgstr "Notifier par courriel à la fin"
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:16
-msgid "Multi-value separator"
-msgstr "Séparateur multi-valeur"
-
-#: src/Form/Writer/SpreadsheetWriterConfigForm.php:17
-msgid ""
-"To output all values of each property, cells can be multivalued with this "
-"separator.\n"
-"It is recommended to use a character that is never used, like \"|\", or a "
-"random string."
-msgstr ""
-"Pour exporter toutes les valeurs de chaque propriété, les cellules doivent "
-"être multivaluées avec un séparateur.\n"
-"Il est recommandé d’utiliser un caractère qui n’est jamais utilisé, comme \"|"
-"\" ou une chaîne de caractères aléatoires."
-
-#: src/Form/Writer/MetadataSelectTrait.php:18
-msgid "If empty, all used properties will be returned."
-msgstr "Si vide, toutes les propriétés utilisées seront retournées."
-
-#: src/Form/Writer/MetadataSelectTrait.php:27
-#: src/Form/Writer/MetadataSelectTrait.php:54
-msgid "Select one or more metadata…"
-msgstr "Choisir une ou plusieurs métadonnées…"
-
-#: src/Form/Writer/MetadataSelectTrait.php:35
-msgid "Metadata to exclude"
-msgstr "Métadonnées à exclure"
-
-#: src/Form/Writer/MetadataSelectTrait.php:36
-msgid ""
-"It is recommended to remove big fields from the list of properties, in "
-"particular extracted text."
-msgstr ""
-"Il est recommandé de supprimer les grands champs de la liste des propriétés, "
-"notamment le texte complet."
-
-#: src/Form/Writer/MetadataSelectTrait.php:39
-#: src/Form/Writer/MetadataSelectTrait.php:65
-msgid "Resource metadata"
-msgstr "Métadonnées des ressources"
-
-#: src/Form/Writer/MetadataSelectTrait.php:41
-#: src/Form/Writer/MetadataSelectTrait.php:83
-msgid "All used properties more than 500 characters"
-msgstr "Propriétés utilisées de plus de 5000 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:42
-#: src/Form/Writer/MetadataSelectTrait.php:85
-msgid "All used properties more than 1000 characters"
-msgstr "Propriétés utilisées de plus de 1000 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:43
-#: src/Form/Writer/MetadataSelectTrait.php:87
-msgid "All used properties more than 5000 characters"
-msgstr "Propriétés utilisées de plus de 5000 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:67
-msgid "Specific fields below"
-msgstr "Champs spécifiques ci-dessous"
-
-#: src/Form/Writer/MetadataSelectTrait.php:68
-#: src/Form/Writer/MetadataSelectTrait.php:98
-#: src/Form/Writer/MetadataSelectTrait.php:106
-#: src/Form/Writer/MetadataSelectTrait.php:142
-#: src/Form/Writer/MetadataSelectTrait.php:150
-msgid "Internal id"
-msgstr "Id interne"
-
-#: src/Form/Writer/MetadataSelectTrait.php:69
-msgid "Resource url"
-msgstr "Url de la ressource"
-
-#: src/Form/Writer/MetadataSelectTrait.php:76
-msgid "Owner id"
-msgstr "Id du propriétaire"
-
-#: src/Form/Writer/MetadataSelectTrait.php:77
-msgid "Visibility public/private"
-msgstr "Visibilité public/privé"
-
-#: src/Form/Writer/MetadataSelectTrait.php:79
-msgid "Openness"
-msgstr "Ouverture"
-
-#: src/Form/Writer/MetadataSelectTrait.php:81
-msgid "All used properties"
-msgstr "Toutes les propriétés utilisées"
-
-#: src/Form/Writer/MetadataSelectTrait.php:82
-msgid "All used properties less than 500 characters"
-msgstr "Propriétés utilisées de moins de 500 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:84
-msgid "All used properties less than 1000 characters"
-msgstr "Propriétés utilisées de moins de 1000 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:86
-msgid "All used properties less than 5000 characters"
-msgstr "Propriétés utilisées de moins de 5000 caractères"
-
-#: src/Form/Writer/MetadataSelectTrait.php:92
-msgid "Tags (Folksonomy)"
-msgstr "Mots-clés (Folksonomy)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:96
-msgid "Item set (for item)"
-msgstr "Collection (pour item)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:100
-#: src/Form/Writer/MetadataSelectTrait.php:119
-#: src/Form/Writer/MetadataSelectTrait.php:144
-#: src/Form/Writer/MetadataSelectTrait.php:152
-msgid "Label (first title)"
-msgstr "Libellé (premier titre)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:104
-msgid "Media (for item)"
-msgstr "Média (pour item)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:107
-msgid "Url / File"
-msgstr "Url / fichier"
-
-#: src/Form/Writer/MetadataSelectTrait.php:108
-msgid "File name"
-msgstr "Nom du fichier"
-
-#: src/Form/Writer/MetadataSelectTrait.php:109
-msgid "Source url / file"
-msgstr "Url ou fichier source"
-
-#: src/Form/Writer/MetadataSelectTrait.php:123
-msgid "Asset (thumbnail)"
-msgstr "Fichier (vignette)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:133
-msgid "Asset file nameif any, else primary media original file name"
-msgstr ""
-"Nom du fichier de la vignette attachée, sinon nom du fichier original du "
-"média principal"
-
-#: src/Form/Writer/MetadataSelectTrait.php:140
-msgid "Item (for media)"
-msgstr "Item (pour média)"
-
-#: src/Form/Writer/MetadataSelectTrait.php:148
-msgid "Resource (for annotation)"
-msgstr "Ressource (pour annotation)"
-
-#: src/Form/Writer/ResourceQueryTrait.php:16
-msgid "Resource query"
-msgstr "Requête pour les ressources"
-
-#: src/Form/Writer/ResourceQueryTrait.php:17
-msgid "Limit the resources output. Should be used with one resource type only."
-msgstr ""
-"Limiter la sortie des ressources. Utiliser avec un seul type de ressource."
-
-#: src/Form/Writer/ResourceTypesSelectTrait.php:16
-msgid "Resource types"
-msgstr "Types de ressource"
-
-#: src/Form/Writer/ResourceTypesSelectTrait.php:17
-msgid ""
-"When multiple types are selected, a column is automatically added to "
-"identify it."
-msgstr ""
-"Quand plusieurs types sont choisis, une colonne est automatiquement ajoutée "
-"pour l’identifier."
-
-#: src/Form/Writer/ResourceTypesSelectTrait.php:28
-msgid "Select one or more resource type…"
-msgstr "Choisir un ou plusieurs types de ressource…"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:20
-msgid "This optional comment will help admins for future reference."
-msgstr ""
-"Ce commentaire facultatif pourra aider les admins dans les références "
-"futures."
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:25
-msgid "Optional comment for future reference."
-msgstr "Commentaire facultatif pour référence future."
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:43
-msgid ""
-"Include deleted resources according to date (require module HistoryLog, "
-"query unsupported)"
-msgstr ""
-"Inclure les ressources supprimées depuis la date (nécessite le module "
-"HistoryLog, requête non gérée)"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:46
-msgid "Id only"
-msgstr "Id seulement"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:66
-msgid "Directory"
-msgstr "Dossier"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:67
-msgid ""
-"This setting allows to store the file in the specified location. It should "
-"be writeable by the web server. It may be relative to Omeka root. Available "
-"placeholders are: \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", "
-"\"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
-msgstr ""
-"Ce paramètre permet d’enregistrer le fichier dans le chemin défini. Il doit "
-"être inscriptible par le serveur web. Il peut être relatif à la racine "
-"Omeka. Les jokers disponibles sont : \"{label}\", \"{exporter}\", "
-"\"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", "
-"\"{random}\"."
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:80
-msgid "Filename"
-msgstr "Nom de fichier"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:81
-msgid ""
-"This setting allows to store the file always with the same name, generally "
-"for server tasks. The existing file will be overridden. Available "
-"placeholders are: \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", "
-"\"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
-msgstr ""
-"Ce paramètre permet d’enregistrer le fichier dans le chemin défini. Il doit "
-"être inscriptible par le serveur web. Il peut être relatif à la racine "
-"Omeka. Les jokers disponibles sont : \"{label}\", \"{exporter}\", "
-"\"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", "
-"\"{random}\"."
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:99
-msgid "Export all original or thumbnails as zip"
-msgstr "Exporter tous les originaux ou les vignettes au format zip"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:102
-msgid "Large"
-msgstr "Large"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:104
-msgid "Square"
-msgstr "Carré"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:105
-msgid "Attached asset"
-msgstr "Actif rattaché"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:106
-msgid "Asset, else original"
-msgstr "Actif, sinon original"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:107
-msgid "Asset, else large"
-msgstr "Actif, sinon important"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:108
-msgid "Asset, else medium"
-msgstr "Actif, sinon moyen"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:109
-msgid "Asset, else square"
-msgstr "Actif, sinon carré"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:120
-msgid "Incremental since last successful export"
-msgstr "Export incrémental depuis le dernier export complet"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:121
-msgid ""
-"Only new and updated resources since last completed export with the same "
-"exporter and user will be output."
-msgstr ""
-"Seuls les ressources nouvelles et mises à jour depuis le dernier export "
-"complet avec le même exporteur et utilisateur seront exportées."
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:139
-msgid "Use a background job"
-msgstr "Utiliser une tâche en arrière-plan"
-
-#: src/Form/Writer/AbstractWriterConfigForm.php:140
-msgid ""
-"For complex formats or numerous resources, the process may require more than "
-"30 seconds, that is the default duration of web server before error."
-msgstr ""
-"Pour les formats complexes ou pour un grand nombre de ressources, le "
-"traitement peut durer plus de 30 secondes, ce qui est la durée par défaut "
-"des serveurs web avant une erreur."
-
-#: src/Form/Writer/CsvWriterConfigForm.php:18
-msgid "Delimiter"
-msgstr "Délimiteur"
-
-#: src/Form/Writer/CsvWriterConfigForm.php:29
-msgid "Enclosure"
-msgstr "Séparateur"
-
-#: src/Form/Writer/CsvWriterConfigForm.php:40
-msgid "Escape"
-msgstr "Échappement"
 
 #: src/Form/ShaperDeleteForm.php:29
 msgid "Delete shaper"
@@ -1610,11 +1151,289 @@ msgstr "Supprimer un formateur"
 msgid "Start export"
 msgstr "Lancer l’export"
 
-#: src/Api/Representation/ExportRepresentation.php:143
+#: src/Form/Formatter/MetadataSelectTrait.php:18
+msgid "If empty, all used properties will be returned."
+msgstr "Si vide, toutes les propriétés utilisées seront retournées."
+
+#: src/Form/Formatter/MetadataSelectTrait.php:27
+#: src/Form/Formatter/MetadataSelectTrait.php:54
+msgid "Select one or more metadata…"
+msgstr "Choisir une ou plusieurs métadonnées…"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:35
+msgid "Metadata to exclude"
+msgstr "Métadonnées à exclure"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:36
+msgid "It is recommended to remove big fields from the list of properties, in particular extracted text."
+msgstr "Il est recommandé de supprimer les grands champs de la liste des propriétés, notamment le texte complet."
+
+#: src/Form/Formatter/MetadataSelectTrait.php:39
+#: src/Form/Formatter/MetadataSelectTrait.php:65
+msgid "Resource metadata"
+msgstr "Métadonnées des ressources"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:41
+#: src/Form/Formatter/MetadataSelectTrait.php:83
+msgid "All used properties more than 500 characters"
+msgstr "Propriétés utilisées de plus de 5000 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:42
+#: src/Form/Formatter/MetadataSelectTrait.php:85
+msgid "All used properties more than 1000 characters"
+msgstr "Propriétés utilisées de plus de 1000 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:43
+#: src/Form/Formatter/MetadataSelectTrait.php:87
+msgid "All used properties more than 5000 characters"
+msgstr "Propriétés utilisées de plus de 5000 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:67
+msgid "Specific fields below"
+msgstr "Champs spécifiques ci-dessous"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:68
+#: src/Form/Formatter/MetadataSelectTrait.php:98
+#: src/Form/Formatter/MetadataSelectTrait.php:106
+#: src/Form/Formatter/MetadataSelectTrait.php:142
+#: src/Form/Formatter/MetadataSelectTrait.php:150
+msgid "Internal id"
+msgstr "Id interne"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:69
+msgid "Resource url"
+msgstr "Url de la ressource"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:76
+msgid "Owner id"
+msgstr "Id du propriétaire"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:77
+msgid "Visibility public/private"
+msgstr "Visibilité public/privé"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:79
+msgid "Openness"
+msgstr "Ouverture"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:81
+msgid "All used properties"
+msgstr "Toutes les propriétés utilisées"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:82
+msgid "All used properties less than 500 characters"
+msgstr "Propriétés utilisées de moins de 500 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:84
+msgid "All used properties less than 1000 characters"
+msgstr "Propriétés utilisées de moins de 1000 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:86
+msgid "All used properties less than 5000 characters"
+msgstr "Propriétés utilisées de moins de 5000 caractères"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:92
+msgid "Tags (Folksonomy)"
+msgstr "Mots-clés (Folksonomy)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:96
+msgid "Item set (for item)"
+msgstr "Collection (pour item)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:100
+#: src/Form/Formatter/MetadataSelectTrait.php:119
+#: src/Form/Formatter/MetadataSelectTrait.php:144
+#: src/Form/Formatter/MetadataSelectTrait.php:152
+msgid "Label (first title)"
+msgstr "Libellé (premier titre)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:104
+msgid "Media (for item)"
+msgstr "Média (pour item)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:107
+msgid "Url / File"
+msgstr "Url / fichier"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:108
+msgid "File name"
+msgstr "Nom du fichier"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:109
+msgid "Source url / file"
+msgstr "Url ou fichier source"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:123
+msgid "Asset (thumbnail)"
+msgstr "Fichier (vignette)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:140
+msgid "Item (for media)"
+msgstr "Item (pour média)"
+
+#: src/Form/Formatter/MetadataSelectTrait.php:148
+msgid "Resource (for annotation)"
+msgstr "Ressource (pour annotation)"
+
+#: src/Form/Formatter/ResourceQueryTrait.php:16
+msgid "Resource query"
+msgstr "Requête pour les ressources"
+
+#: src/Form/Formatter/ResourceQueryTrait.php:17
+msgid "Limit the resources output. Should be used with one resource type only."
+msgstr "Limiter la sortie des ressources. Utiliser avec un seul type de ressource."
+
+#: src/Form/Formatter/ResourceTypesSelectTrait.php:16
+msgid "Resource types"
+msgstr "Types de ressource"
+
+#: src/Form/Formatter/ResourceTypesSelectTrait.php:17
+msgid "When multiple types are selected, a column is automatically added to identify it."
+msgstr "Quand plusieurs types sont choisis, une colonne est automatiquement ajoutée pour l’identifier."
+
+#: src/Form/Formatter/ResourceTypesSelectTrait.php:28
+msgid "Select one or more resource type…"
+msgstr "Choisir un ou plusieurs types de ressource…"
+
+#: src/Form/Formatter/CsvConfigForm.php:18
+msgid "Delimiter"
+msgstr "Délimiteur"
+
+#: src/Form/Formatter/CsvConfigForm.php:29
+msgid "Enclosure"
+msgstr "Séparateur"
+
+#: src/Form/Formatter/CsvConfigForm.php:40
+msgid "Escape"
+msgstr "Échappement"
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:17
+msgid "Multi-value separator"
+msgstr "Séparateur multi-valeur"
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:18
+msgid ""
+"To output all values of each property, cells can be multivalued with this separator.\n"
+"It is recommended to use a character that is never used, like \"|\", or a random string.\n"
+"If \"One value per column\" is enabled, this separator is used only for non-property fields."
+msgstr ""
+"Pour exporter toutes les valeurs de chaque propriété, les cellules doivent être multivaluées avec un séparateur.\n"
+"Il est recommandé d’utiliser un caractère qui n’est jamais utilisé, comme \"|\" ou une chaîne de caractères aléatoires.\n"
+"Avec l’option \"une valeur par colonne\", le séparateur est utilisé seulement pour les métadonnées autres que les propriétés."
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:33
+msgid "One value per column"
+msgstr "Une valeur par colonne"
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:34
+msgid ""
+"When enabled, each value of a multi-valued property gets its own column instead of being joined with a separator.\n"
+"The module pre-scans all resources to determine the maximum number of values for each property.\n"
+"For resources with fewer values, the extra columns are left empty."
+msgstr ""
+"Lorsque cette option est activée, chaque valeur d’une propriété multivaluée dispose de sa propre colonne au lieu d’être regroupée avec un séparateur.\n"
+"Le module analyse au préalable toutes les ressources afin de déterminer le nombre maximal de valeurs pour chaque propriété.\n"
+"Pour les ressources comportant moins de valeurs, les colonnes supplémentaires restent vides."
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:48
+msgid "Column metadata in headers"
+msgstr "Ajouter les métadonnées en en-tête"
+
+#: src/Form/Formatter/SpreadsheetConfigForm.php:49
+msgid ""
+"Add metadata attributes to column headers.\n"
+"When combined with \"One value per column\", creates separate columns for each metadata group.\n"
+"Without \"One value per column\", values in each metadata group are joined with the separator."
+msgstr ""
+"Ajoutez des attributs de métadonnées aux en-têtes de colonnes.\n"
+"Combiné avec l’option « Une valeur par colonne », cela crée des colonnes distinctes pour chaque groupe de métadonnées.\n"
+"Sans l'option « Une valeur par colonne », les valeurs de chaque groupe de métadonnées sont reliées par le séparateur."
+
+#: src/Form/Formatter/AbstractConfigForm.php:20
+msgid "This optional comment will help admins for future reference."
+msgstr "Ce commentaire facultatif pourra aider les admins dans les références futures."
+
+#: src/Form/Formatter/AbstractConfigForm.php:25
+msgid "Optional comment for future reference."
+msgstr "Commentaire facultatif pour référence future."
+
+#: src/Form/Formatter/AbstractConfigForm.php:43
+msgid "Include deleted resources according to date (require module HistoryLog, query unsupported)"
+msgstr "Inclure les ressources supprimées depuis la date (nécessite le module HistoryLog, requête non gérée)"
+
+#: src/Form/Formatter/AbstractConfigForm.php:46
+msgid "Id only"
+msgstr "Id seulement"
+
+#: src/Form/Formatter/AbstractConfigForm.php:66
+msgid "Directory"
+msgstr "Dossier"
+
+#: src/Form/Formatter/AbstractConfigForm.php:67
+msgid "This setting allows to store the file in the specified location. It should be writeable by the web server. It may be relative to Omeka root. Available placeholders are: \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
+msgstr "Ce paramètre permet d’enregistrer le fichier dans le chemin défini. Il doit être inscriptible par le serveur web. Il peut être relatif à la racine Omeka. Les jokers disponibles sont : \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
+
+#: src/Form/Formatter/AbstractConfigForm.php:80
+msgid "Filename"
+msgstr "Nom de fichier"
+
+#: src/Form/Formatter/AbstractConfigForm.php:81
+msgid "This setting allows to store the file always with the same name, generally for server tasks. The existing file will be overridden. Available placeholders are: \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
+msgstr "Ce paramètre permet d’enregistrer le fichier dans le chemin défini. Il doit être inscriptible par le serveur web. Il peut être relatif à la racine Omeka. Les jokers disponibles sont : \"{label}\", \"{exporter}\", \"{export_id}\", \"{date}\", \"{time}\", \"{user_id}\", \"{username}\", \"{random}\"."
+
+#: src/Form/Formatter/AbstractConfigForm.php:99
+msgid "Export all original or thumbnails as zip"
+msgstr "Exporter tous les originaux ou les vignettes au format zip"
+
+#: src/Form/Formatter/AbstractConfigForm.php:102
+msgid "Large"
+msgstr "Large"
+
+#: src/Form/Formatter/AbstractConfigForm.php:104
+msgid "Square"
+msgstr "Carré"
+
+#: src/Form/Formatter/AbstractConfigForm.php:105
+msgid "Attached asset"
+msgstr "Actif rattaché"
+
+#: src/Form/Formatter/AbstractConfigForm.php:106
+msgid "Asset, else original"
+msgstr "Actif, sinon original"
+
+#: src/Form/Formatter/AbstractConfigForm.php:107
+msgid "Asset, else large"
+msgstr "Actif, sinon important"
+
+#: src/Form/Formatter/AbstractConfigForm.php:108
+msgid "Asset, else medium"
+msgstr "Actif, sinon moyen"
+
+#: src/Form/Formatter/AbstractConfigForm.php:109
+msgid "Asset, else square"
+msgstr "Actif, sinon carré"
+
+#: src/Form/Formatter/AbstractConfigForm.php:120
+msgid "Incremental since last successful export"
+msgstr "Export incrémental depuis le dernier export complet"
+
+#: src/Form/Formatter/AbstractConfigForm.php:121
+msgid "Only new and updated resources since last completed export with the same exporter and user will be output."
+msgstr "Seuls les ressources nouvelles et mises à jour depuis le dernier export complet avec le même exporteur et utilisateur seront exportées."
+
+#: src/Form/Formatter/AbstractConfigForm.php:139
+msgid "Use a background job"
+msgstr "Utiliser une tâche en arrière-plan"
+
+#: src/Form/Formatter/AbstractConfigForm.php:140
+msgid "For complex formats or numerous resources, the process may require more than 30 seconds, that is the default duration of web server before error."
+msgstr "Pour les formats complexes ou pour un grand nombre de ressources, le traitement peut durer plus de 30 secondes, ce qui est la durée par défaut des serveurs web avant une erreur."
+
+#: src/Api/Representation/ExportRepresentation.php:152
 msgid "ready"
 msgstr "prêt"
 
-#: src/Api/Representation/ExportRepresentation.php:149
+#: src/Api/Representation/ExportRepresentation.php:158
 msgid "Ready"
 msgstr "Prêt"
 
@@ -1642,88 +1461,78 @@ msgstr "Tentative d’arrêt du traitement d’export #{export}"
 msgid "The process #{export} cannot be stopped."
 msgstr "Le traitement #{export} ne peut pas être arrêté."
 
-#: src/Controller/Admin/ExporterController.php:37
-#: src/Controller/Admin/ExporterController.php:105
-#: src/Controller/Admin/ExporterController.php:154
-#: src/Controller/Admin/ExporterController.php:234
+#: src/Controller/Admin/ExporterController.php:35
+#: src/Controller/Admin/ExporterController.php:103
+#: src/Controller/Admin/ExporterController.php:152
+#: src/Controller/Admin/ExporterController.php:243
 msgid "exporter_id"
 msgstr "exporter_id"
 
-#: src/Controller/Admin/ExporterController.php:69
+#: src/Controller/Admin/ExporterController.php:67
 msgid "Save of exporter {exporter_label} failed"
 msgstr "Échec de l’enregistrement de l’exporteur {exporter_label}"
 
-#: src/Controller/Admin/ExporterController.php:78
+#: src/Controller/Admin/ExporterController.php:76
 msgid "Exporter {exporter_label} successfully saved"
 msgstr "Exporteur {exporter_label} sauvegardé"
 
-#: src/Controller/Admin/ExporterController.php:114
+#: src/Controller/Admin/ExporterController.php:112
 msgid "This exporter cannot be deleted: exports that use it exist."
 msgstr "L’exporteur ne peut pas être supprimé : des exports l’utilisent."
 
-#: src/Controller/Admin/ExporterController.php:127
+#: src/Controller/Admin/ExporterController.php:125
 msgid "Exporter successfully deleted"
 msgstr "Suppression de l’exporteur réussie"
 
-#: src/Controller/Admin/ExporterController.php:129
+#: src/Controller/Admin/ExporterController.php:127
 msgid "Delete of exporter failed"
 msgstr "Échec de la suppression de l’exporteur"
 
-#: src/Controller/Admin/ExporterController.php:192
-msgid "Writer configuration for exporter {exporter_label} successfully saved"
-msgstr ""
-"La configuration de l’écriveur pour l'exporteur {exporter_label} a été "
-"sauvegardée avec succès"
+#: src/Controller/Admin/ExporterController.php:160
+msgid "N/A"
+msgstr "N/A"
 
-#: src/Controller/Admin/ExporterController.php:197
-msgid "Save of writer configuration for exporter {exporter_label} failed"
-msgstr ""
-"Échec de l’enregistrement de la configuration pour l’exporteur "
-"{exporter_label}"
+#: src/Controller/Admin/ExporterController.php:202
+msgid "Configuration for exporter {exporter_label} successfully saved"
+msgstr "La configuration de l’exporteur {exporter_label} a été sauvegardée avec succès"
 
-#: src/Controller/Admin/ExporterController.php:242
-msgid "writer"
-msgstr "écriveur"
+#: src/Controller/Admin/ExporterController.php:207
+msgid "Save of configuration for exporter {exporter_label} failed"
+msgstr "Échec de l’enregistrement de la configuration de l’exporteur {exporter_label}"
 
-#: src/Controller/Admin/ExporterController.php:263
+#: src/Controller/Admin/ExporterController.php:251
+msgid "Formatter is not configured for this exporter"
+msgstr "Le formateur n’est pas configuré pour cet exporteur"
+
+#: src/Controller/Admin/ExporterController.php:269
 msgid "This export will be stored to be run as a task."
 msgstr "Cet export sera enregistré pour être lancé en tant que tâche."
 
-#: src/Controller/Admin/ExporterController.php:274
+#: src/Controller/Admin/ExporterController.php:280
 msgid "The page was reloaded, but params are lost. Restart the export."
-msgstr ""
-"La page a été rechargée, mais les paramètres ont été perdus. Relancer "
-"l’export."
+msgstr "La page a été rechargée, mais les paramètres ont été perdus. Relancer l’export."
 
-#: src/Controller/Admin/ExporterController.php:332
+#: src/Controller/Admin/ExporterController.php:329
 msgid "Save of export failed"
 msgstr "Échec de l’enregistrement de la ressource"
 
-#: src/Controller/Admin/ExporterController.php:342
+#: src/Controller/Admin/ExporterController.php:339
 msgid "The export #{bulk_export} was stored for future use."
 msgstr "L’export #{bulk_export} a été enregistré pour une utilisation future."
 
-#: src/Controller/Admin/ExporterController.php:366
-msgid ""
-"Export started in background (job {link_open_job}#{jobId}{link_close}, "
-"{link_open_log}logs{link_close}). This may take a while."
-msgstr ""
-"Export lancé en arrière-plan (tâche {link_open_job}#{jobId}{link_close}, "
-"{link_open_log}journaux{link_close}). Cela peut prendre un moment."
+#: src/Controller/Admin/ExporterController.php:363
+msgid "Export started in background (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close}). This may take a while."
+msgstr "Export lancé en arrière-plan (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}journaux{link_close}). Cela peut prendre un moment."
 
-#: src/Controller/Admin/ExporterController.php:367
-msgid ""
-"Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
-"logs{link_close})."
-msgstr ""
-"Export lancé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}"
-"journaux{link_close})."
+#: src/Controller/Admin/ExporterController.php:364
+msgid "Export processed in (job {link_open_job}#{jobId}{link_close}, {link_open_log}logs{link_close})."
+msgstr "Export lancé (tâche {link_open_job}#{jobId}{link_close}, {link_open_log}journaux{link_close})."
 
-#: src/Controller/Admin/ExporterController.php:386
+#: src/Controller/Admin/ExporterController.php:383
 msgid "Export start failed"
 msgstr "Échec du lancement de l’export"
 
-#: src/Controller/Admin/ExporterController.php:462
+#: src/Controller/Admin/ExporterController.php:461
 msgid "Continue"
 msgstr "Continuer"
 
@@ -1733,7 +1542,7 @@ msgstr "Suppression du formateur réussie"
 
 #: src/Controller/Admin/ShaperController.php:134
 msgid "You must select at least one shaper to batch delete."
-msgstr "Vous devez sélectionner au moins un façonneur à supprimer par lot."
+msgstr "Vous devez sélectionner au moins un formateur à supprimer par lot."
 
 #: src/Controller/Admin/ShaperController.php:143
 msgid "Shapers successfully deleted"
@@ -1741,7 +1550,7 @@ msgstr "Suppression de l’exporteur réussie"
 
 #: src/Controller/Admin/ShaperController.php:169
 msgid "Deleting shapers. This may take a while."
-msgstr "Suppression des façonneurs. Cela peut prendre un certain temps."
+msgstr "Suppression des formateurs. Cela peut prendre un certain temps."
 
 #: src/Controller/Admin/ShaperController.php:198
 msgid "shaper_id"
@@ -1759,82 +1568,86 @@ msgstr "Formateur sauvegardé"
 msgid "Missing output format configuration"
 msgstr "La configuration du format de sortie manque"
 
-#: src/Formatter/AbstractFormatter.php:206
-msgid "Unable to format resources as {format}."
-msgstr "Impossible de formater les ressources en {format}."
-
-#: src/Formatter/AbstractFormatter.php:421
-msgid "Unable to save output to file: {error}."
-msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
-
-#: src/Formatter/Odt.php:25 src/Formatter/Ods.php:20
-msgid ""
-"To process export to \"{format}\", the php extensions \"zip\" and \"xml\" "
-"are required."
-msgstr ""
-"Pour réaliser un export dans le format \"{format}\", les extensions php "
-"\"zip\" et xml\" sont nécessaires."
-
+#: src/Formatter/AbstractSpreadsheetFormatter.php:50
 #: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:48
 msgid "No metadata are used in any resources."
 msgstr "Aucune métadonnée n’est utilisée dans les ressources."
 
-#: src/Formatter/GeoJson.php:235
+#: src/Formatter/AbstractSpreadsheetFormatter.php:184
+msgid "Skipped resource #{resource_id}: a value in field \"{field}\" contains the separator \"{separator}\"."
+msgstr "Ignore la ressource #{resource_id} : une value dans le champ \"{field}\" contient le séparateur \"{separator}\"."
+
+#: src/Formatter/AbstractFormatter.php:219
+msgid "Unable to format resources as {format}."
+msgstr "Impossible de formater les ressources en {format}."
+
+#: src/Formatter/AbstractFormatter.php:401 src/Formatter/Ods.php:58
+msgid "Unable to open output: {error}."
+msgstr "Impossible d’ouvrir la sortie : {error}."
+
+#: src/Formatter/AbstractFormatter.php:438
+msgid "Unable to save output to file: {error}."
+msgstr "Impossible d’enregistrer le résultat dans le fichier : {error}."
+
+#: src/Formatter/Odt.php:25 src/Formatter/Ods.php:19
+msgid "To process export to \"{format}\", the php extensions \"zip\" and \"xml\" are required."
+msgstr "Pour réaliser un export dans le format \"{format}\", les extensions php \"zip\" et xml\" sont nécessaires."
+
+#: src/Formatter/Odt.php:84
+msgid "Fields with values of {max_length} characters or more that will be skipped: {fields}."
+msgstr "Champs avec une longueur supérieure ou égale à {max_length} caractères ignorés : {fields}."
+
+#: src/Formatter/Odt.php:114
+msgid "Skipped values with more than 1000 characters: {fields}."
+msgstr "Ignorer les valeurs de plus de 1000 caractères : {fields}."
+
+#: src/Formatter/GeoJson.php:247
 msgid "The geonames uri \"{url}\" is invalid."
 msgstr "L’uri geonames « {url} » est incorrecte."
 
-#: src/Formatter/GeoJson.php:300
-msgid ""
-"There is no coordinates for url \"{url}\" (name: {name}), used in resource "
-"#{resource_id}."
-msgstr ""
-"Il n’y a pas de coordonnées pour l’url « {url} » (nom : {name}) (ressource "
-"#{resource_id})."
+#: src/Formatter/GeoJson.php:312
+msgid "There is no coordinates for url \"{url}\" (name: {name}), used in resource #{resource_id}."
+msgstr "Il n’y a pas de coordonnées pour l’url « {url} » (nom : {name}) (ressource #{resource_id})."
 
-#: src/Formatter/GeoJson.php:375
+#: src/Formatter/GeoJson.php:387
 msgid "Output is not xml for url \"{url}\" (resource #{resource_id})."
-msgstr ""
-"La sortie n’est pas du xml pour l’url « {url} » (ressource #{resource_id})."
+msgstr "La sortie n’est pas du xml pour l’url « {url} » (ressource #{resource_id})."
 
-#: src/Formatter/GeoJson.php:383
+#: src/Formatter/GeoJson.php:395
 msgid "Output is not a valid xml for url \"{url}\" (resource #{resource_id})."
-msgstr ""
-"La sortie n’est pas du xml valide pour l’url « {url} » (ressource "
-"#{resource_id})."
+msgstr "La sortie n’est pas du xml valide pour l’url « {url} » (ressource #{resource_id})."
 
-#: src/Formatter/GeoJson.php:414
-msgid ""
-"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
-"{exception}. Retrying in one minute."
-msgstr ""
-"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
-"{exception}. Nouvelle tentative dans une minute."
+#: src/Formatter/GeoJson.php:426
+msgid "Connection error when fetching url \"{url}\" (resource #{resource_id}): {exception}. Retrying in one minute."
+msgstr "Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {exception}. Nouvelle tentative dans une minute."
 
-#: src/Formatter/GeoJson.php:425
-msgid ""
-"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
-"{exception}. Retrying in ten minutes."
-msgstr ""
-"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
-"{exception}. Nouvelle tentative dans dix minutes."
+#: src/Formatter/GeoJson.php:437
+msgid "Connection error when fetching url \"{url}\" (resource #{resource_id}): {exception}. Retrying in ten minutes."
+msgstr "Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {exception}. Nouvelle tentative dans dix minutes."
 
-#: src/Formatter/GeoJson.php:433 src/Formatter/GeoJson.php:440
-msgid ""
-"Connection error when fetching url \"{url}\" (resource #{resource_id}): "
-"{exception}"
-msgstr ""
-"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : "
-"{exception}"
+#: src/Formatter/GeoJson.php:445 src/Formatter/GeoJson.php:452
+msgid "Connection error when fetching url \"{url}\" (resource #{resource_id}): {exception}"
+msgstr "Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {exception}"
 
-#: src/Formatter/GeoJson.php:448
-msgid ""
-"Connection issue when fetching url \"{url}\" (resource #{resource_id}): {msg}"
-msgstr ""
-"Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {msg}"
+#: src/Formatter/GeoJson.php:460
+msgid "Connection issue when fetching url \"{url}\" (resource #{resource_id}): {msg}"
+msgstr "Erreur de connexion pour l’url « {url} » (ressource #{resource_id}) : {msg}"
 
-#: src/Formatter/GeoJson.php:457
+#: src/Formatter/GeoJson.php:469
 msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
 msgstr "La sortie est vide pour l’url « {url} » (ressource #{resource_id})."
+
+#: src/Formatter/Ods.php:29
+msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
+msgstr "Le dossier temporaire \"{folder}\" n’existe pas ou n’est pas inscriptible."
+
+#: src/Formatter/Manager.php:45
+msgid "Formatter \"{formatter}\" cannot be loaded: {error}. Check that the required library is the correct version and is not overridden in another module."
+msgstr "Impossible de charger le formateur « {formatter} » : {error}. Vérifiez que la bibliothèque requise est bien de la bonne version et qu’elle n'est pas redéfinie dans un autre module."
+
+#: src/Formatter/AbstractFieldsJsonFormatter.php:69
+msgid "Unable to check output: {error}."
+msgstr "Impossible de vérifier la sortie : {error}."
 
 #: src/Site/ResourcePageBlockLayout/BulkExportSearch.php:13
 msgid "Bulk export (search)"
@@ -1848,17 +1661,79 @@ msgstr "Export en lot (bouton / recherche)"
 msgid "Bulk export button"
 msgstr "Export en lot (bouton)"
 
-#: config/module.config.php:374
+#: config/module.config.php:375
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: config/module.config.php:387
+#: config/module.config.php:388
 msgid "Past Exports"
 msgstr "Exports précédents"
 
-#: config/module.config.php:404
+#: config/module.config.php:405
 msgid "Params"
 msgstr "Paramètres"
+
+#~ msgid "Writer"
+#~ msgstr "Écriveur"
+
+#, php-format
+#~ msgid "Writer: %s"
+#~ msgstr "Écriveur : %s"
+
+#, php-format
+#~ msgid "No argument files (%s)."
+#~ msgstr "Fichiers d’arguments manquants (%s)."
+
+#~ msgid "Skipped field \"{fieldname}\" of resource: it contains more than 1000 characters."
+#~ msgstr "Le champ \"{fieldname}\" a été ignoré : il contient plus de 1000 caractères."
+
+#~ msgid "No headers are used in any resources."
+#~ msgstr "Aucune entête n’est utilisée dans les ressources."
+
+#~ msgid "{number} different fields are used in all resources."
+#~ msgstr "{number} champs différents sont utilisés dans toutes les ressources."
+
+#~ msgid "No resource type selected."
+#~ msgstr "Pas de type de ressource sélectionné."
+
+#~ msgid "All resources of all resource types ({total}) exported."
+#~ msgstr "Toutes les ressources de tous les types de ressource ({total}) ont été exportées."
+
+#~ msgid "End export of {resource_type}."
+#~ msgstr "Fin de l’export de {resource_type}."
+
+#~ msgid "End export of {total} deleted {resource_type}."
+#~ msgstr "Fin de l’export de {total} {resource_type} supprimés."
+
+#~ msgid "No deleted resource exported for {resource_type}."
+#~ msgstr "Aucune ressource n’a été exportée pour {resource_type}."
+
+#~ msgid "GeoJSON"
+#~ msgstr "GéoJSON"
+
+#~ msgid "OpenDocument Text"
+#~ msgstr "OpenDocument Text"
+
+#~ msgid "To process export of \"{label}\", the php extensions \"zip\" and \"xml\" are required."
+#~ msgstr "Pour réaliser un export de {label}\", les extensions php \"zip\" et xml\" sont nécessaires."
+
+#~ msgid "Unsupported format {format} for spreadsheet."
+#~ msgstr "Format non géré \"{format}\" pour les tableurs."
+
+#~ msgid "Json Table"
+#~ msgstr "Json Table"
+
+#~ msgid "Output directory \"{folder}\" is not writeable."
+#~ msgstr "Le dossier de sortie ({folder}) n’est pas inscriptible."
+
+#~ msgid "OpenDocument Spreadsheet"
+#~ msgstr "OpenDocument Spreadsheet"
+
+#~ msgid "Asset file nameif any, else primary media original file name"
+#~ msgstr "Nom du fichier de la vignette attachée, sinon nom du fichier original du média principal"
+
+#~ msgid "writer"
+#~ msgstr "écriveur"
 
 #~ msgid "Available exporters"
 #~ msgstr "Exporteurs disponibles"
@@ -1886,31 +1761,19 @@ msgstr "Paramètres"
 #~ msgid "This module has resources that cannot be installed."
 #~ msgstr "Ce module a des ressources qui ne peuvent pas être installées."
 
-#~ msgid ""
-#~ "This module cannot install its tables, because they exist already. Try to "
-#~ "remove them first."
-#~ msgstr ""
-#~ "Ce module ne peut pas installer ses tables car elles existent déjà. "
-#~ "Essayez de les supprimer manuellement."
+#~ msgid "This module cannot install its tables, because they exist already. Try to remove them first."
+#~ msgstr "Ce module ne peut pas installer ses tables car elles existent déjà. Essayez de les supprimer manuellement."
 
 #, php-format
 #~ msgid "The module removed tables \"%s\" from a previous broken install."
-#~ msgstr ""
-#~ "Le module a supprimé les tables « %s » depuis une installation échouée."
+#~ msgstr "Le module a supprimé les tables « %s » depuis une installation échouée."
 
 #, php-format
-#~ msgid ""
-#~ "The module \"%s\" was automatically deactivated because the dependencies "
-#~ "are unavailable."
-#~ msgstr ""
-#~ "Le module \"%s\" a été automatiquement désactivé car ses dépendances ne "
-#~ "sont plus disponibles."
+#~ msgid "The module \"%s\" was automatically deactivated because the dependencies are unavailable."
+#~ msgstr "Le module \"%s\" a été automatiquement désactivé car ses dépendances ne sont plus disponibles."
 
-#~ msgid ""
-#~ "This module requires the module \"{module}\", version {version} or above."
-#~ msgstr ""
-#~ "Ce module requiert le module « {module} », version {version} ou "
-#~ "supérieure."
+#~ msgid "This module requires the module \"{module}\", version {version} or above."
+#~ msgstr "Ce module requiert le module « {module} », version {version} ou supérieure."
 
 #~ msgid "The directory \"{path}\" is not writeable: {error}."
 #~ msgstr "Le dossier \"{path}\" n’est pas inscriptible : {error}"
@@ -1939,15 +1802,8 @@ msgstr "Paramètres"
 #~ msgid "Owner email"
 #~ msgstr "Mail du propriétaire"
 
-#~ msgid "format"
-#~ msgstr "format"
-
-#~ msgid ""
-#~ "The dependency Box/Spout version should be >= 3.0. Upgrade dependencies "
-#~ "or CSV Import. See readme."
-#~ msgstr ""
-#~ "La dépendance Box/Spout doit avoir une version >= 3.0. Mettez à jour les "
-#~ "dépendances de CSV Import. Consultez le readme."
+#~ msgid "The dependency Box/Spout version should be >= 3.0. Upgrade dependencies or CSV Import. See readme."
+#~ msgstr "La dépendance Box/Spout doit avoir une version >= 3.0. Mettez à jour les dépendances de CSV Import. Consultez le readme."
 
 #~ msgid "Annotations"
 #~ msgstr "Annotations"
