@@ -115,7 +115,7 @@ $conf = [
                                 'options' => [
                                     'route' => '.:format',
                                     'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                         'action' => 'browse',
                                     ],
                                     'defaults' => [
@@ -134,7 +134,7 @@ $conf = [
                                 'options' => [
                                     'route' => '.:format',
                                     'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                         'action' => 'show',
                                     ],
                                     'defaults' => [
@@ -153,7 +153,7 @@ $conf = [
                             'route' => '/:controller:.:format',
                             'constraints' => [
                                 'controller' => 'resource|item-set|item|media|annotation',
-                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                 'action' => 'browse',
                             ],
                             'defaults' => [
@@ -168,7 +168,7 @@ $conf = [
                             'route' => '/:controller/:id:.:format',
                             'constraints' => [
                                 'controller' => 'resource|item-set|item|media|annotation',
-                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                 'id' => '\d+',
                                 'action' => 'show',
                             ],
@@ -234,7 +234,7 @@ $conf = [
                                 'options' => [
                                     'route' => '.:format',
                                     'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                         'action' => 'browse',
                                     ],
                                     'defaults' => [
@@ -253,7 +253,7 @@ $conf = [
                                 'options' => [
                                     'route' => '.:format',
                                     'constraints' => [
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                         'action' => 'show',
                                     ],
                                     'defaults' => [
@@ -271,7 +271,7 @@ $conf = [
                             'route' => '/:controller:.:format',
                             'constraints' => [
                                 'controller' => 'resource|item-set|item|media|annotation',
-                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                 'action' => 'browse',
                             ],
                             'defaults' => [
@@ -286,7 +286,7 @@ $conf = [
                             'route' => '/:controller/:id:.:format',
                             'constraints' => [
                                 'controller' => 'resource|item-set|item|media|annotation',
-                                'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                 'id' => '\d+',
                                 'action' => 'show',
                             ],
@@ -311,7 +311,7 @@ $conf = [
                                     'route' => '.:format',
                                     'constraints' => [
                                         'controller' => 'resources|item_sets|items|media|annotations',
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                     ],
                                     'defaults' => [
                                         // Don't set default action: it is a rest route.
@@ -337,7 +337,7 @@ $conf = [
                                     'route' => '.:format',
                                     'constraints' => [
                                         'controller' => 'resources|item_sets|items|media|annotations',
-                                        'format' => '[a-zA-Z0-9]+[a-zA-Z0-9.-]*',
+                                        'format' => 'csv|geojson|json-ld|json-table|json|list\.txt|ods|odt|tsv|txt',
                                     ],
                                     'defaults' => [
                                         // Don't set default action: it is a rest route.
