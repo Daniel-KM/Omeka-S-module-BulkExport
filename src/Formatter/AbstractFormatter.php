@@ -399,7 +399,7 @@ abstract class AbstractFormatter implements FormatterInterface
             $this->hasError = true;
             $this->logger->err(
                 'Unable to open output: {error}.', // @translate
-                ['error' => error_get_last()['message']]
+                ['error' => error_get_last()['message'] ?? 'unknown error']
             );
         }
         return $this;
@@ -436,7 +436,7 @@ abstract class AbstractFormatter implements FormatterInterface
             $this->hasError = true;
             $this->logger->err(
                 'Unable to save output to file: {error}.', // @translate
-                ['error' => error_get_last()['message']]
+                ['error' => error_get_last()['message'] ?? 'unknown error']
             );
         }
         $this->content = null;

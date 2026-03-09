@@ -221,8 +221,8 @@ trait BulkExportTestTrait
     {
         return [
             'delimiter' => "\t",
-            'enclosure' => chr(0),
-            'escape' => chr(0),
+            'enclosure' => "\0",
+            'escape' => "\0",
             'separator' => ' | ',
         ];
     }

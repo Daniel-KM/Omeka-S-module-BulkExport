@@ -19,7 +19,7 @@ class Tsv extends Csv
     public function __construct(ServiceLocatorInterface $services)
     {
         parent::__construct($services);
-        $this->defaultOptions['enclosure'] = chr(0);
-        $this->defaultOptions['escape'] = chr(0);
+        $this->defaultOptions['enclosure'] = "\0";
+        $this->defaultOptions['escape'] = "\0";
     }
 }

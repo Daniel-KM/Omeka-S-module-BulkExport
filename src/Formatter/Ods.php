@@ -48,7 +48,7 @@ class Ods extends AbstractSpreadsheetFormatter
             : @tempnam($tempDir, 'omk_bke_');
 
         $options = new OdsOptions();
-        $options->tempFolder = $tempDir;
+        $options->setTempFolder($tempDir);
         $this->spreadsheetWriter = new OdsWriter($options);
         try {
             $this->spreadsheetWriter
@@ -57,7 +57,7 @@ class Ods extends AbstractSpreadsheetFormatter
             $this->hasError = true;
             $this->logger->err(
                 'Unable to open output: {error}.', // @translate
-                ['error' => error_get_last()['message']]
+                ['error' => error_get_last()['message'] ?? 'unknown error']
             );
         }
         return $this;

@@ -844,7 +844,8 @@ class Export extends AbstractJob
     protected function slugify(string $input, bool $keepCase = false): string
     {
         if (extension_loaded('intl')) {
-            $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
+            static $transliterator;
+            $transliterator ??= \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
             $slug = $transliterator->transliterate($input);
         } elseif (extension_loaded('iconv')) {
             $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $input);

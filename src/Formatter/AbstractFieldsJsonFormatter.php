@@ -67,7 +67,7 @@ abstract class AbstractFieldsJsonFormatter extends AbstractFieldsFormatter
             $this->hasError = true;
             $this->logger->err(
                 'Unable to check output: {error}.', // @translate
-                ['error' => error_get_last()['message']]
+                ['error' => error_get_last()['message'] ?? 'unknown error']
             );
             return parent::finalizeOutput();
         }

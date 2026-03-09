@@ -80,7 +80,8 @@ trait ShaperTrait
 
                 if (in_array('remove_diacritics', $normalizations)) {
                     if (extension_loaded('intl')) {
-                        $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
+                        static $transliterator;
+                        $transliterator ??= \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
                         $value = $transliterator->transliterate((string) $value);
                     } elseif (extension_loaded('iconv')) {
                         $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $value);
