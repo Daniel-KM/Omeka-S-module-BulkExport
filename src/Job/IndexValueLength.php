@@ -30,6 +30,9 @@ class IndexValueLength extends AbstractJob
 
         $services = $this->getServiceLocator();
         $logger = $services->get('Omeka\Logger');
+        $referenceIdProcessor = new \Laminas\Log\Processor\ReferenceId();
+        $referenceIdProcessor->setReferenceId('bulk-export/index-value-length/job_' . $this->job->getId());
+        $logger->addProcessor($referenceIdProcessor);
         $connection = $services->get('Omeka\Connection');
 
         // Mode: 'all' (default) or 'missing'.
