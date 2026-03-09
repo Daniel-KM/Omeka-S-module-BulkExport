@@ -142,7 +142,7 @@ class ApiController extends \Omeka\Controller\ApiController
      *
      * @see https://github.com/omniti-labs/jsend#jsend
      */
-    protected function returnError($message, $statusCode = Response::STATUS_CODE_400, array $errors = null): JsonModel
+    protected function returnError($message, $statusCode = Response::STATUS_CODE_400, ?array $errors = null): JsonModel
     {
         $response = $this->getResponse();
         $response->setStatusCode($statusCode);
