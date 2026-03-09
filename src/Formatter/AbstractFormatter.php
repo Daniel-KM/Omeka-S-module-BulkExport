@@ -269,9 +269,13 @@ abstract class AbstractFormatter implements FormatterInterface
         if (!empty($options['resource_type']) && in_array($options['resource_type'], self::RESOURCES)) {
             $this->resourceType = $options['resource_type'];
         }
-        $options['resource_types'] = empty($this->resourceType)
-            ? []
-            : [$this->mapApiResourceToJsonResourceType($this->resourceType)];
+        // Only set resource_types from resource_type (singular) when
+        // not already provided (e.g. from Job-based export options).
+        if (empty($options['resource_types'])) {
+            $options['resource_types'] = empty($this->resourceType)
+                ? []
+                : [$this->mapApiResourceToJsonResourceType($this->resourceType)];
+        }
 
         // Some quick checks to prepare params in all cases.
         if (!empty($resources)) {

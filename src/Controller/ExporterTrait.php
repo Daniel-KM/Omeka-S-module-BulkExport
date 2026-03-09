@@ -53,6 +53,9 @@ trait ExporterTrait
         $options['format_uri'] = $settings->get('bulkexport_format_uri', 'uri_label');
         $options['language'] = $settings->get('bulkexport_language', '');
         $options['template'] = $settings->get('bulkexport_template');
+        $options['separator'] = $settings->get('bulkexport_separator', ' | ');
+        $options['value_per_column'] = (bool) $settings->get('bulkexport_value_per_column', false);
+        $options['column_metadata'] = $settings->get('bulkexport_column_metadata', []);
         $options['is_site_request'] = $isSiteRequest;
         $options['resource_type'] = $resourceName;
         $options['limit'] = $resourceLimit;

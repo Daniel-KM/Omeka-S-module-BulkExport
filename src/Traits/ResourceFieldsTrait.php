@@ -1048,7 +1048,9 @@ trait ResourceFieldsTrait
                 }
             } elseif ($hasValuePerColumn) {
                 // value_per_column only: just repeat the field name.
-                for ($i = 1; $i <= $info['max_count']; $i++) {
+                // Ensure at least 1 column so the property is not lost.
+                $maxCount = max(1, $info['max_count']);
+                for ($i = 1; $i <= $maxCount; $i++) {
                     // Use the same header name for all columns (as requested).
                     $this->expandedFieldNames[] = $fieldName;
                     $this->expandedFieldsMap[$fieldName . '#' . $i] = [
@@ -1111,22 +1113,27 @@ trait ResourceFieldsTrait
         $hasMetadataMode = !empty($columnMetadata) && !empty($info['columns']);
         $hasValuePerColumn = $this->isValuePerColumnMode();
 
-        $values = $resource->value($fieldName, ['all' => true]);
-
         if (!$hasMetadataMode) {
-            // value_per_column only: return values in order, padded with empty strings.
+            // value_per_column only: use stringMetadata() for proper
+            // formatting of resource, uri, and literal values.
+            $formattedValues = $this->stringMetadata($resource, $fieldName);
+            $maxCount = max(1, $info['max_count']);
             $result = [];
-            for ($i = 0; $i < $info['max_count']; $i++) {
-                $result[] = isset($values[$i]) ? (string) $values[$i] : '';
+            for ($i = 0; $i < $maxCount; $i++) {
+                $result[] = (string) ($formattedValues[$i] ?? '');
             }
             return $result;
         }
 
-        // Metadata mode: organize values by metadata combination.
+        // Metadata mode: get raw values for grouping by metadata
+        // key, and formatted values for output.
+        $rawValues = $resource->value($fieldName, ['all' => true]);
+        $formattedValues = $this->stringMetadata($resource, $fieldName);
+
         $valuesByMetadata = [];
-        foreach ($values as $value) {
+        foreach ($rawValues as $i => $value) {
             $key = $this->getValueMetadataKey($value, $columnMetadata);
-            $valuesByMetadata[$key][] = (string) $value;
+            $valuesByMetadata[$key][] = (string) ($formattedValues[$i] ?? '');
         }
 
         // Build result array in column order.

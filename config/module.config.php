@@ -514,6 +514,9 @@ $conf = [
             'bulkexport_format_uri' => 'uri_label',
             // TODO Check why the option "bulkexport_template" is not configurable.
             'bulkexport_template' => '',
+            'bulkexport_separator' => ' | ',
+            'bulkexport_value_per_column' => false,
+            'bulkexport_column_metadata' => [],
         ],
         'site_settings' => [
             'bulkexport_limit' => 1000,
@@ -556,6 +559,9 @@ $conf = [
             'bulkexport_format_resource_property' => 'dcterms:identifier',
             'bulkexport_format_uri' => 'uri_label',
             'bulkexport_template' => '',
+            'bulkexport_separator' => ' | ',
+            'bulkexport_value_per_column' => false,
+            'bulkexport_column_metadata' => [],
         ],
     ],
 ];

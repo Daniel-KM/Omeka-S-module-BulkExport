@@ -203,6 +203,49 @@ class SettingsFieldset extends Fieldset
                     'id' => 'bulkexport_language',
                 ],
             ])
+
+            ->add([
+                'name' => 'bulkexport_separator',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Multi-value separator (spreadsheet)', // @translate
+                    'info' => 'Separator used to join multiple values in a single cell for spreadsheet formats (csv, tsv, ods). If "One value per column" is enabled, this separator is used only for non-property fields.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_separator',
+                    'value' => ' | ',
+                ],
+            ])
+            ->add([
+                'name' => 'bulkexport_value_per_column',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'One value per column (spreadsheet)', // @translate
+                    'info' => 'When enabled, each value of a multi-valued property gets its own column. The module pre-scans all resources to determine the maximum number of values for each property. Only applies to spreadsheet formats (csv, tsv, ods).', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_value_per_column',
+                ],
+            ])
+            ->add([
+                'name' => 'bulkexport_column_metadata',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Column metadata in headers (spreadsheet)', // @translate
+                    'info' => 'Add metadata attributes to column headers. Creates separate columns for each metadata group. Only applies to spreadsheet formats.', // @translate
+                    'value_options' => [
+                        'language' => 'Language (e.g. dcterms:subject @fr)', // @translate
+                        'datatype' => 'Datatype (e.g. dcterms:subject ^^uri)', // @translate
+                        'visibility' => 'Visibility (e.g. dcterms:subject [private])', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'bulkexport_column_metadata',
+                ],
+            ])
         ;
     }
 
