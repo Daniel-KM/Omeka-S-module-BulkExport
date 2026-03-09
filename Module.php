@@ -533,8 +533,6 @@ class Module extends AbstractModule
 
         $fieldset = $form->get('module_tasks');
         $valueOptions = $fieldset->get('process')->getValueOptions();
-        $valueOptions['db_value_data_index'] = 'BulkExport: Reindex value lengths (all values)'; // @translate
-        $valueOptions['db_value_data_index_missing'] = 'BulkExport: Reindex value lengths (missing only)'; // @translate
         $fieldset->get('process')->setValueOptions($valueOptions);
     }
 
@@ -542,12 +540,5 @@ class Module extends AbstractModule
     {
         $process = $event->getParam('process');
 
-        if ($process === 'db_value_data_index') {
-            $event->setParam('job', \BulkExport\Job\IndexValueLength::class);
-            $event->setParam('args', ['mode' => 'all']);
-        } elseif ($process === 'db_value_data_index_missing') {
-            $event->setParam('job', \BulkExport\Job\IndexValueLength::class);
-            $event->setParam('args', ['mode' => 'missing']);
-        }
     }
 }
