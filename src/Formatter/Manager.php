@@ -36,8 +36,15 @@ class Manager
 
         $factories = $this->config['factories'] ?? [];
         foreach ($factories as $name => $factory) {
-            if (class_exists($name) && in_array(FormatterInterface::class, class_implements($name))) {
-                $this->plugins[$name] = new $name($services);
+            try {
+                if (class_exists($name) && in_array(FormatterInterface::class, class_implements($name))) {
+                    $this->plugins[$name] = new $name($services);
+                }
+            } catch (\Error $e) {
+                $services->get('Omeka\Logger')->err(
+                    'Formatter "{formatter}" cannot be loaded: {error}. Check that the required library is the correct version and is not overridden in another module.', // @translate
+                    ['formatter' => $name, 'error' => $e->getMessage()]
+                );
             }
         }
 
