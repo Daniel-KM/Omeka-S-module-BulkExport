@@ -21,7 +21,8 @@
         "forum": "https://forum.omeka.org/"
     },
     "_require (not set until Omeka S merges PR #2412)": {
-        "omeka/omeka-s-core": "^4.0"
+        "omeka/omeka-s": "^4.0",
+        "daniel-km/omeka-s-module-common": "*"
     },
     "require": {
         "openspout/openspout": "^3.7",
@@ -45,5 +46,8 @@
         "platform": {
             "php": "7.4"
         }
+    },
+    "extra": {
+        "installer-name": "BulkExport"
     }
 }
