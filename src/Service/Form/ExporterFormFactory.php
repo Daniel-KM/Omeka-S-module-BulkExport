@@ -11,11 +11,18 @@ class ExporterFormFactory implements FactoryInterface
 {
     public function __invoke(ContainerInterface $services, $requestedName, ?array $options = null)
     {
-        $formatterOptions = [];
         $formatterManager = $services->get(FormatterManager::class);
-        $formatters = $formatterManager->getPlugins();
-        foreach ($formatters as $key => $formatter) {
-            $formatterOptions[$key] = $formatter->getLabel();
+        $config = $services->get('Config')['formatters'] ?? [];
+        $aliases = $config['aliases'] ?? [];
+
+        // Use aliases as keys so the saved value matches
+        // formatter_forms and formatter lookup.
+        $formatterOptions = [];
+        foreach ($aliases as $alias => $class) {
+            $formatter = $formatterManager->get($alias);
+            if ($formatter) {
+                $formatterOptions[$alias] = $formatter->getLabel();
+            }
         }
 
         $form = new ExporterForm(null, $options ?? []);
