@@ -195,6 +195,13 @@ English subjects in another, etc.
 Notes
 -----
 
+- The size filter options (`min_size`/`max_size`) use `CHAR_LENGTH()` on the
+  `value` LONGTEXT column without an index. On very large databases (millions
+  of values), the first query may be slow while the database buffer pool is
+  cold. To ensure the buffer pool survives restarts, enable `innodb_buffer_pool_dump_at_shutdown`
+  and `innodb_buffer_pool_load_at_startup` in MariaDB/MySQL. In practice,
+  queries are always scoped by resource ids, so the full table is never scanned.
+
 - To convert an export with linked resource exported as url + label into linked
   resources importable, you need to apply this formula in LibreOffice Calc:
   `=REGEX($Export.B2; "(http:/api/items/)(\d+)([^|\n]*)"; "$2"; "g")`
@@ -204,27 +211,25 @@ Notes
 TODO
 ----
 
-- [x] For spreadsheet, add an option to set headers with the datatype and the
-  language (so multiple headers for the same property).
+- [x] For spreadsheet, add an option to set headers with the datatype and the language (so multiple headers for the same property).
 - [x] Rights on exports.
 - [x] Deletion of old exports.
 - [x] Factorized writers into formatters
-- [ ] Extract duplicated mapping methods (`mapResourceTypeToEntity`, etc.)
-  into `ResourceTypeMappingTrait`
+- [ ] Extract duplicated mapping methods (`mapResourceTypeToEntity`, etc.) into `ResourceTypeMappingTrait`
 - [ ] Integrate the new feature api output for Omeka S v4.1.
 - [ ] Integrate with module [Mapper] for custom export mappings.
-- [ ] Enable real-time output for any size
-- [ ] Optimize pre-scan phase for `value_per_column` mode with database-level
-  aggregation (SQL COUNT/GROUP BY) instead of PHP loops
-- [ ] Add progress callbacks for real-time export status updates
-- [ ] Consider async export with Server-Sent Events or WebSocket notifications
-- [ ] Simplify exporter configuration (preset templates)
-- [ ] Export preview
-- [ ] Improve progress display during background exports (percentage, end)
-- [ ] The browse view may be like the Menu view (all edits in one page)
-- [ ] Add drag-and-drop column ordering for spreadsheet exports
-- [ ] Export history with re-run capability
-- [ ] One-click re-export with same settings
+- [ ] Enable real-time output for any size.
+- [ ] Optimize pre-scan phase for `value_per_column` mode with database-level aggregation (SQL COUNT/GROUP BY) instead of PHP loops.
+- [ ] Add progress callbacks for real-time export status updates.
+- [ ] Consider async export with Server-Sent Events or WebSocket notifications.
+- [ ] Simplify exporter configuration (preset templates).
+- [ ] Export preview.
+- [ ] For large databases, reconsider a pre-computed value length cache as in version 3.4.39, but with a php trigger (long process with `CHAR_LENGTH()` on LONGTEXT when the buffer pool is cold).
+- [ ] Improve progress display during background exports (percentage, end).
+- [ ] The browse view may be like the Menu view (all edits in one page).
+- [ ] Add drag-and-drop column ordering for spreadsheet exports.
+- [ ] Export history with re-run capability.
+- [ ] One-click re-export with same settings.
 - [ ] For api, allow to pass settings like in module [Api Info].
 - [ ] Use request header "Accept" like .extension.
 - [ ] Select resources like in the module ebook.
