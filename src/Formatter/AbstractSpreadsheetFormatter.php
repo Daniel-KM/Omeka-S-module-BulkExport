@@ -25,13 +25,6 @@ abstract class AbstractSpreadsheetFormatter extends AbstractFieldsFormatter
     protected $spreadsheetWriter;
 
     /**
-     * Type of spreadsheet (default to csv).
-     *
-     * @var \OpenSpout\Common\Type
-     */
-    protected $spreadsheetType;
-
-    /**
      * @var string
      */
     protected $filepath;

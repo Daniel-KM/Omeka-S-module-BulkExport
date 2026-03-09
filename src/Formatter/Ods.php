@@ -2,16 +2,16 @@
 
 namespace BulkExport\Formatter;
 
-use OpenSpout\Common\Type;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Common\Entity\Cell\StringCell;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\ODS\Options as OdsOptions;
+use OpenSpout\Writer\ODS\Writer as OdsWriter;
 
 class Ods extends AbstractSpreadsheetFormatter
 {
     protected $label = 'ods';
     protected $extension = 'ods';
     protected $mediaType = 'application/vnd.oasis.opendocument.spreadsheet';
-
-    protected $spreadsheetType = Type::ODS;
 
     public function format($resources, $output = null, array $options = []): self
     {
@@ -47,10 +47,11 @@ class Ods extends AbstractSpreadsheetFormatter
             // "php://temp" doesn't seem to work.
             : @tempnam($tempDir, 'omk_bke_');
 
-        $this->spreadsheetWriter = WriterEntityFactory::createODSWriter();
+        $options = new OdsOptions();
+        $options->tempFolder = $tempDir;
+        $this->spreadsheetWriter = new OdsWriter($options);
         try {
             $this->spreadsheetWriter
-                ->setTempFolder($tempDir)
                 ->openToFile($this->filepath);
         } catch (\OpenSpout\Common\Exception\IOException $e) {
             $this->hasError = true;
@@ -64,7 +65,7 @@ class Ods extends AbstractSpreadsheetFormatter
 
     protected function writeFields(array $fields): self
     {
-        $row = WriterEntityFactory::createRowFromArray($fields);
+        $row = new Row(array_map(fn($v) => new StringCell((string) ($v ?? ''), null), $fields));
         $this->spreadsheetWriter
             ->addRow($row);
         return $this;

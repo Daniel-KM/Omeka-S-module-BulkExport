@@ -25,7 +25,7 @@
         "daniel-km/omeka-s-module-common": "*"
     },
     "require": {
-        "openspout/openspout": "^3.7",
+        "openspout/openspout": "^4.25",
         "phpoffice/phpword": "^1.2"
     },
     "provide": {
@@ -44,7 +44,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.4"
+            "php": "8.1"
         }
     },
     "extra": {
