@@ -11,6 +11,11 @@ trait OpenDocumentTextTemplateTrait
      */
     protected $openDocument;
 
+    /**
+     * @var array Count of skipped values per field name.
+     */
+    protected $skippedLongFields = [];
+
     protected function initializeOpenDocumentText()
     {
         $settings = $this->services->get('Omeka\Settings');
@@ -101,10 +106,8 @@ trait OpenDocumentTextTemplateTrait
                 if (mb_strlen($fieldValue) < 1000) {
                     $section->addText($fieldValue, 'recordMetadata', 'pRecordMetadata');
                 } else {
-                    $this->logger->warn(
-                        'Skipped field "{fieldname}" of resource: it contains more than 1000 characters.', // @translate
-                        ['fieldname' => $fieldName]
-                    );
+                    $this->skippedLongFields[$fieldName]
+                        = ($this->skippedLongFields[$fieldName] ?? 0) + 1;
                 }
             }
         }
