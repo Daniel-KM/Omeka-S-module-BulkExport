@@ -3,7 +3,9 @@
 namespace BulkExport;
 
 if (!class_exists('Common\TraitModule', false)) {
-    require_once dirname(__DIR__) . '/Common/TraitModule.php';
+    require_once file_exists(dirname(__DIR__) . '/Common/src/TraitModule.php')
+        ? dirname(__DIR__) . '/Common/src/TraitModule.php'
+        : dirname(__DIR__) . '/Common/TraitModule.php';
 }
 
 use Common\Stdlib\PsrMessage;
@@ -42,30 +44,42 @@ class Module extends AbstractModule
         $translate = $services->get('ControllerPluginManager')->get('translate');
         $translator = $services->get('MvcTranslator');
 
-        if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.80')) {
+        if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.81')) {
             $message = new \Omeka\Stdlib\Message(
                 $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
-                'Common', '3.4.80'
+                'Common', '3.4.81'
             );
             throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
         }
 
-        if (!$this->checkModuleActiveVersion('Log', '3.4.32')) {
-            $message = new \Common\Stdlib\PsrMessage(
-                'The module {module} should be upgraded to version {version} or later.', // @translate
-                ['module' => 'Log', 'version' => '3.4.32']
-            );
-            throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message->setTranslator($translator));
+        $errors = [];
+
+        if (PHP_VERSION_ID < 80100) {
+            $errors[] = (string) (new PsrMessage(
+                'This version of module {module} requires a version of php ≥ {version}.', // @translate
+                ['module' => 'BulkExport', 'version' => '8.1']
+            ))->setTranslator($translator);
         }
+
+        if (!$this->checkModuleActiveVersion('Log', '3.4.36')) {
+            $errors[] = (string) (new PsrMessage(
+                'The module {module} should be upgraded to version {version} or later.', // @translate
+                ['module' => 'Log', 'version' => '3.4.36']
+            ))->setTranslator($translator);
+        }
+
         $config = $services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
 
         if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
-            $message = new PsrMessage(
+            $errors[] = (string) (new PsrMessage(
                 'The directory "{path}" is not writeable.', // @translate
                 ['path' => $basePath . '/bulk_export']
-            );
-            throw new ModuleCannotInstallException((string) $message->setTranslator($translator));
+            ))->setTranslator($translator);
+        }
+
+        if ($errors) {
+            throw new ModuleCannotInstallException(implode("\n", $errors));
         }
     }
 

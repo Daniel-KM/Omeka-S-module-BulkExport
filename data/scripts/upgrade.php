@@ -30,20 +30,37 @@ $localConfig = include dirname(__DIR__, 2) . '/config/module.config.php';
 
 $failExporters = [];
 
-if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.80')) {
+if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.81')) {
     $message = new \Omeka\Stdlib\Message(
         $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
-        'Common', '3.4.80'
+        'Common', '3.4.81'
     );
-    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+    $messenger->addError($message);
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $translate('Missing requirement. Unable to upgrade.')); // @translate
 }
 
-if (!$this->checkModuleActiveVersion('Log', '3.4.32')) {
+$hasError = false;
+
+if (PHP_VERSION_ID < 80100) {
+    $message = new PsrMessage(
+        'This version of module {module} requires a version of php ≥ {version}.', // @translate
+        ['module' => 'BulkExport', 'version' => '8.1']
+    );
+    $messenger->addError($message);
+    $hasError = true;
+}
+
+if (!$this->checkModuleActiveVersion('Log', '3.4.36')) {
     $message = new PsrMessage(
         'The module {module} should be upgraded to version {version} or later.', // @translate
-        ['module' => 'Log', 'version' => '3.4.32']
+        ['module' => 'Log', 'version' => '3.4.36']
     );
-    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message->setTranslator($translator));
+    $messenger->addError($message);
+    $hasError = true;
+}
+
+if ($hasError) {
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $translate('Missing requirement. Unable to upgrade.')); // @translate
 }
 
 if (version_compare($oldVersion, '3.0.7', '<')) {
@@ -268,7 +285,7 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
                     '"o:item[dcterms:title]"',
                     '"o:item/dcterms:title"'
                 ),
-        
+
                     '"o:item_set[o:id]"',
                     '"o:item_set/o:id"'
                 ),
@@ -278,7 +295,7 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
                     '"o:item_set[dcterms:title]"',
                     '"o:item_set/dcterms:title"'
                 ),
-        
+
                     '"o:media[o:id]"',
                     '"o:media/o:id"'
                 ),
@@ -306,7 +323,7 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
                     '"o:media[original_url]"',
                     '"o:media/original_url"'
                 ),
-        
+
                     '"o:resource[o:id]"',
                     '"o:resource/o:id"'
                 ),
@@ -316,14 +333,14 @@ if (version_compare($oldVersion, '3.4.29', '<')) {
                     '"o:resource[dcterms:title]"',
                     '"o:resource/dcterms:title"'
                 ),
-        
+
                     '"o:owner[o:id]"',
                     '"o:owner/o:id"'
                 ),
                     '"o:owner[o:email]"',
                     '"o:owner/o:email"'
                 ),
-        
+
                     '"oa:hasBody[',
                     '"oa:hasBody/'
                 ),
@@ -425,18 +442,13 @@ if (version_compare($oldVersion, '3.4.38', '<')) {
     );
     $messenger->addSuccess($message);
 
-    // Create value_data table and triggers for indexing value length.
-    $tableExists = $connection->executeQuery("SHOW TABLES LIKE 'value_data';")->fetchOne();
-    if (!$tableExists) {
-        // Dispatch job to populate the table with existing data.
-        require_once dirname(__DIR__, 2) . '/src/Job/IndexValueLength.php';
-        $dispatcher = $services->get('Omeka\Job\Dispatcher');
-        $dispatcher->dispatch(\BulkExport\Job\IndexValueLength::class);
-
-        $message = new PsrMessage(
-            'A table has been created to index value lengths for quicker exports. A background job is populating it.' // @translate
-        );
-        $messenger->addSuccess($message);
+    // Remove value_data table and triggers: CHAR_LENGTH() is used
+    // directly in queries, no index needed for Omeka S volumes.
+    try {
+        $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_insert`');
+        $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_update`');
+        $connection->executeStatement('DROP TABLE IF EXISTS `value_data`');
+    } catch (\Exception $e) {
     }
 }
 
@@ -454,43 +466,42 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
         // Column may already exist.
     }
 
-    // Migrate writer class names to formatter aliases.
-    $writerToFormatter = [
-        'BulkExport\\Writer\\CsvWriter' => 'csv',
-        'BulkExport\\Writer\\TsvWriter' => 'tsv',
-        'BulkExport\\Writer\\TextWriter' => 'txt',
-        'BulkExport\\Writer\\OpenDocumentSpreadsheetWriter' => 'ods',
-        'BulkExport\\Writer\\OpenDocumentTextWriter' => 'odt',
-        'BulkExport\\Writer\\JsonTableWriter' => 'json-table',
-        'BulkExport\\Writer\\GeoJsonWriter' => 'geojson',
-    ];
+    // Migrate writer class names to formatter aliases, only if the
+    // writer column still exists (may have been removed by a partial
+    // upgrade).
+    $hasWriterColumn = (bool) $connection->executeQuery(
+        "SHOW COLUMNS FROM `bulk_exporter` LIKE 'writer'"
+    )->fetchOne();
 
-    foreach ($writerToFormatter as $writerClass => $formatterAlias) {
-        $sql = <<<'SQL'
-            UPDATE `bulk_exporter`
-            SET `formatter` = :formatter
-            WHERE `writer` = :writer AND (`formatter` IS NULL OR `formatter` = '');
-            SQL;
-        $connection->executeStatement($sql, [
-            'formatter' => $formatterAlias,
-            'writer' => $writerClass,
-        ]);
-    }
+    if ($hasWriterColumn) {
+        $writerToFormatter = [
+            'BulkExport\\Writer\\CsvWriter' => 'csv',
+            'BulkExport\\Writer\\TsvWriter' => 'tsv',
+            'BulkExport\\Writer\\TextWriter' => 'txt',
+            'BulkExport\\Writer\\OpenDocumentSpreadsheetWriter' => 'ods',
+            'BulkExport\\Writer\\OpenDocumentTextWriter' => 'odt',
+            'BulkExport\\Writer\\JsonTableWriter' => 'json-table',
+            'BulkExport\\Writer\\GeoJsonWriter' => 'geojson',
+        ];
 
-    $message = new PsrMessage(
-        'The exporter architecture has been upgraded. Exporters now use Formatters directly for better performance and maintainability.' // @translate
-    );
-    $messenger->addSuccess($message);
+        foreach ($writerToFormatter as $writerClass => $formatterAlias) {
+            $connection->executeStatement(
+                'UPDATE `bulk_exporter` SET `formatter` = :formatter'
+                . ' WHERE `writer` = :writer'
+                . " AND (`formatter` IS NULL OR `formatter` = '')",
+                [
+                    'formatter' => $formatterAlias,
+                    'writer' => $writerClass,
+                ]
+            );
+        }
 
-    // Remove the legacy writer column now that all data has been migrated to formatter.
-    $sql = <<<'SQL'
-        ALTER TABLE `bulk_exporter`
-            DROP COLUMN `writer`;
-        SQL;
-    try {
-        $connection->executeStatement($sql);
-    } catch (\Exception $e) {
-        // Column may not exist or already removed.
+        try {
+            $connection->executeStatement(
+                'ALTER TABLE `bulk_exporter` DROP COLUMN `writer`'
+            );
+        } catch (\Exception $e) {
+        }
     }
 
     // Rename 'writer' key to 'formatter' in config JSON (bulk_exporter.config).
@@ -554,18 +565,33 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
     }
 }
 
+if (version_compare($oldVersion, '3.4.40', '<')) {
+    // Fix exporters that stored a FQCN instead of an alias as formatter (commit 19f06ce).
+    $formattersConfig = $services->get('Config')['formatters'] ?? [];
+    $aliasesByClass = array_flip($formattersConfig['aliases'] ?? []);
+    $stmt = $connection->executeQuery(
+        'SELECT id, formatter FROM bulk_exporter WHERE formatter LIKE "%\\\\%"'
+    );
+    foreach ($stmt->fetchAllAssociative() as $row) {
+        $alias = $aliasesByClass[$row['formatter']] ?? null;
+        if ($alias) {
+            $connection->executeStatement(
+                'UPDATE bulk_exporter SET formatter = ? WHERE id = ?',
+                [$alias, $row['id']]
+            );
+        }
+    }
+}
+
 // In all cases.
 
-// Ensure value_data table exists (may have been missed if job failed).
-$tableExists = $connection->executeQuery("SHOW TABLES LIKE 'value_data';")->fetchOne();
-if (!$tableExists) {
-    require_once dirname(__DIR__, 2) . '/src/Job/IndexValueLength.php';
-    $dispatcher = $services->get('Omeka\Job\Dispatcher');
-    $dispatcher->dispatch(\BulkExport\Job\IndexValueLength::class);
-    $message = new PsrMessage(
-        'The table to index value lengths was missing and has been recreated. A background job is populating it.' // @translate
-    );
-    $messenger->addWarning($message);
+// Remove value_data table and triggers if they still exist.
+try {
+    $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_insert`');
+    $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_update`');
+    $connection->executeStatement('DROP TABLE IF EXISTS `value_data`');
+} catch (\Exception $e) {
+    // Nothing.
 }
 
 if (!empty($failExporters)) {
