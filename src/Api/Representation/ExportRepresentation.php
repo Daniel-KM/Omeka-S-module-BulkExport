@@ -90,29 +90,15 @@ class ExportRepresentation extends AbstractEntityRepresentation
     }
 
     /**
-     * Get the url where data are stored.
+     * Get the url to download the export.
      *
-     * May be null when there is no file or when stored outside for "files/".
+     * The storage directory "files/bulk_export/" is protected by a .htaccess
+     * denying direct web access, so the file is streamed through the admin
+     * download controller. Null when there is no file.
      */
     public function fileUrl(): ?string
     {
-        $filepath = $this->filename(true);
-        if (!$filepath) {
-            return null;
-        }
-
-        // Relative are inside "files/bulk_export/".
-        $config = $this->services->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        if (mb_strpos($filepath, $basePath . '/') !== 0) {
-            return null;
-        }
-
-        // The path between store and filename is the prefix.
-        $dir = pathinfo($filepath, PATHINFO_DIRNAME);
-        $filename = pathinfo($filepath, PATHINFO_FILENAME);
-        $extension = pathinfo($filepath, PATHINFO_EXTENSION);
-        return $this->getFileUrl(mb_substr($dir, mb_strlen($basePath) + 1), $filename, $extension);
+        return $this->filename() ? $this->adminUrl('download') : null;
     }
 
     /**
