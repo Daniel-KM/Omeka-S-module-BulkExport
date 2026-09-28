@@ -123,7 +123,7 @@ class ExportAdapter extends AbstractEntityAdapter
                 /** @var \Omeka\File\Store\StoreInterface $store */
                 $store = $this->getServiceLocator()->get('Omeka\File\Store');
                 $store->delete('bulk_export/' . $filename);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Silently ignore deletion errors (file may not exist).
             }
         }

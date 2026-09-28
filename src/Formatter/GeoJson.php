@@ -382,7 +382,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
         $doc = new DOMDocument();
         try {
             $doc->loadXML($xml, LIBXML_NONET);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->err(
                 'Output is not xml for url "{url}" (resource #{resource_id}).', // @translate
                 ['url' => $url, 'resource_id' => $this->currentResourceId]
@@ -446,7 +446,7 @@ class GeoJson extends AbstractFieldsJsonFormatter
                 ['url' => $url, 'resource_id' => $this->currentResourceId, 'exception' => $e]
             );
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_reporting($errorLevel);
             $this->logger->err(
                 'Connection error when fetching url "{url}" (resource #{resource_id}): {exception}', // @translate

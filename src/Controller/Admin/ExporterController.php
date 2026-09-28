@@ -27,7 +27,7 @@ class ExporterController extends AbstractActionController
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         try {
             $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exporter = null;
         }
 
@@ -95,7 +95,7 @@ class ExporterController extends AbstractActionController
         $id = (int) $this->params()->fromRoute('id');
         try {
             $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exporter = null;
         }
 
@@ -144,7 +144,7 @@ class ExporterController extends AbstractActionController
         $id = (int) $this->params()->fromRoute('id');
         try {
             $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exporter = null;
         }
 
@@ -235,7 +235,7 @@ class ExporterController extends AbstractActionController
         /** @var \BulkExport\Api\Representation\ExporterRepresentation $exporter */
         try {
             $exporter = $id ? $this->api()->read('bulk_exporters', ['id' => $id])->getContent() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exporter = null;
         }
 
@@ -379,7 +379,7 @@ class ExporterController extends AbstractActionController
                             );
                             $message->setEscapeHtml(false);
                             $this->messenger()->addSuccess($message);
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             $this->messenger()->addError('Export start failed'); // @translate
                         }
 

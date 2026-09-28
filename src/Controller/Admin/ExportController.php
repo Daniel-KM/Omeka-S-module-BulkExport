@@ -102,7 +102,7 @@ class ExportController extends AbstractActionController
         /** @var \BulkExport\Api\Representation\ExportRepresentation $export */
         try {
             $export = $this->api()->read('bulk_exports', ['id' => $id])->getContent();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $export = null;
         }
         if (!$export) {

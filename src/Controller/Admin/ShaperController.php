@@ -189,7 +189,7 @@ class ShaperController extends AbstractActionController
         /** @var \BulkExport\Api\Representation\ShaperRepresentation $shaper */
         try {
             $shaper = $id ? $this->api()->read('bulk_shapers', ['id' => $id])->getContent() : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // New shaper.
             $shaper = null;
         }

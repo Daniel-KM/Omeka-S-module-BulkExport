@@ -224,7 +224,7 @@ trait BatchProcessingTrait
                     } else {
                         $this->incrementStat('skipped');
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->incrementStat('processed');
                     $this->incrementStat('skipped');
                     // Log error if logger available.

@@ -407,7 +407,7 @@ if (version_compare($oldVersion, '3.4.35', '<')) {
     foreach (array_filter(explode(";\n", $sqls)) as $sql) {
         try {
             $connection->executeStatement($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
     }
 
@@ -433,7 +433,7 @@ if (version_compare($oldVersion, '3.4.38', '<')) {
         SQL;
     try {
         $connection->executeStatement($sql);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Table exists.
     }
 
@@ -448,7 +448,7 @@ if (version_compare($oldVersion, '3.4.38', '<')) {
         $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_insert`');
         $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_update`');
         $connection->executeStatement('DROP TABLE IF EXISTS `value_data`');
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
     }
 }
 
@@ -462,7 +462,7 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
         SQL;
     try {
         $connection->executeStatement($sql);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Column may already exist.
     }
 
@@ -500,7 +500,7 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
             $connection->executeStatement(
                 'ALTER TABLE `bulk_exporter` DROP COLUMN `writer`'
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
     }
 
@@ -516,7 +516,7 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
         SQL;
     try {
         $connection->executeStatement($sql);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Fallback for older MySQL versions without JSON functions.
         $sql = "SELECT `id`, `config` FROM `bulk_exporter`";
         $stmt = $connection->executeQuery($sql);
@@ -546,7 +546,7 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
         SQL;
     try {
         $connection->executeStatement($sql);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Fallback for older MySQL versions without JSON functions.
         $sql = "SELECT `id`, `params` FROM `bulk_export`";
         $stmt = $connection->executeQuery($sql);
@@ -590,7 +590,7 @@ try {
     $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_insert`');
     $connection->executeStatement('DROP TRIGGER IF EXISTS `tr_value_data_update`');
     $connection->executeStatement('DROP TABLE IF EXISTS `value_data`');
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     // Nothing.
 }
 
@@ -619,7 +619,7 @@ if (!empty($failExporters)) {
             $stmt->bindValue('config', json_encode($data['config']), \PDO::PARAM_STR);
             $stmt->executeStatement();
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Nothing.
     }
 }

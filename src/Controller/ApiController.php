@@ -36,7 +36,7 @@ class ApiController extends \Omeka\Controller\ApiController
 
         try {
             $apiJsonModel = parent::getList();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->returnError(
                 $e->getMessage(),
                 Response::STATUS_CODE_405

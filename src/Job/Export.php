@@ -669,7 +669,7 @@ class Export extends AbstractJob
                 'sort_order' => 'DESC',
                 'limit' => 1,
             ])->getContent();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->err($e);
             return null;
         }
@@ -902,7 +902,7 @@ class Export extends AbstractJob
                 $store = $this->services->get('Omeka\File\Store');
                 $store->put($this->filepath, $storagePath);
                 @unlink($this->filepath);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                     'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
                     ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
@@ -915,7 +915,7 @@ class Export extends AbstractJob
             try {
                 $result = copy($this->filepath, $outputFilepath);
                 @unlink($this->filepath);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw new \Omeka\Job\Exception\RuntimeException((string) new PsrMessage(
                     'Export error when saving "{filename}" (temp file: "{tempfile}"): {exception}', // @translate
                     ['filename' => $filename, 'tempfile' => $this->filepath, 'exception' => $e]
@@ -1110,7 +1110,7 @@ class Export extends AbstractJob
 
         try {
             $mailer->send($message);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log(Logger::ERR, new \Omeka\Stdlib\Message(
                 'Error when sending email to notify end of process.' // @translate
             ));
