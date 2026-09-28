@@ -114,6 +114,22 @@ abstract class AbstractConfigForm extends Form
                 ],
             ])
             ->add([
+                'name' => 'zip_files_naming',
+                'type' => CommonElement\OptionalRadio::class,
+                'options' => [
+                    'label' => 'Names of the files in the zip', // @translate
+                    'value_options' => [
+                        'storage' => 'Storage name (original/xxx.jpg)', // @translate
+                        'item_folder' => 'Folder by item, then media id (original/{item id}/{media id}.jpg)', // @translate
+                        'item_prefix' => 'Item id and media id (original/{item id}_{media id}.jpg)', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'zip_files_naming',
+                    'value' => 'storage',
+                ],
+            ])
+            ->add([
                 'name' => 'incremental',
                 'type' => Element\Checkbox::class,
                 'options' => [
