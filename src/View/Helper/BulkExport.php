@@ -86,12 +86,15 @@ class BulkExport extends AbstractHelper
             'items' => 'items',
             'item_sets' => 'item_sets',
             'media' => 'media',
+            'digital_objects' => 'digital_objects',
             'resources' => 'resources',
             'annotation' => 'annotations',
             'item' => 'items',
             'item-set' => 'item_sets',
             'itemset' => 'item_sets',
             'media' => 'media',
+            'digital-object' => 'digital_objects',
+            'digitalobject' => 'digital_objects',
             'resource' => 'resources',
             'annotate\controller\admin\annotation' => 'annotations',
             'annotate\controller\admin\annotationcontroller' => 'annotations',
@@ -196,6 +199,7 @@ class BulkExport extends AbstractHelper
             'items' => 'item',
             'item_sets' => 'item-set',
             'media' => 'media',
+            'digital_objects' => 'digital-object',
             'resources' => 'resource',
         ];
         $resourceController = $resourceControllers[$options['resourceType']] ?? 'resource';

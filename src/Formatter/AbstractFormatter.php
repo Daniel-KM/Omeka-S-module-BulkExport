@@ -16,6 +16,7 @@ abstract class AbstractFormatter implements FormatterInterface
         'item' => 'items',
         'media' => 'media',
         'item-set' => 'item_sets',
+        'digital-object' => 'digital_objects',
         'resource' => 'resources',
         'annotation' => 'annotations',
     ];
@@ -466,6 +467,7 @@ abstract class AbstractFormatter implements FormatterInterface
             'items' => 'o:Item',
             'media' => 'o:Media',
             'item_sets' => 'o:ItemSet',
+            'digital_objects' => 'o:DigitalObject',
             'modules' => 'o:Module',
             'sites' => 'o:Site',
             'site_pages' => 'o:SitePage',

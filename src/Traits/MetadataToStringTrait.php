@@ -136,32 +136,32 @@ trait MetadataToStringTrait
                     ? $this->extractFirstValueOfResources($resource->media(), $metadata)
                     : [];
             case 'o:media/o:media_type':
-                return $resource->resourceName() === 'media'
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true)
                     ? [$resource->mediaType()]
                     : [];
             case 'o:media/o:size':
-                return $resource->resourceName() === 'media'
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true)
                     ? [$resource->size()]
                     : [];
             case 'o:media/o:original_url':
             case 'o:media/original_url':
-                return $resource->resourceName() === 'media' && $resource->hasOriginal()
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true) && $resource->hasOriginal()
                     ? [$resource->originalUrl()]
                     : [];
             case 'o:media/o:thumbnails_url/large':
             case 'o:media/o:thumbnails_url/medium':
             case 'o:media/o:thumbnails_url/square':
-                return $resource->resourceName() === 'media' && $resource->hasThumbnails()
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true) && $resource->hasThumbnails()
                     ? [$resource->thumbnailUrl(substr($metadata, strrpos($metadata, '/') + 1))]
                     : [];
             case 'o:media/o:filename':
-                return $resource->resourceName() === 'media' && $resource->hasOriginal()
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true) && $resource->hasOriginal()
                     ? [$resource->filename()]
                     : [];
             case 'o:media/o:filename/large':
             case 'o:media/o:filename/medium':
             case 'o:media/o:filename/square':
-                return $resource->resourceName() === 'media' && $resource->hasThumbnails()
+                return in_array($resource->resourceName(), ['media', 'digital_objects'], true) && $resource->hasThumbnails()
                     ? [substr($resource->filename(), 0, strrpos($resource->filename(), '.')) . '.jpg']
                     : [];
 

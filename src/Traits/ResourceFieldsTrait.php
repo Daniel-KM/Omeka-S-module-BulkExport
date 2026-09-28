@@ -695,6 +695,9 @@ trait ResourceFieldsTrait
             'o:Item' => \Omeka\Entity\Item::class,
             'o:Media' => \Omeka\Entity\Media::class,
             'o:ItemSet' => \Omeka\Entity\ItemSet::class,
+            'o:DigitalObject' => class_exists('DigitalObject\Module', false)
+                ? \DigitalObject\Entity\DigitalObject::class
+                : null,
             'o:Module' => \Omeka\Entity\Module::class,
             'o:Site' => \Omeka\Entity\Site::class,
             'o:SitePage' => \Omeka\Entity\SitePage::class,
