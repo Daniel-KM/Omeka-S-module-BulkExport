@@ -69,7 +69,8 @@ trait BulkExportTestTrait
      *
      * @param string $label Exporter label.
      * @param string $formatterName Formatter name (e.g., 'csv', 'tsv').
-     * @param array $formatterConfig Formatter configuration.
+     * @param array $formatterConfig Formatter configuration, stored under the key
+     *   "formatter" of the exporter config.
      * @return Exporter
      */
     protected function createExporter(string $label, string $formatterName, array $formatterConfig = []): Exporter
@@ -81,7 +82,7 @@ trait BulkExportTestTrait
         $exporter->setOwner($auth->getIdentity());
         $exporter->setLabel($label);
         $exporter->setFormatter($formatterName);
-        $exporter->setConfig($formatterConfig);
+        $exporter->setConfig($formatterConfig ? ['formatter' => $formatterConfig] : []);
 
         $entityManager->persist($exporter);
         $entityManager->flush();
@@ -234,6 +235,29 @@ trait BulkExportTestTrait
      * @param string $delimiter CSV delimiter.
      * @return array Parsed rows.
      */
+    /**
+     * Get the export file path after job completion.
+     */
+    protected function getExportFilePath(int $exportId): ?string
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->clear();
+
+        $exportEntity = $entityManager->find(Export::class, $exportId);
+        $filename = $exportEntity ? $exportEntity->getFilename() : null;
+        if (!$filename) {
+            return null;
+        }
+
+        if (mb_substr($filename, 0, 1) === '/') {
+            return $filename;
+        }
+
+        $config = $this->getServiceLocator()->get('Config');
+        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+        return $basePath . '/bulk_export/' . $filename;
+    }
+
     protected function parseCsvFile(string $filepath, string $delimiter = ','): array
     {
         $rows = [];

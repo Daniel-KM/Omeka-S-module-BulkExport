@@ -230,4 +230,58 @@ class UpgradeTest extends AbstractHttpControllerTestCase
         // Cleanup.
         $connection->executeStatement("DELETE FROM `bulk_exporter` WHERE `id` = :id", ['id' => $exporterId]);
     }
+
+    /**
+     * Test migration 3.4.41: "bulkexport_views" to "bulkexport_placement".
+     *
+     * A site without stored value keeps the previous default (item browse), an
+     * explicit value is converted, and a site already migrated is not reset
+     * when the upgrade is replayed.
+     */
+    public function testMigrationViewsToPlacement(): void
+    {
+        $services = $this->getServiceLocator();
+        $api = $services->get('Omeka\ApiManager');
+        $siteSettings = $services->get('Omeka\Settings\Site');
+
+        $siteIds = [];
+        foreach (['default', 'explicit', 'migrated'] as $slug) {
+            $siteIds[$slug] = $api->create('sites', [
+                'o:title' => 'Upgrade ' . $slug,
+                'o:slug' => 'upgrade-' . $slug,
+                'o:theme' => 'default',
+            ])->getContent()->id();
+        }
+
+        $siteSettings->setTargetId($siteIds['default']);
+        $siteSettings->delete('bulkexport_views');
+        $siteSettings->delete('bulkexport_placement');
+
+        $siteSettings->setTargetId($siteIds['explicit']);
+        $siteSettings->delete('bulkexport_placement');
+        $siteSettings->set('bulkexport_views', ['item_show', 'media_browse']);
+
+        $siteSettings->setTargetId($siteIds['migrated']);
+        $siteSettings->delete('bulkexport_views');
+        $siteSettings->set('bulkexport_placement', ['after/items']);
+
+        $module = new \BulkExport\Module();
+        $module->setServiceLocator($services);
+        $module->upgrade('3.4.40', '3.4.41', $services);
+
+        $expected = [
+            'default' => ['browse/items'],
+            'explicit' => ['after/items', 'browse/media'],
+            'migrated' => ['after/items'],
+        ];
+        foreach ($expected as $slug => $placement) {
+            $siteSettings->setTargetId($siteIds[$slug]);
+            $this->assertSame($placement, $siteSettings->get('bulkexport_placement'), $slug);
+            $this->assertNull($siteSettings->get('bulkexport_views'), $slug);
+        }
+
+        foreach ($siteIds as $siteId) {
+            $api->delete('sites', $siteId);
+        }
+    }
 }

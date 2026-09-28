@@ -2,7 +2,6 @@
 
 namespace BulkExportTest\Job;
 
-use BulkExport\Entity\Export;
 use BulkExport\Job\Export as ExportJob;
 
 use BulkExportTest\BulkExportTestTrait;
@@ -527,32 +526,5 @@ class ValuePerColumnTest extends AbstractHttpControllerTestCase
         // With format_uri=uri, only the URI should appear.
         $this->assertEquals('http://example.com/subject1', $dataRow[$subjectIndices[0]]);
         $this->assertEquals('http://example.com/subject2', $dataRow[$subjectIndices[1]]);
-    }
-
-    /**
-     * Get the export file path after job completion.
-     */
-    protected function getExportFilePath(int $exportId): ?string
-    {
-        $entityManager = $this->getEntityManager();
-        $entityManager->clear();
-
-        $exportEntity = $entityManager->find(Export::class, $exportId);
-        if (!$exportEntity) {
-            return null;
-        }
-
-        $filename = $exportEntity->getFilename();
-        if (!$filename) {
-            return null;
-        }
-
-        if (mb_substr($filename, 0, 1) === '/') {
-            return $filename;
-        }
-
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        return $basePath . '/bulk_export/' . $filename;
     }
 }

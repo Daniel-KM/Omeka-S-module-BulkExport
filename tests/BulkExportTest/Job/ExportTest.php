@@ -3,11 +3,9 @@
 namespace BulkExportTest\Job;
 
 use BulkExport\Job\Export;
-
-
+use BulkExportTest\BulkExportTestTrait;
 use Omeka\Entity\Job;
 use Omeka\Test\AbstractHttpControllerTestCase;
-use BulkExportTest\BulkExportTestTrait;
 
 /**
  * Unit and functional tests for the Export job.
@@ -74,7 +72,9 @@ class ExportTest extends AbstractHttpControllerTestCase
         // Create exporter and export.
         $exporter = $this->createExporter('CSV Test', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'resource_types' => ['items'],
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+            ],
         ]);
 
         $args = [
@@ -101,7 +101,9 @@ class ExportTest extends AbstractHttpControllerTestCase
         // Create exporter and export.
         $exporter = $this->createExporter('TSV Test', 'tsv', $this->getTsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'resource_types' => ['items'],
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+            ],
         ]);
 
         $args = [
@@ -131,8 +133,11 @@ class ExportTest extends AbstractHttpControllerTestCase
         // Create exporter with query filter for item1 only.
         $exporter = $this->createExporter('Filtered Export', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'resource_types' => ['items'],
-            'query' => ['id' => [$item1->id()]],
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+                'metadata' => ['o:id', 'dcterms:title'],
+                'query' => ['id' => [$item1->id()]],
+            ],
         ]);
 
         $args = [
@@ -142,6 +147,14 @@ class ExportTest extends AbstractHttpControllerTestCase
         $job = $this->runJob(Export::class, $args);
 
         $this->assertEquals(Job::STATUS_COMPLETED, $job->getStatus());
+
+        $outputFile = $this->getExportFilePath($export->getId());
+        $this->assertNotNull($outputFile);
+        $this->assertFileExists($outputFile);
+        $this->assertSame([
+            ['o:id', 'dcterms:title'],
+            [(string) $item1->id(), 'Filtered Item'],
+        ], $this->parseCsvFile($outputFile));
     }
 
     /**
@@ -154,8 +167,10 @@ class ExportTest extends AbstractHttpControllerTestCase
         // Create exporter with query that matches nothing.
         $exporter = $this->createExporter('Empty Export', 'csv', $this->getCsvFormatterConfig());
         $export = $this->createExport($exporter, [
-            'resource_types' => ['items'],
-            'query' => ['id' => [999999]],
+            'formatter' => [
+                'resource_types' => ['o:Item'],
+                'query' => ['id' => [999999]],
+            ],
         ]);
 
         $args = [

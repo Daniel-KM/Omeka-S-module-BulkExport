@@ -2,7 +2,6 @@
 
 namespace BulkExportTest\Job;
 
-use BulkExport\Entity\Export;
 use BulkExport\Job\Export as ExportJob;
 
 
@@ -353,37 +352,5 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
         $this->assertContains('o:id', $headers, 'o:id should still be in headers');
         $this->assertContains('dcterms:title', $headers, 'dcterms:title should still be in headers');
         $this->assertContains('dcterms:description', $headers, 'dcterms:description should still be in headers');
-    }
-
-    /**
-     * Get the export file path after job completion.
-     *
-     * @param int $exportId Export ID.
-     * @return string|null File path or null.
-     */
-    protected function getExportFilePath(int $exportId): ?string
-    {
-        // Refresh export from database to get updated filename.
-        $entityManager = $this->getEntityManager();
-        $entityManager->clear();
-
-        $exportEntity = $entityManager->find(Export::class, $exportId);
-        if (!$exportEntity) {
-            return null;
-        }
-
-        $filename = $exportEntity->getFilename();
-        if (!$filename) {
-            return null;
-        }
-
-        // Build absolute path.
-        if (mb_substr($filename, 0, 1) === '/') {
-            return $filename;
-        }
-
-        $config = $this->getServiceLocator()->get('Config');
-        $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
-        return $basePath . '/bulk_export/' . $filename;
     }
 }
