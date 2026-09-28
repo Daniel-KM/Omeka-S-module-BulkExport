@@ -34,7 +34,8 @@ Installation
 
 See general end user documentation for [installing a module].
 
-This module requires the module [Common], that should be installed first.
+This module requires the modules [Common] and [Log], that should be installed
+first.
 
 For Omeka S v3, the module [Blocks Disposition] can be used to add it in the
 public sites. This is useless for Omeka S v4.
@@ -70,9 +71,17 @@ Quick start
 
 The list of available outputs is added automatically in the admin resource
 browse pages and in the resource show pages. The list of exporters is
-configurable in the settings. This is the same for the sites: use the site
-settings and eventually the blocks disposition settings (for Omeka S < v4) to
-display the list of  exporters. For Omeka S v4, use the resource page blocks.
+configurable in the settings.
+
+In the public sites, use the resource page block "Bulk Export" with the themes
+that support resource page blocks (Omeka S v4). For old themes, select the pages
+where to display the list in the site settings, group "Old themes": item, media
+and item set show and browse pages. By default, the list is displayed only on
+the item browse page.
+
+The resources of the module Digital Object can be exported too, via the
+resource page block and the view helper, and their files are managed like the
+media ones.
 
 ### View helper
 
@@ -102,6 +111,40 @@ the settings. To output more resources or for complex or slow formats, you need
 to use the bulk export process, that will create the output in a file via a
 background job: just config a writer for default params, then use it and process
 the export.
+
+The files are stored in the directory `files/bulk_export`, protected against
+direct web access by a `.htaccess` (Apache only: with Nginx, deny it in the
+server configuration). They are downloaded from the admin board, via the list
+of exports or at `/admin/bulk-export/export/{id}/download`.
+
+The bulk export can zip the files too (original, thumbnails or assets), in
+`files/temp/export_{format}_{job id}_0001.zip`. The names of the files in the
+zip can be the storage names (default), or grouped by item: a folder by item
+with the media ids (`original/{item id}/{media id}.jpg`), or the item id as
+prefix (`original/{item id}_{media id}.jpg`). The asset of an item is named
+`asset`.
+
+### Size filter of properties
+
+To avoid too large or too small cells, the properties can be filtered by the
+length of their values, in the settings, the site settings and the config of
+each exporter: "Size filter to include" and "Size filter to exclude", for
+example all used properties less than 500, 1000 or 5000 characters.
+
+### Persistent identifiers
+
+When the module [Persistent Identifiers] is enabled, the persistent identifier
+(ark, doi…) of items can be exported with the field `o:pid` ("Persistent
+identifier" in the list of metadata). It is part of the default fields of the
+items.
+
+### Linked resources
+
+The resources that link to the exported resource (the "Linked resources" of the
+resource page, or `@reverse` in json-ld) can be exported with the fields
+`@reverse/o:id`, `@reverse/dcterms:identifier` and `@reverse/dcterms:title`.
+Each linking resource is output once, even if it links via many properties.
+Only the resources visible by the user who runs the export are output.
 
 
 Advanced spreadsheet options
@@ -195,7 +238,7 @@ English subjects in another, etc.
 Notes
 -----
 
-- The size filter options (`min_size`/`max_size`) use `CHAR_LENGTH()` on the
+- The size filter options (`metadata_size`/`metadata_exclude_size`) use `CHAR_LENGTH()` on the
   `value` LONGTEXT column without an index. On very large databases (millions
   of values), the first query may be slow while the database buffer pool is
   cold. To ensure the buffer pool survives restarts, enable `innodb_buffer_pool_dump_at_shutdown`
@@ -307,7 +350,8 @@ pattern.
 [installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Api Info]: https://gitlab.com/Daniel-KM/Omeka-S-module/ApiInfo
 [Mapper]: https://gitlab.com/Daniel-KM/Omeka-S-module-Mapper
-[module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/issues
+[Persistent Identifiers]: https://github.com/omeka-s-modules/PersistentIdentifiers
+[module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-BulkExport/-/work_items
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
