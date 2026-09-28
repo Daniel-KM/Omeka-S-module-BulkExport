@@ -711,7 +711,19 @@ class Export extends AbstractJob
     {
         $outputPath = $this->getOutputFilepath();
         $destinationDir = dirname($outputPath);
-        return $this->checkDestinationDir($destinationDir) !== null;
+        if ($this->checkDestinationDir($destinationDir) === null) {
+            return false;
+        }
+
+        // Keep the default directory protected against direct web access, even
+        // when it is recreated by the job.
+        $config = $this->services->get('Config');
+        $defaultDir = ($config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files')) . '/bulk_export';
+        if (mb_strpos($destinationDir . '/', $defaultDir . '/') === 0) {
+            $this->services->get('Common\DirectoryManager')->protectDirectory($defaultDir);
+        }
+
+        return true;
     }
 
     /**
