@@ -71,7 +71,7 @@ class Module extends AbstractModule
         $config = $services->get('Config');
         $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
 
-        if (!$this->checkDestinationDir($basePath . '/bulk_export')) {
+        if (!$this->checkDestinationDir($basePath . '/bulk_export', true)) {
             $errors[] = (string) (new PsrMessage(
                 'The directory "{path}" is not writeable.', // @translate
                 ['path' => $basePath . '/bulk_export']
@@ -205,7 +205,7 @@ class Module extends AbstractModule
             ->allow(
                 $backendRoles,
                 ['BulkExport\Controller\Admin\Export'],
-                ['browse', 'index', 'show', 'logs', 'delete-confirm', 'delete']
+                ['browse', 'index', 'show', 'logs', 'download', 'delete-confirm', 'delete']
             )
             ->allow(
                 $backendRoles,

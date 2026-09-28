@@ -33,7 +33,7 @@ $this->headScript()
             $status = $translate($export->statusLabel());
             $owner = $export->owner();
             $filename = $export->filename();
-            $fileUrl = $filename && $export->isCompleted() ? $export->fileUrl() : '';
+            $fileUrl = $filename && $export->isCompleted() ? $this->url('admin/bulk-export/id', ['controller' => 'export', 'action' => 'download', 'id' => $export->id()]) : '';
             $exporter = $export->exporter();
             $userIsAllowedDelete = $exporter->userIsAllowed('delete');
             $job = $export->job();

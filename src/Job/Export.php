@@ -922,9 +922,14 @@ class Export extends AbstractJob
         $data = ['o:filename' => $filename];
         $this->export = $this->api->update('bulk_exports', $this->export->id(), $data, [], ['isPartial' => true])->getContent();
 
-        $fileUrl = $this->export->fileUrl();
-        // For cloud storage, filesize may not be available after upload.
-        // Use the size from when we saved (stored in $filesize during save).
+        // Stream the export through the admin controller (the directory is
+        // protected by a .htaccess denying direct web access).
+        $fileUrl = $filename
+            ? $this->getServiceLocator()->get('ViewHelperManager')->get('url')
+                ->__invoke('admin/bulk-export/id', ['controller' => 'export', 'action' => 'download', 'id' => $this->export->id()])
+            : null;
+        // For cloud storage, filesize may not be available after upload. Use
+        // the size from when we saved (stored in $filesize during save).
         $filesize = $this->export->filesize() ?? $this->lastSavedFilesize ?? null;
         if (!$fileUrl) {
             $this->logger->notice(
