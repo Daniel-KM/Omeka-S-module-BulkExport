@@ -288,16 +288,7 @@ trait MetadataToStringTrait
 
             // Module HistoryLog.
             case 'operation':
-                if (!$this->hasHistoryLog) {
-                    return [];
-                }
-                $lastOperation = $this->historyLastOperations[$resource->resourceName()][$resource->id()] ?? null;
-                if ($lastOperation === 'import') {
-                    $lastOperation = 'create';
-                } elseif ($lastOperation === 'export') {
-                    $lastOperation = 'update';
-                }
-                return $lastOperation ? [$lastOperation] : [];
+                return $this->lastOperation($resource);
 
             // Module Persistent Identifiers.
             case 'o:pid':
@@ -473,6 +464,31 @@ trait MetadataToStringTrait
         $pid = $this->services->get('Omeka\Connection')
             ->fetchOne('SELECT `pid` FROM `pid_item` WHERE `item_id` = ?', [$itemId]);
         return is_string($pid) && $pid !== '' ? [$pid] : [];
+    }
+
+    /**
+     * Get the last operation on the resource logged by module History Log.
+     *
+     * Operations "import" and "export" are converted into "create" and
+     * "update".
+     */
+    protected function lastOperation(AbstractResourceRepresentation $resource): array
+    {
+        if (!class_exists('HistoryLog\Module', false)) {
+            return [];
+        }
+        $operations = $this->api->search('history_events', [
+            'entity_name' => $resource->resourceName(),
+            'entity_id' => $resource->id(),
+            'sort_by' => 'id',
+            'sort_order' => 'desc',
+            'limit' => 1,
+        ], ['returnScalar' => 'operation'])->getContent();
+        $operation = reset($operations);
+        if (!$operation) {
+            return [];
+        }
+        return [['import' => 'create', 'export' => 'update'][$operation] ?? $operation];
     }
 
     /**
