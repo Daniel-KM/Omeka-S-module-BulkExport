@@ -431,10 +431,12 @@ if (version_compare($oldVersion, '3.4.38', '<')) {
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB;
         ALTER TABLE `bulk_shaper` ADD CONSTRAINT `FK_C40AB3ED7E3C61F9` FOREIGN KEY (`owner_id`) REFERENCES `user` (`id`) ON DELETE SET NULL;
         SQL;
-    try {
-        $connection->executeStatement($sql);
-    } catch (\Throwable $e) {
-        // Table exists.
+    foreach (array_filter(array_map('trim', explode(";\n", $sql))) as $sql) {
+        try {
+            $connection->executeStatement($sql);
+        } catch (\Throwable $e) {
+            // Table exists.
+        }
     }
 
     $message = new PsrMessage(

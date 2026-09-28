@@ -80,7 +80,7 @@ class Odt extends AbstractFieldsFormatter
         }
 
         $results = $connection
-            ->executeQuery($qb, $bind, $types)
+            ->executeQuery($qb->getSQL(), $bind, $types)
             ->fetchAllKeyValue();
         if ($results) {
             $list = [];

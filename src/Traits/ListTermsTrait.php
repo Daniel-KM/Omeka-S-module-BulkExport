@@ -100,7 +100,7 @@ trait ListTermsTrait
             );
         }
 
-        $terms = $connection->executeQuery($qb, $bind, $types)->fetchAllKeyValue();
+        $terms = $connection->executeQuery($qb->getSQL(), $bind, $types)->fetchAllKeyValue();
         return $this->usedPropertiesByTermCache[$cacheKey] = array_map('intval', $terms);
     }
 
@@ -132,7 +132,7 @@ trait ListTermsTrait
             ->where('alternate_label != ""')
             ->addOrderBy('property.id', 'asc')
         ;
-        $this->propertyTemplateLabelsByTerm = $connection->executeQuery($qb)->fetchAllKeyValue();
+        $this->propertyTemplateLabelsByTerm = $connection->executeQuery($qb->getSQL())->fetchAllKeyValue();
         return $this->propertyTemplateLabelsByTerm;
     }
 
