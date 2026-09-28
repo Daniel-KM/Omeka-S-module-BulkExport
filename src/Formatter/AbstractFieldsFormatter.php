@@ -41,8 +41,18 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
 
     protected function process(): self
     {
+        $metadata = (array) ($this->options['metadata'] ?? []);
+        $metadataSize = (string) ($this->options['metadata_size'] ?? '');
+        if ($metadataSize !== '') {
+            $metadata[] = $metadataSize;
+        }
+        $metadataExclude = (array) ($this->options['metadata_exclude'] ?? []);
+        $metadataExcludeSize = (string) ($this->options['metadata_exclude_size'] ?? '');
+        if ($metadataExcludeSize !== '') {
+            $metadataExclude[] = $metadataExcludeSize;
+        }
         $this
-            ->prepareFieldNames($this->options['metadata'], $this->options['metadata_exclude']);
+            ->prepareFieldNames($metadata, $metadataExclude);
 
         if (!count($this->fieldNames)) {
             $this->logger->warn('No metadata are used in any resources.'); // @translate

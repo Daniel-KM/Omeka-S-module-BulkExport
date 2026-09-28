@@ -364,7 +364,15 @@ class Module extends AbstractModule
                     'required' => false,
                 ])
                 ->add([
+                    'name' => 'bulkexport_metadata_size',
+                    'required' => false,
+                ])
+                ->add([
                     'name' => 'bulkexport_metadata_exclude',
+                    'required' => false,
+                ])
+                ->add([
+                    'name' => 'bulkexport_metadata_exclude_size',
                     'required' => false,
                 ])
                 ->add([
@@ -389,7 +397,15 @@ class Module extends AbstractModule
                 'required' => false,
             ])
             ->add([
+                'name' => 'bulkexport_metadata_size',
+                'required' => false,
+            ])
+            ->add([
                 'name' => 'bulkexport_metadata_exclude',
+                'required' => false,
+            ])
+            ->add([
+                'name' => 'bulkexport_metadata_exclude_size',
                 'required' => false,
             ])
             ->add([

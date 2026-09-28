@@ -8,6 +8,16 @@ trait MetadataSelectTrait
 {
     public function appendMetadataSelect($prefix = '')
     {
+        $sizeOptions = [
+            '' => 'No size filter', // @translate
+            'properties_max_500' => 'All used properties less than 500 characters', // @translate
+            'properties_max_1000' => 'All used properties less than 1000 characters', // @translate
+            'properties_max_5000' => 'All used properties less than 5000 characters', // @translate
+            'properties_min_500' => 'All used properties more than 500 characters', // @translate
+            'properties_min_1000' => 'All used properties more than 1000 characters', // @translate
+            'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
+        ];
+
         $this
             ->add([
                 'name' => $prefix . 'metadata',
@@ -28,22 +38,25 @@ trait MetadataSelectTrait
                 ],
             ])
             ->add([
+                'name' => $prefix . 'metadata_size',
+                'type' => CommonElement\OptionalSelect::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Size filter to include', // @translate
+                    'info' => 'Add all used property values matching this size, in addition to the explicit metadata list above.', // @translate
+                    'value_options' => $sizeOptions,
+                ],
+                'attributes' => [
+                    'id' => $prefix . 'metadata_size',
+                ],
+            ])
+            ->add([
                 'name' => $prefix . 'metadata_exclude',
                 'type' => CommonElement\OptionalPropertySelect::class,
                 'options' => [
                     'element_group' => 'export',
                     'label' => 'Metadata to exclude', // @translate
                     'info' => 'It is recommended to remove big fields from the list of properties, in particular extracted text.', // @translate
-                    'prepend_value_options' => [
-                        'metadata' => [
-                            'label' => 'Resource metadata', // @translate
-                            'options' => [
-                                'properties_min_500' => 'All used properties more than 500 characters', // @translate
-                                'properties_min_1000' => 'All used properties more than 1000 characters', // @translate
-                                'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
-                            ],
-                        ],
-                    ],
                     'term_as_value' => true,
                 ],
                 'attributes' => [
@@ -52,6 +65,19 @@ trait MetadataSelectTrait
                     'multiple' => true,
                     'class' => 'chosen-select',
                     'data-placeholder' => 'Select one or more metadata…', // @translate
+                ],
+            ])
+            ->add([
+                'name' => $prefix . 'metadata_exclude_size',
+                'type' => CommonElement\OptionalSelect::class,
+                'options' => [
+                    'element_group' => 'export',
+                    'label' => 'Size filter to exclude', // @translate
+                    'info' => 'Skip all used property values matching this size, in addition to the explicit exclude list above.', // @translate
+                    'value_options' => $sizeOptions,
+                ],
+                'attributes' => [
+                    'id' => $prefix . 'metadata_exclude_size',
                 ],
             ])
         ;
@@ -79,12 +105,6 @@ trait MetadataSelectTrait
                     'o:is_open' => 'Openness', // @translate
                     // For all resources.
                     'properties' => 'All used properties', // @translate
-                    'properties_max_500' => 'All used properties less than 500 characters', // @translate
-                    'properties_min_500' => 'All used properties more than 500 characters', // @translate
-                    'properties_max_1000' => 'All used properties less than 1000 characters', // @translate
-                    'properties_min_1000' => 'All used properties more than 1000 characters', // @translate
-                    'properties_max_5000' => 'All used properties less than 5000 characters', // @translate
-                    'properties_min_5000' => 'All used properties more than 5000 characters', // @translate
                     // Modules.
                     // 'o-history-log:event' => 'History log events (module History Log)',
                     'operation' => 'History log last operation (create, update, delete or undelete)',

@@ -259,7 +259,9 @@ abstract class AbstractFormatter implements FormatterInterface
         $options += [
             'resource_type' => null,
             'metadata' => [],
+            'metadata_size' => '',
             'metadata_exclude' => [],
+            'metadata_exclude_size' => '',
             'limit' => 0,
             'site_slug' => '',
             'is_site_request' => false,

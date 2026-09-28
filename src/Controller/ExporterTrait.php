@@ -44,7 +44,9 @@ trait ExporterTrait
         $options = [];
         $options['site_slug'] = $isSiteRequest ? $this->params('site-slug') : null;
         $options['metadata'] = $settings->get('bulkexport_metadata', []);
+        $options['metadata_size'] = $settings->get('bulkexport_metadata_size', '');
         $options['metadata_exclude'] = $settings->get('bulkexport_metadata_exclude', []);
+        $options['metadata_exclude_size'] = $settings->get('bulkexport_metadata_exclude_size', '');
         $options['format_fields'] = $settings->get('bulkexport_format_fields', 'name');
         $options['format_fields_labels'] = $settings->get('bulkexport_format_fields_labels', []);
         $options['format_generic'] = $settings->get('bulkexport_format_generic', 'string');
