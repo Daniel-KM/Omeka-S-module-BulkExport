@@ -31,6 +31,13 @@ class Odt extends AbstractFieldsFormatter
         return parent::format($resources, $output, $options);
     }
 
+    protected function reset(): self
+    {
+        parent::reset();
+        $this->skippedLongFields = [];
+        return $this;
+    }
+
     protected function process(): self
     {
         $this->logLongValueFields(1000);

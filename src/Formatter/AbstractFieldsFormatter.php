@@ -45,6 +45,20 @@ abstract class AbstractFieldsFormatter extends AbstractFormatter
         return parent::format($resources, $output, $options + $this->defaultOptionsFields);
     }
 
+    protected function reset(): self
+    {
+        parent::reset();
+        // The formatter is a shared service, so clear the fields prepared for a
+        // previous export, else they are reused as is.
+        $this->fieldNames = null;
+        $this->fieldLabels = null;
+        $this->labelFormatFields = 'name';
+        $this->fieldColumnsInfo = [];
+        $this->expandedFieldNames = [];
+        $this->expandedFieldsMap = [];
+        return $this;
+    }
+
     protected function process(): self
     {
         $metadata = (array) ($this->options['metadata'] ?? []);
