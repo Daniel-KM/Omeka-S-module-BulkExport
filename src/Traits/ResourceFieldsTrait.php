@@ -402,6 +402,9 @@ trait ResourceFieldsTrait
                         $this->fieldNames[] = 'o:is_open';
                         break;
                     case 'o:Item':
+                        if (class_exists('PersistentIdentifiers\Module', false)) {
+                            $this->fieldNames[] = 'o:pid';
+                        }
                         $this->fieldNames[] = 'o:item_set/o:id';
                         $this->fieldNames[] = 'o:item_set/dcterms:title';
                         $this->fieldNames[] = 'o:media/o:id';
@@ -628,6 +631,7 @@ trait ResourceFieldsTrait
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
                 // Modules.
                 'o-module-folksonomy:tag' => $this->translator->translate('Tag'), // @translate
+                'o:pid' => $this->translator->translate('Persistent identifier'), // @translate
             ];
         }
 
@@ -705,6 +709,7 @@ trait ResourceFieldsTrait
             'o:owner',
             'o:is_public',
             'o:is_open',
+            'o:pid',
             /*
             'o:resource',
             'o:resource/o:id',

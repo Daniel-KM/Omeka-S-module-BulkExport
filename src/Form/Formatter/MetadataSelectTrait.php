@@ -158,6 +158,10 @@ trait MetadataSelectTrait
             unset($mapping['o:annotation']);
         }
 
+        if (class_exists('PersistentIdentifiers\Module', false)) {
+            $mapping['metadata']['options']['o:pid'] = 'Persistent identifier (module Persistent Identifiers)'; // @translate
+        }
+
         return $mapping;
     }
 }

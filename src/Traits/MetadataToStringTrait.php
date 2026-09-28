@@ -285,6 +285,12 @@ trait MetadataToStringTrait
                 }
                 return $lastOperation ? [$lastOperation] : [];
 
+            // Module Persistent Identifiers.
+            case 'o:pid':
+                return $resource->resourceName() === 'items'
+                    ? $this->persistentIdentifier($resource->id())
+                    : [];
+
             // Module Folksonomy.
             case 'o-module-folksonomy:tag':
                 $json = $resource->jsonSerialize();
@@ -437,6 +443,22 @@ trait MetadataToStringTrait
         return array_map(function ($v) {
             return $v->id();
         }, $resources);
+    }
+
+    /**
+     * Get the persistent identifier of an item (module Persistent Identifiers).
+     *
+     * The table is read directly: an item has one pid at most, and the module
+     * does not add it to the item representation.
+     */
+    protected function persistentIdentifier(int $itemId): array
+    {
+        if (!class_exists('PersistentIdentifiers\Module', false)) {
+            return [];
+        }
+        $pid = $this->services->get('Omeka\Connection')
+            ->fetchOne('SELECT `pid` FROM `pid_item` WHERE `item_id` = ?', [$itemId]);
+        return is_string($pid) && $pid !== '' ? [$pid] : [];
     }
 
     /**
