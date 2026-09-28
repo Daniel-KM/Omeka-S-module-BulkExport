@@ -519,15 +519,10 @@ $conf = [
             'bulkexport_column_metadata' => [],
         ],
         'site_settings' => [
+            // Triggered partials are deprecated with new themes. Placements use
+            // the format "position/resource" (after/items, browse/items…).
+            'bulkexport_placement' => [],
             'bulkexport_limit' => 1000,
-            'bulkexport_views' => [
-                // 'item_show',
-                'item_browse',
-                // 'itemset_show',
-                // 'itemset_browse',
-                // 'media_show',
-                // 'media_browse',
-            ],
             'bulkexport_formatters' => [
                 'csv',
                 // 'json',

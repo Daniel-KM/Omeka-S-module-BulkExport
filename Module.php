@@ -423,14 +423,9 @@ class Module extends AbstractModule
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 
-        $allowed = [
-            'item_show' => 'items',
-            'itemset_show' => 'item_sets',
-            'media_show' => 'media',
-        ];
-        $bulkExportViews = $siteSettings->get('bulkexport_views') ?: [];
-        $bulkExportViews = array_intersect_key($allowed, array_fill_keys($bulkExportViews, null));
-        if (!count($bulkExportViews)) {
+        // Placements use the format "position/resource" (old themes only).
+        $placements = $siteSettings->get('bulkexport_placement', []);
+        if (!count($placements)) {
             return;
         }
 
@@ -438,8 +433,7 @@ class Module extends AbstractModule
         $vars = $view->vars();
 
         $resource = $vars->offsetGet('resource');
-        $resourceName = $resource->resourceName();
-        if (!in_array($resourceName, $bulkExportViews)) {
+        if (!in_array('after/' . $resource->resourceName(), $placements)) {
             return;
         }
 
@@ -469,14 +463,9 @@ class Module extends AbstractModule
         $services = $this->getServiceLocator();
         $siteSettings = $services->get('Omeka\Settings\Site');
 
-        $allowed = [
-            'item_browse' => 'items',
-            'itemset_browse' => 'item_sets',
-            'media_browse' => 'media',
-        ];
-        $bulkExportViews = $siteSettings->get('bulkexport_views') ?: [];
-        $bulkExportViews = array_intersect_key($allowed, array_fill_keys($bulkExportViews, null));
-        if (!count($bulkExportViews)) {
+        // Placements use the format "position/resource" (old themes only).
+        $placements = $siteSettings->get('bulkexport_placement', []);
+        if (!count($placements)) {
             return;
         }
 
@@ -487,7 +476,7 @@ class Module extends AbstractModule
         $paramsRoute = $params->fromRoute();
         $controller = $paramsRoute['__CONTROLLER'] ?? $paramsRoute['controller'] ?? null;
         $resourceName = $easyMeta->resourceName($controller);
-        if (!in_array($resourceName, $bulkExportViews)) {
+        if (!in_array('browse/' . $resourceName, $placements)) {
             return;
         }
 

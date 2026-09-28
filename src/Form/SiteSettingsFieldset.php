@@ -6,6 +6,11 @@ use Common\Form\Element as CommonElement;
 
 class SiteSettingsFieldset extends SettingsFieldset
 {
+    protected $elementGroups = [
+        'export' => 'Bulk Export', // @translate
+        'themes_old' => 'Old themes', // @translate
+    ];
+
     public function init(): void
     {
         parent::init();
@@ -19,23 +24,23 @@ class SiteSettingsFieldset extends SettingsFieldset
     {
         return $this
             ->add([
-                'name' => 'bulkexport_views',
+                'name' => 'bulkexport_placement',
                 'type' => CommonElement\OptionalMultiCheckbox::class,
                 'options' => [
-                    'element_group' => 'export',
-                    'label' => 'Resource pages where to display exporters automatically', // @translate
-                    'info' => 'The config should be compliant with module BlocksDisposition if you use it. When the theme supports resource page blocks, it is recommended to use them.', // @translate
+                    'element_group' => 'themes_old',
+                    'label' => 'Bulk Export', // @translate
                     'value_options' => [
-                        'item_show' => 'Item / show', // @translate
-                        'item_browse' => 'Item / browse', // @translate
-                        'itemset_show' => 'Item set / show', // @translate
-                        'itemset_browse' => 'Item set / browse', // @translate
-                        'media_show' => 'Media / show', // @translate
-                        'media_browse' => 'Media / browse', // @translate
+                        'after/items' => 'Item show', // @translate
+                        'after/media' => 'Media show', // @translate
+                        'after/item_sets' => 'Item set show', // @translate
+                        'browse/items' => 'Item browse', // @translate
+                        'browse/media' => 'Media browse', // @translate
+                        'browse/item_sets' => 'Item set browse', // @translate
                     ],
                 ],
                 'attributes' => [
-                    'id' => 'bulkexport_views',
+                    'id' => 'bulkexport_placement',
+                    'required' => false,
                 ],
             ]);
     }
