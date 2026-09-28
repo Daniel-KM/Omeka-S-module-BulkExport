@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 00:00+0000\n"
+"POT-Creation-Date: 2026-09-28 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:35 Module.php:49
+#: data/scripts/upgrade.php:35 Module.php:66
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr ""
@@ -26,11 +26,11 @@ msgstr ""
 msgid "Missing requirement. Unable to upgrade."
 msgstr ""
 
-#: Module.php:143
+#: Module.php:160
 msgid "WARNING:"
 msgstr ""
 
-#: Module.php:155
+#: Module.php:172
 msgid "Remove bulk export directory"
 msgstr ""
 
@@ -57,7 +57,7 @@ msgstr ""
 msgid "Resource type not allowed for export for now"
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:15 src/View/Helper/BulkExport.php:144
+#: src/Controller/ExporterTrait.php:15 src/View/Helper/BulkExport.php:147
 msgid "Unsupported resource type to export."
 msgstr ""
 
@@ -65,25 +65,25 @@ msgstr ""
 msgid "Unsupported format \"{format}\"."
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:152
+#: src/Controller/ExporterTrait.php:154
 msgid "The list of ids should be a list of numeric internal identifiers."
 msgstr ""
 
-#: src/Controller/ExporterTrait.php:161
+#: src/Controller/ExporterTrait.php:163
 msgid ""
 "A query cannot be used to export \"resources\" before Omeka S v4.1: set the "
 "resource type or use the list of ids instead."
 msgstr ""
 
-#: src/Job/Export.php:774
+#: src/Job/Export.php:786
 msgid "unknown"
 msgstr ""
 
-#: src/Job/Export.php:775
+#: src/Job/Export.php:787
 msgid "anonymous"
 msgstr ""
 
-#: src/Job/Export.php:822
+#: src/Job/Export.php:834
 msgid "no-name"
 msgstr ""
 
@@ -102,165 +102,185 @@ msgstr ""
 msgid "Digital library"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:581
+#: src/Traits/ResourceFieldsTrait.php:590
 msgid "id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:588
+#: src/Traits/ResourceFieldsTrait.php:597
 msgid "Resource id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:589
+#: src/Traits/ResourceFieldsTrait.php:598
 msgid "Resource identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:592
+#: src/Traits/ResourceFieldsTrait.php:601
 msgid "Item set id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:595
+#: src/Traits/ResourceFieldsTrait.php:604
 msgid "Item id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:596
+#: src/Traits/ResourceFieldsTrait.php:605
 msgid "Item identifier"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:597
+#: src/Traits/ResourceFieldsTrait.php:606
 msgid "Item title"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:599
+#: src/Traits/ResourceFieldsTrait.php:608
 msgid "Media id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:600
+#: src/Traits/ResourceFieldsTrait.php:609
 msgid "Media file"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:601
+#: src/Traits/ResourceFieldsTrait.php:610
 msgid "Media source"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:602
+#: src/Traits/ResourceFieldsTrait.php:611
 msgid "File media type"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:603
+#: src/Traits/ResourceFieldsTrait.php:612
 msgid "File size"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:604
+#: src/Traits/ResourceFieldsTrait.php:613
 msgid "Url to original"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:605
+#: src/Traits/ResourceFieldsTrait.php:614
 msgid "Original file url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:606
+#: src/Traits/ResourceFieldsTrait.php:615
 msgid "Url to large thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:607
+#: src/Traits/ResourceFieldsTrait.php:616
 msgid "Url to medium thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:608
+#: src/Traits/ResourceFieldsTrait.php:617
 msgid "Url to square thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:614
+#: src/Traits/ResourceFieldsTrait.php:623
 msgid "Asset id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:615
+#: src/Traits/ResourceFieldsTrait.php:624
 msgid "Asset url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:616
+#: src/Traits/ResourceFieldsTrait.php:625
 msgid "Asset file name"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:617
+#: src/Traits/ResourceFieldsTrait.php:626
 msgid "Asset id if any, else primary media id"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:618
+#: src/Traits/ResourceFieldsTrait.php:627
 msgid "Asset url if any, else primary media original url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:619
+#: src/Traits/ResourceFieldsTrait.php:628
 msgid "Asset url if any, else primary media large url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:620
+#: src/Traits/ResourceFieldsTrait.php:629
 msgid "Asset url if any, else primary media medium url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:621
+#: src/Traits/ResourceFieldsTrait.php:630
 msgid "Asset url if any, else primary media square url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:622
+#: src/Traits/ResourceFieldsTrait.php:631
 msgid "Asset file name if any, else primary media original file name"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:623
+#: src/Traits/ResourceFieldsTrait.php:632
 msgid "Asset file name if any, else primary media large file name"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:624
+#: src/Traits/ResourceFieldsTrait.php:633
 msgid "Asset file name if any, else primary media medium file name"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:625
+#: src/Traits/ResourceFieldsTrait.php:634
 msgid "Asset file name if any, else primary media square file name"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:626
+#: src/Traits/ResourceFieldsTrait.php:635
 msgid "Annotation"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:627
+#: src/Traits/ResourceFieldsTrait.php:636
+msgid "Linked resource"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:637
+msgid "Linked resource id"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:638
+msgid "Linked resource identifier"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:639
+msgid "Linked resource title"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:640
 msgid "Url"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:630
+#: src/Traits/ResourceFieldsTrait.php:643
 msgid "Tag"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:646
+#: src/Traits/ResourceFieldsTrait.php:644
+msgid "Persistent identifier"
+msgstr ""
+
+#: src/Traits/ResourceFieldsTrait.php:660
 #, php-format
 msgid "Annotation body: %s"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:651
+#: src/Traits/ResourceFieldsTrait.php:665
 #, php-format
 msgid "Annotation target: %s"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:153
+#: src/View/Helper/BulkExport.php:156
 msgid ""
 "A query cannot be used to export \"resources\": set the resource type or use "
 "the list of ids instead."
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:177
+#: src/View/Helper/BulkExport.php:180
 #, php-format
 msgid "Unsupported resource type to export: %s."
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:234
+#: src/View/Helper/BulkExport.php:238
 #, php-format
 msgid "Download as spreadsheet %s"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:236
+#: src/View/Helper/BulkExport.php:240
 msgid "Download as text"
 msgstr ""
 
-#: src/View/Helper/BulkExport.php:237
+#: src/View/Helper/BulkExport.php:241
 #, php-format
 msgid "Download as %s"
 msgstr ""
@@ -416,7 +436,7 @@ msgid "Exporter"
 msgstr ""
 
 #: view/bulk/admin/export/show-details.phtml:43
-#: view/bulk/admin/shaper/shaper-table.phtml:62
+#: view/bulk/admin/shaper/shaper-table.phtml:65
 #: view/bulk/admin/shaper/show-details.phtml:21
 msgid "[no owner]"
 msgstr ""
@@ -518,27 +538,27 @@ msgstr ""
 msgid "Add new shaper"
 msgstr ""
 
-#: view/bulk/admin/shaper/browse.phtml:78
-#: view/bulk/admin/shaper/browse.phtml:97
+#: view/bulk/admin/shaper/browse.phtml:80
+#: view/bulk/admin/shaper/browse.phtml:100
 msgid "Delete shapers"
 msgstr ""
 
-#: view/bulk/admin/shaper/browse.phtml:79
+#: view/bulk/admin/shaper/browse.phtml:81
 msgid "Are you sure you would like to delete the selected shapers?"
 msgstr ""
 
-#: view/bulk/admin/shaper/browse.phtml:81
-#: view/bulk/admin/shaper/browse.phtml:100
+#: view/bulk/admin/shaper/browse.phtml:83
+#: view/bulk/admin/shaper/browse.phtml:103
 #, php-format
 msgid ""
 "%1$s: this action will permanently delete %2$s shapers and cannot be undone."
 msgstr ""
 
-#: view/bulk/admin/shaper/browse.phtml:98
+#: view/bulk/admin/shaper/browse.phtml:101
 msgid "Are you sure you would like to delete all shapers?"
 msgstr ""
 
-#: view/bulk/admin/shaper/browse.phtml:143
+#: view/bulk/admin/shaper/browse.phtml:146
 msgid "No shapers yet."
 msgstr ""
 
@@ -578,68 +598,78 @@ msgstr ""
 msgid "Export record"
 msgstr ""
 
-#: data/scripts/upgrade.php:46 Module.php:59
+#: data/scripts/upgrade.php:46 Module.php:76
 msgid "This version of module {module} requires a version of php ≥ {version}."
 msgstr ""
 
-#: data/scripts/upgrade.php:55 Module.php:66
+#: data/scripts/upgrade.php:55 Module.php:83
 msgid "The module {module} should be upgraded to version {version} or later."
 msgstr ""
 
-#: data/scripts/upgrade.php:174
+#: data/scripts/upgrade.php:173
 msgid ""
 "It is now possible to export resources as GeoJSON for values filled via "
 "Value Suggest Geonames."
 msgstr ""
 
-#: data/scripts/upgrade.php:181
+#: data/scripts/upgrade.php:180
 msgid ""
 "It is now possible to export into a specific directory with a specific "
 "filename."
 msgstr ""
 
-#: data/scripts/upgrade.php:188
+#: data/scripts/upgrade.php:187
 msgid ""
 "It is now possible to export via the api endpoint: just add an extension to "
 "it, like for admin or site view, for example \"/api/items.ods\" or \"/api-"
 "local/items/151.odt\" (from module Api Info)."
 msgstr ""
 
-#: data/scripts/upgrade.php:240
+#: data/scripts/upgrade.php:239
 msgid "It is now possible to store an exporter as a task."
 msgstr ""
 
-#: data/scripts/upgrade.php:245
+#: data/scripts/upgrade.php:244
 msgid "It is now possible to do an incremental export."
 msgstr ""
 
-#: data/scripts/upgrade.php:361
+#: data/scripts/upgrade.php:360
 msgid ""
 "The config of exporters has been upgraded to a new format. You may check "
 "them if you use a complex config."
 msgstr ""
 
-#: data/scripts/upgrade.php:377
+#: data/scripts/upgrade.php:379
 msgid ""
 "New resource page blocks have been added to display a button to export "
 "current resources."
 msgstr ""
 
-#: data/scripts/upgrade.php:382
+#: data/scripts/upgrade.php:384
 msgid ""
 "A new option has been added to display the exporters automatically in "
 "selected pages for themes that don’t manage resource page blocks. Check your "
 "site if needed."
 msgstr ""
 
-#: data/scripts/upgrade.php:415
+#: data/scripts/upgrade.php:417
 msgid ""
 "The option \"divclass\" was removed from blocks. Check your theme if you "
 "customized it."
 msgstr ""
 
-#: data/scripts/upgrade.php:441
+#: data/scripts/upgrade.php:445
 msgid "It is now possible to define a specific format for each metadata."
+msgstr ""
+
+#: data/scripts/upgrade.php:742
+msgid ""
+"Settings \"metadata\" / \"metadata_exclude\" were split into \"metadata\"+"
+"\"metadata_size\" / \"metadata_exclude\"+\"metadata_exclude_size\"."
+msgstr ""
+
+#: data/scripts/upgrade.php:749 Module.php:93
+msgid "The directory \"{path}\" is not writeable."
 msgstr ""
 
 #: data/exporters/ods.php:5
@@ -658,11 +688,7 @@ msgstr ""
 msgid "TSV (tab-separated values)"
 msgstr ""
 
-#: Module.php:76
-msgid "The directory \"{path}\" is not writeable."
-msgstr ""
-
-#: Module.php:149
+#: Module.php:166
 msgid "All bulk exports will be removed (folder \"{folder}\")."
 msgstr ""
 
@@ -685,33 +711,33 @@ msgstr ""
 msgid "Error processing resource #{id}: {error}"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:462
+#: src/Traits/ResourceFieldsTrait.php:470
 msgid ""
 "Some properties are not exported because they contain more or less than 500, "
 "1000 or 5000 characters: {properties}."
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:609
-#: src/Form/Formatter/MetadataSelectTrait.php:114
+#: src/Traits/ResourceFieldsTrait.php:618
+#: src/Form/Formatter/MetadataSelectTrait.php:134
 msgid "File name of original"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:610
-#: src/Form/Formatter/MetadataSelectTrait.php:115
+#: src/Traits/ResourceFieldsTrait.php:619
+#: src/Form/Formatter/MetadataSelectTrait.php:135
 msgid "File name of large thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:611
-#: src/Form/Formatter/MetadataSelectTrait.php:116
+#: src/Traits/ResourceFieldsTrait.php:620
+#: src/Form/Formatter/MetadataSelectTrait.php:136
 msgid "File name of medium thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:612
-#: src/Form/Formatter/MetadataSelectTrait.php:117
+#: src/Traits/ResourceFieldsTrait.php:621
+#: src/Form/Formatter/MetadataSelectTrait.php:137
 msgid "File name of square thumbnail"
 msgstr ""
 
-#: src/Traits/ResourceFieldsTrait.php:657
+#: src/Traits/ResourceFieldsTrait.php:671
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
@@ -806,107 +832,105 @@ msgid ""
 "\" is #{export_id} on {date}."
 msgstr ""
 
-#: src/Job/Export.php:724
+#: src/Job/Export.php:736
 msgid "The path should not contain \"../\"."
 msgstr ""
 
-#: src/Job/Export.php:732 src/Job/Export.php:741
+#: src/Job/Export.php:744 src/Job/Export.php:753
 msgid "The destination folder \"{folder}\" is not writeable."
 msgstr ""
 
-#: src/Job/Export.php:807
+#: src/Job/Export.php:819
 msgid "The specified dir path \"{path}\" is invalid. Using default one."
 msgstr ""
 
-#: src/Job/Export.php:895 src/Job/Export.php:908
+#: src/Job/Export.php:907 src/Job/Export.php:920
 msgid ""
 "Export error when saving \"{filename}\" (temp file: \"{tempfile}\"): "
 "{exception}"
 msgstr ""
 
-#: src/Job/Export.php:915
+#: src/Job/Export.php:927
 msgid "Export error when saving \"{filename}\" (temp file: \"{tempfile}\")."
 msgstr ""
 
-#: src/Job/Export.php:931
+#: src/Job/Export.php:948
 msgid "The export is available locally as specified (size: {size} bytes)."
 msgstr ""
 
-#: src/Job/Export.php:936
+#: src/Job/Export.php:953
 msgid "The export is available at {link} (size: {size} bytes)."
 msgstr ""
 
-#: src/Job/Export.php:1055
+#: src/Job/Export.php:1072
 msgid "No owner to notify end of process."
 msgstr ""
 
-#: src/Job/Export.php:1068
+#: src/Job/Export.php:1085
 msgid "[Omeka Bulk Export] #{job_id}"
 msgstr ""
 
-#: src/Job/Export.php:1072
+#: src/Job/Export.php:1089
 msgid ""
 "Export ended (job {link_open_job}#{jobId}{link_close}, {link_open_log}"
 "logs{link_close})."
 msgstr ""
 
-#: src/Job/Export.php:1098
+#: src/Job/Export.php:1115
 msgid "Error when sending email to notify end of process."
 msgstr ""
 
-#: src/Job/Export.php:1132
+#: src/Job/Export.php:1133
+msgid "The php extension \"zip\" is required to export the files."
+msgstr ""
+
+#: src/Job/Export.php:1159
 msgid "No resources to create zip file."
 msgstr ""
 
-#: src/Job/Export.php:1139
+#: src/Job/Export.php:1166
 msgid "Creation of zip of all local files ({format})"
 msgstr ""
 
-#: src/Job/Export.php:1147
+#: src/Job/Export.php:1174
 msgid ""
 "End of creation of zip for format {format} to {download}: {total} files."
 msgstr ""
 
-#: src/Job/Export.php:1174
+#: src/Job/Export.php:1201
 msgid "No files to zip for format \"{format}\"."
 msgstr ""
 
-#: src/Job/Export.php:1193
+#: src/Job/Export.php:1222
 msgid "Zipping \"{format}\" files stopped."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:26
-msgid "Resource pages where to display exporters automatically"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:27
-msgid ""
-"The config should be compliant with module BlocksDisposition if you use it. "
-"When the theme supports resource page blocks, it is recommended to use them."
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:29
-msgid "Item / show"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:30
-msgid "Item / browse"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:31
-msgid "Item set / show"
-msgstr ""
-
-#: src/Form/SiteSettingsFieldset.php:32
-msgid "Item set / browse"
+#: src/Form/SiteSettingsFieldset.php:11
+msgid "Old themes"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:33
-msgid "Media / show"
+msgid "Item show"
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:34
-msgid "Media / browse"
+msgid "Media show"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:35
+msgid "Item set show"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:36
+msgid "Item browse"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:37
+msgid "Media browse"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:38
+msgid "Item set browse"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:39
@@ -1075,12 +1099,12 @@ msgstr ""
 
 #: src/Form/SettingsFieldset.php:241
 #: src/Form/Formatter/SpreadsheetConfigForm.php:56
-msgid "Datatype (e.g. dcterms:subject ^^uri)"
+msgid "Data type (e.g. dcterms:subject ^^uri)"
 msgstr ""
 
 #: src/Form/SettingsFieldset.php:242
 #: src/Form/Formatter/SpreadsheetConfigForm.php:57
-msgid "Visibility (e.g. dcterms:subject [private])"
+msgid "Visibility (e.g. dcterms:subject §private)"
 msgstr ""
 
 #: src/Form/ExporterDeleteForm.php:29
@@ -1210,130 +1234,160 @@ msgstr ""
 msgid "Start export"
 msgstr ""
 
+#: src/Form/Formatter/MetadataSelectTrait.php:12
+msgid "No size filter"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:13
+msgid "All used properties less than 500 characters"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:14
+msgid "All used properties less than 1000 characters"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:15
+msgid "All used properties less than 5000 characters"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:16
+msgid "All used properties more than 500 characters"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:17
+msgid "All used properties more than 1000 characters"
+msgstr ""
+
 #: src/Form/Formatter/MetadataSelectTrait.php:18
+msgid "All used properties more than 5000 characters"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:28
 msgid "If empty, all used properties will be returned."
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:27
-#: src/Form/Formatter/MetadataSelectTrait.php:54
+#: src/Form/Formatter/MetadataSelectTrait.php:37
+#: src/Form/Formatter/MetadataSelectTrait.php:67
 msgid "Select one or more metadata…"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:35
+#: src/Form/Formatter/MetadataSelectTrait.php:45
+msgid "Size filter to include"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:46
+msgid ""
+"Add all used property values matching this size, in addition to the explicit "
+"metadata list above."
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:58
 msgid "Metadata to exclude"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:36
+#: src/Form/Formatter/MetadataSelectTrait.php:59
 msgid ""
 "It is recommended to remove big fields from the list of properties, in "
 "particular extracted text."
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:39
-#: src/Form/Formatter/MetadataSelectTrait.php:65
-msgid "Resource metadata"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:41
-#: src/Form/Formatter/MetadataSelectTrait.php:83
-msgid "All used properties more than 500 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:42
-#: src/Form/Formatter/MetadataSelectTrait.php:85
-msgid "All used properties more than 1000 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:43
-#: src/Form/Formatter/MetadataSelectTrait.php:87
-msgid "All used properties more than 5000 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:67
-msgid "Specific fields below"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:68
-#: src/Form/Formatter/MetadataSelectTrait.php:98
-#: src/Form/Formatter/MetadataSelectTrait.php:106
-#: src/Form/Formatter/MetadataSelectTrait.php:142
-#: src/Form/Formatter/MetadataSelectTrait.php:150
-msgid "Internal id"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:69
-msgid "Resource url"
+#: src/Form/Formatter/MetadataSelectTrait.php:75
+msgid "Size filter to exclude"
 msgstr ""
 
 #: src/Form/Formatter/MetadataSelectTrait.php:76
+msgid ""
+"Skip all used property values matching this size, in addition to the "
+"explicit exclude list above."
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:91
+msgid "Resource metadata"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:93
+msgid "Specific fields below"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:94
+#: src/Form/Formatter/MetadataSelectTrait.php:118
+#: src/Form/Formatter/MetadataSelectTrait.php:126
+#: src/Form/Formatter/MetadataSelectTrait.php:162
+#: src/Form/Formatter/MetadataSelectTrait.php:170
+#: src/Form/Formatter/MetadataSelectTrait.php:178
+msgid "Internal id"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:95
+msgid "Resource url"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:102
 msgid "Owner id"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:77
+#: src/Form/Formatter/MetadataSelectTrait.php:103
 msgid "Visibility public/private"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:79
+#: src/Form/Formatter/MetadataSelectTrait.php:105
 msgid "Openness"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:81
+#: src/Form/Formatter/MetadataSelectTrait.php:107
 msgid "All used properties"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:82
-msgid "All used properties less than 500 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:84
-msgid "All used properties less than 1000 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:86
-msgid "All used properties less than 5000 characters"
-msgstr ""
-
-#: src/Form/Formatter/MetadataSelectTrait.php:92
+#: src/Form/Formatter/MetadataSelectTrait.php:112
 msgid "Tags (Folksonomy)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:96
+#: src/Form/Formatter/MetadataSelectTrait.php:116
 msgid "Item set (for item)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:100
-#: src/Form/Formatter/MetadataSelectTrait.php:119
-#: src/Form/Formatter/MetadataSelectTrait.php:144
-#: src/Form/Formatter/MetadataSelectTrait.php:152
+#: src/Form/Formatter/MetadataSelectTrait.php:120
+#: src/Form/Formatter/MetadataSelectTrait.php:139
+#: src/Form/Formatter/MetadataSelectTrait.php:164
+#: src/Form/Formatter/MetadataSelectTrait.php:172
+#: src/Form/Formatter/MetadataSelectTrait.php:180
 msgid "Label (first title)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:104
+#: src/Form/Formatter/MetadataSelectTrait.php:124
 msgid "Media (for item)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:107
+#: src/Form/Formatter/MetadataSelectTrait.php:127
 msgid "Url / File"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:108
+#: src/Form/Formatter/MetadataSelectTrait.php:128
 msgid "File name"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:109
+#: src/Form/Formatter/MetadataSelectTrait.php:129
 msgid "Source url / file"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:123
+#: src/Form/Formatter/MetadataSelectTrait.php:143
 msgid "Asset (thumbnail)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:140
+#: src/Form/Formatter/MetadataSelectTrait.php:160
 msgid "Item (for media)"
 msgstr ""
 
-#: src/Form/Formatter/MetadataSelectTrait.php:148
+#: src/Form/Formatter/MetadataSelectTrait.php:168
+msgid "Linked resources (resources linking to this one)"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:176
 msgid "Resource (for annotation)"
+msgstr ""
+
+#: src/Form/Formatter/MetadataSelectTrait.php:190
+msgid "Persistent identifier (module Persistent Identifiers)"
 msgstr ""
 
 #: src/Form/Formatter/ResourceQueryTrait.php:16
@@ -1398,7 +1452,7 @@ msgid ""
 msgstr ""
 
 #: src/Form/Formatter/SpreadsheetConfigForm.php:48
-msgid "Column metadata in headers"
+msgid "Add metadata in headers"
 msgstr ""
 
 #: src/Form/Formatter/SpreadsheetConfigForm.php:49
@@ -1485,30 +1539,46 @@ msgid "Asset, else square"
 msgstr ""
 
 #: src/Form/Formatter/AbstractConfigForm.php:120
+msgid "Names of the files in the zip"
+msgstr ""
+
+#: src/Form/Formatter/AbstractConfigForm.php:122
+msgid "Storage name (original/xxx.jpg)"
+msgstr ""
+
+#: src/Form/Formatter/AbstractConfigForm.php:123
+msgid "Folder by item, then media id (original/{item id}/{media id}.jpg)"
+msgstr ""
+
+#: src/Form/Formatter/AbstractConfigForm.php:124
+msgid "Item id and media id (original/{item id}_{media id}.jpg)"
+msgstr ""
+
+#: src/Form/Formatter/AbstractConfigForm.php:136
 msgid "Incremental since last successful export"
 msgstr ""
 
-#: src/Form/Formatter/AbstractConfigForm.php:121
+#: src/Form/Formatter/AbstractConfigForm.php:137
 msgid ""
 "Only new and updated resources since last completed export with the same "
 "exporter and user will be output."
 msgstr ""
 
-#: src/Form/Formatter/AbstractConfigForm.php:139
+#: src/Form/Formatter/AbstractConfigForm.php:155
 msgid "Use a background job"
 msgstr ""
 
-#: src/Form/Formatter/AbstractConfigForm.php:140
+#: src/Form/Formatter/AbstractConfigForm.php:156
 msgid ""
 "For complex formats or numerous resources, the process may require more than "
 "30 seconds, that is the default duration of web server before error."
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:152
+#: src/Api/Representation/ExportRepresentation.php:138
 msgid "ready"
 msgstr ""
 
-#: src/Api/Representation/ExportRepresentation.php:158
+#: src/Api/Representation/ExportRepresentation.php:144
 msgid "Ready"
 msgstr ""
 
@@ -1648,7 +1718,7 @@ msgid "Missing output format configuration"
 msgstr ""
 
 #: src/Formatter/AbstractSpreadsheetFormatter.php:50
-#: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:48
+#: src/Formatter/GeoJson.php:63 src/Formatter/AbstractFieldsFormatter.php:78
 msgid "No metadata are used in any resources."
 msgstr ""
 
@@ -1658,31 +1728,31 @@ msgid ""
 "separator \"{separator}\"."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:219
+#: src/Formatter/AbstractFormatter.php:220
 msgid "Unable to format resources as {format}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:401 src/Formatter/Ods.php:58
+#: src/Formatter/AbstractFormatter.php:413 src/Formatter/Ods.php:59
 msgid "Unable to open output: {error}."
 msgstr ""
 
-#: src/Formatter/AbstractFormatter.php:438
+#: src/Formatter/AbstractFormatter.php:450
 msgid "Unable to save output to file: {error}."
 msgstr ""
 
-#: src/Formatter/Odt.php:25 src/Formatter/Ods.php:19
+#: src/Formatter/Odt.php:25 src/Formatter/Ods.php:20
 msgid ""
 "To process export to \"{format}\", the php extensions \"zip\" and \"xml\" "
 "are required."
 msgstr ""
 
-#: src/Formatter/Odt.php:84
+#: src/Formatter/Odt.php:91
 msgid ""
 "Fields with values of {max_length} characters or more that will be skipped: "
 "{fields}."
 msgstr ""
 
-#: src/Formatter/Odt.php:114
+#: src/Formatter/Odt.php:121
 msgid "Skipped values with more than 1000 characters: {fields}."
 msgstr ""
 
@@ -1731,7 +1801,7 @@ msgstr ""
 msgid "Output is empty for url \"{url}\" (resource #{resource_id})."
 msgstr ""
 
-#: src/Formatter/Ods.php:29
+#: src/Formatter/Ods.php:30
 msgid "The temporary folder \"{folder}\" does not exist or is not writeable."
 msgstr ""
 
