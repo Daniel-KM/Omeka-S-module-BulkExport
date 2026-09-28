@@ -10,6 +10,13 @@ trait ListTermsTrait
     protected $propertyTemplateLabelsByTerm;
 
     /**
+     * Memoize used-properties lookups by option signature within the request.
+     *
+     * @var array
+     */
+    protected $usedPropertiesByTermCache = [];
+
+    /**
      * To be prepared ouside.
      *
      * @var \Laminas\Mvc\I18n\Translator
@@ -34,6 +41,11 @@ trait ListTermsTrait
             'min_size' => 0,
             'max_size' => 0,
         ];
+
+        $cacheKey = md5(serialize($options));
+        if (isset($this->usedPropertiesByTermCache[$cacheKey])) {
+            return $this->usedPropertiesByTermCache[$cacheKey];
+        }
 
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $this->services->get('Omeka\Connection');
@@ -89,7 +101,7 @@ trait ListTermsTrait
         }
 
         $terms = $connection->executeQuery($qb, $bind, $types)->fetchAllKeyValue();
-        return array_map('intval', $terms);
+        return $this->usedPropertiesByTermCache[$cacheKey] = array_map('intval', $terms);
     }
 
     /**

@@ -302,6 +302,10 @@ abstract class AbstractFormatter implements FormatterInterface
                     $this->resourceType = $this->resource->resourceName();
                     // Simplify for formats that manage single/list the same.
                     $this->resources = [$this->resource];
+                    // Scope the used-properties lookup to this resource, else
+                    // it scans the whole value table (CHAR_LENGTH, not
+                    // indexable) on each export, e.g. when crawled.
+                    $this->resourceIds = [$this->resource->id()];
                 }
             } elseif (is_array($resources)) {
                 $first = reset($resources);
@@ -309,6 +313,11 @@ abstract class AbstractFormatter implements FormatterInterface
                     && $first instanceof \Omeka\Api\Representation\AbstractResourceEntityRepresentation;
                 if ($isResource) {
                     $this->resources = $hasLimit ? array_slice($resources, 0, $options['limit']) : $resources;
+                    // Scope to these resources (see single-resource case).
+                    $this->resourceIds = array_values(array_unique(array_filter(array_map(
+                        fn ($r) => (int) $r->id(),
+                        $this->resources
+                    ))));
                 } else {
                     // This is a list of id if all keys are numeric.
                     $this->isId = count($resources) === count(array_filter($resources, 'is_numeric', ARRAY_FILTER_USE_KEY));

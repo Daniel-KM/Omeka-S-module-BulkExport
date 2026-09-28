@@ -364,10 +364,6 @@ trait ResourceFieldsTrait
 
         $entityClasses = array_map([$this, 'mapResourceTypeToEntity'], $this->options['resource_types'] ?? []);
         $resourceIds = $this->resourceIds ?? [];
-        $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm([
-            'entity_classes' => $entityClasses,
-            'resource_ids' => $resourceIds,
-        ]));
         $this->options['resource_types'] = $this->options['resource_types'] ?: [];
 
         if ($listFieldNames) {
@@ -456,15 +452,25 @@ trait ResourceFieldsTrait
         if ($listFieldsToExclude) {
             $toExclude = $this->managePropertiesList($listFieldsToExclude);
             $this->fieldNames = array_diff($this->fieldNames, $toExclude);
-            $unlimitedUsedProperties = array_diff($unlimitedUsedProperties, $toExclude);
         }
 
-        $missingProperties = array_diff($unlimitedUsedProperties, $usedProperties);
-        if ($hasPropertiesMinMax && count($missingProperties)) {
-            $this->logger->warn(
-                'Some properties are not exported because they contain more or less than 500, 1000 or 5000 characters: {properties}.', // @translate
-                ['properties' => $missingProperties]
-            );
+        // The unlimited property list is only used to warn about properties
+        // skipped for their size, so run it (a value-table scan) only then.
+        if ($hasPropertiesMinMax) {
+            $unlimitedUsedProperties = array_keys($this->getUsedPropertiesByTerm([
+                'entity_classes' => $entityClasses,
+                'resource_ids' => $resourceIds,
+            ]));
+            if ($listFieldsToExclude) {
+                $unlimitedUsedProperties = array_diff($unlimitedUsedProperties, $toExclude);
+            }
+            $missingProperties = array_diff($unlimitedUsedProperties, $usedProperties);
+            if (count($missingProperties)) {
+                $this->logger->warn(
+                    'Some properties are not exported because they contain more or less than 500, 1000 or 5000 characters: {properties}.', // @translate
+                    ['properties' => $missingProperties]
+                );
+            }
         }
 
         // Parse metadata_shapers for multiple shapers per field support.
