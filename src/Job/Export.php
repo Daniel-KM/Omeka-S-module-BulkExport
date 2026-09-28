@@ -1125,6 +1125,16 @@ class Export extends AbstractJob
             return $this;
         }
 
+        // The files are zipped with the extension zip, that is not required to
+        // install the module, so check it here to fail with a message instead
+        // of a fatal error.
+        if (!class_exists('ZipArchive')) {
+            $this->logger->err(
+                'The php extension "zip" is required to export the files.' // @translate
+            );
+            return $this;
+        }
+
         $config = $this->services->get('Config');
         $this->basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
         $this->baseUrl = $config['file_store']['local']['base_uri'] ?: $this->services->get('Router')->getBaseUrl() . '/files';
