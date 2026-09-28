@@ -40,6 +40,7 @@ $hyperlink = $plugins->get('hyperlink');
                     <li><?= $shaper->link('', 'edit', [
                         'class' => 'o-icon-edit',
                         'title' => $translate('Edit'),
+                        'aria-label' => $translate('Edit'),
                     ]); ?></li>
                     <?php endif; ?>
                     <?php if ($userIsAllowedDelete): ?>
@@ -48,6 +49,7 @@ $hyperlink = $plugins->get('hyperlink');
                         'data-sidebar-content-url' => $shaper->url('delete-confirm'),
                         'class' => 'o-icon-delete sidebar-content',
                         'title' => $translate('Delete'),
+                        'aria-label' => $translate('Delete'),
                     ]); ?></li>
                     <?php endif; ?>
                     <li><?= $hyperlink('', '#', [
@@ -55,6 +57,7 @@ $hyperlink = $plugins->get('hyperlink');
                         'data-sidebar-content-url' => $shaper->url('show-details'),
                         'class' => 'o-icon-more sidebar-content',
                         'title' => $translate('Details'),
+                        'aria-label' => $translate('Details'),
                     ]); ?></li>
                 </ul>
             </td>
