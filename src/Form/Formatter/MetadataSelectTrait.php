@@ -144,6 +144,14 @@ trait MetadataSelectTrait
                     'o:item/dcterms:title' => 'Label (first title)', // @translate
                 ],
             ],
+            '@reverse' => [
+                'label' => 'Linked resources (resources linking to this one)', // @translate
+                'options' => [
+                    '@reverse/o:id' => 'Internal id', // @translate
+                    '@reverse/dcterms:identifier' => 'Identifier', // @translate
+                    '@reverse/dcterms:title' => 'Label (first title)', // @translate
+                ],
+            ],
             'o:annotation' => [
                 'label' => 'Resource (for annotation)', // @translate
                 'options' => [

@@ -627,6 +627,10 @@ trait ResourceFieldsTrait
                 '(o:asset/o:filename | o:primary_media/o:filename/medium)[1]' => $this->translator->translate('Asset file name if any, else primary media medium file name'), // @translate
                 '(o:asset/o:filename | o:primary_media/o:filename/square)[1]' => $this->translator->translate('Asset file name if any, else primary media square file name'), // @translate
                 'o:annotation' => $this->translator->translate('Annotation'), // @translate
+                '@reverse' => $this->translator->translate('Linked resource'), // @translate
+                '@reverse/o:id' => $this->translator->translate('Linked resource id'), // @translate
+                '@reverse/dcterms:identifier' => $this->translator->translate('Linked resource identifier'), // @translate
+                '@reverse/dcterms:title' => $this->translator->translate('Linked resource title'), // @translate
                 'url' => $this->translator->translate('Url'), // @translate,
                 'resource_type' => $this->translator->translate('Resource type'), // @translate,
                 // Modules.

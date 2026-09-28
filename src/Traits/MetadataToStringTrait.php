@@ -243,6 +243,20 @@ trait MetadataToStringTrait
                     ? $this->extractFirstValueOfResources([$resource->item()], $metadata)
                     : [];
 
+            // Resources linking to this one (JSON-LD @reverse).
+            case '@reverse/o:id':
+                return $this->subjectResourceIds($resource);
+            case '@reverse/dcterms:identifier':
+            case '@reverse/dcterms:title':
+                $resources = [];
+                foreach ($this->subjectResourceIds($resource) as $id) {
+                    try {
+                        $resources[] = $this->api->read('resources', $id)->getContent();
+                    } catch (\Exception $e) {
+                    }
+                }
+                return $this->extractFirstValueOfResources($resources, $metadata);
+
             // Resources for annotation (target).
             case 'o:resource/o:id':
                 /** @var \Annotate\Api\Representation\AnnotationRepresentation $resource*/
@@ -462,16 +476,41 @@ trait MetadataToStringTrait
     }
 
     /**
+     * Get the ids of the resources that link to the resource, without
+     * duplicates.
+     *
+     * Visibility is managed by the doctrine filter of the current user.
+     */
+    protected function subjectResourceIds(AbstractResourceRepresentation $resource): array
+    {
+        if (!$resource instanceof AbstractResourceEntityRepresentation) {
+            return [];
+        }
+        $entity = $this->services->get('Omeka\EntityManager')
+            ->find(\Omeka\Entity\Resource::class, $resource->id());
+        if (!$entity) {
+            return [];
+        }
+        $rows = $this->services->get('Omeka\ApiAdapterManager')
+            ->get($resource->resourceName())
+            ->getSubjectValuesSimple($entity);
+        return array_values(array_unique(array_map('intval', array_column($rows, 'id'))));
+    }
+
+    /**
      * Return the first value of the property of all resources.
      *
      * @param \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
-     * @param string $metadata The full metadata, with a term.
+     * @param string $metadata The full metadata, with a term, like
+     *   "o:item_set/dcterms:title" or "o:resource[dcterms:title]".
      * @return array
      */
     protected function extractFirstValueOfResources(array $resources, $metadata): array
     {
         $result = [];
-        $term = trim(substr($metadata, strpos($metadata, '[') + 1), '[] ');
+        $term = strpos($metadata, '[') === false
+            ? substr($metadata, strrpos($metadata, '/') + 1)
+            : trim(substr($metadata, strpos($metadata, '[') + 1), '[] ');
         foreach ($resources as $resource) {
             $value = $resource->value($term);
             if ($value) {
