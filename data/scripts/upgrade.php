@@ -50,10 +50,10 @@ if (PHP_VERSION_ID < 80100) {
     $hasError = true;
 }
 
-if (!$this->checkModuleActiveVersion('Log', '3.4.36')) {
+if (!$this->checkModuleActiveVersion('Log', '3.4.40')) {
     $message = new PsrMessage(
         'The module {module} should be upgraded to version {version} or later.', // @translate
-        ['module' => 'Log', 'version' => '3.4.36']
+        ['module' => 'Log', 'version' => '3.4.40']
     );
     $messenger->addError($message);
     $hasError = true;
@@ -68,17 +68,24 @@ if (version_compare($oldVersion, '3.0.7', '<')) {
     $iterator = new \RecursiveIteratorIterator($directory);
     // The format has changed, so import them later.
     $failExporters = [];
-    foreach (array_keys($iterator) as $filepath) {
-        $failExporters[] = $filepath;
+    foreach ($iterator as $fileinfo) {
+        if ($fileinfo->isFile()) {
+            $failExporters[] = $fileinfo->getPathname();
+        }
     }
 }
 
 if (version_compare($oldVersion, '3.0.8', '<')) {
-    $sql = <<<'SQL'
-        ALTER TABLE `bulk_export`
-            ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
-        SQL;
-    $connection->executeStatement($sql);
+    $hasComment = (bool) $connection->executeQuery(
+        "SHOW COLUMNS FROM `bulk_export` LIKE 'comment'"
+    )->fetchOne();
+    if (!$hasComment) {
+        $sql = <<<'SQL'
+            ALTER TABLE `bulk_export`
+                ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
+            SQL;
+        $connection->executeStatement($sql);
+    }
 }
 
 if (version_compare($oldVersion, '3.0.7', '>')
@@ -86,14 +93,6 @@ if (version_compare($oldVersion, '3.0.7', '>')
 ) {
     $failExporters[] = dirname(__DIR__) . '/exporters/txt.php';
     $failExporters[] = dirname(__DIR__) . '/exporters/odt.php';
-}
-
-if (version_compare($oldVersion, '3.0.8', '<')) {
-    $sql = <<<'SQL'
-        ALTER TABLE `bulk_export`
-            ADD `comment` VARCHAR(190) DEFAULT NULL AFTER `job_id`;
-        SQL;
-    $connection->executeStatement($sql);
 }
 
 if (version_compare($oldVersion, '3.3.12.5', '<')) {
@@ -367,7 +366,10 @@ if (version_compare($oldVersion, '3.4.32', '<')) {
     /** @var \Omeka\Settings\SiteSettings $siteSettings */
     $siteSettings = $services->get('Omeka\Settings\Site');
     $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
-    $bulkExportViews = $localConfig['bulkexport']['site_settings']['bulkexport_views'];
+    // The setting "bulkexport_views" no longer exists in the config: it was
+    // migrated to "bulkexport_placement" in version 3.4.41 (see below). The
+    // default is therefore an empty array here.
+    $bulkExportViews = $localConfig['bulkexport']['site_settings']['bulkexport_views'] ?? [];
     foreach ($siteIds as $siteId) {
         $siteSettings->setTargetId($siteId);
         $siteSettings->set('bulkexport_views', $bulkExportViews);
@@ -523,13 +525,13 @@ if (version_compare($oldVersion, '3.4.39', '<')) {
         $sql = "SELECT `id`, `config` FROM `bulk_exporter`";
         $stmt = $connection->executeQuery($sql);
         while ($row = $stmt->fetchAssociative()) {
-            $config = json_decode($row['config'], true) ?: [];
-            if (isset($config['writer'])) {
-                $config['formatter'] = $config['writer'];
-                unset($config['writer']);
+            $exporterConfig = json_decode($row['config'], true) ?: [];
+            if (isset($exporterConfig['writer'])) {
+                $exporterConfig['formatter'] = $exporterConfig['writer'];
+                unset($exporterConfig['writer']);
                 $updateSql = "UPDATE `bulk_exporter` SET `config` = :config WHERE `id` = :id";
                 $connection->executeStatement($updateSql, [
-                    'config' => json_encode($config),
+                    'config' => json_encode($exporterConfig),
                     'id' => $row['id'],
                 ]);
             }
@@ -623,5 +625,129 @@ if (!empty($failExporters)) {
         }
     } catch (\Throwable $e) {
         // Nothing.
+    }
+}
+
+if (version_compare($oldVersion, '3.4.41', '<')) {
+    // Migrate bulkexport_views to bulkexport_placement.
+    $viewToPlacement = [
+        'item_show' => 'after/items',
+        'item_browse' => 'browse/items',
+        'itemset_show' => 'after/item_sets',
+        'itemset_browse' => 'browse/item_sets',
+        'media_show' => 'after/media',
+        'media_browse' => 'browse/media',
+    ];
+    /** @var \Omeka\Settings\SiteSettings $siteSettings */
+    $siteSettings = $services->get('Omeka\Settings\Site');
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    foreach ($siteIds as $siteId) {
+        $siteSettings->setTargetId($siteId);
+        $views = $siteSettings->get('bulkexport_views');
+        // Keep the placement of a site already migrated (replayed upgrade).
+        if ($views === null && $siteSettings->get('bulkexport_placement') !== null) {
+            continue;
+        }
+        // A site without stored value used the previous default.
+        $views ??= ['item_browse'];
+        $placements = [];
+        foreach ($views as $view) {
+            if (isset($viewToPlacement[$view])) {
+                $placements[] = $viewToPlacement[$view];
+            }
+        }
+        $siteSettings->set('bulkexport_placement', $placements);
+        // The setting "bulkexport_views" is replaced by "bulkexport_placement".
+        $siteSettings->delete('bulkexport_views');
+    }
+
+    $sizeKeys = [
+        'properties_max_500',
+        'properties_max_1000',
+        'properties_max_5000',
+        'properties_min_500',
+        'properties_min_1000',
+        'properties_min_5000',
+        'properties_small',
+        'properties_large',
+    ];
+    $splitArray = function (array $values) use ($sizeKeys): array {
+        $sizes = array_values(array_intersect($values, $sizeKeys));
+        $rest = array_values(array_diff($values, $sizeKeys));
+        return [$rest, $sizes[0] ?? ''];
+    };
+
+    foreach (['bulkexport_metadata', 'bulkexport_metadata_exclude'] as $key) {
+        $values = (array) $settings->get($key, []);
+        [$rest, $size] = $splitArray($values);
+        $settings->set($key, $rest);
+        $settings->set($key . '_size', $size);
+    }
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    foreach ($siteIds as $siteId) {
+        $siteSettings->setTargetId($siteId);
+        foreach (['bulkexport_metadata', 'bulkexport_metadata_exclude'] as $key) {
+            $values = (array) $siteSettings->get($key, []);
+            [$rest, $size] = $splitArray($values);
+            $siteSettings->set($key, $rest);
+            $siteSettings->set($key . '_size', $size);
+        }
+    }
+
+    $exporterRows = $connection->fetchAllAssociative(
+        'SELECT id, config FROM bulk_exporter'
+    );
+    foreach ($exporterRows as $row) {
+        $cfg = json_decode((string) $row['config'], true) ?: [];
+        $changed = false;
+        foreach (['metadata', 'metadata_exclude'] as $key) {
+            if (isset($cfg[$key]) && is_array($cfg[$key])) {
+                [$rest, $size] = $splitArray($cfg[$key]);
+                $cfg[$key] = $rest;
+                $cfg[$key . '_size'] = $size;
+                $changed = true;
+            }
+        }
+        if ($changed) {
+            $connection->executeStatement(
+                'UPDATE bulk_exporter SET config = :c WHERE id = :id',
+                ['c' => json_encode($cfg), 'id' => $row['id']]
+            );
+        }
+    }
+
+    $exportRows = $connection->fetchAllAssociative(
+        'SELECT id, params FROM bulk_export'
+    );
+    foreach ($exportRows as $row) {
+        $params = json_decode((string) $row['params'], true) ?: [];
+        $changed = false;
+        foreach (['metadata', 'metadata_exclude'] as $key) {
+            if (isset($params[$key]) && is_array($params[$key])) {
+                [$rest, $size] = $splitArray($params[$key]);
+                $params[$key] = $rest;
+                $params[$key . '_size'] = $size;
+                $changed = true;
+            }
+        }
+        if ($changed) {
+            $connection->executeStatement(
+                'UPDATE bulk_export SET params = :p WHERE id = :id',
+                ['p' => json_encode($params), 'id' => $row['id']]
+            );
+        }
+    }
+
+    $messenger->addSuccess(new PsrMessage(
+        'Settings "metadata" / "metadata_exclude" were split into "metadata"+"metadata_size" / "metadata_exclude"+"metadata_exclude_size".' // @translate
+    ));
+
+    // Protect the existing directory of exports against direct web access.
+    $basePath = $config['file_store']['local']['base_path'] ?: (OMEKA_PATH . '/files');
+    if (!$this->checkDestinationDir($basePath . '/bulk_export', true)) {
+        $messenger->addWarning(new PsrMessage(
+            'The directory "{path}" is not writeable.', // @translate
+            ['path' => $basePath . '/bulk_export']
+        ));
     }
 }
