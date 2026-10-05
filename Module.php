@@ -187,7 +187,7 @@ class Module extends AbstractModule
         $acl = $services->get('Omeka\Acl');
 
         $roles = $acl->getRoles();
-        $backendRoles = array_diff($roles, ['guest']);
+        $backendRoles = array_diff($roles, ['guest', 'guest_private', 'guest_private_site']);
         $baseRoles = array_diff($backendRoles, ['editor', 'site_admin', 'global_admin']);
 
         $acl
