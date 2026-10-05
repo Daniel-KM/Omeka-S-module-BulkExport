@@ -50,10 +50,10 @@ if (PHP_VERSION_ID < 80100) {
     $hasError = true;
 }
 
-if (!$this->checkModuleActiveVersion('Log', '3.4.40')) {
+if (!$this->checkModuleActiveVersion('Log', '3.4.42')) {
     $message = new PsrMessage(
         'The module {module} should be upgraded to version {version} or later.', // @translate
-        ['module' => 'Log', 'version' => '3.4.40']
+        ['module' => 'Log', 'version' => '3.4.42']
     );
     $messenger->addError($message);
     $hasError = true;
@@ -748,6 +748,30 @@ if (version_compare($oldVersion, '3.4.41', '<')) {
         $messenger->addWarning(new PsrMessage(
             'The directory "{path}" is not writeable.', // @translate
             ['path' => $basePath . '/bulk_export']
+        ));
+    }
+}
+
+if (version_compare($oldVersion, '3.4.42', '<')) {
+    // Use the standard csv format (rfc 4180), without escape character.
+    $updated = 0;
+    $rows = $connection->fetchAllAssociative('SELECT id, config FROM bulk_exporter');
+    foreach ($rows as $row) {
+        $config = json_decode((string) $row['config'], true) ?: [];
+        if (!isset($config['formatter']['escape']) || $config['formatter']['escape'] === '') {
+            continue;
+        }
+        $config['formatter']['escape'] = '';
+        $connection->executeStatement(
+            'UPDATE bulk_exporter SET config = :c WHERE id = :id',
+            ['c' => json_encode($config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 'id' => $row['id']]
+        );
+        ++$updated;
+    }
+    if ($updated) {
+        $messenger->addSuccess(new PsrMessage(
+            'The escape character of {count} exporter(s) was removed to follow the standard csv format.', // @translate
+            ['count' => $updated]
         ));
     }
 }

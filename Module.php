@@ -78,10 +78,10 @@ class Module extends AbstractModule
             ))->setTranslator($translator);
         }
 
-        if (!$this->checkModuleActiveVersion('Log', '3.4.40')) {
+        if (!$this->checkModuleActiveVersion('Log', '3.4.42')) {
             $errors[] = (string) (new PsrMessage(
                 'The module {module} should be upgraded to version {version} or later.', // @translate
-                ['module' => 'Log', 'version' => '3.4.40']
+                ['module' => 'Log', 'version' => '3.4.42']
             ))->setTranslator($translator);
         }
 
