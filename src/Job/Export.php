@@ -601,7 +601,7 @@ class Export extends AbstractJob
 
         $delimiter = $this->options['delimiter'] ?? ',';
         $enclosure = $this->options['enclosure'] ?? '"';
-        $escape = $this->options['escape'] ?? '\\';
+        $escape = $this->options['escape'] ?? '';
 
         $deleted = 0;
 

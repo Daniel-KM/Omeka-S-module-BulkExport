@@ -11,7 +11,7 @@ class Csv extends AbstractSpreadsheetFormatter
     protected $defaultOptions = [
         'delimiter' => ',',
         'enclosure' => '"',
-        'escape' => '\\',
+        'escape' => '',
     ];
 
     protected function initializeOutput(): self

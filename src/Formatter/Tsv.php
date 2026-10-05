@@ -20,6 +20,6 @@ class Tsv extends Csv
     {
         parent::__construct($services);
         $this->defaultOptions['enclosure'] = "\0";
-        $this->defaultOptions['escape'] = "\0";
+        $this->defaultOptions['escape'] = '';
     }
 }

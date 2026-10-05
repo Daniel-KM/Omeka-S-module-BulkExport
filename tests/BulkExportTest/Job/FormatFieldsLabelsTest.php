@@ -282,7 +282,7 @@ class FormatFieldsLabelsTest extends AbstractHttpControllerTestCase
                 // TSV-specific settings (normally set by handleParamsForm).
                 'delimiter' => "\t",
                 'enclosure' => '"',
-                'escape' => '\\',
+                'escape' => '',
             ],
         ]);
 

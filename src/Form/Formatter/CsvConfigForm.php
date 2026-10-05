@@ -41,7 +41,7 @@ class CsvConfigForm extends SpreadsheetConfigForm
                 ],
                 'attributes' => [
                     'id' => 'escape',
-                    'value' => '\\',
+                    'value' => '',
                 ],
             ]);
         return $this;

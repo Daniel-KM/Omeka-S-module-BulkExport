@@ -210,7 +210,7 @@ trait BulkExportTestTrait
         return [
             'delimiter' => ',',
             'enclosure' => '"',
-            'escape' => '\\',
+            'escape' => '',
             'separator' => ' | ',
         ];
     }
@@ -223,7 +223,7 @@ trait BulkExportTestTrait
         return [
             'delimiter' => "\t",
             'enclosure' => "\0",
-            'escape' => "\0",
+            'escape' => '',
             'separator' => ' | ',
         ];
     }
@@ -263,7 +263,7 @@ trait BulkExportTestTrait
         $rows = [];
         if (($handle = fopen($filepath, 'r')) !== false) {
             $isFirstRow = true;
-            while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+            while (($data = fgetcsv($handle, 0, $delimiter, '"', '')) !== false) {
                 // Strip BOM from first cell of first row if present.
                 if ($isFirstRow && count($data) > 0) {
                     $data[0] = preg_replace('/^\xEF\xBB\xBF/', '', $data[0]);

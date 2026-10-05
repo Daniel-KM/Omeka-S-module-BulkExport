@@ -30,7 +30,7 @@ class FormatterReuseTest extends AbstractHttpControllerTestCase
     {
         $formatter->format($resources, null, ['metadata' => $metadata]);
         $lines = explode("\n", trim((string) $formatter->getContent(), "\xEF\xBB\xBF\n"));
-        return str_getcsv($lines[0]);
+        return str_getcsv($lines[0], ',', '"', '');
     }
 
     /**

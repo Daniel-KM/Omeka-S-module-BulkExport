@@ -8,7 +8,7 @@ return [
         'formatter' => [
             'delimiter' => ',',
             'enclosure' => '"',
-            'escape' => '\\',
+            'escape' => '',
             'separator' => ' | ',
             'resource_types' => [
                 'o:Item',
