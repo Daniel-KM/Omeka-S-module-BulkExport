@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 00:00+0000\n"
+"POT-Creation-Date: 2026-11-16 15:50+0000\n"
 "PO-Revision-Date: 2026-09-28 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
@@ -301,7 +301,7 @@ msgid "Download as %s"
 msgstr "Télécharger en %s"
 
 #: view/bulk/admin/bulk-export/index.phtml:22
-#: view/bulk/admin/export/browse.phtml:18 view/bulk/admin/export/logs.phtml:54
+#: view/bulk/admin/export/browse.phtml:18 view/bulk/admin/export/logs.phtml:56
 #: view/bulk/admin/export/show.phtml:31
 #: view/bulk/admin/exporter/configure-formatter.phtml:27
 #: view/bulk/admin/exporter/delete.phtml:23
@@ -378,65 +378,69 @@ msgstr "Démarrage : %s"
 msgid "End: %s"
 msgstr "Terminé : %s"
 
-#: view/bulk/admin/export/logs.phtml:40
+#: view/bulk/admin/export/logs.phtml:42
 msgid "Emergency"
 msgstr "Urgence"
 
-#: view/bulk/admin/export/logs.phtml:41
+#: view/bulk/admin/export/logs.phtml:43
 msgid "Alert"
 msgstr "Alerte"
 
-#: view/bulk/admin/export/logs.phtml:42
+#: view/bulk/admin/export/logs.phtml:44
 msgid "Critical"
 msgstr "Critique"
 
-#: view/bulk/admin/export/logs.phtml:45
+#: view/bulk/admin/export/logs.phtml:47
 msgid "Notice"
 msgstr "Avis"
 
-#: view/bulk/admin/export/logs.phtml:47
+#: view/bulk/admin/export/logs.phtml:49
 msgid "Debug"
 msgstr "Débogage"
 
-#: view/bulk/admin/export/logs.phtml:54 view/bulk/admin/export/show.phtml:31
+#: view/bulk/admin/export/logs.phtml:56 view/bulk/admin/export/show.phtml:31
 #, php-format
 msgid "Export #%d"
 msgstr "Export #%d"
 
-#: view/bulk/admin/export/logs.phtml:61 view/bulk/admin/export/show.phtml:38
+#: view/bulk/admin/export/logs.phtml:63 view/bulk/admin/export/show.phtml:38
 msgid "Attempt to stop job"
 msgstr "Essayer d’arrêter la tâche"
 
-#: view/bulk/admin/export/logs.phtml:64
+#: view/bulk/admin/export/logs.phtml:66
 msgid "Manage logs"
 msgstr "Gérer les journaux"
 
-#: view/bulk/admin/export/logs.phtml:75
+#: view/bulk/admin/export/logs.phtml:77
 msgid "Show only messages whose severity is higher than or equal to"
 msgstr ""
 "Afficher seulement les messages dont la sévérité est supérieure ou égale à"
 
-#: view/bulk/admin/export/logs.phtml:92
+#: view/bulk/admin/export/logs.phtml:94
 msgid "Message"
 msgstr "Message"
 
-#: view/bulk/admin/export/logs.phtml:93
+#: view/bulk/admin/export/logs.phtml:95
 msgid "Severity"
 msgstr "Sévérité"
 
-#: view/bulk/admin/export/logs.phtml:94
+#: view/bulk/admin/export/logs.phtml:96
 msgid "Time"
 msgstr "Heure"
 
-#: view/bulk/admin/export/logs.phtml:118
+#: view/bulk/admin/export/logs.phtml:119
 msgid "Full log"
 msgstr "Message complet"
 
-#: view/bulk/admin/export/logs.phtml:135
+#: view/bulk/admin/export/logs.phtml:123
+msgid "Copy"
+msgstr "Copier"
+
+#: view/bulk/admin/export/logs.phtml:136
 msgid "No logs yet."
 msgstr "Pas encore de journaux."
 
-#: view/bulk/admin/export/logs.phtml:135
+#: view/bulk/admin/export/logs.phtml:136
 msgid "Refresh page"
 msgstr "Rafraîchir la page"
 
@@ -714,6 +718,26 @@ msgstr ""
 #: data/scripts/upgrade.php:749 Module.php:93
 msgid "The directory \"{path}\" is not writeable."
 msgstr "Le dossier \"{path}\" n’est pas inscriptible."
+
+#: data/scripts/upgrade.php:773
+msgid ""
+"The escape character of {count} exporter(s) was removed to follow the "
+"standard csv format."
+msgstr ""
+"Le caractère d’échappement de {count} exporteur(s) a été retiré pour suivre "
+"le format csv standard."
+
+#: data/scripts/upgrade.php:816
+msgid ""
+"The theme of these sites manages the resource page blocks, so the module is "
+"no more displayed via the events in the resource pages, but its blocks are "
+"not placed: {sites}. Add the blocks of the module in the resource pages of "
+"these sites, if needed."
+msgstr ""
+"Le thème de ces sites gère les blocs des pages de ressource, donc le module "
+"n’est plus affiché par les événements dans les pages de ressource, mais ses "
+"blocs ne sont pas placés : {sites}. Ajouter les blocs du module dans les "
+"pages de ressource de ces sites, si nécessaire."
 
 #: data/exporters/ods.php:5
 msgid "OpenDocument spreadsheet (ods)"
