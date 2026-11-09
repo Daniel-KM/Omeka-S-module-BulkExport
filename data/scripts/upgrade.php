@@ -50,10 +50,10 @@ if (PHP_VERSION_ID < 80100) {
     $hasError = true;
 }
 
-if (!$this->checkModuleActiveVersion('Log', '3.4.42')) {
+if (!$this->checkModuleActiveVersion('Log', '3.4.43')) {
     $message = new PsrMessage(
         'The module {module} should be upgraded to version {version} or later.', // @translate
-        ['module' => 'Log', 'version' => '3.4.42']
+        ['module' => 'Log', 'version' => '3.4.43']
     );
     $messenger->addError($message);
     $hasError = true;
