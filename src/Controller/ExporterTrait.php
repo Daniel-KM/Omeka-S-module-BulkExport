@@ -134,6 +134,9 @@ trait ExporterTrait
         $id = $params->fromRoute('id');
         if ($id) {
             $resources = (int) $id;
+            // Return a 404 for a missing or private resource, not an error 500
+            // from the formatter (urls are crawled by bots).
+            $this->api()->read($resourceName, $resources);
         } else {
             $id = $params->fromQuery('id');
             if ($id) {
