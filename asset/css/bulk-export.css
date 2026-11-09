@@ -8,43 +8,47 @@
     .show .bulk-export .exporters {
         padding-left: 0;
     }
-    .bulk-export .exporters li {
-        list-style: none;
-        display: inline-block;
-    }
-    .bulk-export .exporters li:not(:last-child)::after {
-        content: ' · ';
+    .bulk-export {
+        & .exporters {
+            & li {
+                list-style: none;
+                display: inline-block;
+                &:not(:last-child)::after {
+                    content: ' · ';
+                }
+            }
+        }
     }
 
     /* Export button */
 
     .bulk-export-details {
         cursor: pointer;
-    }
-    .bulk-export-details summary {
-        display: inline-block;
-        height: 45px;
-        padding: 7.5px;
-        border: 0;
-        border-radius: 2px;
-    }
-    .bulk-export-details[open] summary,
-    .bulk-export-details summary:hover {
-        background-color: #dedede;
-    }
-    .bulk-export-details[open] > ul,
-    .bulk-export-details[open] > .bulk-export > ul {
-        display: block;
-        position: absolute;
-        z-index: 10;
-        overflow: visible;
-        cursor: auto;
-        min-height: 48px;
-        padding: 15px;
-        margin-top: 3px;
-        border: 1px solid #DCD6CA;
-        background: #EEE;
-        background-color: #FFFFFF;
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2);
+        & summary {
+            display: inline-block;
+            height: 45px;
+            padding: 7.5px;
+            border: 0;
+            border-radius: 2px;
+        }
+        &[open] summary,
+        & summary:hover {
+            background-color: #dedede;
+        }
+        &[open] > ul,
+        &[open] > .bulk-export > ul {
+            display: block;
+            position: absolute;
+            z-index: 10;
+            overflow: visible;
+            cursor: auto;
+            min-height: 48px;
+            padding: 15px;
+            margin-top: 3px;
+            border: 1px solid #DCD6CA;
+            background: #EEE;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2);
+        }
     }
 }
