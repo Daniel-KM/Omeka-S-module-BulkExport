@@ -775,3 +775,61 @@ if (version_compare($oldVersion, '3.4.42', '<')) {
         ));
     }
 }
+
+if (version_compare($oldVersion, '3.4.43', '<')) {
+    // The module is no more displayed via the events in the resource pages
+    // when the theme manages the resource page blocks, so check if the blocks
+    // of the module are placed in each site where the module was displayed,
+    // according to its placement and to the module BlocksDisposition.
+    $placementSettings = ['bulkexport_placement'];
+    $isBlocksDispositionActive = (bool) $connection->fetchOne('SELECT `is_active` FROM `module` WHERE `id` = "BlocksDisposition"');
+    $siteSetting = fn (int $siteId, string $name) => json_decode((string) $connection->fetchOne(
+        'SELECT `value` FROM `site_setting` WHERE `site_id` = ? AND `id` = ?',
+        [$siteId, $name]
+    ), true);
+    $moduleConfig = $this->getConfig()['resource_page_block_layouts'] ?? [];
+    $blockNames = array_keys(($moduleConfig['invokables'] ?? []) + ($moduleConfig['factories'] ?? []));
+    $themeManager = $services->get('Omeka\Site\ThemeManager');
+    $listBlocks = function ($blocks) use (&$listBlocks): array {
+        if (!is_array($blocks)) {
+            return is_string($blocks) ? [$blocks] : [];
+        }
+        $result = [];
+        foreach ($blocks as $value) {
+            $result = array_merge($result, $listBlocks($value));
+        }
+        return $result;
+    };
+    $sitesWithoutBlocks = [];
+    foreach ($connection->executeQuery('SELECT `id`, `slug`, `theme` FROM `site`')->fetchAllAssociative() as $site) {
+        $theme = $themeManager->getTheme($site['theme']);
+        if (!$theme
+            || !method_exists($theme, 'isConfigurableResourcePageBlocks')
+            || !$theme->isConfigurableResourcePageBlocks()
+        ) {
+            continue;
+        }
+        if ($placementSettings
+            && !array_filter(array_map(fn ($name) => $siteSetting((int) $site['id'], $name), $placementSettings))
+        ) {
+            continue;
+        }
+        if ($isBlocksDispositionActive
+            && !in_array(__NAMESPACE__, (array) $siteSetting((int) $site['id'], 'blocksdisposition_item_show'), true)
+        ) {
+            continue;
+        }
+        $themeSettings = $siteSetting((int) $site['id'], 'theme_settings_' . $site['theme']) ?: [];
+        $siteBlocks = $themeSettings['resource_page_blocks'] ?? $theme->getConfigSpec()['resource_page_blocks'] ?? [];
+        if (!array_intersect($blockNames, $listBlocks($siteBlocks))) {
+            $sitesWithoutBlocks[] = $site['slug'];
+        }
+    }
+    if ($sitesWithoutBlocks) {
+        $message = new \Common\Stdlib\PsrMessage(
+            'The theme of these sites manages the resource page blocks, so the module is no more displayed via the events in the resource pages, but its blocks are not placed: {sites}. Add the blocks of the module in the resource pages of these sites, if needed.', // @translate
+            ['sites' => implode(', ', $sitesWithoutBlocks)]
+        );
+        $messenger->addError($message);
+    }
+}
